@@ -15,7 +15,7 @@ local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 function validate_pxIdentidier(identifier, px_cookie)
     local re_pxcook = ''
 
-    -- return
+    -- if no cookie we stop validation
     if px_cookie == nil or #px_cookie == 0 then
         return false;
     end
