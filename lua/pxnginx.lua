@@ -16,7 +16,7 @@ function gen_pxIdentifier()
     local sec_now_str = tostring(ngx.time());
     local ip = ngx.var.remote_addr;
     local ua = ngx.var.http_user_agent;
-    local identifier = ngx.hmac_sha1(px_, token, px_appId .. ip .. ua);
+    local identifier = ngx.hmac_sha1(px_token, px_appId .. ip .. ua);
     return ngx.encode_base64(identifier .. sec_now_str);
 end
 
