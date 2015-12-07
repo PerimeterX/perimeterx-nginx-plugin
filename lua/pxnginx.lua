@@ -11,6 +11,15 @@ local px_apiServer = 'https://pxcollector.a.pxi.pub';
 local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 -- ## END - Configuration block ##
 
+-- Generate an encrypted user-unique key
+function gen_pxIdentifier()
+    local sec_now_str = tostring(ngx.time());
+    local ip = ngx.var.remote_addr;
+    local ua = ngx.var.http_user_agent;
+    local identifier = ngx.hmac_sha1(px_, token, px_appId .. ip .. ua);
+    return ngx.encode_base64(identifier .. sec_now_str);
+end
+
 -- Validating the user key came from px-cookie and match against the locally generated one
 function validate_pxIdentidier(identifier, px_cookie)
     local re_pxcook = ''

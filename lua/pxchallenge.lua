@@ -14,8 +14,8 @@ function sendTo_Perimeter()
     pxdata['pxidentifier'] = ngx.ctx.pxidentifier;
     pxdata = json.encode(pxdata);
     if not (ngx.ctx.px_apiServer == nil) then
-        local report = [[curl -X POST -H "Content-Type: application/json" -d ]] .. [[']] .. pxdata .. [[']] .. " " .. ngx.ctx.px_apiServer .. '/api/v1/nginxcollect' .. [[ & ]]
-        os.execute(report);
+        -- local report = [[curl -X POST -H "Content-Type: application/json" -d ]] .. [[']] .. pxdata .. [[']] .. " " .. ngx.ctx.px_apiServer .. '/api/v1/nginxcollect' .. [[ & ]]
+        -- os.execute(report);
     end
 end
 
