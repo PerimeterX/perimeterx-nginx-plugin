@@ -3,8 +3,8 @@
 -- Version 1.0.0
 -- Release date: 15.12.2015
 ----------------------------------------------
-local json = require "lua-json"
-local http = require "http"
+local json = require "pxlua-json"
+local http = require "pxhttp"
 
 function sendTo_Perimeter()
     local pxdata = {}

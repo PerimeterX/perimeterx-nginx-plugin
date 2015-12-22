@@ -1,4 +1,4 @@
-local http_headers = require "http_headers"
+local http_headers = require "pxhttp_headers"
 
 local ngx_socket_tcp = ngx.socket.tcp
 local ngx_req = ngx.req
