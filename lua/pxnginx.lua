@@ -6,7 +6,7 @@
 
 -- ## Configuration Block ##
 local px_token = 'my_temporary_token';
-local px_appId = 'PX6002';
+local px_appId = 'PXAPPCODE';
 local px_apiServer = 'https://pxcollector.a.pxi.pub';
 local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 -- ## END - Configuration block ##

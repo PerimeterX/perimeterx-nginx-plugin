@@ -4,6 +4,7 @@
 -- Release date: 15.12.2015
 ----------------------------------------------
 local json = require "lua-json"
+local http = require "http"
 
 function sendTo_Perimeter()
     local pxdata = {}
@@ -14,8 +15,18 @@ function sendTo_Perimeter()
     pxdata['pxidentifier'] = ngx.ctx.pxidentifier;
     pxdata = json.encode(pxdata);
     if not (ngx.ctx.px_apiServer == nil) then
-        -- local report = [[curl -X POST -H "Content-Type: application/json" -d ]] .. [[']] .. pxdata .. [[']] .. " " .. ngx.ctx.px_apiServer .. '/api/v1/nginxcollect' .. [[ & ]]
-        -- os.execute(report);
+        local submit = function()
+           local httpc = http.new()
+           local res, err = httpc:request_uri(ngx.ctx.px_apiServer .. '/api/v1/collector/nginxcollect', {
+                method = "POST",
+               body = "data=" .. pxdata,
+                headers = {
+                    ["Content-Type"] = "application/x-www-form-urlencoded",
+                }
+            })
+        end
+
+        ngx.timer.at(1, submit)
     end
 end
 
