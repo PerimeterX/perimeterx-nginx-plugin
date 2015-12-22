@@ -6,15 +6,3 @@
 Hello World
 </body>
 </html>
-'
-<script>var str = "' .. ngx.ctx.pxidentifier .. '";
-var strx = "";
-for (var i = 0; i < str.length; i++) {
-    strx += str[i];
-    if ((i + 1) % 4 == 0) {
-        strx += Math.random().toString(36).substring(3, 4);
-    }
-};
-document.cookie = "_pxcook=" + strx;
-window.location.reload();
-</script>
