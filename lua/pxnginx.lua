@@ -7,7 +7,7 @@
 -- ## Configuration Block ##
 local px_token = 'my_temporary_token';
 local px_appId = 'PXAPPCODE';
-local px_apiServer = 'https://pxcollector.a.pxi.pub';
+local px_apiServer = 'https://collector.a.pxi.pub';
 local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 -- ## END - Configuration block ##
 
@@ -21,7 +21,7 @@ function gen_pxIdentifier()
 end
 
 -- Validating the user key came from px-cookie and match against the locally generated one
-function validate_pxIdentidier(identifier, px_cookie)
+function validate_pxIdentifier(identifier, px_cookie)
     local re_pxcook = ''
 
     -- if no cookie we stop validation
@@ -70,7 +70,7 @@ ngx.ctx.px_apiServer = px_apiServer;
 ngx.ctx.px_token = px_token;
 local pxcook = ngx.var.cookie__pxcook;
 
-if not validate_pxIdentidier(ngx.ctx.pxidentifier, pxcook) then
+if not validate_pxIdentifier(ngx.ctx.pxidentifier, pxcook) then
     return 1;
 end
 
