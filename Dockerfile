@@ -15,7 +15,7 @@ ENV LUAJIT_LIB /usr/local/lib
 ENV LUAJIT_INC /usr/local/include/luajit-2.0
 
 RUN apt-get -qq update
-RUN apt-get -qq -y install wget
+RUN apt-get -qq -y install wget git
 
 # ***** BUILD DEPENDENCIES *****
 
@@ -27,6 +27,7 @@ RUN apt-get -qq -y install libpcre3-dev
 RUN apt-get -qq -y install zlib1g-dev
 RUN apt-get -qq -y install libssl-dev
 RUN apt-get -qq -y install curl
+RUN apt-get -qq -y install ca-certificates
 
 # LUAJit dependencies
 RUN apt-get -qq -y install gcc
@@ -57,6 +58,21 @@ RUN make -j2
 RUN make install
 RUN ln -s ${NGINX_ROOT}/sbin/nginx /usr/local/sbin/nginx
 
+# Lua dependency packages
+RUN apt-get install lua-cjson \
+    && ln -s /usr/lib/x86_64-linux-gnu/lua/5.1/cjson.so /usr/local/lib/lua/5.1/cjson.so
+RUN cd /tmp \
+    && git clone https://github.com/pintsized/lua-resty-http.git \
+	&& cd lua-resty-http \
+	&& make install
+
+# PerimeterX Lua package
+RUN mkdir /tmp/px
+COPY lib /tmp/px/lib
+COPY Makefile /tmp/px
+RUN cd /tmp/px \
+    && make install
+
 # ***** MISC *****
 WORKDIR ${WEB_DIR}
 EXPOSE 80
@@ -67,9 +83,9 @@ RUN rm -rf /nginx-${VER_NGINX}
 RUN rm -rf /LuaJIT-${VER_LUAJIT}
 RUN rm -rf /${NGINX_DEVEL_KIT}
 RUN rm -rf /${LUA_NGINX_MODULE}
+RUN rm -rf /tmp/lua-resty-http
 
 COPY nginx.conf /nginx/conf/nginx.conf
-COPY lua /nginx/lua
 COPY www /nginx/www
 
 # forward request and error logs to docker log collector

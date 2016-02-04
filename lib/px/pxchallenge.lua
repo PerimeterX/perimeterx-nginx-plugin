@@ -3,8 +3,8 @@
 -- Version 1.0.0
 -- Release date: 15.12.2015
 ----------------------------------------------
-local json = require "pxlua-json"
-local http = require "pxhttp"
+local cjson = require "cjson"
+local http = require "resty.http"
 
 function sendTo_Perimeter()
     local pxdata = {}
@@ -13,33 +13,33 @@ function sendTo_Perimeter()
     pxdata['px_app_id'] = ngx.ctx.px_app_id;
     pxdata['pxtoken'] = ngx.ctx.pxtoken;
     pxdata['pxidentifier'] = ngx.ctx.pxidentifier;
-    pxdata = json.encode(pxdata);
+    pxdata = cjson.encode(pxdata);
     local apiServer = ngx.ctx.px_apiServer;
     if apiServer ~= nil and apiServer ~= "" then
-        local submit = function()
-           local httpc = http.new()
-           local res, err = httpc:request_uri(apiServer .. '/api/v1/collector/nginxcollect', {
-               method = "POST",
-               body = "data=" .. pxdata,
-               headers = {
-                    ["Content-Type"] = "application/x-www-form-urlencoded",
-                }
-            })
+		local submit = function()
+        local httpc = http.new()
+        local res, err = httpc:request_uri(apiServer .. '/api/v1/collector/nginxcollect', {
+			method = "POST",
+			body = "data=" .. pxdata,
+			headers = {
+				["Content-Type"] = "application/x-www-form-urlencoded",
+            }
+        })
 
-	if not res then
-	    ngx.log(ngx.ERR, "failed to make http post: ",err)
-	    return
-	elseif res.status ~= 200 then
-	    ngx.log(ngx.ERR, "Non 200 response code: ", res.status)
-        end
-	end
+		if not res then
+			ngx.log(ngx.ERR, "Failed to make HTTP POST: ",err)
+			return
+		elseif res.status ~= 200 then
+			ngx.log(ngx.ERR, "Non 200 response code: ", res.status)
+			end
+		end
 
-        local ok, err = ngx.timer.at(1, submit)
-	if not ok then
-	    ngx.log(ngx.ERR, "Failed timer for submit: ", err)
-	    return
-  	end
+		local ok, err = ngx.timer.at(1, submit)
 
+		if not ok then
+			ngx.log(ngx.ERR, "Failed timer for submit: ", err)
+			return
+		end
     end
 end
 
