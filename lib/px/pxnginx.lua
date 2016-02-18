@@ -1,8 +1,10 @@
 ----------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.0.0
--- Release date: 15.12.2015
+-- Version 1.1.0
+-- Release date: 21.02.2015
 ----------------------------------------------
+local pxClient = require "px.pxclient"
+local pxFilters = require "px.pxfilters"
 
 -- ## Configuration Block ##
 local px_token = 'my_temporary_token';
@@ -11,6 +13,38 @@ local px_apiServer = 'https://collector.a.pxi.pub';
 local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 -- ## END - Configuration block ##
 
+
+-- Check for whitelisted request
+-- By IP
+local wlips = pxFilters.Whitelist['ip_addresses'];
+-- reverse client string builder
+for i = 1, #wlips do
+    if ngx.var.remote_addr == wlips[i] then
+        ngx.log(ngx.INFO, "Whitelisted: ip_addresses")
+        return 0
+    end
+end
+
+local wlfuri = pxFilters.Whitelist['uri_full'];
+-- reverse client string builder
+for i = 1, #wlfuri do
+    if ngx.var.uri == wlfuri[i] then
+        ngx.log(ngx.INFO, "Whitelisted: uri_full")
+        return 0
+    end
+end
+
+local wluri = pxFilters.Whitelist['uri_prefixes'];
+-- reverse client string builder
+for i = 1, #wluri do
+    if string.sub(ngx.var.uri, 1, string.len(wluri[i])) == wluri[i] then
+        ngx.log(ngx.INFO, "Whitelisted: uri_prefixes")
+        return 0
+    end
+end
+
+
+ngx.log(ngx.INFO, "Passed whitelisting filter")
 -- Generate an encrypted user-unique key
 function gen_pxIdentifier()
     local sec_now_str = tostring(ngx.time());
@@ -73,5 +107,7 @@ local pxcook = ngx.var.cookie__pxcook;
 if not validate_pxIdentifier(ngx.ctx.pxidentifier, pxcook) then
     return 1;
 end
+
+pxClient.sendTo_Perimeter('page_request');
 
 return 0;
