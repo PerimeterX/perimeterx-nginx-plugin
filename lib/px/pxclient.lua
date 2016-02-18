@@ -24,7 +24,7 @@ function CLIENT.sendTo_Perimeter(type)
     pxdata['user_agent'] = ngx.var.http_user_agent;
     pxdata['socket_ip'] = ngx.var.remote_addr;
     pxdata = cjson.encode(pxdata);
-    local apiServer = 'http://10.0.2.2:8080';
+    local apiServer = ngx.ctx.px_apiServer;
     if apiServer ~= nil and apiServer ~= "" then
         local submit = function()
             local httpc = http.new()
