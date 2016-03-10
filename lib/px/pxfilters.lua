@@ -13,19 +13,21 @@ FILTERS.Whitelist = {};
 -- example:
 -- filter: example.com/api_server_full?data=data
 -- will not filter: example.com/api_server?data=data
-FILTERS.Whitelist['uri_full'] = {'/', '/api_server_full' }
+-- FILTERS.Whitelist['uri_full'] = {'/', '/api_server_full' }
+FILTERS.Whitelist['uri_full'] = {}
 
 -- URI Prefixes filter
 -- will filter requests where the uri starts with any of the list below.
 -- example:
 -- filter: example.com/api_server_full?data=data
 -- will not filter: example.com/full_api_server?data=data
-FILTERS.Whitelist['uri_prefixes'] = {'/api_server'}
+-- FILTERS.Whitelist['uri_prefixes'] = {'/api_server'}
+FILTERS.Whitelist['uri_prefixes'] = {}
 
 -- IP Addresses filter
 -- will filter requests coming from the ip in the list below
-FILTERS.Whitelist['ip_addresses'] = {'192.168.99.1'}
-
+-- FILTERS.Whitelist['ip_addresses'] = {'192.168.99.1'}
+FILTERS.Whitelist['ip_addresses'] = {}
 
 return FILTERS
 
