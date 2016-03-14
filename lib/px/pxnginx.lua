@@ -8,7 +8,7 @@ local pxFilters = require "px.pxfilters"
 
 -- ## Configuration Block ##
 local px_token = 'my_temporary_token';
-local px_appId = 'PXAPPCODE';
+local px_appId = 'PX3tHq532g';
 local px_apiServer = 'https://collector.a.pxi.pub';
 local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 -- ## END - Configuration block ##
