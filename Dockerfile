@@ -14,7 +14,7 @@ ENV WEB_DIR ${NGINX_ROOT}/html
 ENV LUAJIT_LIB /usr/local/lib
 ENV LUAJIT_INC /usr/local/include/luajit-2.0
 
-RUN apt-get update
+RUN apt-get -qq update
 RUN apt-get -qq -y install wget git
 
 # ***** BUILD DEPENDENCIES *****
