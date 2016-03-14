@@ -68,10 +68,8 @@ RUN cd /tmp \
 
 # PerimeterX Lua package
 RUN mkdir -p /tmp/px
-COPY lib /tmp/px/lib
-COPY Makefile /tmp/px
-RUN cd /tmp/px \
-    && make install
+COPY lib Makefile /tmp/px/
+RUN make -C /tmp/px install
 
 # ***** MISC *****
 WORKDIR ${WEB_DIR}
