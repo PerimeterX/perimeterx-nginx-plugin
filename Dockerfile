@@ -74,6 +74,7 @@ RUN make -C /tmp/px install
 
 # ***** MISC *****
 WORKDIR ${WEB_DIR}
+EXPOSE 8080
 
 # ***** CLEANUP *****
 RUN rm -rf /nginx-${VER_NGINX}
