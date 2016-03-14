@@ -48,8 +48,15 @@ ngx.log(ngx.INFO, "Passed whitelisting filter")
 -- Generate an encrypted user-unique key
 function gen_pxIdentifier()
     local sec_now_str = tostring(ngx.time());
-    local ip = ngx.var.remote_addr;
-    local ua = ngx.var.http_user_agent;
+    local ip = '';
+    if ngx.var.remote_addr then
+        local ip = ngx.var.remote_addr;
+    end
+
+    local ua = '';
+    if ngx.var.http_user_agent then
+        ua = ngx.var.http_user_agent;
+    end
     local identifier = ngx.hmac_sha1(px_token, px_appId .. ip .. ua);
     return ngx.encode_base64(identifier .. sec_now_str);
 end
