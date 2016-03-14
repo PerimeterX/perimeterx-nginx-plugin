@@ -22,7 +22,7 @@ FILTERS.Whitelist['uri_full'] = {}
 -- filter: example.com/api_server_full?data=data
 -- will not filter: example.com/full_api_server?data=data
 -- FILTERS.Whitelist['uri_prefixes'] = {'/api_server'}
-FILTERS.Whitelist['uri_prefixes'] = {}
+FILTERS.Whitelist['uri_prefixes'] = {'/report', '/portal', '/createKey', '/backoffice', '/oauth' }
 
 -- IP Addresses filter
 -- will filter requests coming from the ip in the list below

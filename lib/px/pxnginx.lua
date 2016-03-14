@@ -3,14 +3,13 @@
 -- Version 1.1.0
 -- Release date: 21.02.2015
 ----------------------------------------------
-local pxClient = require "px.pxclient"
 local pxFilters = require "px.pxfilters"
 
 -- ## Configuration Block ##
 local px_token = 'my_temporary_token';
-local px_appId = 'PXAPPCODE';
 local pxserver = 'collector.a.pxi.pub'
 local pxport = 443
+local px_appId = 'PX3tHq532g';
 local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 local pxdebug = false
 -- ## END - Configuration block ##
@@ -48,11 +47,18 @@ end
 ngx.log(ngx.INFO, "Passed whitelisting filter")
 -- Generate an encrypted user-unique key
 function gen_pxIdentifier()
-  local sec_now_str = tostring(ngx.time())
-  local ip = ngx.var.remote_addr
-  local ua = ngx.var.http_user_agent or ""
-  local identifier = ngx.hmac_sha1(px_token, px_appId .. ip .. ua)
-  return ngx.encode_base64(identifier .. sec_now_str)
+    local sec_now_str = tostring(ngx.time());
+    local ip = '';
+    if ngx.var.remote_addr then
+        local ip = ngx.var.remote_addr;
+    end
+
+    local ua = '';
+    if ngx.var.http_user_agent then
+        ua = ngx.var.http_user_agent;
+    end
+    local identifier = ngx.hmac_sha1(px_token, px_appId .. ip .. ua);
+    return ngx.encode_base64(identifier .. sec_now_str);
 end
 
 -- Validating the user key came from px-cookie and match against the locally generated one

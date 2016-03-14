@@ -67,16 +67,14 @@ RUN cd /tmp \
 	&& make install
 
 # PerimeterX Lua package
-RUN mkdir /tmp/px
+RUN mkdir -p /tmp/px
+COPY Makefile /tmp/px/
 COPY lib /tmp/px/lib
-COPY Makefile /tmp/px
-RUN cd /tmp/px \
-    && make install
+RUN make -C /tmp/px install
 
 # ***** MISC *****
 WORKDIR ${WEB_DIR}
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
 
 # ***** CLEANUP *****
 RUN rm -rf /nginx-${VER_NGINX}
