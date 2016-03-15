@@ -3,44 +3,44 @@
 -- Version 1.1.0
 -- Release date: 21.02.2015
 ----------------------------------------------
-local pxClient = require "px.pxclient"
 local pxFilters = require "px.pxfilters"
 
 -- ## Configuration Block ##
 local px_token = 'my_temporary_token';
+local pxserver = 'collector.a.pxi.pub'
+local pxport = 443
 local px_appId = 'PX3tHq532g';
-local px_apiServer = 'https://collector.a.pxi.pub';
 local cookie_lifetime = 600 -- cookie lifetime, value in seconds
+local pxdebug = false
 -- ## END - Configuration block ##
-
 
 -- Check for whitelisted request
 -- By IP
-local wlips = pxFilters.Whitelist['ip_addresses'];
+local wlips = pxFilters.Whitelist['ip_addresses']
 -- reverse client string builder
 for i = 1, #wlips do
-    if ngx.var.remote_addr == wlips[i] then
-        ngx.log(ngx.INFO, "Whitelisted: ip_addresses")
-        return 0
-    end
+  if ngx.var.remote_addr == wlips[i] then
+    ngx.log(ngx.INFO, "Whitelisted: ip_addresses")
+    return 0
+  end
 end
 
-local wlfuri = pxFilters.Whitelist['uri_full'];
+local wlfuri = pxFilters.Whitelist['uri_full']
 -- reverse client string builder
 for i = 1, #wlfuri do
-    if ngx.var.uri == wlfuri[i] then
-        ngx.log(ngx.INFO, "Whitelisted: uri_full")
-        return 0
-    end
+  if ngx.var.uri == wlfuri[i] then
+    ngx.log(ngx.INFO, "Whitelisted: uri_full")
+    return 0
+  end
 end
 
-local wluri = pxFilters.Whitelist['uri_prefixes'];
+local wluri = pxFilters.Whitelist['uri_prefixes']
 -- reverse client string builder
 for i = 1, #wluri do
-    if string.sub(ngx.var.uri, 1, string.len(wluri[i])) == wluri[i] then
-        ngx.log(ngx.INFO, "Whitelisted: uri_prefixes")
-        return 0
-    end
+  if string.sub(ngx.var.uri, 1, string.len(wluri[i])) == wluri[i] then
+    ngx.log(ngx.INFO, "Whitelisted: uri_prefixes")
+    return 0
+  end
 end
 
 
@@ -63,58 +63,65 @@ end
 
 -- Validating the user key came from px-cookie and match against the locally generated one
 function validate_pxIdentifier(identifier, px_cookie)
-    local re_pxcook = ''
+  local re_pxcook = ''
 
-    -- if no cookie we stop validation
-    if px_cookie == nil or #px_cookie == 0 then
-        return false;
+  -- if no cookie we stop validation
+  if px_cookie == nil or #px_cookie == 0 then
+    return false
+  end
+
+  -- reverse client string builder
+  for i = 1, #px_cookie do
+    if not (i % 5 == 0) then
+      local c = px_cookie:sub(i, i)
+      re_pxcook = re_pxcook .. c
     end
+  end
 
-    -- reverse client string builder
-    for i = 1, #px_cookie do
-        if not (i % 5 == 0) then
-            local c = px_cookie:sub(i, i)
-            re_pxcook = re_pxcook .. c;
-        end
-    end
+  -- no need to continure and check if length doesnt match
+  if not (#re_pxcook == #identifier) then
+    return false
+  end
 
-    -- no need to continure and check if length doesnt match
-    if not (#re_pxcook == #identifier) then
-        return false;
-    end
+  -- extract sha key from identifier and cookie
+  re_pxcook = ngx.decode_base64(re_pxcook)
+  identifier = ngx.decode_base64(identifier)
 
-    -- extract sha key from identifier and cookie
-    re_pxcook = ngx.decode_base64(re_pxcook)
-    identifier = ngx.decode_base64(identifier)
+  -- separting the timestamp and key from the cookie value
+  local re_pxcook_time = re_pxcook:sub(#re_pxcook - 9, #re_pxcook)
+  local re_pxcook_key = re_pxcook:sub(1, #re_pxcook - 10)
+  local identifier_key = identifier:sub(1, #re_pxcook - 10)
 
-    -- separting the timestamp and key from the cookie value
-    local re_pxcook_time = re_pxcook:sub(#re_pxcook - 9, #re_pxcook)
-    local re_pxcook_key = re_pxcook:sub(1, #re_pxcook - 10)
-    local identifier_key = identifier:sub(1, #re_pxcook - 10)
+  -- validate time is still in range
+  if tonumber(re_pxcook_time) + cookie_lifetime < ngx.time() then
+    return false
+  end
 
-    -- validate time is still in range
-    if tonumber(re_pxcook_time) + cookie_lifetime < ngx.time() then
-        return false;
-    end
-
-    -- validate key and cookie key
-    if not (identifier_key == re_pxcook_key) then
-        return false;
-    end
-    return true;
+  -- validate key and cookie key
+  if not (identifier_key == re_pxcook_key) then
+    return false
+  end
+  return true
 end
 
--- initilize identifier and cookie to perform check
-ngx.ctx.pxidentifier = gen_pxIdentifier();
-ngx.ctx.px_app_id = px_appId;
-ngx.ctx.px_apiServer = px_apiServer;
-ngx.ctx.px_token = px_token;
-local pxcook = ngx.var.cookie__pxcook;
+-- initilize identifier, cookie to perform check, vars that are not allowed in async API must be set in the ctx
+ngx.ctx.pxdebug = pxdebug
+ngx.ctx.px_app_id = px_appId
+ngx.ctx.pxserver = pxserver
+ngx.ctx.pxport = pxport
+ngx.ctx.px_token = px_token
+ngx.ctx.method = ngx.req.get_method()
+ngx.ctx.headers = ngx.req.get_headers()
+ngx.ctx.host = ngx.var.host
+ngx.ctx.uri = ngx.var.uri
+ngx.ctx.remote_addr = ngx.var.remote_addr
+ngx.ctx.user_agent = ngx.var.http_user_agent
+
+ngx.ctx.pxidentifier = gen_pxIdentifier()
+local pxcook = ngx.var.cookie__pxcook
 
 if not validate_pxIdentifier(ngx.ctx.pxidentifier, pxcook) then
-    return 1;
+  return 1
 end
 
-pxClient.sendTo_Perimeter('page_request');
-
-return 0;
+return 0

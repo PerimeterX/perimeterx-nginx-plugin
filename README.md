@@ -38,17 +38,25 @@ lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
 lua_ssl_verify_depth 3;
 ```
 
-### PX Configuration
-You must set the following values in pxnginx.lua.
+### PX Application ID 
+The following values must be set in pxnginx.lua.
 ```
 local px_token = 'my_temporary_token';
 local px_appId = 'PXAPPCODE';
 ```
 px_token should be set to a randomly generated string
 
-px_appID should be set to your application ID issued by PerimeterX 
+px_appID should be set to your application ID issued by PerimeterX
 
-### Nginx Configuration
+### Whitelist 
+Whitelisting (bypassing enforcement) is configured in pxfilters.lua.
+
+There are three types of filters that can be configured.
+* Full URI
+* URI prefix
+* IP addresses
+
+### Nginx 
 
 ```
 location / {
