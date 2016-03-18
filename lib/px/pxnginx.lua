@@ -7,8 +7,8 @@ local pxClient = require "px.pxclient"
 local pxFilters = require "px.pxfilters"
 
 -- ##  Configuration Block ##
-local px_token = 'mysecrettoken'
-local px_appId = 'appid_goes_here'
+local px_token = 'my_temporary_token'
+local px_appId = 'PXAPPID'
 local pxserver = 'collector.a.pxi.pub'
 local pxport = 443
 local sslEnabled = true
