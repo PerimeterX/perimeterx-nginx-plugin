@@ -20,6 +20,30 @@ if req_method == 'OPTIONS' or req_method == 'HEAD' then
 end
 
 -- Check for whitelisted request
+-- White By Substring in User Agent
+local wluas = pxFilters.Whitelist['ua_sub']
+-- reverse client string builder
+for i = 1, #wluas do
+    if ngx.var.http_user_agent and wluas[i] then
+        local k = string.find(ngx.var.http_user_agent, wluas[i])
+        if k == 1 then
+            ngx.log(ngx.INFO, "Whitelisted: ua_full")
+            return 0
+        end
+    end
+end
+
+-- Whitelist By Full User Agent
+local wluaf = pxFilters.Whitelist['ua_full']
+-- reverse client string builder
+for i = 1, #wluaf do
+    if ngx.var.http_user_agent and wluaf[i] and ngx.var.http_user_agent == wluaf[i] then
+        ngx.log(ngx.INFO, "Whitelisted: ua_sub")
+        return 0
+    end
+end
+
+-- Check for whitelisted request
 -- By IP
 local wlips = pxFilters.Whitelist['ip_addresses']
 -- reverse client string builder
@@ -126,7 +150,7 @@ ngx.ctx.pxidentifier = gen_pxIdentifier()
 local pxcook = ngx.var.cookie__pxcook
 
 if not validate_pxIdentifier(ngx.ctx.pxidentifier, pxcook) then
-return 1
+    return 1
 end
 
 return 0

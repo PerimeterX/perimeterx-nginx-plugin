@@ -29,5 +29,14 @@ FILTERS.Whitelist['uri_prefixes'] = {'/report', '/portal', '/createKey', '/backo
 -- FILTERS.Whitelist['ip_addresses'] = {'192.168.99.1'}
 FILTERS.Whitelist['ip_addresses'] = {}
 
+-- Full useragent
+-- will filter requests coming with a full user agent
+--FILTERS.Whitelist['ua_full'] = {'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}
+FILTERS.Whitelist['ua_full'] = {'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}
+
+-- filter by user agent substring
+--FILTERS.Whitelist['ua_sub'] = {'Inspectlet', 'GoogleCloudMonitoring'}
+FILTERS.Whitelist['ua_sub'] = {'Inspectlet', 'GoogleCloudMonitoring'}
+
 return FILTERS
 
