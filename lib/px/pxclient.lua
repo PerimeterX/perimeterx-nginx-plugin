@@ -13,6 +13,7 @@ function CLIENT.sendTo_Perimeter(event_type)
     pxdata['method'] = ngx.ctx.method
     pxdata['type'] = event_type;
     pxdata['headers'] = ngx.ctx.headers
+    pxdata['referrer'] = ngx.var.host .. ngx.var.uri
     pxdata['px_app_id'] = ngx.ctx.px_app_id
     pxdata['pxtoken'] = ngx.ctx.pxtoken
     pxdata['pxidentifier'] = ngx.ctx.pxidentifier
@@ -20,7 +21,7 @@ function CLIENT.sendTo_Perimeter(event_type)
     pxdata['timestamp'] = tostring(ngx.time())
     pxdata['uri'] = ngx.ctx.uri
     pxdata['user-agent'] = ngx.ctx.user_agent
-    pxdata['socket_ip'] = ngx.ctx.remote_addr;
+    pxdata['socket_ip'] = ngx.ctx.remote_addr
     pxdata = cjson.encode(pxdata);
 
     local pxserver = ngx.ctx.pxserver
@@ -39,10 +40,10 @@ function CLIENT.sendTo_Perimeter(event_type)
             ngx.log(ngx.ERR, "HTTPC connection error: ", err)
         end
         -- Perform SSL/TLS handshake
-        local session, err = httpc:ssl_handshake()
-        if not session then
-            ngx.log(ngx.ERR, "HTTPC SSL handshare error: ", err)
-        end
+--        local session, err = httpc:ssl_handshake()
+--        if not session then
+--            ngx.log(ngx.ERR, "HTTPC SSL handshare error: ", err)
+--        end
         -- Perform the HTTP requeset
         local res, err = httpc:request({
             path = '/api/v1/collector/nginxcollect',
