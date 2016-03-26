@@ -15,7 +15,7 @@ local pxdebug = false
 -- ## END - Configuration block ##
 
 local req_method = ngx.var.request_method
-if req_method == ngx.HTTP_HEAD or req_method == ngx.HTTP_OPTIONS then
+if req_method == 'OPTIONS' or req_method == 'HEAD' then
     return 0
 end
 
