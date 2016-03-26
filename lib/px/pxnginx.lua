@@ -14,6 +14,11 @@ local cookie_lifetime = 600 -- cookie lifetime, value in seconds
 local pxdebug = false
 -- ## END - Configuration block ##
 
+local req_method = ngx.var.request_method
+if req_method == ngx.HTTP_HEAD or req_method == ngx.HTTP_OPTIONS then
+    return 0
+end
+
 -- Check for whitelisted request
 -- By IP
 local wlips = pxFilters.Whitelist['ip_addresses']
