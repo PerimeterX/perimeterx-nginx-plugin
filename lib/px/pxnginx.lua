@@ -5,16 +5,7 @@
 ----------------------------------------------
 local pxClient = require "px.pxclient"
 local pxFilters = require "px.pxfilters"
-
--- ##  Configuration Block ##
-local px_token = 'my_temporary_token'
-local px_appId = 'PXAPPID'
-local pxserver = 'collector.a.pxi.pub'
-local pxport = 443
-local sslEnabled = true
-local cookie_lifetime = 600 -- cookie lifetime, value in seconds
-local pxdebug = false
--- ## END - Configuration block ##
+local config = require "px.pxconfig"
 
 -- local functions 
 local ngx_decode_base64 = ngx.decode_base64
@@ -22,8 +13,10 @@ local ngx_time = ngx.time
 local ngx_log = ngx.log
 local ngx_req_get_method = ngx.req.get_method
 local ngx_req_get_headers = ngx.req.get_headers
+local ngx_hmac_sha1 = ngx.hmac_sha1
 local ngx_INFO = ngx.INFO
-local toString = tostring
+local tostring = tostring
+local tonumber = tonumber
 local string_sub = string.sub
 local string_len = string.len
 
@@ -60,10 +53,10 @@ end
 ngx_log(ngx_INFO, "Passed whitelisting filter")
 -- Generate an encrypted user-unique key
 local function gen_pxIdentifier()
-    local sec_now_str = toString(ngx_time())
+    local sec_now_str = tostring(ngx_time())
     local ip = ngx.var.remote_addr
     local ua = ngx.var.http_user_agent or ""
-    local identifier = ngx.hmac_sha1(px_token, px_appId .. ip .. ua)
+    local identifier = ngx_hmac_sha1(config.px_token, config.px_appId .. ip .. ua)
     return ngx.encode_base64(identifier .. sec_now_str)
 end
 
@@ -99,7 +92,7 @@ local function validate_pxIdentifier(identifier, px_cookie)
     local identifier_key = identifier:sub(1, #re_pxcook - 10)
 
     -- validate time is still in range
-    if tonumber(re_pxcook_time) + cookie_lifetime < ngx_time() then
+    if tonumber(re_pxcook_time) + config.cookie_lifetime < ngx_time() then
         return false
     end
 
@@ -111,20 +104,15 @@ local function validate_pxIdentifier(identifier, px_cookie)
 end
 
 -- initilize identifier, cookie to perform check, vars that are not allowed in async API must be set in the ctx
-ngx.ctx.pxdebug = pxdebug
-ngx.ctx.px_app_id = px_appId
-ngx.ctx.pxserver = pxserver
-ngx.ctx.pxport = pxport
-ngx.ctx.sslEnabled = sslEnabled
-ngx.ctx.px_token = px_token
 ngx.ctx.method = ngx_req_get_method()
 ngx.ctx.headers = ngx_req_get_headers()
 ngx.ctx.host = ngx.var.host
 ngx.ctx.uri = ngx.var.uri
 ngx.ctx.remote_addr = ngx.var.remote_addr
 ngx.ctx.user_agent = ngx.var.http_user_agent
-
 ngx.ctx.pxidentifier = gen_pxIdentifier()
+
+
 local pxcook = ngx.var.cookie__pxcook
 
 if not validate_pxIdentifier(ngx.ctx.pxidentifier, pxcook) then
