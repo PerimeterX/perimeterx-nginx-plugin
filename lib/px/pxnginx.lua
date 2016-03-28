@@ -3,11 +3,11 @@
 -- Version 1.1.0
 -- Release date: 21.02.2015
 ----------------------------------------------
-local pxClient = require "px.pxclient"
 local pxFilters = require "px.pxfilters"
 local config = require "px.pxconfig"
 
 -- local functions 
+local ngx_encode_base64 = ngx.encode_base64
 local ngx_decode_base64 = ngx.decode_base64
 local ngx_time = ngx.time
 local ngx_log = ngx.log
@@ -19,6 +19,35 @@ local tostring = tostring
 local tonumber = tonumber
 local string_sub = string.sub
 local string_len = string.len
+
+local req_method = ngx.var.request_method
+if req_method ~= 'GET' then
+    return 0
+end
+
+-- Check for whitelisted request
+-- White By Substring in User Agent
+local wluas = pxFilters.Whitelist['ua_sub']
+-- reverse client string builder
+for i = 1, #wluas do
+    if ngx.var.http_user_agent and wluas[i] then
+        local k = string.find(ngx.var.http_user_agent, wluas[i])
+        if k == 1 then
+            ngx.log(ngx_INFO, "Whitelisted: ua_full")
+            return 0
+        end
+    end
+end
+
+-- Whitelist By Full User Agent
+local wluaf = pxFilters.Whitelist['ua_full']
+-- reverse client string builder
+for i = 1, #wluaf do
+    if ngx.var.http_user_agent and wluaf[i] and ngx.var.http_user_agent == wluaf[i] then
+        ngx.log(ngx_INFO, "Whitelisted: ua_sub")
+        return 0
+    end
+end
 
 -- Check for whitelisted request
 -- By IP
@@ -57,7 +86,7 @@ local function gen_pxIdentifier()
     local ip = ngx.var.remote_addr
     local ua = ngx.var.http_user_agent or ""
     local identifier = ngx_hmac_sha1(config.px_token, config.px_appId .. ip .. ua)
-    return ngx.encode_base64(identifier .. sec_now_str)
+    return ngx_encode_base64(identifier .. sec_now_str)
 end
 
 -- Validating the user key came from px-cookie and match against the locally generated one

@@ -53,7 +53,7 @@ RUN make
 RUN make install
 # Nginx with LuaJIT
 WORKDIR /nginx-${VER_NGINX}
-RUN ./configure --prefix=${NGINX_ROOT} --with-ld-opt="-Wl,-rpath,${LUAJIT_LIB}" --add-module=/${NGINX_DEVEL_KIT} --add-module=/${LUA_NGINX_MODULE} --with-http_ssl_module
+RUN ./configure --prefix=${NGINX_ROOT} --with-ld-opt="-Wl,-rpath,${LUAJIT_LIB}" --add-module=/${NGINX_DEVEL_KIT} --add-module=/${LUA_NGINX_MODULE} --with-http_ssl_module --with-http_stub_status_module
 RUN make -j2
 RUN make install
 RUN ln -s ${NGINX_ROOT}/sbin/nginx /usr/local/sbin/nginx
@@ -67,16 +67,14 @@ RUN cd /tmp \
 	&& make install
 
 # PerimeterX Lua package
-RUN mkdir /tmp/px
+RUN mkdir -p /tmp/px
+COPY Makefile /tmp/px/
 COPY lib /tmp/px/lib
-COPY Makefile /tmp/px
-RUN cd /tmp/px \
-    && make install
+RUN make -C /tmp/px install
 
 # ***** MISC *****
 WORKDIR ${WEB_DIR}
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
 
 # ***** CLEANUP *****
 RUN rm -rf /nginx-${VER_NGINX}
