@@ -4,7 +4,6 @@
 -- Release date: 21.02.2015
 ----------------------------------------------
 
-local cjson = require "cjson"
 local http = require "resty.http"
 local buffer = require "px.pxbuffer"
 local config = require "px.pxconfig"
