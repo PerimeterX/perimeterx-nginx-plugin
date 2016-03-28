@@ -4,6 +4,7 @@
 -- Release date: 21.02.2015
 ----------------------------------------------
 local pxFilters = require "px.pxfilters"
+local pxClient = require "px.pxclient"
 local config = require "px.pxconfig"
 
 -- local functions 
@@ -147,5 +148,7 @@ local pxcook = ngx.var.cookie__pxcook
 if not validate_pxIdentifier(ngx.ctx.pxidentifier, pxcook) then
     return 1
 end
+
+pxClient.sendTo_Perimeter("page_requested")
 
 return 0
