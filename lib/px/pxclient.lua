@@ -39,9 +39,9 @@ function CLIENT.submit(data)
     local res, err = httpc:request({
         path = '/api/v1/collector/nginxcollect',
         method = "POST",
-        body = "data=" .. data,
+        body = data,
         headers = {
-            ["Content-Type"] = "application/x-www-form-urlencoded",
+            ["Content-Type"] = "application/json",
         }
     })
     if not res then
