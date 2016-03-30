@@ -87,6 +87,7 @@ function gen_pxIdentifier()
     local ip = '';
     if ngx.var.remote_addr then
         ip = ngx.var.remote_addr;
+        ngx_log(ngx_ERROR, "IP " .. ip)
     end
 
     local ua = '';
@@ -94,14 +95,13 @@ function gen_pxIdentifier()
         ua = ngx.var.http_user_agent;
     end
 
-    local identifier = ngx_hmac_sha1(px_token, px_appId .. ip .. ua);
+    local identifier = ngx_hmac_sha1(config.px_token, config.px_appId .. ip .. ua);
     return ngx_encode_base64(identifier .. sec_now_str);
 end
 
 -- Validating the user key came from px-cookie and match against the locally generated one
 local function validate_pxIdentifier(identifier, px_cookie)
     local re_pxcook = ''
-    ngx_log(ngx_ERROR, "VALIDATE COOKIE")
 
     -- if no cookie we stop validation
     if px_cookie == nil or #px_cookie == 0 then
