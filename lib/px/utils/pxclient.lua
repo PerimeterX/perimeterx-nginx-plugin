@@ -5,7 +5,7 @@
 ----------------------------------------------
 
 local http = require "resty.http"
-local buffer = require "px.pxbuffer"
+local buffer = require "px.utils.pxbuffer"
 local config = require "px.pxconfig"
 local ngx_log = ngx.log
 local ngx_time = ngx.time
@@ -14,7 +14,7 @@ local ngx_ERR = ngx.ERR
 local CLIENT = {}
 
 -- Submit is the function to create the HTTP connection to the PX collector and POST the data
-function CLIENT.submit(data)
+function CLIENT.submit(data, path)
     local px_server = config.px_server
     local px_port = config.px_port
     local ssl_enabled = config.ssl_enabled
@@ -37,7 +37,7 @@ function CLIENT.submit(data)
     end
     -- Perform the HTTP requeset
     local res, err = httpc:request({
-        path = '/api/v1/collector/nginxcollect',
+        path = path,
         method = "POST",
         body = data,
         headers = {
@@ -89,7 +89,7 @@ function CLIENT.sendTo_Perimeter(event_type)
     buffer.addEvent(pxdata)
     -- Perform the HTTP action
     if buflen >= maxbuflen then
-        CLIENT.submit(buffer.dumpEvents())
+        CLIENT.submit(buffer.dumpEvents(), config.nginx_collect_path);
     end
 end
 
