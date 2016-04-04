@@ -24,7 +24,7 @@ function CLIENT.submit(data)
     -- create new HTTP connection
     local httpc = http.new()
     httpc:set_timeout(timeout)
-    local ok, err =  httpc:connect(px_server,px_port)
+    local ok, err = httpc:connect(px_server, px_port)
     if not ok then
         ngx_log(ngx_ERR, "HTTPC connection error: ", err)
     end
@@ -45,7 +45,7 @@ function CLIENT.submit(data)
         }
     })
     if not res then
-        ngx_log(ngx_ERR, "Failed to make HTTP POST: ",err)
+        ngx_log(ngx_ERR, "Failed to make HTTP POST: ", err)
         return
     elseif res.status ~= 200 then
         ngx_log(ngx_ERR, "Non 200 response code: ", res.status)
@@ -78,16 +78,11 @@ function CLIENT.sendTo_Perimeter(event_type)
     local buflen = buffer.getBufferLength()
     local maxbuflen = config.px_maxbuflen
     local pxdata = {}
-    pxdata['method'] = ngx.ctx.method
     pxdata['type'] = event_type;
     pxdata['headers'] = ngx.ctx.headers
     pxdata['px_app_id'] = config.px_appId
-    pxdata['px_token'] = config.px_token
     pxdata['pxidentifier'] = ngx.ctx.pxidentifier
-    pxdata['host'] = ngx.ctx.host
     pxdata['timestamp'] = tostring(ngx_time())
-    pxdata['uri'] = ngx.ctx.uri
-    pxdata['user-agent'] = ngx.ctx.user_agent
     pxdata['socket_ip'] = ngx.ctx.remote_addr;
 
     -- Experimental Buffer Support --
