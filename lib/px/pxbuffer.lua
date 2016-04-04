@@ -15,25 +15,29 @@ function _M.lockBuffer()
     lock = true
     return
 end
+
 -- unlockBuffer sets the lock to false
 function _M.unlockBuffer()
     lock = false
     return
 end
+
 -- getBufferLock returns the lock status
 function _M.getBufferLock()
     return lock
 end
+
 -- getBufferLength returns the amount of events in the event table
 function _M.getBufferLength()
     return #events
 end
+
 -- addEvent puts and event into the events table
 function _M.addEvent(event)
     local lock = _M.getBufferLock()
     repeat
         if lock == false then
-            events[#events+1] = event
+            events[#events + 1] = event
             -- table.insert(events,event)
             return
         end
@@ -41,6 +45,7 @@ function _M.addEvent(event)
     until true
     return
 end
+
 -- resetBuffer sets events to be empty
 local function resetBuffer()
     events = {}
