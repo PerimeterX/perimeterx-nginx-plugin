@@ -21,6 +21,7 @@ if (pxBlockCheck.Process()) then
     return 2
 end
 
-pxClient.sendTo_Perimeter("page_requested")
+ngx.log(ngx.ERR, "send page request activity")
+pxClient.sendActivityTo_Perimeter("page_requested")
 
 return 0
