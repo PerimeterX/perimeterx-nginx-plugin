@@ -7,6 +7,7 @@
 local http = require "resty.http"
 local buffer = require "px.utils.pxbuffer"
 local config = require "px.pxconfig"
+local cjson = require "cjson"
 local ngx_log = ngx.log
 local ngx_time = ngx.time
 local tostring = tostring
@@ -14,7 +15,7 @@ local ngx_ERR = ngx.ERR
 local CLIENT = {}
 
 -- Submit is the function to create the HTTP connection to the PX collector and POST the data
-function CLIENT.submit(data, path)
+function CLIENT.submit(data, path, additional_headers)
     local px_server = config.px_server
     local px_port = config.px_port
     local ssl_enabled = config.ssl_enabled
@@ -35,14 +36,20 @@ function CLIENT.submit(data, path)
             ngx_log(ngx_ERR, "HTTPC SSL handshare error: ", err)
         end
     end
+
+    -- Extending headers
+    local headers = {
+        ["Content-Type"] = "application/json",
+    }
+    if (additional_headers) then
+        for k,v in pairs(additional_headers) do headers[k] = v end
+    end
+
     -- Perform the HTTP requeset
     local res, err = httpc:request({
         path = path,
         method = "POST",
         body = data,
-        headers = {
-            ["Content-Type"] = "application/json",
-        }
     })
     if not res then
         ngx_log(ngx_ERR, "Failed to make HTTP POST: ", err)
@@ -57,6 +64,7 @@ function CLIENT.submit(data, path)
     end
     -- Must read the response body to clear the buffer in order for set keepalive to work properly.
     local body = res:read_body()
+
     -- Check for connection reuse
     if px_debug == true then
         local times, err = httpc:get_reused_times()
@@ -71,19 +79,22 @@ function CLIENT.submit(data, path)
     local ok, err = httpc:set_keepalive()
     if not ok then
         ngx_log(ngx_ERR, "Failed to set keepalive: ", err)
+        return false
     end
+
+    return body
 end
 
-function CLIENT.sendTo_Perimeter(event_type)
+function CLIENT.sendActivityTo_Perimeter(event_type)
     local buflen = buffer.getBufferLength()
     local maxbuflen = config.px_maxbuflen
     local pxdata = {}
+
     pxdata['type'] = event_type;
-    pxdata['headers'] = ngx.ctx.headers
-    pxdata['px_app_id'] = config.px_appId
-    pxdata['pxidentifier'] = ngx.ctx.pxidentifier
-    pxdata['timestamp'] = tostring(ngx_time())
-    pxdata['socket_ip'] = ngx.ctx.remote_addr;
+    pxdata['headers'] = ngx.req.get_headers();
+    pxdata['px_app_id'] = config.px_appId;
+    pxdata['timestamp'] = tostring(ngx_time());
+    pxdata['socket_ip'] = ngx.var.remote_addr;
 
     -- Experimental Buffer Support --
     buffer.addEvent(pxdata)
@@ -91,6 +102,21 @@ function CLIENT.sendTo_Perimeter(event_type)
     if buflen >= maxbuflen then
         CLIENT.submit(buffer.dumpEvents(), config.nginx_collect_path);
     end
+end
+
+function CLIENT.retriveScoreFromServer()
+    local pxdata = {}
+    pxdata['request'] = {};
+    pxdata['request']['ip'] = ngx.var.remote_addr;
+    pxdata['request']['uri'] = ngx.var.uri;
+    pxdata['request']['headers'] = ngx.req.get_headers();
+    local body = cjson.encode(pxdata)
+
+    local headers = {
+        ['Authorization'] = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ1ODYzODE2NCwic3ViIjoiUFg2MDAyIiwianRpIjoiZGEzY2U1ZGMtNjY2Mi00ZGRlLThhYTYtMWFhNzI4MTIzMzMzIn0.Rrz5MUKceV7wyxqnEyJ-MKq1QA4SpVJ6-aAMNem4tn0"
+    }
+
+    return CLIENT.submit(body, config.risk_score_api_path, headers);
 end
 
 return CLIENT
