@@ -5,22 +5,59 @@
 ----------------------------------------------
 
 local http = require "resty.http"
-local buffer = require "px.utils.pxbuffer"
+local cjson = require "cjson"
 local px_config = require "px.pxconfig"
 local ngx_log = ngx.log
+local ngx_ERR = ngx.ERR
 local ngx_time = ngx.time
 local tostring = tostring
-local ngx_ERR = ngx.ERR
 local _M = {}
 
--- Submit is the function to create the HTTP connection to the PX collector and POST the data
-function _M.submit(data, path)
+-- new_request_object --
+-- takes no arguments
+-- returns table
+function _M.new_request_object()
+    local risk = {}
+    risk.cid = ''
+    risk.request = {}
+    risk.request.ip = ngx.var.remote_addr
+    risk.request.uri = ngx.var.uri
+    risk.request.headers = {}
+    local h = ngx.req.get_headers()
+    for k,v in pairs(h) do
+        risk.request.headers[#risk.request.headers + 1] = { ['name'] = k , ['value'] = v }
+    end
+    return risk
+end
+
+-- process --
+-- takes one argument - table
+-- returns boolean
+function _M.process(data)
+    if data.scores.non_human >= px_config.blocking_score then
+        return false
+    elseif data.scores.filter >= px_config.blocking_score then
+        return false
+    elseif data.scores.suspected_script >= px_config.blocking_score then
+        return false
+    end
+
+    return true
+end
+
+-- call_s2s --
+-- takes three values, data , path, and auth_token
+-- returns response body as a table
+function _M.call_s2s(data, path, auth_token)
     local px_server = px_config.px_server
     local px_port = px_config.px_port
     local ssl_enabled = px_config.ssl_enabled
     local px_debug = px_config.px_debug
+
+    data = cjson.encode(data)
+
     -- timeout in milliseconds
-    local timeout = 2000
+    local timeout = 1000
     -- create new HTTP connection
     local httpc = http.new()
     httpc:set_timeout(timeout)
@@ -42,6 +79,7 @@ function _M.submit(data, path)
         body = data,
         headers = {
             ["Content-Type"] = "application/json",
+            ["Authorization"] = "Bearer " .. auth_token
         }
     })
     if not res then
@@ -55,8 +93,12 @@ function _M.submit(data, path)
             ngx_log(ngx_ERR, "POST response status: ", res.status)
         end
     end
-    -- Must read the response body to clear the buffer in order for set keepalive to work properly.
-    local body = res:read_body()
+
+    local body = cjson.decode(res:read_body())
+    if not body then
+        ngx_log(ngx_ERR,"Failed to decode JSON response body")
+    end
+
     -- Check for connection reuse
     if px_debug == true then
         local times, err = httpc:get_reused_times()
@@ -72,25 +114,8 @@ function _M.submit(data, path)
     if not ok then
         ngx_log(ngx_ERR, "Failed to set keepalive: ", err)
     end
-end
 
-function _M.send_to_perimeterx(event_type)
-    local buflen = buffer.getBufferLength()
-    local maxbuflen = px_config.px_maxbuflen
-    local pxdata = {}
-    pxdata['type'] = event_type;
-    pxdata['headers'] = ngx.req.get_headers()
-    pxdata['px_app_id'] = px_config.px_appId
-    -- pxdata['pxidentifier'] = ngx.ctx.pxidentifier
-    pxdata['timestamp'] = tostring(ngx_time())
-    pxdata['socket_ip'] = ngx.var.remote_addr;
-
-    -- Experimental Buffer Support --
-    buffer.addEvent(pxdata)
-    -- Perform the HTTP action
-    if buflen >= maxbuflen then
-        _M.submit(buffer.dumpEvents(), px_config.nginx_collector_path);
-    end
+    return body
 end
 
 return _M

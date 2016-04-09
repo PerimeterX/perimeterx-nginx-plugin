@@ -16,9 +16,9 @@ local function submit_on_timer()
     if not ok then
         ngx_log(ngx_ERR, "Failed to schedule submit timer: ".. err)
     end
-    local buflen = buffer.getBufferLength()   
+    local buflen = buffer.getBufferLength()
     if buflen > 0 then
-        pxclient.submit(buffer.dumpEvents(), config.nginx_collect_path)
+        pxclient.submit(buffer.dumpEvents(), config.nginx_collector_path)
     end
     return
 end

@@ -38,7 +38,6 @@ function _M.addEvent(event)
     repeat
         if lock == false then
             events[#events + 1] = event
-            -- table.insert(events,event)
             return
         end
         lock = _M.getBufferLock()
