@@ -28,10 +28,10 @@ end
 if ngx.var.cookie__px then
     local _px = ngx.var.cookie__px
     local success, result  = pcall(px_cookie.process,_px)
-	if not success then 
+    if not success then
         ngx_log(ngx_ERR,"PX: Failed to process _px cookie - ", result)
-		px_block.block()
-	end
+        px_block.block()
+    end
 
     if result == true then
         px_client.send_to_perimeterx("page_requested")
@@ -41,7 +41,6 @@ if ngx.var.cookie__px then
     -- If false block with 403 status code
     px_block.block()
 end
-
 
 if ngx.var.cookie__pxcook then
     local _pxcook = ngx.var.cookie__pxcook
@@ -67,10 +66,10 @@ local result =  px_api.process(response)
 if result == true then
     px_client.send_to_perimeterx("page_requested")
     return true
+else
+    -- if s2s returns high, start with challenge --
+    px_challenge.challenge()
 end
-
--- if s2s returns high, start with challenge -- 
-px_challenge.challenge()
 
 -- Catch all --
 px_block.block()

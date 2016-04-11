@@ -9,11 +9,14 @@ all: ;
 
 install: all
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px
-	$(INSTALL) lib/px/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/
+	@if test -f $(DESTDIR)/$(LUA_LIB_DIR)/px/pxconfig.lua; then \
+		echo "pxconfig.lua exists - skipping"; \
+	else \
+		$(INSTALL) lib/px/pxconfig.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/pxconfig.lua; fi
+	$(INSTALL) lib/px/pxnginx.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/pxnginx.lua
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/block
 	$(INSTALL) lib/px/block/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/block
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/challenge
 	$(INSTALL) lib/px/challenge/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/challenge
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 	$(INSTALL) lib/px/utils/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
-
