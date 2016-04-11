@@ -46,10 +46,10 @@ function _M.submit(data, path)
     })
     if not res then
         ngx_log(ngx_ERR, "Failed to make HTTP POST: ", err)
-        return
+        error("Failed to make HTTP POST: " .. err)
     elseif res.status ~= 200 then
         ngx_log(ngx_ERR, "Non 200 response code: ", res.status)
-        return
+        error("Non 200 response code: " .. err)
     else
         if px_debug == true then
             ngx_log(ngx_ERR, "POST response status: ", res.status)

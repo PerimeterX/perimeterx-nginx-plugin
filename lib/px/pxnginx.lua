@@ -27,11 +27,17 @@ end
 -- process _px cookie if present
 if ngx.var.cookie__px then
     local _px = ngx.var.cookie__px
-    local result, code = px_cookie.process(_px)
+    local success, result  = pcall(px_cookie.process,_px)
+	if not success then 
+        ngx_log(ngx_ERR,"PX: Failed to process _px cookie - ", result)
+		px_block.block()
+	end
+
     if result == true then
         px_client.send_to_perimeterx("page_requested")
         return true
     end
+
     -- If false block with 403 status code
     px_block.block()
 end
@@ -48,24 +54,23 @@ if ngx.var.cookie__pxcook then
 end
 
 -- if no _px or _pxcook is present call s2s API --
+-- if the s2s fails (timeout or connectivity) then issue JS challenge as fallback
 local data = px_api.new_request_object()
--- TODO --
--- generate and set the CID --
-data.cid = 'this is my test cid'
-local response = px_api.call_s2s(data, risk_api_path, auth_token)
-local result =  px_api.process(response)
+local success, result = pcall(px_api.call_s2s,data, risk_api_path, auth_token)
+if not success then
+    ngx_log(ngx_ERR,"PX: Failed server to server API call - ", result)
+    px_challenge.challenge()
+end
+local response = result
 
+local result =  px_api.process(response)
 if result == true then
     px_client.send_to_perimeterx("page_requested")
     return true
 end
--- TODO --
--- Handle S2S response with more logic
--- DO CHALLENGE --
-px_challenge.challenge() -- block
+
+-- if s2s returns high, start with challenge -- 
+px_challenge.challenge()
 
 -- Catch all --
-ngx.status = ngx_HTTP_FORBIDDEN
-ngx_say("You shoud never get here")
-ngx_exit(ngx_OK)
-
+px_block.block()

@@ -66,6 +66,22 @@ RUN cd /tmp \
 	&& cd lua-resty-http \
 	&& make install
 
+# Install GNU Nettle
+
+RUN cd /tmp \
+    && apt-get -qq -y install m4 \
+    && wget https://ftp.gnu.org/gnu/nettle/nettle-3.2.tar.gz \
+	&& tar zxvf nettle-3.2.tar.gz \
+	&& cd nettle-3.2 \
+	&& ./configure \
+	&& make \
+	&& make install
+
+RUN cd /tmp \
+    && git clone https://github.com/bungle/lua-resty-nettle \
+	&& cd lua-resty-nettle \
+	&& cp -r lib/resty/* /usr/local/lib/lua/resty
+
 # PerimeterX Lua package
 RUN mkdir -p /tmp/px
 COPY Makefile /tmp/px/

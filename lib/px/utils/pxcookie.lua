@@ -115,32 +115,48 @@ end
 -- takes one argument - cookie
 -- returns boolean,
 function _M.process(cookie)
+
+    -- Decrypt AES-256 or base64 decode cookie
     local data
-
     if cookie_encrypted == true then
-        data = decrypt(cookie, cookie_secret)
+        local success, result  = pcall(decrypt,cookie, cookie_secret)
+        if not success then
+            ngx_log(ngx_ERR,"PX: Could not decrpyt cookie - ", result)
+            return false
+        end
+        data = result
     else
-        data = ngx_decode_base64(cookie)
+        local success, result  = pcall(ngx_decode_base64,cookie)
+        if not success then
+            ngx_log(ngx_ERR,"PX: Could not decode b64 cookie - ", result)
+            return false
+        end
+        data = result
     end
 
-    local fields = decode(data)
-    if fields == nil then
-        ngx_log(ngx_ERR,"PX: Could not decode cookie")
+    -- Deserialize the JSON payload
+    local success, result  = pcall(decode, data)
+    if not success then
+        ngx_log(ngx_ERR,"PX: Could not decode payload - ", result)
         return false
     end
+    local fields = result
 
-    local result  = validate(fields)
+    -- Validate the cookie integrity
+    local success, result  = pcall(validate,fields)
     if result == false then
-        ngx_log(ngx_ERR,"PX: Cookie digest is not valid")
+        ngx_log(ngx_ERR,"PX: Could not validate cookie integrity - ", result)
         return false
     end
 
+    -- Check bot score and block if it is >= to the configured block score
     if fields.s.b >= blocking_score then
         ngx_log(ngx_ERR,"PX: Visitor score is higher than allowed threshold: ", fields.s.b)
         return false
     end
 
     return true
+
 end
 
 return _M

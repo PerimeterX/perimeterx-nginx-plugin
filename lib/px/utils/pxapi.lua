@@ -84,10 +84,10 @@ function _M.call_s2s(data, path, auth_token)
     })
     if not res then
         ngx_log(ngx_ERR, "Failed to make HTTP POST: ", err)
-        return
+        error("Failed to make HTTP POST: " .. err)
     elseif res.status ~= 200 then
         ngx_log(ngx_ERR, "Non 200 response code: ", res.status)
-        return
+        error("Non 200 response code: " .. err)
     else
         if px_debug == true then
             ngx_log(ngx_ERR, "POST response status: ", res.status)
@@ -95,9 +95,6 @@ function _M.call_s2s(data, path, auth_token)
     end
 
     local body = cjson.decode(res:read_body())
-    if not body then
-        ngx_log(ngx_ERR,"Failed to decode JSON response body")
-    end
 
     -- Check for connection reuse
     if px_debug == true then
