@@ -3,7 +3,7 @@
 ## Requirements
 1. Lua CJSON - http://www.kyne.com.au/~mark/software/lua-cjson.php
 2. Lua Resty HTTP - https://github.com/pintsized/lua-resty-http
-3. Lua Resy Nettle - https://github.com/bunogle/lua-resty-nettle (requires libnettle 3.2 or higher)
+3. Lua Resy Nettle - https://github.com/bungle/lua-resty-nettle (requires libnettle 3.2 or higher)
 4. NGINX with ngx_lua support or Openresty
 	
 ## Installation
