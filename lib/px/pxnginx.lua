@@ -62,8 +62,7 @@ end
 -- TODO --
 -- Handle S2S response with more logic
 -- DO CHALLENGE --
-
-px_challenge.challenge()
+px_challenge.challenge() -- block
 
 -- Catch all --
 ngx.status = ngx_HTTP_FORBIDDEN

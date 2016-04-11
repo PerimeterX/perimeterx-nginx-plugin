@@ -1,7 +1,6 @@
 local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
 local ngx_say = ngx.say
 local ngx_exit = ngx.exit
-
 local _M = {}
 
 function _M.block()
