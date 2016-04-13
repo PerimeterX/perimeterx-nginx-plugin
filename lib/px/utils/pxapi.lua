@@ -82,12 +82,12 @@ function _M.call_s2s(data, path, auth_token)
             ["Authorization"] = "Bearer " .. auth_token
         }
     })
-    if not res then
+    if err or not res then
         ngx_log(ngx_ERR, "Failed to make HTTP POST: ", err)
         error("Failed to make HTTP POST: " .. err)
     elseif res.status ~= 200 then
         ngx_log(ngx_ERR, "Non 200 response code: ", res.status)
-        error("Non 200 response code: " .. err)
+        error("Non 200 response code: " .. res.status)
     else
         if px_debug == true then
             ngx_log(ngx_ERR, "POST response status: ", res.status)

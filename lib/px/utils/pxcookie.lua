@@ -29,7 +29,7 @@ local hmac = require "resty.nettle.hmac"
 local function split_cookie(cookie)
     local a = {}
     local b = 1
-    for i in string_gmatch(cookie,"[^:]+") do
+    for i in string_gmatch(cookie, "[^:]+") do
         a[b] = i
         b = b + 1
     end
@@ -40,7 +40,7 @@ end
 -- takes one argument - a string
 -- returns one value - a hex formated representation of the string bytes
 local function to_hex(str)
-    return (string_gsub(str, "(.)", function (c)
+    return (string_gsub(str, "(.)", function(c)
         return string_format("%02X%s", string_byte(c), "")
     end))
 end
@@ -49,7 +49,7 @@ end
 -- takes one argument - a string of hex values
 -- returns one value - char representation of the string
 local function from_hex(str)
-    return (str:gsub('..', function (cc)
+    return (str:gsub('..', function(cc)
         return string_char(tonumber(cc, 16))
     end))
 end
@@ -58,9 +58,9 @@ end
 -- takes one arguement - a string
 -- returns one string
 local function unpad(str)
-    local a = string_sub(str,#str,#str)
+    local a = string_sub(str, #str, #str)
     if string_byte(a) <= 16 then
-        return string_sub(str,1,#str - string_byte(a))
+        return string_sub(str, 1, #str - string_byte(a))
     end
     return str
 end
@@ -70,23 +70,22 @@ end
 -- returns one string - plaintext cookie
 local function decrypt(cookie, key)
     -- Split the cookie into three parts - salt , iterations, ciphertext
-    local salt, iterations, ciphertext  = split_cookie(cookie)
+    local salt, iterations, ciphertext = split_cookie(cookie)
     salt = ngx_decode_base64(salt)
     iterations = tonumber(iterations)
     ciphertext = ngx_decode_base64(ciphertext)
 
     -- Decrypt
-    local keydata  = pbkdf2.hmac_sha256(key, iterations, salt, 48)
+    local keydata = pbkdf2.hmac_sha256(key, iterations, salt, 48)
     keydata = to_hex(keydata)
 
-    local secret_key = from_hex(string_sub(keydata,1,64))
-    local iv =  from_hex(string_sub(keydata,65,96))
+    local secret_key = from_hex(string_sub(keydata, 1, 64))
+    local iv = from_hex(string_sub(keydata, 65, 96))
 
     local aes256 = aes.new(secret_key, "cbc", iv)
     local plaintext = aes256:decrypt(ciphertext)
 
     plaintext = unpad(plaintext)
-
     return plaintext
 end
 
@@ -101,7 +100,7 @@ end
 
 local function validate(data)
     local request_data  = data.t .. data.s.a .. data.s.b .. ngx.var.remote_addr .. ngx.var.http_user_agent
-    local digest  = hmac("sha256", cookie_secret, request_data)
+    local digest = hmac("sha256", cookie_secret, request_data)
     digest = to_hex(digest)
 
     if digest ~= string_upper(data.h) then
@@ -115,48 +114,51 @@ end
 -- takes one argument - cookie
 -- returns boolean,
 function _M.process(cookie)
+    if not cookie then
+        ngx_log(ngx_ERR, "Risk cookie is not exist")
+        error("Risk cookie is not exist")
+    end
 
     -- Decrypt AES-256 or base64 decode cookie
     local data
     if cookie_encrypted == true then
-        local success, result  = pcall(decrypt,cookie, cookie_secret)
+        local success, result = pcall(decrypt, cookie, cookie_secret)
         if not success then
-            ngx_log(ngx_ERR,"PX: Could not decrpyt cookie - ", result)
-            return false
+            ngx_log(ngx_ERR, "PX: Could not decrpyt cookie - ", result)
+            error("PX: Could not decrpyt cookie")
         end
         data = result
     else
-        local success, result  = pcall(ngx_decode_base64,cookie)
+        local success, result = pcall(ngx_decode_base64, cookie)
         if not success then
-            ngx_log(ngx_ERR,"PX: Could not decode b64 cookie - ", result)
-            return false
+            ngx_log(ngx_ERR, "PX: Could not decode b64 cookie - ", result)
+            error("PX: Could not decode b64 cookie")
         end
         data = result
     end
 
     -- Deserialize the JSON payload
-    local success, result  = pcall(decode, data)
+    local success, result = pcall(decode, data)
     if not success then
-        ngx_log(ngx_ERR,"PX: Could not decode payload - ", result)
-        return false
+        ngx_log(ngx_ERR, "PX: Could not decode payload - ", data)
+        error("PX: Could not decode payload")
     end
-    local fields = result
 
+    local fields = result
     -- Validate the cookie integrity
-    local success, result  = pcall(validate,fields)
-    if result == false then
-        ngx_log(ngx_ERR,"PX: Could not validate cookie integrity - ", result)
-        return false
+    local success, result = pcall(validate, fields)
+    if not success or result == false then
+        ngx_log(ngx_ERR, "PX: Could not validate cookie integrity - ", result)
+        error("PX: Could not validate cookie integrity")
     end
 
     -- Check bot score and block if it is >= to the configured block score
-    if fields.s.b >= blocking_score then
-        ngx_log(ngx_ERR,"PX: Visitor score is higher than allowed threshold: ", fields.s.b)
+    if fields.s and fields.s.b and fields.s.b >= blocking_score then
+        ngx_log(ngx_ERR, "PX: Visitor score is higher than allowed threshold: ", fields.s.b)
         return false
     end
 
     return true
-
 end
 
 return _M

@@ -21,55 +21,58 @@ local ngx_exit = ngx.exit
 local ngx_OK = ngx.OK
 
 if (px_filters.process()) then
-    return true
+    return true;
 end
 
 -- process _px cookie if present
-if ngx.var.cookie__px then
-    local _px = ngx.var.cookie__px
-    local success, result  = pcall(px_cookie.process,_px)
-    if not success then
-        ngx_log(ngx_ERR,"PX: Failed to process _px cookie - ", result)
+local _px = ngx.var.cookie__px;
+local success, result = pcall(px_cookie.process, _px)
+px_client.send_to_perimeterx("page_requested")
+
+-- cookie verification passed - checking result.
+if success then
+    -- score crossed threshold
+    if result == false then
         px_block.block()
+
+        -- score did not cross the blocking threshold
+    else
+        if px_challenge.process() then
+            px_client.send_to_perimeterx("page_requested")
+            return true
+        else
+            px_challenge.challenge()
+        end
     end
 
-    if result == true then
-        px_client.send_to_perimeterx("page_requested")
-        return true
-    end
-
-    -- If false block with 403 status code
-    px_block.block()
-end
-
-if ngx.var.cookie__pxcook then
-    local _pxcook = ngx.var.cookie__pxcook
-    local result = px_challenge.process(_pxcook)
-    -- If false challenge with 503 status code + JS
-    if not result then
-        px_challenge.challenge()
-    end
-    return true
-end
-
--- if no _px or _pxcook is present call s2s API --
--- if the s2s fails (timeout or connectivity) then issue JS challenge as fallback
-local data = px_api.new_request_object()
-local success, result = pcall(px_api.call_s2s,data, risk_api_path, auth_token)
-if not success then
-    ngx_log(ngx_ERR,"PX: Failed server to server API call - ", result)
-    px_challenge.challenge()
-end
-local response = result
-
-local result =  px_api.process(response)
-if result == true then
-    px_client.send_to_perimeterx("page_requested")
-    return true
+    -- cookie verification failed/cookie does not exist. performing s2s query
 else
-    -- if s2s returns high, start with challenge --
-    px_challenge.challenge()
-end
+    local request_data = px_api.new_request_object()
+    local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
+    local result
+    if success then
+        result = px_api.process(response);
+        -- score crossed threshold
+        if result == false then
+            px_block.block()
 
--- Catch all --
-px_block.block()
+            -- score did not cross the blocking threshold
+        else
+            if px_challenge.process() then
+                px_client.send_to_perimeterx("page_requested")
+                return true
+            else
+                px_challenge.challenge()
+            end
+        end
+    else
+        -- server2server call failed, processing challenge
+        ngx_log(ngx_ERR, "PX: Failed server to server API call - ", result)
+        if px_challenge.process() then
+            px_client.send_to_perimeterx("page_requested")
+            return true
+        else
+            px_challenge.challenge()
+        end
+    end
+end
