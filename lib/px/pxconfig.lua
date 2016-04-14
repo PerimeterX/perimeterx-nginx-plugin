@@ -7,7 +7,6 @@
 local _M = {}
 
 -- ##  Configuration Block ##
-_M.px_token = 'my_temporary_token'
 _M.px_appId = 'APP_ID'
 _M.px_server = 'collector.a.pxi.pub'
 _M.px_port = 443
