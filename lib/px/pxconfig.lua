@@ -23,7 +23,6 @@ _M.px_debug = false
 _M.px_maxbuflen = 500
 _M.nginx_collector_path = '/api/v1/collector/nginxcollect'
 _M.risk_api_path = '/api/v1/risk'
-
 -- -- ## END - Configuration block ##
 
 return _M

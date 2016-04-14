@@ -73,7 +73,7 @@ local function gen_pxIdentifier()
         ua = ngx.var.http_user_agent;
     end
 
-    local identifier = ngx.hmac_sha1(config.px_token, config.px_appId .. ip .. ua);
+    local identifier = ngx.hmac_sha1(config.auth_token, config.px_appId .. ip .. ua);
     return ngx_encode_base64(identifier .. sec_now_str);
 end
 
