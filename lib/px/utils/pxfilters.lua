@@ -40,7 +40,12 @@ _M.Whitelist['ua_sub'] = {'Inspectlet', 'GoogleCloudMonitoring'}
 
 function _M.process()
     local req_method = ngx.var.request_method
+    local content_type = ngx.var.request_method
     if req_method ~= 'GET' then
+        return true
+    end
+
+    if content_type ~= 'text/html' then
         return true
     end
 
