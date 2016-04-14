@@ -12,6 +12,7 @@ local tonumber = tonumber
 local ngx_decode_base64 = ngx.decode_base64
 local ngx_log = ngx.log
 local ngx_ERR = ngx.ERR
+local pcall = pcall
 -- localized config
 local px_config = require "px.pxconfig"
 local cookie_encrypted = px_config.cookie_encrypted
@@ -73,7 +74,7 @@ local function decrypt(cookie, key)
     local salt, iterations, ciphertext = split_cookie(cookie)
     iterations = tonumber(iterations)
     if iterations > 5000 then
-        error('iterations number is too high ', iterations)
+        error('PX: Received cookie with too many iterations: ', iterations)
     end
     salt = ngx_decode_base64(salt)
     ciphertext = ngx_decode_base64(ciphertext)
@@ -118,8 +119,8 @@ end
 -- returns boolean,
 function _M.process(cookie)
     if not cookie then
-        ngx_log(ngx_ERR, "Risk cookie is not exist")
-        error("Risk cookie is not exist")
+        ngx_log(ngx_ERR, "PX ERROR: Risk cookie not present")
+        error("PX: Risk cookie not present")
     end
 
     -- Decrypt AES-256 or base64 decode cookie
@@ -127,14 +128,14 @@ function _M.process(cookie)
     if cookie_encrypted == true then
         local success, result = pcall(decrypt, cookie, cookie_secret)
         if not success then
-            ngx_log(ngx_ERR, "PX: Could not decrpyt cookie - ", result)
+            ngx_log(ngx_ERR, "PX ERROR: Could not decrpyt cookie - ", result)
             error("PX: Could not decrpyt cookie")
         end
         data = result
     else
         local success, result = pcall(ngx_decode_base64, cookie)
         if not success then
-            ngx_log(ngx_ERR, "PX: Could not decode b64 cookie - ", result)
+            ngx_log(ngx_ERR, "PX ERROR: Could not decode b64 cookie - ", result)
             error("PX: Could not decode b64 cookie")
         end
         data = result
@@ -143,7 +144,7 @@ function _M.process(cookie)
     -- Deserialize the JSON payload
     local success, result = pcall(decode, data)
     if not success then
-        ngx_log(ngx_ERR, "PX: Could not decode payload - ", data)
+        ngx_log(ngx_ERR, "PX ERROR: Could not decode payload - ", data)
         error("PX: Could not decode payload")
     end
 
@@ -151,13 +152,13 @@ function _M.process(cookie)
     -- Validate the cookie integrity
     local success, result = pcall(validate, fields)
     if not success or result == false then
-        ngx_log(ngx_ERR, "PX: Could not validate cookie integrity - ", result)
+        ngx_log(ngx_ERR, "PX ERROR: Could not validate cookie integrity - ", result)
         error("PX: Could not validate cookie integrity")
     end
 
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b and fields.s.b >= blocking_score then
-        ngx_log(ngx_ERR, "PX: Visitor score is higher than allowed threshold: ", fields.s.b)
+        ngx_log(ngx_ERR, "PX NOTICE: Visitor score is higher than allowed threshold: ", fields.s.b)
         return false
     end
 

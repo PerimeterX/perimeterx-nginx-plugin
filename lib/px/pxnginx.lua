@@ -20,6 +20,7 @@ local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
 local ngx_say = ngx.say
 local ngx_exit = ngx.exit
 local ngx_OK = ngx.OK
+local pcall = pcall
 
 if (px_filters.process()) then
     return true;

@@ -5,6 +5,7 @@
 2. Lua Resty HTTP - https://github.com/pintsized/lua-resty-http
 3. Lua Resy Nettle - https://github.com/bungle/lua-resty-nettle (requires libnettle 3.2 or higher)
 4. NGINX with ngx_lua support or Openresty
+5. LuaJIT
 	
 ## Installation
 ```

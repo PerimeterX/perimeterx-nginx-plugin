@@ -59,7 +59,7 @@ function _M.process()
         if ngx.var.http_user_agent and wluas[i] then
             local k = string.find(ngx.var.http_user_agent, wluas[i])
             if k == 1 then
-                ngx.log(ngx.ERR, "Whitelisted: ua_full")
+                ngx.log(ngx.ERR, "PX NOTICE: Whitelisted: ua_full")
                 return true
             end
         end
@@ -70,7 +70,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wluaf do
         if ngx.var.http_user_agent and wluaf[i] and ngx.var.http_user_agent == wluaf[i] then
-            ngx.log(ngx.ERR, "Whitelisted: ua_sub")
+            ngx.log(ngx.ERR, "PX NOTICE: Whitelisted: ua_sub")
             return true
         end
     end
@@ -90,7 +90,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wlfuri do
         if ngx.var.uri == wlfuri[i] then
-            ngx.log(ngx.ERR, "Whitelisted: uri_full")
+            ngx.log(ngx.ERR, "PX NOTICE: Whitelisted: uri_full")
             return true
         end
     end
@@ -99,7 +99,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wluri do
         if string.sub(ngx.var.uri, 1, string.len(wluri[i])) == wluri[i] then
-            ngx.log(ngx.ERR, "Whitelisted: uri_prefixes")
+            ngx.log(ngx.ERR, "PX NOTICE: `Whitelisted: uri_prefixes")
             return true
         end
     end
@@ -108,7 +108,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wluris do
         if string.sub(ngx.var.uri, -string.len(wluris[i])) == wluris[i] then
-            ngx.log(ngx.ERR, "Whitelisted: uri_suffix")
+            ngx.log(ngx.ERR, "PX NOTICE: `Whitelisted: uri_suffix")
             return true
         end
     end

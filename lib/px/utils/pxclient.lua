@@ -26,13 +26,13 @@ function _M.submit(data, path)
     httpc:set_timeout(timeout)
     local ok, err = httpc:connect(px_server, px_port)
     if not ok then
-        ngx_log(ngx_ERR, "HTTPC connection error: ", err)
+        ngx_log(ngx_ERR, "PX ERROR: HTTPC connection error: ", err)
     end
     -- Perform SSL/TLS handshake
     if ssl_enabled == true then
         local session, err = httpc:ssl_handshake()
         if not session then
-            ngx_log(ngx_ERR, "HTTPC SSL handshare error: ", err)
+            ngx_log(ngx_ERR, "PX ERROR: HTTPC SSL handshare error: ", err)
         end
     end
     -- Perform the HTTP requeset
@@ -45,14 +45,14 @@ function _M.submit(data, path)
         }
     })
     if not res then
-        ngx_log(ngx_ERR, "Failed to make HTTP POST: ", err)
+        ngx_log(ngx_ERR, "PX ERROR: Failed to make HTTP POST: ", err)
         error("Failed to make HTTP POST: " .. err)
     elseif res.status ~= 200 then
-        ngx_log(ngx_ERR, "Non 200 response code: ", res.status)
+        ngx_log(ngx_ERR, "PX ERROR: Non 200 response code: ", res.status)
         error("Non 200 response code: " .. err)
     else
         if px_debug == true then
-            ngx_log(ngx_ERR, "POST response status: ", res.status)
+            ngx_log(ngx_ERR, "PX DEBUG: POST response status: ", res.status)
         end
     end
     -- Must read the response body to clear the buffer in order for set keepalive to work properly.
@@ -61,16 +61,14 @@ function _M.submit(data, path)
     if px_debug == true then
         local times, err = httpc:get_reused_times()
         if not times then
-            ngx_log(ngx_ERR, "Error getting reuse times: ", err)
+            ngx_log(ngx_ERR, "PX ERROR: Error getting reuse times: ", err)
         end
-        if px_debug == true then
-            ngx_log(ngx_ERR, "Reused conn times: ", times)
-        end
+            ngx_log(ngx_ERR, "PX DEBUG: Reused conn times: ", times)
     end
     -- set keepalive to ensure connection pooling
     local ok, err = httpc:set_keepalive()
     if not ok then
-        ngx_log(ngx_ERR, "Failed to set keepalive: ", err)
+        ngx_log(ngx_ERR, "PX ERROR: Failed to set keepalive: ", err)
     end
 end
 
