@@ -12,6 +12,7 @@ local px_challenge = require "px.challenge.pxchallenge"
 local px_block = require "px.block.pxblock"
 local px_api = require "px.utils.pxapi"
 local auth_token = px_config.auth_token
+local enable_server_calls = px_config.enable_server_calls
 local risk_api_path = px_config.risk_api_path
 local ngx_log = ngx.log
 local ngx_ERR = ngx.ERR
@@ -40,13 +41,10 @@ if success then
         if px_challenge.process() then
             px_client.send_to_perimeterx("page_requested")
             return true
-        else
-            px_challenge.challenge()
         end
     end
-
     -- cookie verification failed/cookie does not exist. performing s2s query
-else
+elseif enable_server_calls == true then
     local request_data = px_api.new_request_object()
     local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
     local result
@@ -61,8 +59,6 @@ else
             if px_challenge.process() then
                 px_client.send_to_perimeterx("page_requested")
                 return true
-            else
-                px_challenge.challenge()
             end
         end
     else
@@ -71,8 +67,9 @@ else
         if px_challenge.process() then
             px_client.send_to_perimeterx("page_requested")
             return true
-        else
-            px_challenge.challenge()
         end
     end
+elseif px_challenge.process() then
+    px_client.send_to_perimeterx("page_requested")
+    return true
 end

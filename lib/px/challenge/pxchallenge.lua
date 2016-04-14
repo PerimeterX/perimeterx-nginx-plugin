@@ -76,17 +76,6 @@ local function gen_pxIdentifier()
     return ngx_encode_base64(identifier .. sec_now_str);
 end
 
-
-function _M.process()
-    local pxidentifier = gen_pxIdentifier()
-    local pxcook = ngx.var.cookie__pxcook
-    if not validate_pxIdentifier(pxidentifier, pxcook) then
-        return false;
-    end
-
-    return true;
-end
-
 function _M.challenge()
     px_client.send_to_perimeterx("challenge_sent")
     ngx.status = ngx_HTTP_SERVICE_UNAVAILABLE
@@ -94,6 +83,17 @@ function _M.challenge()
     ngx_say('<H1 style="display: none;">You are not authorized to view this page.</H1><script>var str = "' .. gen_pxIdentifier() .. '";var strx = "";for (var i = 0; i < str.length; i++) {    strx += str[i];    if ((i + 1) % 4 == 0) {        strx += Math.random().toString(36).substring(3, 4);    }};document.cookie = "_pxcook=" + strx;window.location.reload();</script>');
     ngx_exit(ngx_OK)
 end
+
+function _M.process()
+    local pxidentifier = gen_pxIdentifier()
+    local pxcook = ngx.var.cookie__pxcook
+    if not validate_pxIdentifier(pxidentifier, pxcook) then
+        _M.challenge()
+    end
+
+    return true;
+end
+
 
 
 return _M
