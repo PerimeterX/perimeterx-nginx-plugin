@@ -24,6 +24,13 @@ _M.Whitelist['uri_full'] = {}
 -- _M.Whitelist['uri_prefixes'] = {'/api_server'}
 _M.Whitelist['uri_prefixes'] = {}
 
+-- URI Suffixes filter
+-- will filter requests where the uri starts with any of the list below.
+-- example:
+-- filter: example.com/mystyle.css?data=data
+-- _M.Whitelist['uri_prefixes'] = {'.css'}
+_M.Whitelist['uri_suffixes'] = { '.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar' }
+
 -- IP Addresses filter
 -- will filter requests coming from the ip in the list below
 -- _M.Whitelist['ip_addresses'] = {'192.168.99.1'}
@@ -40,12 +47,7 @@ _M.Whitelist['ua_sub'] = {}
 
 function _M.process()
     local req_method = ngx.var.request_method
-    local content_type = ngx.var.content_type
     if req_method ~= 'GET' then
-        return true
-    end
-
-    if content_type ~= 'text/html' then
         return true
     end
 
@@ -101,6 +103,16 @@ function _M.process()
             return true
         end
     end
+
+    local wluris = _M.Whitelist['uri_suffixes']
+    -- reverse client string builder
+    for i = 1, #wluris do
+        if string.sub(ngx.var.uri, -string.len(wluris[i])) == wluris[i] then
+            ngx.log(ngx.ERR, "Whitelisted: uri_suffix")
+            return true
+        end
+    end
+
     return false
 end
 

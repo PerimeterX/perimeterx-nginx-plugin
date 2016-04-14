@@ -34,6 +34,7 @@ end
 -- takes one argument - table
 -- returns boolean
 function _M.process(data)
+    ngx_log(ngx_ERR, "Processing server 2 server score: ", cjson.encode(data.scores))
     if data.scores.non_human >= px_config.blocking_score then
         return false
     elseif data.scores.filter >= px_config.blocking_score then
@@ -41,7 +42,6 @@ function _M.process(data)
     elseif data.scores.suspected_script >= px_config.blocking_score then
         return false
     end
-
     return true
 end
 
