@@ -86,7 +86,7 @@ function _M.challenge()
 end
 
 function _M.process()
-    if not enable_javascript_challenge then
+    if enable_javascript_challenge == false then
         return true;
     end
 
