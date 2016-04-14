@@ -71,8 +71,11 @@ end
 local function decrypt(cookie, key)
     -- Split the cookie into three parts - salt , iterations, ciphertext
     local salt, iterations, ciphertext = split_cookie(cookie)
-    salt = ngx_decode_base64(salt)
     iterations = tonumber(iterations)
+    if iterations > 5000 then
+        error('iterations number is too high ', iterations)
+    end
+    salt = ngx_decode_base64(salt)
     ciphertext = ngx_decode_base64(ciphertext)
 
     -- Decrypt
