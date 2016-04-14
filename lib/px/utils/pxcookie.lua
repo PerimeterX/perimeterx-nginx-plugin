@@ -99,7 +99,7 @@ local function decode(data)
 end
 
 local function validate(data)
-    local request_data  = data.t .. data.s.a .. data.s.b .. ngx.var.remote_addr .. ngx.var.http_user_agent
+    local request_data  = data.t .. data.s.a .. data.s.b .. ngx.var.http_user_agent
     local digest = hmac("sha256", cookie_secret, request_data)
     digest = to_hex(digest)
 

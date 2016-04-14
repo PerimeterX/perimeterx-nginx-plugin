@@ -40,12 +40,8 @@ _M.Whitelist['ua_sub'] = {}
 
 function _M.process()
     local req_method = ngx.var.request_method
-    local content_type = ngx.var.content_type
-    if req_method ~= 'GET' then
-        return true
-    end
 
-    if content_type ~= 'text/html' then
+    if req_method ~= 'GET' then
         return true
     end
 
