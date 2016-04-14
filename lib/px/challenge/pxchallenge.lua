@@ -5,6 +5,7 @@
 ----------------------------------------------
 local config = require "px.pxconfig"
 local px_client = require "px.utils.pxclient"
+local enable_javascript_challenge = config.enable_javascript_challenge;
 local ngx_decode_base64 = ngx.decode_base64
 local ngx_encode_base64 = ngx.encode_base64
 local ngx_HTTP_SERVICE_UNAVAILABLE = ngx.HTTP_SERVICE_UNAVAILABLE
@@ -85,6 +86,10 @@ function _M.challenge()
 end
 
 function _M.process()
+    if not enable_javascript_challenge then
+        return true;
+    end
+
     local pxidentifier = gen_pxIdentifier()
     local pxcook = ngx.var.cookie__pxcook
     if not validate_pxIdentifier(pxidentifier, pxcook) then

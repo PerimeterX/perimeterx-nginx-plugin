@@ -15,6 +15,7 @@ _M.ssl_enabled = true
 _M.cookie_lifetime = 3600 -- cookie lifetime, value in seconds
 _M.cookie_encrypted = false
 _M.enable_server_calls = true
+_M.enable_javascript_challenge = true
 _M.cookie_secret = 'COOKIE_SECRET'
 _M.auth_token = 'JWT_AUTH_TOKEN'
 _M.blocking_score = 90
