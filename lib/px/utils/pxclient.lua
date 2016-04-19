@@ -72,10 +72,10 @@ function _M.submit(data, path)
     end
 end
 
-function _M.send_to_perimeterx(event_type)
+function _M.send_to_perimeterx(event_type, details)
     local buflen = buffer.getBufferLength();
     local maxbuflen = px_config.px_maxbuflen;
-    local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. '/' .. ngx.var.uri;
+    local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
 
     local pxdata = {};
     pxdata['type'] = event_type;
@@ -84,6 +84,7 @@ function _M.send_to_perimeterx(event_type)
     pxdata['px_app_id'] = px_config.px_appId;
     pxdata['timestamp'] = tostring(ngx_time());
     pxdata['socket_ip'] = ngx.var.remote_addr;
+    pxdata['details'] = details;
 
     -- Experimental Buffer Support --
     buffer.addEvent(pxdata)
@@ -92,5 +93,6 @@ function _M.send_to_perimeterx(event_type)
         _M.submit(buffer.dumpEvents(), px_config.nginx_collector_path);
     end
 end
+
 
 return _M

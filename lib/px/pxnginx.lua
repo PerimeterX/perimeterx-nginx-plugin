@@ -34,8 +34,7 @@ px_client.send_to_perimeterx("page_requested")
 if success then
     -- score crossed threshold
     if result == false then
-        px_block.block()
-
+        px_block.block('cookie_high_score')
         -- score did not cross the blocking threshold
     else
         px_client.send_to_perimeterx("page_requested")
@@ -50,7 +49,7 @@ elseif enable_server_calls == true then
         result = px_api.process(response);
         -- score crossed threshold
         if result == false then
-            px_block.block()
+            px_block.block('s2s_high_score')
             -- score did not cross the blocking threshold
         else
             px_client.send_to_perimeterx("page_requested")
