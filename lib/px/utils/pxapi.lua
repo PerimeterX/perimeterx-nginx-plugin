@@ -18,7 +18,7 @@ local _M = {}
 -- new_request_object --
 -- takes no arguments
 -- returns table
-function _M.new_request_object()
+function _M.new_request_object(call_reason)
     local risk = {}
     risk.cid = ''
     risk.request = {}
@@ -29,6 +29,9 @@ function _M.new_request_object()
     for k,v in pairs(h) do
         risk.request.headers[#risk.request.headers + 1] = { ['name'] = k , ['value'] = v }
     end
+    risk.additional = {}
+    risk.additional.s2s_call_reason = call_reason
+
     return risk
 end
 
@@ -65,7 +68,7 @@ function _M.call_s2s(data, path, auth_token)
     data = cjson.encode(data)
 
     -- timeout in milliseconds
-    local timeout = 500
+    local timeout = px_config.s2s_timeout
     -- create new HTTP connection
     local httpc = http.new()
     httpc:set_timeout(timeout)
