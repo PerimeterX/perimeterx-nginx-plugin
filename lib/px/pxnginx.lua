@@ -8,7 +8,6 @@ local px_filters = require "px.utils.pxfilters"
 local px_config = require "px.pxconfig"
 local px_client = require "px.utils.pxclient"
 local px_cookie = require "px.utils.pxcookie"
-local px_challenge = require "px.challenge.pxchallenge"
 local px_block = require "px.block.pxblock"
 local px_api = require "px.utils.pxapi"
 local auth_token = px_config.auth_token
@@ -39,10 +38,8 @@ if success then
 
         -- score did not cross the blocking threshold
     else
-        if px_challenge.process() then
-            px_client.send_to_perimeterx("page_requested")
-            return true
-        end
+        px_client.send_to_perimeterx("page_requested")
+        return true
     end
     -- cookie verification failed/cookie does not exist. performing s2s query
 elseif enable_server_calls == true then
@@ -54,23 +51,18 @@ elseif enable_server_calls == true then
         -- score crossed threshold
         if result == false then
             px_block.block()
-
             -- score did not cross the blocking threshold
         else
-            if px_challenge.process() then
-                px_client.send_to_perimeterx("page_requested")
-                return true
-            end
-        end
-    else
-        -- server2server call failed, processing challenge
-        ngx_log(ngx_ERR, "PX: Failed server to server API call - ", result)
-        if px_challenge.process() then
             px_client.send_to_perimeterx("page_requested")
             return true
         end
+    else
+        -- server2server call failed, passing taffic
+        ngx_log(ngx_ERR, "PX: Failed server to server API call - ", result)
+        px_client.send_to_perimeterx("page_requested")
+        return true
     end
-elseif px_challenge.process() then
+else
     px_client.send_to_perimeterx("page_requested")
     return true
 end

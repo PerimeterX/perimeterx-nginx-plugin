@@ -43,7 +43,6 @@ init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
 The following values must be set in pxconfig.lua.
 
 ```
-_M.px_token = 'random_challenge_token'
 _M.px_appId = 'APP_ID'
 _M.cookie_encrypted = false
 _M.cookie_secret = 'COOKIE_SECRET'
