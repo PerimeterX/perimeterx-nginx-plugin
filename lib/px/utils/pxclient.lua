@@ -77,6 +77,10 @@ function _M.send_to_perimeterx(event_type, details)
     local maxbuflen = px_config.px_maxbuflen;
     local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
 
+    if event_type == 'page_requested' and not px_config.send_page_requested_activity then
+        return
+    end
+
     local pxdata = {};
     pxdata['type'] = event_type;
     pxdata['headers'] = ngx.req.get_headers()
