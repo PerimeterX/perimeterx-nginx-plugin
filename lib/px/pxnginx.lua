@@ -42,7 +42,7 @@ if success then
     end
     -- cookie verification failed/cookie does not exist. performing s2s query
 elseif enable_server_calls == true then
-    local request_data = px_api.new_request_object()
+    local request_data = px_api.new_request_object(result.message)
     local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
     local result
     if success then

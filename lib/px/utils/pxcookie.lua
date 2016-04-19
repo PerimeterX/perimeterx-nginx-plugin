@@ -120,7 +120,7 @@ end
 function _M.process(cookie)
     if not cookie then
         ngx_log(ngx_ERR, "PX ERROR: Risk cookie not present")
-        error("PX: Risk cookie not present")
+        error({message="no_cookie"})
     end
 
     -- Decrypt AES-256 or base64 decode cookie
@@ -129,14 +129,14 @@ function _M.process(cookie)
         local success, result = pcall(decrypt, cookie, cookie_secret)
         if not success then
             ngx_log(ngx_ERR, "PX ERROR: Could not decrpyt cookie - ", result)
-            error("PX: Could not decrpyt cookie")
+            error({message="invalid_cookie"})
         end
         data = result
     else
         local success, result = pcall(ngx_decode_base64, cookie)
         if not success then
             ngx_log(ngx_ERR, "PX ERROR: Could not decode b64 cookie - ", result)
-            error("PX: Could not decode b64 cookie")
+            error({message="invalid_cookie"})
         end
         data = result
     end
@@ -145,7 +145,7 @@ function _M.process(cookie)
     local success, result = pcall(decode, data)
     if not success then
         ngx_log(ngx_ERR, "PX ERROR: Could not decode payload - ", data)
-        error("PX: Could not decode payload")
+        error({message="invalid_cookie"})
     end
 
     local fields = result
@@ -153,7 +153,12 @@ function _M.process(cookie)
     local success, result = pcall(validate, fields)
     if not success or result == false then
         ngx_log(ngx_ERR, "PX ERROR: Could not validate cookie integrity - ", result)
-        error("PX: Could not validate cookie integrity")
+        error({message="invalid_cookie"})
+    end
+
+    -- cookie expired
+    if fields.t and fields.t > 0 and fields.t/1000 < os.time() then
+        error({message="cookie_expired"})
     end
 
     -- Check bot score and block if it is >= to the configured block score
