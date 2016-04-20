@@ -11,6 +11,8 @@ local string_upper = string.upper
 local tonumber = tonumber
 local ngx_decode_base64 = ngx.decode_base64
 local pcall = pcall
+local cjson = require "cjson"
+
 -- localized config
 local px_config = require "px.pxconfig"
 local px_logger = require "px.utils.pxlogger"
@@ -96,7 +98,6 @@ end
 -- tales one argument - string
 -- returns one value - table
 local function decode(data)
-    local cjson = require "cjson"
     local fields = cjson.decode(data)
     return fields
 end

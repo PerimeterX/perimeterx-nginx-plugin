@@ -5,7 +5,7 @@ local px_config = require "px.pxconfig"
 local _M = {}
 
 function validate_msg(message)
-    if type(message) ~= 'string' and type(message) ~= 'number' and type(message) ~= 'boolean' then
+    if type(message) ~= 'string' and type(message) ~= 'number'  then
         return false;
     end
     return true;

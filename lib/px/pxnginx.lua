@@ -56,7 +56,6 @@ elseif enable_server_calls == true then
         end
     else
         -- server2server call failed, passing taffic
-        px_logger.error("Failed server to server API call - " .. result)
         px_client.send_to_perimeterx("page_requested")
         return true
     end
