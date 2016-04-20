@@ -107,6 +107,7 @@ local function validate(data)
     digest = to_hex(digest)
 
     if digest ~= string_upper(data.h) then
+        px_logger.error('Failed to verify cookie content ' .. cjson.encode(data));
         return false
     end
 
@@ -151,7 +152,6 @@ function _M.process(cookie)
     -- Validate the cookie integrity
     local success, result = pcall(validate, fields)
     if not success or result == false then
-        px_logger.error("Could not validate cookie integrity - " .. result)
         error({ message = "invalid_cookie" })
     end
 
