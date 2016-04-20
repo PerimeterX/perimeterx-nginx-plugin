@@ -3,7 +3,7 @@
 -- Version 1.5.0
 -- Release date: 05.04.2016
 ----------------------------------------------
-
+local px_logger = require "px.utils.pxlogger"
 local _M = {}
 
 _M.Whitelist = {};
@@ -59,7 +59,7 @@ function _M.process()
         if ngx.var.http_user_agent and wluas[i] then
             local k = string.find(ngx.var.http_user_agent, wluas[i])
             if k == 1 then
-                ngx.log(ngx.ERR, "PX NOTICE: Whitelisted: ua_full")
+                px_logger.debug("Whitelisted: ua_full. " .. wluas[i])
                 return true
             end
         end
@@ -70,7 +70,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wluaf do
         if ngx.var.http_user_agent and wluaf[i] and ngx.var.http_user_agent == wluaf[i] then
-            ngx.log(ngx.ERR, "PX NOTICE: Whitelisted: ua_sub")
+            px_logger.debug("Whitelisted: ua_sub. " .. wluaf[i])
             return true
         end
     end
@@ -81,7 +81,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wlips do
         if ngx.var.remote_addr == wlips[i] then
-            ngx.log(ngx.ERR, "Whitelisted: ip_addresses")
+            px_logger.debug("Whitelisted: ip_addresses. " .. wlips[i])
             return true
         end
     end
@@ -90,7 +90,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wlfuri do
         if ngx.var.uri == wlfuri[i] then
-            ngx.log(ngx.ERR, "PX NOTICE: Whitelisted: uri_full")
+            px_logger.debug("Whitelisted: uri_full. " .. wlfuri[i])
             return true
         end
     end
@@ -99,7 +99,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wluri do
         if string.sub(ngx.var.uri, 1, string.len(wluri[i])) == wluri[i] then
-            ngx.log(ngx.ERR, "PX NOTICE: `Whitelisted: uri_prefixes")
+            px_logger.debug("Whitelisted: uri_prefixes. " .. wluri[i])
             return true
         end
     end
@@ -108,7 +108,7 @@ function _M.process()
     -- reverse client string builder
     for i = 1, #wluris do
         if string.sub(ngx.var.uri, -string.len(wluris[i])) == wluris[i] then
-            ngx.log(ngx.ERR, "PX NOTICE: `Whitelisted: uri_suffix")
+            px_logger.debug("Whitelisted: uri_suffix. " .. wluris[i])
             return true
         end
     end

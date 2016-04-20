@@ -10,11 +10,10 @@ local string_char = string.char
 local string_upper = string.upper
 local tonumber = tonumber
 local ngx_decode_base64 = ngx.decode_base64
-local ngx_log = ngx.log
-local ngx_ERR = ngx.ERR
 local pcall = pcall
 -- localized config
 local px_config = require "px.pxconfig"
+local px_logger = require "px.utils.pxlogger"
 local cookie_encrypted = px_config.cookie_encrypted
 local blocking_score = px_config.blocking_score
 local cookie_secret = px_config.cookie_secret
@@ -119,7 +118,7 @@ end
 -- returns boolean,
 function _M.process(cookie)
     if not cookie then
-        ngx_log(ngx_ERR, "PX ERROR: Risk cookie not present")
+        px_logger.debug("Risk cookie not present")
         error({ message = "no_cookie" })
     end
 
@@ -128,14 +127,14 @@ function _M.process(cookie)
     if cookie_encrypted == true then
         local success, result = pcall(decrypt, cookie, cookie_secret)
         if not success then
-            ngx_log(ngx_ERR, "PX ERROR: Could not decrpyt cookie - ", result)
+            px_logger.error("Could not decrpyt cookie - " .. result)
             error({ message = "invalid_cookie" })
         end
         data = result
     else
         local success, result = pcall(ngx_decode_base64, cookie)
         if not success then
-            ngx_log(ngx_ERR, "PX ERROR: Could not decode b64 cookie - ", result)
+            px_logger.error("Could not decode b64 cookie - " .. result)
             error({ message = "invalid_cookie" })
         end
         data = result
@@ -144,7 +143,7 @@ function _M.process(cookie)
     -- Deserialize the JSON payload
     local success, result = pcall(decode, data)
     if not success then
-        ngx_log(ngx_ERR, "PX ERROR: Could not decode payload - ", data)
+        px_logger.error("Could not decode payload - " .. data)
         error({ message = "invalid_cookie" })
     end
 
@@ -152,7 +151,7 @@ function _M.process(cookie)
     -- Validate the cookie integrity
     local success, result = pcall(validate, fields)
     if not success or result == false then
-        ngx_log(ngx_ERR, "PX ERROR: Could not validate cookie integrity - ", result)
+        px_logger.error("Could not validate cookie integrity - " .. result)
         error({ message = "invalid_cookie" })
     end
 
@@ -163,7 +162,7 @@ function _M.process(cookie)
 
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b and fields.s.b >= blocking_score then
-        ngx_log(ngx_ERR, "PX NOTICE: Visitor score is higher than allowed threshold: ", fields.s.b)
+        px_logger.info("Visitor score is higher than allowed threshold: " .. fields.s.b)
         if fields.u then
             ngx.ctx.uuid = fields.u
         end

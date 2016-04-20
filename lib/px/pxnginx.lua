@@ -10,11 +10,10 @@ local px_client = require "px.utils.pxclient"
 local px_cookie = require "px.utils.pxcookie"
 local px_block = require "px.block.pxblock"
 local px_api = require "px.utils.pxapi"
+local px_logger = require "px.utils.pxlogger"
 local auth_token = px_config.auth_token
 local enable_server_calls = px_config.enable_server_calls
 local risk_api_path = px_config.risk_api_path
-local ngx_log = ngx.log
-local ngx_ERR = ngx.ERR
 local pcall = pcall
 
 if ngx.req.is_internal() then
@@ -57,7 +56,7 @@ elseif enable_server_calls == true then
         end
     else
         -- server2server call failed, passing taffic
-        ngx_log(ngx_ERR, "PX: Failed server to server API call - ", result)
+        px_logger.error("Failed server to server API call - " .. result)
         px_client.send_to_perimeterx("page_requested")
         return true
     end
