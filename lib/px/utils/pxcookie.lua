@@ -103,6 +103,10 @@ local function decode(data)
 end
 
 local function validate(data)
+    px_logger.error('cookie content ' .. cjson.encode(data));
+    px_logger.error('ngx.var.http_user_agent ' .. ngx.var.http_user_agent);
+    px_logger.error('ngx.var.remote_addr ' .. ngx.var.remote_addr);
+
     local request_data = data.t .. data.s.a .. data.s.b .. data.u .. ngx.var.remote_addr .. ngx.var.http_user_agent
     local digest = hmac("sha256", cookie_secret, request_data)
     digest = to_hex(digest)
