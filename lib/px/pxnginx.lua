@@ -24,6 +24,7 @@ if (px_filters.process()) then
     return true;
 end
 
+px_logger.info("New request process. IP: " .. ngx.var.remote_addr .. ". UA: " .. ngx.var.http_user_agent)
 -- process _px cookie if present
 local _px = ngx.var.cookie__px;
 local success, result = pcall(px_cookie.process, _px)
