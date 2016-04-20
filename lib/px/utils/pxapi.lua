@@ -39,7 +39,7 @@ end
 -- takes one argument - table
 -- returns boolean
 function _M.process(data)
-	if debug then
+	if px_debug then
         ngx_log(ngx_ERR, "PX DEBUG: Processing server 2 server response: ", cjson.encode(data.scores))
 	end
 
@@ -63,7 +63,6 @@ function _M.call_s2s(data, path, auth_token)
     local px_server = px_config.px_server
     local px_port = px_config.px_port
     local ssl_enabled = px_config.ssl_enabled
-    local px_debug = px_config.px_debug
 
     data = cjson.encode(data)
 
