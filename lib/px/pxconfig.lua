@@ -6,6 +6,8 @@
 
 local _M = {}
 
+_M.px_enabled = true
+
 -- ##  Configuration Block ##
 _M.px_appId = 'APP_ID'
 _M.px_server = 'collector.a.pxi.pub'
