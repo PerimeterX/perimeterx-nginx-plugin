@@ -21,6 +21,10 @@ local ngx_exit = ngx.exit
 local ngx_OK = ngx.OK
 local pcall = pcall
 
+if ngx.req.is_internal() then
+    return true;
+end
+
 if (px_filters.process()) then
     return true;
 end

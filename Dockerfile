@@ -2,7 +2,7 @@
 FROM ubuntu:14.04
 
 ENV VER_NGINX_DEVEL_KIT=0.2.19
-ENV VER_LUA_NGINX_MODULE=0.9.16
+ENV VER_LUA_NGINX_MODULE=0.9.20
 ENV VER_NGINX=1.7.10
 ENV VER_LUAJIT=2.0.4
 
@@ -14,6 +14,7 @@ ENV WEB_DIR ${NGINX_ROOT}/html
 ENV LUAJIT_LIB /usr/local/lib
 ENV LUAJIT_INC /usr/local/include/luajit-2.0
 
+RUN apt-key update
 RUN apt-get update
 RUN apt-get -qq -y install wget git
 
