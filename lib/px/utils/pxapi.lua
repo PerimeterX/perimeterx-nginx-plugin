@@ -10,8 +10,6 @@ local px_config = require "px.pxconfig"
 local px_debug = px_config.px_debug
 local ngx_log = ngx.log
 local ngx_ERR = ngx.ERR
-local ngx_time = ngx.time
-local tostring = tostring
 
 local _M = {}
 
@@ -26,8 +24,8 @@ function _M.new_request_object(call_reason)
     risk.request.uri = ngx.var.uri
     risk.request.headers = {}
     local h = ngx.req.get_headers()
-    for k,v in pairs(h) do
-        risk.request.headers[#risk.request.headers + 1] = { ['name'] = k , ['value'] = v }
+    for k, v in pairs(h) do
+        risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
     end
     risk.additional = {}
     risk.additional.s2s_call_reason = call_reason
@@ -39,18 +37,21 @@ end
 -- takes one argument - table
 -- returns boolean
 function _M.process(data)
-	if px_debug then
+    if px_debug then
         ngx_log(ngx_ERR, "PX DEBUG: Processing server 2 server response: ", cjson.encode(data.scores))
-	end
+    end
 
     if data.scores.non_human >= px_config.blocking_score then
-		ngx_log(ngx_ERR, "PX: Block reason - non human score: ",data.scores.non_human)
+        ngx.ctx.uuid = data.uuid
+        ngx_log(ngx_ERR, "PX: Block reason - non human score: ", data.scores.non_human)
         return false
     elseif data.scores.filter >= px_config.blocking_score then
-		ngx_log(ngx_ERR, "PX: Block reason - filter score: ",data.scores.filter)
+        ngx.ctx.uuid = data.uuid
+        ngx_log(ngx_ERR, "PX: Block reason - filter score: ", data.scores.filter)
         return false
     elseif data.scores.suspected_script >= px_config.blocking_score then
-		ngx_log(ngx_ERR, "PX: Block reason - script score: ",data.scores.suspected_script)
+        ngx.ctx.uuid = data.uuid
+        ngx_log(ngx_ERR, "PX: Block reason - script score: ", data.scores.suspected_script)
         return false
     end
     return true
@@ -112,7 +113,7 @@ function _M.call_s2s(data, path, auth_token)
         if not times then
             ngx_log(ngx_ERR, "PX DEBUG: Error getting reuse times: ", err)
         end
-            ngx_log(ngx_ERR, "PX DEBUG: Reused conn times: ", times)
+        ngx_log(ngx_ERR, "PX DEBUG: Reused conn times: ", times)
     end
     -- set keepalive to ensure connection pooling
     local ok, err = httpc:set_keepalive()

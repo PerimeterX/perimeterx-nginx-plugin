@@ -15,10 +15,6 @@ local enable_server_calls = px_config.enable_server_calls
 local risk_api_path = px_config.risk_api_path
 local ngx_log = ngx.log
 local ngx_ERR = ngx.ERR
-local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
-local ngx_say = ngx.say
-local ngx_exit = ngx.exit
-local ngx_OK = ngx.OK
 local pcall = pcall
 
 if ngx.req.is_internal() then
@@ -38,7 +34,7 @@ px_client.send_to_perimeterx("page_requested")
 if success then
     -- score crossed threshold
     if result == false then
-        px_block.block('cookie_high_score')
+        px_block.block('cookie_high_score', ngx.ctx.uuid)
         -- score did not cross the blocking threshold
     else
         px_client.send_to_perimeterx("page_requested")
@@ -53,7 +49,7 @@ elseif enable_server_calls == true then
         result = px_api.process(response);
         -- score crossed threshold
         if result == false then
-            px_block.block('s2s_high_score')
+            px_block.block('s2s_high_score', ngx.ctx.uuid)
             -- score did not cross the blocking threshold
         else
             px_client.send_to_perimeterx("page_requested")
