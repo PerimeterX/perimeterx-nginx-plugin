@@ -6,13 +6,15 @@ local _M = {}
 
 function _M.block(reason, uuid)
     local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
-    local details = 'block_module:nginx,';
+    local details = {}
+    details.block_module = 'nginx'
+
     if reason then
-        details = details .. 'block_reason:' .. reason .. ','
+        details.block_reason = reason
     end
 
     if uuid then
-        details = details .. 'block_uuid:' .. uuid
+        details.block_uuid = uuid
     end
 
     px_client.send_to_perimeterx('block', details);
