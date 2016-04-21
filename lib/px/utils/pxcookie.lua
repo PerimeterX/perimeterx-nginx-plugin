@@ -11,7 +11,7 @@ local string_upper = string.upper
 local tonumber = tonumber
 local ngx_decode_base64 = ngx.decode_base64
 local pcall = pcall
-local cjson = require "cjson"
+local os_time = os.time
 
 -- localized config
 local px_config = require "px.pxconfig"
@@ -20,6 +20,7 @@ local cookie_encrypted = px_config.cookie_encrypted
 local blocking_score = px_config.blocking_score
 local cookie_secret = px_config.cookie_secret
 -- localized modules
+local cjson = require "cjson"
 local aes = require "resty.nettle.aes"
 local pbkdf2 = require "resty.nettle.pbkdf2"
 local hmac = require "resty.nettle.hmac"
@@ -153,11 +154,13 @@ function _M.process(cookie)
     -- Validate the cookie integrity
     local success, result = pcall(validate, fields)
     if not success or result == false then
+        px_logger.error("Could not validate cookie signature - " .. data)
         error({ message = "invalid_cookie" })
     end
 
     -- cookie expired
-    if fields.t and fields.t > 0 and fields.t / 1000 < os.time() then
+    if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
+        px_logger.error("Cookie expired - " .. data)
         error({ message = "cookie_expired" })
     end
 
