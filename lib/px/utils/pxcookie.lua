@@ -151,13 +151,6 @@ function _M.process(cookie)
     end
 
     local fields = result
-    -- Validate the cookie integrity
-    local success, result = pcall(validate, fields)
-    if not success or result == false then
-        px_logger.error("Could not validate cookie signature - " .. data)
-        error({ message = "invalid_cookie" })
-    end
-
     -- cookie expired
     if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
         px_logger.error("Cookie expired - " .. data)
@@ -171,6 +164,13 @@ function _M.process(cookie)
             ngx.ctx.uuid = fields.u
         end
         return false
+    end
+
+    -- Validate the cookie integrity
+    local success, result = pcall(validate, fields)
+    if not success or result == false then
+        px_logger.error("Could not validate cookie signature - " .. data)
+        error({ message = "invalid_cookie" })
     end
 
     return true
