@@ -109,7 +109,7 @@ RUN mkdir -p /var/log/nginx
 RUN touch /var/log/nginx/access.log
 RUN touch /var/log/nginx/error.log
 #RUN ln -sf /dev/stdout /var/log/nginx/access.log
-RUN ln -sf /dev/stderr /var/log/nginx/error.log
+#RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 # This is the default CMD used by nginx:1.9.2 image
 CMD ["nginx", "-g", "daemon off;"]
