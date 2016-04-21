@@ -20,14 +20,20 @@ if not px_config.px_enabled then
     return true;
 end
 
-if ngx.req.is_internal() then
-    return true;
+-- skip internal redirect processing
+local px_process = ngx.req.get_headers()['px_process']
+if px_process and px_process == px_config.cookie_secret then
+    px_logger.debug('Internal redirect detected, exit px processing')
+    return true
 end
+ngx.req.set_header('px_process', px_config.cookie_secret)
 
+-- run filter and whitelisting logic
 if (px_filters.process()) then
     return true;
 end
 
+px_logger.debug("New request process. IP: " .. ngx.var.remote_addr .. ". UA: " .. ngx.var.http_user_agent)
 -- process _px cookie if present
 local _px = ngx.var.cookie__px;
 local success, result = pcall(px_cookie.process, _px)
