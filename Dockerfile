@@ -29,6 +29,7 @@ RUN apt-get -qq -y install zlib1g-dev
 RUN apt-get -qq -y install libssl-dev
 RUN apt-get -qq -y install curl
 RUN apt-get -qq -y install ca-certificates
+RUN apt-get -qq -y install rsyslog
 
 # LUAJit dependencies
 RUN apt-get -qq -y install gcc
