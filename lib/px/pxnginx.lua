@@ -37,7 +37,6 @@ px_logger.debug("New request process. IP: " .. ngx.var.remote_addr .. ". UA: " .
 -- process _px cookie if present
 local _px = ngx.var.cookie__px;
 local success, result = pcall(px_cookie.process, _px)
-px_client.send_to_perimeterx("page_requested")
 
 -- cookie verification passed - checking result.
 if success then
