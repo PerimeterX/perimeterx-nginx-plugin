@@ -160,6 +160,7 @@ function _M.process(cookie)
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b and fields.s.b >= blocking_score then
         px_logger.info("Visitor score is higher than allowed threshold: " .. fields.s.b)
+        ngx.ctx.block_score = fields.s.b
         if fields.u then
             ngx.ctx.uuid = fields.u
         end
