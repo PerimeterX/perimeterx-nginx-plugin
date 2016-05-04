@@ -4,7 +4,7 @@ local ngx_exit = ngx.exit
 local px_client = require "px.utils.pxclient"
 local _M = {}
 
-function _M.block(reason, uuid)
+function _M.block(reason, uuid, score)
     local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
     local details = {}
     local ref_str = ''
@@ -18,6 +18,11 @@ function _M.block(reason, uuid)
         details.block_uuid = uuid
         ref_str = '<span style="font-size: 20px;">Block Reference: <span style="color: #525151;">#' .. uuid .. '</span></span>';
     end
+
+    if score then
+        details.block_score = score
+    end
+
     px_client.send_to_perimeterx('block', details);
     ngx.status = ngx_HTTP_FORBIDDEN;
     ngx.header["Content-Type"] = 'text/html';

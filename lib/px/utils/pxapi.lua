@@ -39,14 +39,17 @@ function _M.process(data)
     px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.scores))
     if data.scores.non_human >= px_config.blocking_score then
         ngx.ctx.uuid = data.uuid
+        ngx.ctx.block_score = data.scores.non_human
         px_logger.error("Block reason - non human score: " .. data.scores.non_human)
         return false
     elseif data.scores.filter >= px_config.blocking_score then
         ngx.ctx.uuid = data.uuid
+        ngx.ctx.block_score = data.scores.filter
         px_logger.error("Block reason - filter score: " .. data.scores.filter)
         return false
     elseif data.scores.suspected_script >= px_config.blocking_score then
         ngx.ctx.uuid = data.uuid
+        ngx.ctx.block_score = data.scores.suspected_script
         px_logger.error("Block reason - script score: " .. data.scores.suspected_script)
         return false
     end
