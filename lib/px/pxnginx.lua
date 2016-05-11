@@ -14,6 +14,8 @@ local px_logger = require "px.utils.pxlogger"
 local auth_token = px_config.auth_token
 local enable_server_calls = px_config.enable_server_calls
 local risk_api_path = px_config.risk_api_path
+local remote_addr = ngx.var.remote_addr  or ""
+local user_agent = ngx.var.http_user_agent or ""
 local pcall = pcall
 
 if not px_config.px_enabled then
@@ -33,7 +35,7 @@ if (px_filters.process()) then
     return true;
 end
 
-px_logger.debug("New request process. IP: " .. ngx.var.remote_addr .. ". UA: " .. ngx.var.http_user_agent)
+px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. http_user_agent)
 -- process _px cookie if present
 local _px = ngx.var.cookie__px;
 local success, result = pcall(px_cookie.process, _px)

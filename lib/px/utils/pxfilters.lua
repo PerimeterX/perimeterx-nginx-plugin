@@ -4,6 +4,11 @@
 -- Release date: 05.04.2016
 ----------------------------------------------
 local px_logger = require "px.utils.pxlogger"
+local string_sub = string.sub
+local string_find = string.find
+local string_len = string.len
+local string_gsub = string.gsub
+
 local _M = {}
 
 _M.Whitelist = {};
@@ -45,69 +50,81 @@ _M.Whitelist['ua_full'] = {}
 --_M.Whitelist['ua_sub'] = {'Inspectlet', 'GoogleCloudMonitoring'}
 _M.Whitelist['ua_sub'] = {}
 
+-- Escape Lua magic chars in a string
+local function escape_magic_chars(pattern)
+    local magic_chars = { '%', '(',  ')' , '.',  '+' , '-', '*', '?', '[' ,']' ,'^', '$' }
+    for i = 1 , #magic_chars do
+        pattern = string_gsub(pattern, "%" .. magic_chars[i], "%%%1")
+    end
+    return pattern
+end
+
+-- Process the whitlelist
 function _M.process()
+    -- by HTTP method
     local req_method = ngx.var.request_method
     if req_method ~= 'GET' then
         return true
     end
 
-    -- Check for whitelisted request
-    -- White By Substring in User Agent
-    local wluas = _M.Whitelist['ua_sub']
-    -- reverse client string builder
-    for i = 1, #wluas do
-        if ngx.var.http_user_agent and wluas[i] then
-            local k = string.find(ngx.var.http_user_agent, wluas[i])
-            if k == 1 then
-                px_logger.debug("Whitelisted: ua_full. " .. wluas[i])
-                return true
+    -- by user agent - pattern match
+    local ua = ngx.var.http_user_agent
+
+    if ua then
+        --  By user agent - strict match
+        local wluaf = _M.Whitelist['ua_full']
+        if #wluaf > 0 then
+            for i = 1, #wluaf do
+                if wluaf[i] == ua then
+                    px_logger.debug("Whitelisted: UA strict match " .. wluaf[i])
+                    return true
+                end
+            end
+        end
+
+        local wluas = _M.Whitelist['ua_sub']
+        if #wluas > 0 then
+            for i = 1, #wluas do
+                local k,j = string_find(ua, escape_magic_chars(wluas[i]))
+                if k then
+                    px_logger.debug("Whitelisted: UA partial match " .. wluas[i])
+                    return true
+                end
             end
         end
     end
 
-    -- Whitelist By Full User Agent
-    local wluaf = _M.Whitelist['ua_full']
-    -- reverse client string builder
-    for i = 1, #wluaf do
-        if ngx.var.http_user_agent and wluaf[i] and ngx.var.http_user_agent == wluaf[i] then
-            px_logger.debug("Whitelisted: ua_sub. " .. wluaf[i])
-            return true
-        end
-    end
-
-    -- Check for whitelisted request
-    -- By IP
+    -- By IP address
+    local ip_address = ngx.var.remote_addr
     local wlips = _M.Whitelist['ip_addresses']
-    -- reverse client string builder
     for i = 1, #wlips do
-        if ngx.var.remote_addr == wlips[i] then
-            px_logger.debug("Whitelisted: ip_addresses. " .. wlips[i])
+        if ip_address == wlips[i] then
+            px_logger.debug("Whitelisted: IP address  " .. wlips[i])
             return true
         end
     end
 
+    -- By URI
+    local uri = ngx.var.uri
     local wlfuri = _M.Whitelist['uri_full']
-    -- reverse client string builder
     for i = 1, #wlfuri do
-        if ngx.var.uri == wlfuri[i] then
+        if uri == wlfuri[i] then
             px_logger.debug("Whitelisted: uri_full. " .. wlfuri[i])
             return true
         end
     end
 
     local wluri = _M.Whitelist['uri_prefixes']
-    -- reverse client string builder
     for i = 1, #wluri do
-        if string.sub(ngx.var.uri, 1, string.len(wluri[i])) == wluri[i] then
+        if string_sub(uri, 1, string_len(wluri[i])) == wluri[i] then
             px_logger.debug("Whitelisted: uri_prefixes. " .. wluri[i])
             return true
         end
     end
 
     local wluris = _M.Whitelist['uri_suffixes']
-    -- reverse client string builder
     for i = 1, #wluris do
-        if string.sub(ngx.var.uri, -string.len(wluris[i])) == wluris[i] then
+        if string_sub(uri, -string_len(wluris[i])) == wluris[i] then
             px_logger.debug("Whitelisted: uri_suffix. " .. wluris[i])
             return true
         end
