@@ -3,9 +3,15 @@ LUA_INCLUDE_DIR ?= $(PREFIX)/include
 LUA_LIB_DIR ?=     $(PREFIX)/lib/lua/$(LUA_VERSION)
 INSTALL ?= install
 
-.PHONY: all install
+.PHONY: all package install
 
 all: ;
+
+docker: 
+	@docker build -t perimeterx/pxnginx .
+
+package:
+	@tar zcf pxNginxPlugin.tgz Dockerfile Makefile README.md nginx* lib/ vendor/ www/
 
 install: all
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px
@@ -18,3 +24,6 @@ install: all
 	$(INSTALL) lib/px/block/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/block
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 	$(INSTALL) lib/px/utils/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
+
+clean:
+	rm -rf pxNginxPlugin.tgz 
