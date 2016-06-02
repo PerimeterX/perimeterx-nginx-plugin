@@ -47,9 +47,6 @@ _M.Whitelist['ua_sub'] = {}
 
 function _M.process()
     local req_method = ngx.var.request_method
-    if req_method ~= 'GET' then
-        return true
-    end
 
     -- Check for whitelisted request
     -- White By Substring in User Agent
