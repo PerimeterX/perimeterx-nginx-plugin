@@ -162,7 +162,7 @@ function _M.process(cookie)
         error({ message = "cookie_expired" })
     end
 
-    ngx.req.set_header('PX_SCORE', fields.s.b)
+    ngx.req.set_header(px_config.score_header_name, fields.s.b)
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b and fields.s.b >= blocking_score then
         px_logger.info("Visitor score is higher than allowed threshold: " .. fields.s.b)

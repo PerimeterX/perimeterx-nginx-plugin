@@ -31,7 +31,7 @@ for i = 1, #enabled_routes do
 end
 
 if not valid_route then
-    ngx.req.set_header('PX_SCORE', 0)
+    ngx.req.set_header(px_config.score_header_name, 0)
     return true;
 end
 
@@ -45,7 +45,7 @@ ngx.req.set_header('px_process', px_config.cookie_secret)
 
 -- run filter and whitelisting logic
 if (px_filters.process()) then
-    ngx.req.set_header('PX_SCORE', 0)
+    ngx.req.set_header(px_config.score_header_name, 0)
     return true;
 end
 
