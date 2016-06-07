@@ -22,6 +22,21 @@ if not px_config.px_enabled then
     return true;
 end
 
+local enabled_routes = px_config.enabled_routes
+local valid_route = false
+-- Enable module only on configured routes
+for i = 1, #enabled_routes do
+    if string.sub(ngx.var.uri, 1, string.len(enabled_routes[i])) == enabled_routes[i] then
+        px_logger.debug("Whitelisted: uri_prefixes. " .. enabled_routes[i])
+        valid_route = true
+    end
+end
+
+if not valid_route then
+    ngx.req.set_header(px_config.score_header_name, 0)
+    return true;
+end
+
 -- skip internal redirect processing
 local px_process = ngx.req.get_headers()['px_process']
 if px_process and px_process == px_config.cookie_secret then
@@ -32,6 +47,7 @@ ngx.req.set_header('px_process', px_config.cookie_secret)
 
 -- run filter and whitelisting logic
 if (px_filters.process()) then
+    ngx.req.set_header(px_config.score_header_name, 0)
     return true;
 end
 
@@ -44,7 +60,7 @@ local success, result = pcall(px_cookie.process, _px)
 if success then
     -- score crossed threshold
     if result == false then
-        px_block.block('cookie_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
+        return px_block.block('cookie_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
         -- score did not cross the blocking threshold
     else
         px_client.send_to_perimeterx("page_requested")
@@ -59,7 +75,7 @@ elseif enable_server_calls == true then
         result = px_api.process(response);
         -- score crossed threshold
         if result == false then
-            px_block.block('s2s_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
+            return px_block.block('s2s_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
             -- score did not cross the blocking threshold
         else
             px_client.send_to_perimeterx("page_requested")

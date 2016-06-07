@@ -104,7 +104,12 @@ local function decode(data)
 end
 
 local function validate(data)
-    local request_data = data.t .. data.s.a .. data.s.b .. data.u .. ngx.var.remote_addr .. ngx.var.http_user_agent
+    local request_data = data.t .. data.s.a .. data.s.b .. data.u;
+    if data.v then
+        request_data = request_data .. data.v
+    end
+
+    request_data = request_data .. ngx.var.remote_addr .. ngx.var.http_user_agent
     local digest = hmac("sha256", cookie_secret, request_data)
     digest = to_hex(digest)
 
@@ -157,6 +162,7 @@ function _M.process(cookie)
         error({ message = "cookie_expired" })
     end
 
+    ngx.req.set_header(px_config.score_header_name, fields.s.b)
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b and fields.s.b >= blocking_score then
         px_logger.info("Visitor score is higher than allowed threshold: " .. fields.s.b)

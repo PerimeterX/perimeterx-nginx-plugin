@@ -61,12 +61,6 @@ end
 
 -- Process the whitlelist
 function _M.process()
-    -- by HTTP method
-    local req_method = ngx.var.request_method
-    if req_method ~= 'GET' then
-        return true
-    end
-
     -- by user agent - pattern match
     local ua = ngx.var.http_user_agent
 
