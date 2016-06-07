@@ -21,6 +21,7 @@ _M.auth_token = 'JWT_AUTH_TOKEN'
 _M.s2s_timeout = 1000
 _M.send_page_requested_activity = false
 _M.blocking_score = 90
+_M.block_enabled = false
 _M.px_debug = false
 _M.px_maxbuflen = 500
 _M.nginx_collector_path = '/api/v1/collector/nginxcollect'
