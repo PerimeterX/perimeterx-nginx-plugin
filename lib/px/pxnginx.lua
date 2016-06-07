@@ -20,6 +20,20 @@ if not px_config.px_enabled then
     return true;
 end
 
+local enabled_routes = px_config.enabled_routes
+local valid_route = false
+-- Enable module only on configured routes
+for i = 1, #enabled_routes do
+    if string.sub(ngx.var.uri, 1, string.len(enabled_routes[i])) == enabled_routes[i] then
+        px_logger.debug("Whitelisted: uri_prefixes. " .. enabled_routes[i])
+        valid_route = true
+    end
+end
+
+if not valid_route then
+    return true;
+end
+
 -- skip internal redirect processing
 local px_process = ngx.req.get_headers()['px_process']
 if px_process and px_process == px_config.cookie_secret then

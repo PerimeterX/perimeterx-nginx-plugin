@@ -46,7 +46,7 @@ _M.Whitelist['ua_full'] = {}
 _M.Whitelist['ua_sub'] = {}
 
 function _M.process()
-    local req_method = ngx.var.request_method
+
 
     -- Check for whitelisted request
     -- White By Substring in User Agent
