@@ -10,7 +10,7 @@ _M.px_enabled = true
 
 -- ##  Configuration Block ##
 _M.px_appId = 'APP_ID'
-_M.px_server = 'collector.a.pxi.pub'
+_M.px_server = 'sapi.perimeterx.com'
 _M.px_port = 443
 _M.ssl_enabled = true
 _M.cookie_lifetime = 3600 -- cookie lifetime, value in seconds
