@@ -48,7 +48,7 @@ function _M.submit(data, path)
         error("Failed to make HTTP POST: " .. err)
     elseif res.status ~= 200 then
         px_logger.error("Non 200 response code: " .. res.status)
-        error("Non 200 response code: " .. err)
+        error("Non 200 response code: " .. res.status)
     else
         px_logger.debug("POST response status: " .. res.status)
     end

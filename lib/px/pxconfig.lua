@@ -25,7 +25,7 @@ _M.block_enabled = false
 _M.score_header_name = 'X-PX-SCORE'
 _M.px_debug = false
 _M.px_maxbuflen = 500
-_M.nginx_collector_path = '/api/v1/collector/nginxcollect'
+_M.nginx_collector_path = '/api/v1/collector/s2s'
 _M.risk_api_path = '/api/v1/risk'
 _M.enabled_routes = {}
 -- -- ## END - Configuration block ##

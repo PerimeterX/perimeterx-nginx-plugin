@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 docker rm -f nginx
 mv lib/px/pxconfig.lua lib/px/pxconfig.lua.tmp
 mv lib/px/utils/pxfilters.lua lib/px/utils/pxfilterx.lua.tmp
