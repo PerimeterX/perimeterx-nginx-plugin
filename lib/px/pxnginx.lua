@@ -32,7 +32,7 @@ for i = 1, #enabled_routes do
     end
 end
 
-if not valid_route then
+if not valid_route and #enabled_routes > 0 then
     ngx.req.set_header(px_config.score_header_name, 0)
     return true;
 end
