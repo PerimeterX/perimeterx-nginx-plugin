@@ -55,9 +55,13 @@ _M.auth_token = 'JWT_AUTH_TOKEN'
 ```
 
 px_token should be set to a randomly generated string
+
 px_appID should be set to your application ID issued by PerimeterX
+
 cookie_encrypted = true or false based on how you configured the risk cookie in the portal
+
 cookie_secret = the cookie secret for your application from the portal
+
 auth_token = application specific auth token to enable using the risk api for clients who are missing the cookie
 
 ### Whitelist 

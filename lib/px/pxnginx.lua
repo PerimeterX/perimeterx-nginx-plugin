@@ -14,19 +14,22 @@ local px_logger = require "px.utils.pxlogger"
 local auth_token = px_config.auth_token
 local enable_server_calls = px_config.enable_server_calls
 local risk_api_path = px_config.risk_api_path
+local enabled_routes = px_config.enabled_routes
 local remote_addr = ngx.var.remote_addr  or ""
 local user_agent = ngx.var.http_user_agent or ""
+local string_sub = string.sub
+local string_len = string.len
 local pcall = pcall
 
 if not px_config.px_enabled then
     return true;
 end
 
-local enabled_routes = px_config.enabled_routes
 local valid_route = false
+
 -- Enable module only on configured routes
 for i = 1, #enabled_routes do
-    if string.sub(ngx.var.uri, 1, string.len(enabled_routes[i])) == enabled_routes[i] then
+    if string_sub(ngx.var.uri, 1, string_len(enabled_routes[i])) == enabled_routes[i] then
         px_logger.debug("Whitelisted: uri_prefixes. " .. enabled_routes[i])
         valid_route = true
     end
@@ -61,7 +64,7 @@ if success then
     -- score crossed threshold
     if result == false then
         return px_block.block('cookie_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
-        -- score did not cross the blocking threshold
+            -- score did not cross the blocking threshold
     else
         px_client.send_to_perimeterx("page_requested")
         return true
@@ -76,13 +79,13 @@ elseif enable_server_calls == true then
         -- score crossed threshold
         if result == false then
             return px_block.block('s2s_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
-            -- score did not cross the blocking threshold
+                -- score did not cross the blocking threshold
         else
             px_client.send_to_perimeterx("page_requested")
             return true
         end
     else
-        -- server2server call failed, passing taffic
+        -- server2server call failed, passing traffic
         px_client.send_to_perimeterx("page_requested")
         return true
     end

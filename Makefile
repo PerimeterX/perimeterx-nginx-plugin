@@ -11,7 +11,7 @@ docker:
 	@docker build -t perimeterx/pxnginx .
 
 package:
-	@tar zcf pxNginxPlugin.tgz Dockerfile Makefile README.md nginx* lib/ vendor/ www/
+	tar zvcf pxNginxPlugin.tgz Dockerfile Makefile README.md nginx* lib/ vendor/ www/
 
 install: all
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px
