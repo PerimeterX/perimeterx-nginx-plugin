@@ -32,6 +32,8 @@ RUN curl -sSL https://github.com/openresty/lua-nginx-module/archive/v${VER_LUA_N
 RUN curl -sSL https://ftp.gnu.org/gnu/nettle/nettle-3.2.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/pintsized/lua-resty-http/archive/v0.08.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/bungle/lua-resty-nettle/archive/v0.95.tar.gz | tar -C /usr/local --strip-components 1 -xzf - && mkdir -p /usr/local/lib/lua/resty && mv /usr/local/lib/resty/* /usr/local/lib/lua/resty
+# Install CPAN dependencies for unit tests
+RUN echo yes | cpan Test::Nginx CryptX
 # ***** BUILD FROM SOURCE *****
 # LuaJIT
 WORKDIR /LuaJIT-${VER_LUAJIT}
@@ -52,6 +54,7 @@ RUN ./configure && make && make install
 RUN mkdir -p /tmp/px
 COPY Makefile /tmp/px/
 COPY lib /tmp/px/lib
+COPY t   /tmp/t
 RUN make -C /tmp/px install
 # ***** MISC *****
 WORKDIR ${WEB_DIR}
