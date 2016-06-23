@@ -1,7 +1,7 @@
  package = "perimeterx-nginx-plugin"
  version = "1.0-0"
  source = {
-    url = "git@github.com:PerimeterX/perimeterx-nginx-plugin.git",
+    url = "git://github.com/PerimeterX/perimeterx-nginx-plugin.git",
     tag = "v1.0",
  }
  description = {
@@ -15,13 +15,11 @@
     license = "MIT/PerimeterX"
  }
  dependencies = {
-    "lua >= 5.1",
-    "luaknife",
     "lua-cjson",
     "lua-resty-http",
-    "lua-resty-nettle >= 3.1.1"
-
+    "lua-resty-nettle"
  }
+
  build = {
     type = "make"
  }
