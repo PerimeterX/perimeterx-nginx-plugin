@@ -82,7 +82,7 @@ px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. user_a
 local _px = ngx.var.cookie__px;
 local _pxCaptcha = ngx.var.cookie__pxCaptcha;
 
-if px_config.captcha_enabled then
+if px_config.captcha_enabled and _pxCaptcha then
     local success, result = pcall(px_captcha.process, _pxCaptcha)
 
     -- validating captcha value and if reset went well, pass traffic
