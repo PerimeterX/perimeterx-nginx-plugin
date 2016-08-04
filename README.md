@@ -126,7 +126,7 @@ By enabling captcha support, a captcha will be served as part of the block page 
 **default: true**
 
 ```
-_M.block_enabled = false
+_M.captcha_enabled = false
 ```
 
 
