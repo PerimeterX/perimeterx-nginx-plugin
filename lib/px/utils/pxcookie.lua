@@ -110,16 +110,32 @@ local function validate(data)
         request_data = request_data .. data.v
     end
 
-    request_data = request_data .. ngx.var.remote_addr .. ngx.var.http_user_agent
-    local digest = hmac("sha256", cookie_secret, request_data)
-    digest = to_hex(digest)
-
-    if digest ~= string_upper(data.h) then
-        px_logger.error('Failed to verify cookie content ' .. cjson.encode(data));
-        return false
+    if data.a then
+        request_data = request_data .. data.a
     end
 
-    return true
+    local request_data_ip = request_data .. ngx.var.remote_addr .. ngx.var.http_user_agent
+    local digest_ip = hmac("sha256", cookie_secret, request_data)
+    digest_ip = to_hex(digest_ip)
+
+    -- policy with ip
+    if digest_ip == string_upper(data.h) then
+        px_logger.debug('cookie verification succeed with IP in signature')
+        return true
+    end
+
+    local request_data_noip = request_data .. ngx.var.http_user_agent
+    local digest_noip = hmac("sha256", cookie_secret, request_data_noip)
+    digest_noip = to_hex(digest_noip)
+
+    -- policy with no ip
+    if digest_noip == string_upper(data.h) then
+        px_logger.debug('cookie verification succeed with no IP in signature')
+        return true
+    end
+
+    px_logger.error('Failed to verify cookie content ' .. cjson.encode(data));
+    return false
 end
 
 -- process --

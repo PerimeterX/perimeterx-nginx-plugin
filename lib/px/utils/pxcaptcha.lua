@@ -58,7 +58,7 @@ end
 
 function _M.process(captcha)
     if not captcha then
-        px_logger.error('CAPTCHA object is nil');
+        px_logger.debug('CAPTCHA object is nil');
         return -1;
     end
     px_logger.debug('Processing new CAPTCHA object');

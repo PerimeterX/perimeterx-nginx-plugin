@@ -24,7 +24,7 @@ _M.px_debug = false
 
 _M.s2s_timeout = 1000
 _M.px_maxbuflen = 10
-_M.px_server = 'collector.perimeterx.net'
+_M.px_server = 'sapi.perimeterx.net'
 _M.px_port = 443
 _M.ssl_enabled = true
 _M.nginx_collector_path = '/api/v1/collector/s2s'
