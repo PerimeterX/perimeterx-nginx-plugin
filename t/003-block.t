@@ -103,4 +103,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 403 
 
 --- error_log
-PX INFO: Visitor score is higher than allowed threshold: 100
+PX DEBUG: Visitor score is higher than allowed threshold: 100

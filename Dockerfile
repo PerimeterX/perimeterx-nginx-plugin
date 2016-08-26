@@ -68,7 +68,6 @@ RUN rm -rf \
     /lua-resty-http-0.08 \
     /nettle-3.2
 COPY nginx.conf /nginx/conf/nginx.conf
-COPY www /nginx/www
 # forward request and error logs to docker log collector
 RUN mkdir -p /var/log/nginx
 RUN touch /var/log/nginx/access.log
