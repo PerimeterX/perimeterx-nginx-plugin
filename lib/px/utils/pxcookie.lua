@@ -153,14 +153,15 @@ function _M.process(cookie)
         local success, result = pcall(decrypt, cookie, cookie_secret)
         if not success then
             px_logger.error("Could not decrpyt cookie - " .. result)
-            error({ message = "cookie_invalid" })
+            error({ message = "cookie_decryption_failed" })
         end
         data = result
+        ngx.log(ngx.ERR, result);
     else
         local success, result = pcall(ngx_decode_base64, cookie)
         if not success then
             px_logger.error("Could not decode b64 cookie - " .. result)
-            error({ message = "cookie_invalid" })
+            error({ message = "cookie_decryption_failed" })
         end
         data = result
     end
@@ -168,21 +169,23 @@ function _M.process(cookie)
     -- Deserialize the JSON payload
     local success, result = pcall(decode, data)
     if not success then
-        px_logger.error("Could not decode payload - " .. data)
-        error({ message = "cookie_invalid" })
+        px_logger.error("Could not decode cookie")
+        error({ message = "cookie_decryption_failed" })
     end
 
     local fields = result
+    ngx.ctx.px_cookie = data;
     -- cookie expired
     if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
         px_logger.error("Cookie expired - " .. data)
         error({ message = "cookie_expired" })
     end
+
     -- Set the score header for upstream applications
     px_headers.set_score_header(fields.s.b)
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b and fields.s.b >= blocking_score then
-        px_logger.info("Visitor score is higher than allowed threshold: " .. fields.s.b)
+        px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s.b)
         ngx.ctx.block_score = fields.s.b
         if fields.u then
             ngx.ctx.uuid = fields.u
@@ -197,7 +200,7 @@ function _M.process(cookie)
     local success, result = pcall(validate, fields)
     if not success or result == false then
         px_logger.error("Could not validate cookie signature - " .. data)
-        error({ message = "invalid_cookie" })
+        error({ message = "cookie_validation_failed" })
     end
 
     return true
