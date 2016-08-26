@@ -38,9 +38,7 @@ function _M.new_request_object(call_reason)
     end
 
     risk.additional.http_version = ngx.req.http_version()
-    if px_config.module_version then
-        risk.additional.module_version = px_config.module_version
-    end
+    risk.additional.module_version = 'NGINX Module v1.1'
 
     return risk
 end
