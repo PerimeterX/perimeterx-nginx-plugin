@@ -81,6 +81,7 @@ px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. user_a
 -- process _px cookie if present
 local _px = ngx.var.cookie__px;
 local _pxCaptcha = ngx.var.cookie__pxCaptcha;
+ngx.ctx.px_module_version = 'NGINX Module v1.1.1';
 
 if px_config.captcha_enabled and _pxCaptcha then
     local success, result = pcall(px_captcha.process, _pxCaptcha)
@@ -96,7 +97,7 @@ local success, result = pcall(px_cookie.process, _px)
 if success then
     -- score crossed threshold
     if result == false then
-        return px_block.block('cookie_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
+        return px_block.block('cookie_high_score')
             -- score did not cross the blocking threshold
     else
         px_client.send_to_perimeterx("page_requested")
@@ -112,7 +113,7 @@ elseif enable_server_calls == true then
         -- score crossed threshold
         if result == false then
             px_logger.error("blocking s2s")
-            return px_block.block('s2s_high_score', ngx.ctx.uuid, ngx.ctx.block_score)
+            return px_block.block('s2s_high_score')
             -- score did not cross the blocking threshold
         else
             px_client.send_to_perimeterx("page_requested")

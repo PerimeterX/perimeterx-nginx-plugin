@@ -4,22 +4,26 @@ local px_client = require "px.utils.pxclient"
 local px_config = require "px.pxconfig"
 local _M = {}
 
-function _M.block(reason, uuid, score)
+function _M.block(reason)
     local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
     local details = {}
     local ref_str = ''
     local vid = ''
+    local uuid = ''
+    local score = 0
     details.block_module = 'nginx'
     if reason then
         details.block_reason = reason
     end
 
-    if uuid then
+    if ngx.ctx.uuid then
+        uuid = ngx.ctx.uuid
         details.block_uuid = uuid
         ref_str = '<span style="font-size: 20px;">Block Reference: <span style="color: #525151;">#' .. uuid .. '</span></span>';
     end
 
-    if score then
+    if ngx.ctx.block_score then
+        score = ngx.ctx.block_score
         details.block_score = score
     end
 
