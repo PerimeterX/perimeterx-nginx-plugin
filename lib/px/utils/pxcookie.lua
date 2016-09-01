@@ -115,7 +115,7 @@ local function validate(data)
     end
 
     local request_data_ip = request_data .. ngx.var.remote_addr .. ngx.var.http_user_agent
-    local digest_ip = hmac("sha256", cookie_secret, request_data)
+    local digest_ip = hmac("sha256", cookie_secret, request_data_ip)
     digest_ip = to_hex(digest_ip)
 
     -- policy with ip
