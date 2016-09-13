@@ -38,7 +38,9 @@ function _M.new_request_object(call_reason)
     end
 
     risk.additional.http_version = ngx.req.http_version()
-    risk.additional.module_version = 'NGINX Module v1.1'
+    risk.additional.http_method = ngx.req.get_method()
+
+    risk.additional.module_version = 'NGINX Module v1.1.2'
 
     return risk
 end
