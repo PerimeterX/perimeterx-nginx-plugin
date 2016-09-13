@@ -12,6 +12,7 @@ local string_gmatch = string.gmatch
 local auth_token = px_config.auth_token
 local captcha_api_path = px_config.captcha_api_path
 local pcall = pcall
+local ngx_req_get_headers = ngx.req.get_headers
 
 local _M = {}
 
@@ -40,7 +41,7 @@ local function new_captcha_request_object(captcha, vid)
     captcha_reset.request.ip = ngx.var.remote_addr
     captcha_reset.request.uri = ngx.var.uri
     captcha_reset.request.headers = {}
-    local h = ngx.req.get_headers()
+    local h = ngx_req_get_headers()
     for k, v in pairs(h) do
         captcha_reset.request.headers[#captcha_reset.request.headers + 1] = { ['name'] = k, ['value'] = v }
     end
