@@ -156,7 +156,6 @@ function _M.process(cookie)
             error({ message = "cookie_decryption_failed" })
         end
         data = result
-        ngx.log(ngx.ERR, result);
     else
         local success, result = pcall(ngx_decode_base64, cookie)
         if not success then
