@@ -103,7 +103,7 @@ Configuration options are set on `/usr/local/lib/lua/px/pxconfig.lua`:
 - cookie_secret
 - auth_token
 
-##### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
+#### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
 **default:** 70
 
