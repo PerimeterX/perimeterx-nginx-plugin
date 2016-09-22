@@ -12,7 +12,7 @@ Table of Contents
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
-  *   [Custom Block Action](#custom-block)
+  *   [Monitoring mode](#monitoring-mode)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Enabled Routes](#enabled-routes)
   *   [API Timeout Milliseconds](#api-timeout)
@@ -58,13 +58,13 @@ events {
 
 http {
     lua_package_path "/usr/local/lib/lua/?.lua;;";
-    
+
     # -- initializing the perimeterx module -- #
     init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
-    
+
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
     lua_ssl_verify_depth 3;
-    
+
     resolver 8.8.8.8;
 
     server {
@@ -111,7 +111,7 @@ Configuration options are set on `/usr/local/lib/lua/px/pxconfig.lua`:
 _M.blocking_score = 60
 ```
 
-#### <a name="custom-block"></a> Monitoring Mode
+#### <a name="monitoring-mode"></a> Monitoring Mode
 By default the PerimeterX module will block users crossing the block score threshold you define, meaning, if a user crosses the minimum block score he will get to the block page. The PerimeterX plugin can be activated in monitor mode.
 
 ```
@@ -199,7 +199,7 @@ Add the directive `resolver A.B.C.D;` to your NGINX configuration file in the ht
 Update your lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
 
 ```
-lua_package_path "/usr/local/lib/lua/?.lua;;"; 
+lua_package_path "/usr/local/lib/lua/?.lua;;";
 ```
 
 ### Lua CA Certificates
