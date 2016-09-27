@@ -34,6 +34,37 @@ Table of Contents
 - [GNU Nettle >= v3.2](https://www.lysator.liu.se/~nisse/nettle/)
 
 
+<a name="requirements"></a> Requirements
+-----------------------------------------------
+
+
+### Resolver
+Add the directive `resolver A.B.C.D;` to your NGINX configuration file in the http section. This is required so NGINX can resolve the PerimeterX API DNS name.
+
+### Lua Package Path
+Update your lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
+
+```
+lua_package_path "/usr/local/lib/lua/?.lua;;";
+```
+
+### Lua CA Certificates
+To support TLS to the collector you must point Lua to the trusted certificate location (actual location may differ between Linux distributions)
+
+```
+lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
+lua_ssl_verify_depth 3;
+```
+
+In CentOS/RHEL systems the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`
+
+### Lua Timer Initialization
+Add the init by lua script.
+
+```
+init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+```
+
 <a name="installation"></a> Installation
 ----------------------------------------
 
@@ -185,38 +216,6 @@ There are three types of filters that can be configured.
 * Full URI
 * URI prefix
 * IP addresses
-
-
-<a name="requirements"></a> Requirements
------------------------------------------------
-
-
-### Resolver
-Add the directive `resolver A.B.C.D;` to your NGINX configuration file in the http section. This is required so NGINX can resolve the PerimeterX API DNS name.
-
-### Lua Package Path
-Update your lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
-
-```
-lua_package_path "/usr/local/lib/lua/?.lua;;";
-```
-
-### Lua CA Certificates
-To support TLS to the collector you must point Lua to the trusted certificate location (actual location may differ between Linux distributions)
-
-```
-lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
-lua_ssl_verify_depth 3;
-```
-
-In CentOS/RHEL systems the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`
-
-### Lua Timer Initialization
-Add the init by lua script.
-
-```
-init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
-```
 
 <a name="nginxplus"></a> NGINX Plus
 -----------------------------------------------
