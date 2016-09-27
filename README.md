@@ -19,9 +19,8 @@ Table of Contents
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
 -   [Whitelisting](#whitelisting)
--   [Common Requirements](#commonr)
+-   [Requirements](#requirements)
 -   [Contributing](#contributing)
-  *   [Tests](#tests)
 
 <a name="Usage"></a>
 
@@ -177,7 +176,7 @@ Enables debug logging
 _M.px_debug = true
 ```
 
-<a name="whitelist"></a> Whitelisting
+<a name="whitelisting"></a> Whitelisting
 -----------------------------------------------
 Whitelisting (bypassing enforcement) is configured in the file `/usr/local/lib/lua/px/utils/pxfilter.lua`
 
