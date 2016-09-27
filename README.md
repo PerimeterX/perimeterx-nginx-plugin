@@ -8,6 +8,7 @@ Table of Contents
 
 -   [Usage](#usage)
   *   [Dependencies](#dependencies)
+  *   [Requirements](#requirements)
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
@@ -19,7 +20,6 @@ Table of Contents
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
 -   [Whitelisting](#whitelisting)
--   [Requirements](#requirements)
 -   [Contributing](#contributing)
 
 <a name="Usage"></a>
