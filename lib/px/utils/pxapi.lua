@@ -9,6 +9,7 @@ local cjson = require "cjson"
 local px_config = require "px.pxconfig"
 local px_logger = require "px.utils.pxlogger"
 local px_headers = require "px.utils.pxheaders"
+local px_constants = require "px.utils.pxconstants"
 local px_debug = px_config.px_debug
 local ngx_req_get_method = ngx.req.get_method
 local ngx_req_get_headers = ngx.req.get_headers
@@ -44,7 +45,7 @@ function _M.new_request_object(call_reason)
 
     risk.additional.http_version = ngx_req_http_version()
     risk.additional.http_method = ngx_req_get_method()
-    risk.additional.module_version = 'NGINX Module v1.1.2'
+    risk.additional.module_version = px_constants.MODULE_VERSION
 
     return risk
 end
