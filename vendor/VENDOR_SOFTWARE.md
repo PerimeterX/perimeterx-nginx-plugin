@@ -10,6 +10,16 @@ GNU Nettle is distributed under the the [GNU Public License Version 3](http://ww
 
 ### Installation Notes
 
+Note - To compile install m4. 
+
+```
+apt-get install m4
+./configure
+make
+make install
+```
+
+
 On 64 bit RHEL based Linux distributions add a sym link to ensure libnettle.so is in the Lua search path
 
 ```
