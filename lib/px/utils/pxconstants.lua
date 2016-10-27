@@ -1,6 +1,6 @@
 ----------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.2
+-- Version 1.1.3
 -- Release date: 05.04.2016
 ----------------------------------------------
 
@@ -15,7 +15,7 @@ local function readonlytable(table)
 end
 
 local _M = readonlytable {
-    MODULE_VERSION = "NGINX Module v1.1.2"
+    MODULE_VERSION = "NGINX Module v1.1.3"
 }
 
 return _M
