@@ -56,8 +56,12 @@ end
 function _M.process(data)
     px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.scores))
     px_headers.set_score_header(data.scores.non_human)
-    if data.scores.non_human >= px_config.blocking_score then
+
+    if data.uuid then
         ngx.ctx.uuid = data.uuid
+    end
+
+    if data.scores.non_human >= px_config.blocking_score then
         ngx.ctx.block_score = data.scores.non_human
         px_logger.error("Block reason - non human score: " .. data.scores.non_human)
         return false
