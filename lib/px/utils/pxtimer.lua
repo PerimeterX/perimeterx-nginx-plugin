@@ -1,6 +1,6 @@
 ----------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.5.0
+-- Version 1.1.3
 -- Release date: 05.04.2016
 ----------------------------------------------
 

@@ -1,6 +1,6 @@
 ---------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.0
+-- Version 1.1.3
 -- Release date: 21.02.2015
 ----------------------------------------------
 
@@ -9,6 +9,7 @@ local cjson = require "cjson"
 local px_config = require "px.pxconfig"
 local px_logger = require "px.utils.pxlogger"
 local px_headers = require "px.utils.pxheaders"
+local px_constants = require "px.utils.pxconstants"
 local px_debug = px_config.px_debug
 local ngx_req_get_method = ngx.req.get_method
 local ngx_req_get_headers = ngx.req.get_headers
@@ -44,7 +45,7 @@ function _M.new_request_object(call_reason)
 
     risk.additional.http_version = ngx_req_http_version()
     risk.additional.http_method = ngx_req_get_method()
-    risk.additional.module_version = 'NGINX Module v1.1.2'
+    risk.additional.module_version = px_constants.MODULE_VERSION
 
     return risk
 end
@@ -55,8 +56,12 @@ end
 function _M.process(data)
     px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.scores))
     px_headers.set_score_header(data.scores.non_human)
-    if data.scores.non_human >= px_config.blocking_score then
+
+    if data.uuid then
         ngx.ctx.uuid = data.uuid
+    end
+
+    if data.scores.non_human >= px_config.blocking_score then
         ngx.ctx.block_score = data.scores.non_human
         px_logger.error("Block reason - non human score: " .. data.scores.non_human)
         return false

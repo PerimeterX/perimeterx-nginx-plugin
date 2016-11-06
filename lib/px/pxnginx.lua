@@ -43,7 +43,7 @@ local string_len = string.len
 local pcall = pcall
 
 if not px_config.px_enabled then
-    return true;
+    return true
 end
 
 local valid_route = false
@@ -58,12 +58,12 @@ end
 
 if not valid_route and #enabled_routes > 0 then
     px_headers.set_score_header(0)
-    return true;
+    return true
 end
 
 -- Validate if request is from internal redirect to avoid duplicate processing
 if px_headers.validate_internal_request() then
-    return true;
+    return true
 end
 
 -- Clean any protected headers from the request.
@@ -74,21 +74,21 @@ px_headers.clear_protected_headers()
 -- run filter and whitelisting logic
 if (px_filters.process()) then
     px_headers.set_score_header(0)
-    return true;
+    return true
 end
 
 px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. user_agent)
 -- process _px cookie if present
-local _px = ngx.var.cookie__px;
-local _pxCaptcha = ngx.var.cookie__pxCaptcha;
-ngx.ctx.px_module_version = 'NGINX Module v1.1.1';
+local _px = ngx.var.cookie__px
+local _pxCaptcha = ngx.var.cookie__pxCaptcha
 
 if px_config.captcha_enabled and _pxCaptcha then
     local success, result = pcall(px_captcha.process, _pxCaptcha)
 
-    -- validating captcha value and if reset went well, pass traffic
+    -- validating captcha value and if reset was successful then pass the request
     if success and result == 0 then
-        return true;
+		ngx.header['Set-Cookie'] = '_pxCaptcha=; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
+        return true
     end
 end
 
@@ -109,12 +109,12 @@ elseif enable_server_calls == true then
     local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
     local result
     if success then
-        result = px_api.process(response);
+        result = px_api.process(response)
         -- score crossed threshold
         if result == false then
             px_logger.error("blocking s2s")
             return px_block.block('s2s_high_score')
-            -- score did not cross the blocking threshold
+                -- score did not cross the blocking threshold
         else
             px_client.send_to_perimeterx("page_requested")
             return true
