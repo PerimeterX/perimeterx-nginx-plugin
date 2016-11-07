@@ -1,3 +1,9 @@
+---------------------------------------------
+-- PerimeterX(www.perimeterx.com) Nginx plugin
+-- Version 1.1.4
+-- Release date: 07.11.2016
+----------------------------------------------
+
 local _M = {}
 
 -- localized functions
@@ -174,6 +180,13 @@ function _M.process(cookie)
 
     local fields = result
     ngx.ctx.px_cookie = data;
+    if fields.u then
+        ngx.ctx.uuid = fields.u
+    end
+    if fields.v then
+        ngx.ctx.vid = fields.v
+    end
+
     -- cookie expired
     if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
         px_logger.error("Cookie expired - " .. data)
@@ -186,12 +199,6 @@ function _M.process(cookie)
     if fields.s and fields.s.b and fields.s.b >= blocking_score then
         px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s.b)
         ngx.ctx.block_score = fields.s.b
-        if fields.u then
-            ngx.ctx.uuid = fields.u
-        end
-        if fields.v then
-            ngx.ctx.vid = fields.v
-        end
         return false
     end
 

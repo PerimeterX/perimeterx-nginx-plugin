@@ -1,7 +1,14 @@
+---------------------------------------------
+-- PerimeterX(www.perimeterx.com) Nginx plugin
+-- Version 1.1.4
+-- Release date: 07.11.2016
+----------------------------------------------
+
 local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
 local ngx_say = ngx.say
 local px_client = require "px.utils.pxclient"
 local px_config = require "px.pxconfig"
+local px_constants = require "px.utils.pxconstants"
 local ngx_exit = ngx.exit
 local _M = {}
 
@@ -11,7 +18,8 @@ function _M.block(reason)
     local vid = ''
     local uuid = ''
     local score = 0
-    details.block_module = 'nginx'
+
+    details.module_version = px_constants.MODULE_VERSION
     if reason then
         details.block_reason = reason
     end
@@ -32,7 +40,6 @@ function _M.block(reason)
     end
 
     px_client.send_to_perimeterx('block', details);
-
     if px_config.block_enabled then
         ngx.status = ngx_HTTP_FORBIDDEN;
         ngx.header["Content-Type"] = 'text/html';
