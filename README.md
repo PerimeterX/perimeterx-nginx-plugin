@@ -21,6 +21,7 @@ Table of Contents
   *   [Debug Mode](#debug-mode)
 -   [Whitelisting](#whitelisting)
 -   [Contributing](#contributing)
+  *   [Tests](#tests)
 
 <a name="Usage"></a>
 
@@ -240,7 +241,7 @@ To run the code, simply follow the steps in the [installation guide](#installati
 
 Feel free to check out the [Example App](https://nginx-sample-app.perimeterx.com), to have a feel of the project.
 
-###Test
+###<a name="tests"></a>Test
 > Tests for this project are written using the `Test::Nginx` testing framework.
 
 **Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
