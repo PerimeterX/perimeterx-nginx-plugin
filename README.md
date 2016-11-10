@@ -79,6 +79,12 @@ Or by downoading the sources for this repository and run `sudo make install`
 
 ### <a name="basic-usage"></a> Basic Usage Example
 
+To apply the PerimeterX enforcement add the following line in your location block.
+
+`access_by_lua_file /usr/local/lib/lua/px/pxnginx.lua;`
+
+Below is a complete example of nginx.conf containing the required directives and with enforcement applied to the location block /.
+
 #### nginx.conf
 ```
 worker_processes  1;
@@ -112,30 +118,24 @@ http {
     }
 }
 ```
-> Note: IP extraction, according to your network setup, is very important. It is common to have a load balancer/proxy on top of your applications, in which case the PerimeterX module will send the system's internal IP as the user's. In order to properly perform processing and detection on server-to-server calls, PerimeterX module needs the real user's IP.
 
-for the NGINX module to work with the real user's IP you need to set the `set_real_ip_from` NGINX directive in your nginx.conf, this will make sure the socket IP used in the nginx is not coming from one of the network levels below it.
+### Extracting the real IP address from a request
+
+> Note: IP extraction, according to your network setup, is very important. It is common to have a load balancer/proxy on top of your applications, in which case the PerimeterX module will send the system's internal IP as the user's. In order to properly perform processing and detection on server-to-server calls, the PerimeterX module requires the user's real IP address.
+
+For the NGINX module to work with the real user's IP you need to set the `set_real_ip_from` NGINX directive in your nginx.conf, this will make sure the socket IP used in nginx is not coming from one of the network levels below it.
 
 example:
 ```
   set_real_ip_from 172.0.0.0/8;
   set_real_ip_from 107.178.0.0/16;	
-```
-
-And modifying required configurations on `/usr/local/lib/lua/px/pxconfig.lua`:
-
-```
-_M.px_appId = 'APP_ID'
-_M.cookie_secret = 'COOKIE_SECRET'
-_M.auth_token = 'JWT_AUTH_TOKEN'
-
-```
+ ```
 
 ### <a name="configuration"></a> Configuration Options
 
 #### Configuring Required Parameters
 
-Configuration options are set on `/usr/local/lib/lua/px/pxconfig.lua`:
+Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`:
 
 #### Required parameters:
 
