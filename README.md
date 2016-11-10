@@ -242,7 +242,7 @@ To run the code, simply follow the steps in the [installation guide](#installati
 Feel free to check out the [Example App](https://nginx-sample-app.perimeterx.com), to have a feel of the project.
 
 ###<a name="tests"></a>Test
-> Tests for this project are written using the `Test::Nginx` testing framework.
+> Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
 
 **Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
 Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
