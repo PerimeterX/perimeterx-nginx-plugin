@@ -5,10 +5,13 @@
 ----------------------------------------------
 
 local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
+local nginx_HTTP_TEMPORARY_REDIRECT = ngx.HTTP_TEMPORARY_REDIRECT
+local ngx_redirect = ngx.redirect
 local ngx_say = ngx.say
 local px_client = require "px.utils.pxclient"
 local px_config = require "px.pxconfig"
 local px_constants = require "px.utils.pxconstants"
+local px_logger = require "px.utils.pxlogger"
 local ngx_exit = ngx.exit
 local _M = {}
 
@@ -40,7 +43,14 @@ function _M.block(reason)
     end
 
     px_client.send_to_perimeterx('block', details);
+
     if px_config.block_enabled then
+        px_logger.debug('we are going to block')
+        if px_config.custom_block_url then
+            px_logger.debug('we are going to custom block this')
+            ngx_redirect(px_config.custom_block_url, nginx_HTTP_TEMPORARY_REDIRECT)
+        end
+        px_logger.debug('we made it through something is not ok')
         ngx.status = ngx_HTTP_FORBIDDEN;
         ngx.header["Content-Type"] = 'text/html';
         if px_config.captcha_enabled then
