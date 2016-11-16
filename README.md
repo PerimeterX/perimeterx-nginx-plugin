@@ -13,16 +13,15 @@ Table of Contents
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
-  *   [Custom Block Page](#custom-block)
   *   [Monitoring mode](#monitoring-mode)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Enabled Routes](#enabled-routes)
   *   [API Timeout Milliseconds](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
+  *   [Custom Block Page](#customblockpage)
 -   [Whitelisting](#whitelisting)
 -   [Contributing](#contributing)
-  *   [Tests](#tests)
 
 <a name="Usage"></a>
 
@@ -80,12 +79,6 @@ Or by downoading the sources for this repository and run `sudo make install`
 
 ### <a name="basic-usage"></a> Basic Usage Example
 
-To apply the PerimeterX enforcement add the following line in your location block.
-
-`access_by_lua_file /usr/local/lib/lua/px/pxnginx.lua;`
-
-Below is a complete example of nginx.conf containing the required directives and with enforcement applied to the location block /.
-
 #### nginx.conf
 ```
 worker_processes  1;
@@ -120,23 +113,30 @@ http {
 }
 ```
 
-### Extracting the real IP address from a request
+> Note: IP extraction according to your network setup is important. It is common to have a load balancer/proxy on top of your applications, in this case the PerimeterX module will send an internal IP as the user's. In order to perform processing and detection for server-to-server calls, PerimeterX module need the real user ip.
 
-> Note: IP extraction, according to your network setup, is very important. It is common to have a load balancer/proxy on top of your applications, in which case the PerimeterX module will send the system's internal IP as the user's. In order to properly perform processing and detection on server-to-server calls, the PerimeterX module requires the user's real IP address.
-
-For the NGINX module to work with the real user's IP you need to set the `set_real_ip_from` NGINX directive in your nginx.conf, this will make sure the socket IP used in nginx is not coming from one of the network levels below it.
+for the NGINX module to work with the real user IP you need to set the `set_real_ip_from` NGINX directive in your nginx.conf, this will make sure the socket IP used in the nginx is not coming from one of the networks below.
 
 example:
 ```
   set_real_ip_from 172.0.0.0/8;
   set_real_ip_from 107.178.0.0/16;	
- ```
+```
+
+And modifying required configurations on `/usr/local/lib/lua/px/pxconfig.lua`:
+
+```
+_M.px_appId = 'APP_ID'
+_M.cookie_secret = 'COOKIE_SECRET'
+_M.auth_token = 'JWT_AUTH_TOKEN'
+
+```
 
 ### <a name="configuration"></a> Configuration Options
 
 #### Configuring Required Parameters
 
-Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`:
+Configuration options are set on `/usr/local/lib/lua/px/pxconfig.lua`:
 
 #### Required parameters:
 
@@ -146,65 +146,26 @@ Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`:
 
 #### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
-**Default blocking value:** 70
+**default:** 70
 
 ```
 _M.blocking_score = 60
 ```
 
-#### <a name="custom-block"></a> Serve a Custom Block/reCAPTCHA Page
-The Perimeterx allows serving the client a customized block page, when a user crosses the defined blocking thershold, and the Enforcer is set to Blocking Mode (default behaviour).
->Note: Perimeterx will serve the user with our default blocking screen when no custom page is defined.
-
-######Customizing the Block Page
-Open the file `pxblock.lua` located at `/lib/px/block/`.
-Create a copy of the file for backup purposes. `pxblock.lua.orig`.
-In this file (line 51), under `ngx_say`, there is an inline html containing PerimeterX's default blocking page.
-At the end of that html, you will find the ref_str variable.
-
-You may change the html as you wish, keeping the `<br> <br>
-</br>' .. ref_str .. '​</div></body></html>')` in place.
-
-[Custom Blocking Page Example](http://github.somewhere)
-
-######Customizing the reCAPTCHA Page
-Open the file `pxblock.lua` located at `/lib/px/block/`.
-Create a copy of the file for backup purposes. `pxblock.lua.orig`.
-In this file,there are 2 variables storing HTML - `head` and `body`. Both of these variables are changable, but must not alter the contents of the part quoted below:
-
-For `head` :
-
-```javascript
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script> window.px_vid = "' .. vid .. '"; function handleCaptcha(response) { var 
-name = "_pxCaptcha"; var expiryUtc = new Date( Date.now() + 1000 * 10 ).toUTCString(); 
-var cookieParts = [name, "=", response + ":" + window.px_vid, "; expires=", expiryUtc, ";
-path=/"]; document.cookie = cookieParts.join(""); location.reload(); } </script>
-```
-For `body` :
-
-```
-<div class="g­recaptcha" data­sitekey="6Lcj­R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" 
-data­callback="handleCaptcha" data­theme="dark"></div><br> </br> ' .. ref_str .. ' </div>; 
-```
-These code bits are required in order to use our reCAPTCHA, and allow cleaning of user's bad score.
-
-[Custom reCAPTCHA Page Example](http://github.somewhere)
-
 #### <a name="monitoring-mode"></a> Monitoring Mode
-By default the PerimeterX module will block users crossing the block score threshold you define, meaning, if a user crosses the minimum block score he will receive the block page. The PerimeterX plugin can also be activated in monitor only mode.
-Setting the block_enalbed flag to false will prevent the block page from being displayed to the user, but the data will still be available in the PerimeterX Portal.
+By default the PerimeterX module will block users crossing the block score threshold you define, meaning, if a user crosses the minimum block score he will get to the block page. The PerimeterX plugin can be activated in monitor mode.
 
 ```
 _M.block_enabled = false
 ```
-Disabling blocking means users crossing the blocking threshold will not be activly blocked, but you will still be able to consume their score through a custom request header `X-PX-SCORE`.
 
-#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
+This way users crossing the blocking score will not be activly blocked, but you will be able to consume their score from a request header `X-PX-SCORE`.
 
-By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
+#### <a name="captcha-support"></a>Enable/disable captcha in the block page
 
-**Default: true**
+By enabling captcha support, a captcha will be served as part of the block page giving real users the ability to answer, get score clean up and passed to the requested page.
+
+**default: true**
 
 ```
 _M.captcha_enabled = false
@@ -213,9 +174,9 @@ _M.captcha_enabled = false
 
 #### <a name="enabled-routes"></a> Enabled Routes
 
-The enabled routes variable allow you to implicitly define a set of routes which the plugin will be active on. Supplying an empty list will set all application routes as active.
+Enabled routes is a list of routes you can implicitly define where the plugin will be active on. empty list will active plugin on all routes.
 
-**Default: Empty list (all routes)**
+**default: all routes**
 
 ```php
 _M.enabled_routes = {'/blockhere'}
@@ -223,11 +184,12 @@ _M.enabled_routes = {'/blockhere'}
 
 
 #### <a name="api-timeout"></a>API Timeout Milliseconds
-> Note: Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, or is expired or invalid.
 
-API Timeout in milliseconds (float) to wait for the PerimeterX server API response.
+Timeout in milliseconds (float) to wait for the PerimeterX server API response.
+The API is called when the risk cookie does not exist, or is expired or
+invalid.
 
-**Default:** 1000
+**default:** 1000
 
 ```
 _M.s2s_timeout = 250
@@ -235,9 +197,12 @@ _M.s2s_timeout = 250
 
 #### <a name="send-page-activities"></a> Send Page Activities
 
-Boolean flag to enable or disable sending of activities and metrics to PerimeterX on each page request. Enabling this feature will provide data that populates the PerimeterX portal with valuable information such as the amount of requests blocked and additional API usage statistics.
+Boolean flag to enable or disable sending activities and metrics to
+PerimeterX on each page request. Enabling this feature will provide data
+that populates the PerimeterX portal with valuable information such as
+amount requests blocked and API usage statistics.
 
-**Default:** false
+**default:** false
 
 ```php
 _M.send_page_requested_activity = false
@@ -245,13 +210,28 @@ _M.send_page_requested_activity = false
 
 #### <a name="debug-mode"></a> Debug Mode
 
-Enables debug logging mode.
+Enables debug logging
 
-**Default:** false
+**default:** false
 
 ```
 _M.px_debug = true
 ```
+
+#### <a name="customblockpage"></a> Custom Block Page
+
+Block page could be customize.
+Under this configuration you need to specify the URI to an blocking page html file (relative to servers root).
+
+> Note: This URI is whitelisted automatically under `_M.Whitelist['uri_full'] ` to avoid infinite redirects.
+
+
+**default:** nil
+
+```
+_M.custom_block_page = nil
+```
+
 
 <a name="whitelisting"></a> Whitelisting
 -----------------------------------------------
@@ -269,29 +249,4 @@ The PerimeterX NGINX module is compatible with NGINX Plus. Users or administrato
 
 <a name="contributing"></a> Contributing
 ----------------------------------------
-The following steps are welcome when contributing to our project.
-###Fork/Clone
-First and foremost, [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
-Create a branch on your fork, preferably using a self descriptive branch name.
-
-###Code/Run
-Code your way out of your mess, and help improve our project by implementing missing features, adding capabilites or fixing bugs.
-
-To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
-
-Feel free to check out the [Example App](https://nginx-sample-app.perimeterx.com), to have a feel of the project.
-
-###<a name="tests"></a>Test
-> Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
-
-**Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
-Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
-
-To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`
-
-###Pull Request
-After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
-
-###Thanks
-After all, you are helping us by contributing to this project, and we want to thank you for it.
-We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
+All contributions are welcome. Send a pull request for review.
