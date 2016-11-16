@@ -47,7 +47,7 @@ function _M.block(reason)
 
     if px_config.block_enabled then
         if px_config.custom_block_url then
-            -- handling  custon block url:  create redirect url with url, vid, uuid as query params to use with captcha_api
+            -- handling custom block url: create redirect url with original request url, vid and uuid as query params to use with captcha_api
             local req_query_param = ngx.req.get_uri_args()
             local encoded_query_params
             local original_req_url = ngx.var.uri
