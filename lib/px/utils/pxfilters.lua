@@ -20,6 +20,7 @@ _M.Whitelist = {};
 -- filter: example.com/api_server_full?data=data
 -- will not filter: example.com/api_server?data=data
 -- _M.Whitelist['uri_full'] = {'/', '/api_server_full' }
+-- Note: px_config.custom_block_url should not be removed from here if using custom_block_url configuration
 _M.Whitelist['uri_full'] = { px_config.custom_block_url }
 
 -- URI Prefixes filter

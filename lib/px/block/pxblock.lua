@@ -5,7 +5,7 @@
 ----------------------------------------------
 
 local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
-local nginx_HTTP_TEMPORARY_REDIRECT = ngx.HTTP_TEMPORARY_REDIRECT
+local ngx_HTTP_TEMPORARY_REDIRECT = 307
 local ngx_redirect = ngx.redirect
 local ngx_say = ngx.say
 local ngx_encode_args = ngx.encode_args
@@ -50,7 +50,7 @@ function _M.block(reason)
         if px_config.custom_block_url then
             -- handling custom block url: create redirect url with original request url, vid and uuid as query params to use with captcha_api
             local req_query_param = ngx.req.get_uri_args()
-            local encoded_query_params
+            local enc_query_params
             local original_req_url = ngx.var.uri
             if req_query_param then
                 enc_query_params =  ngx_encode_args(req_query_param)
@@ -58,7 +58,7 @@ function _M.block(reason)
             end
             local redirect_url = px_config.custom_block_url .. '?url=' .. original_req_url .. '&uuid=' .. uuid .. '&vid=' .. vid
             px_logger.debug('Redirecting to custom block page: ' .. redirect_url)
-            ngx_redirect(redirect_url, nginx_HTTP_TEMPORARY_REDIRECT)
+            ngx_redirect(redirect_url, ngx_HTTP_TEMPORARY_REDIRECT)
         end
         ngx.status = ngx_HTTP_FORBIDDEN;
         if px_config.captcha_enabled then

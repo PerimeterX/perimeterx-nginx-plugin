@@ -265,7 +265,7 @@ Under this configuration you need to specify the URI to an blocking page html fi
 **default:** nil
 
 ```
-_M.custom_block_page = nil
+_M.custom_block_url = nil
 ```
 
 <a name="whitelisting"></a> Whitelisting
