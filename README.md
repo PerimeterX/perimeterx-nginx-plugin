@@ -262,7 +262,7 @@ Users can customize the blocking page to meet their branding and message require
 **default:** nil
 
 ```
-_M.custom_block_page = nil
+_M.custom_block_url = nil
 ```
 
 > Note: This URI is whitelisted automatically under `_M.Whitelist['uri_full'] ` to avoid infinite redirects.
@@ -272,7 +272,7 @@ _M.custom_block_page = nil
 If a user is blocked when browsing to `http://www.mysite.com/coolpage`, and the server configuration is: 
 
 ```lua
-_M.custom_block_page /block.html
+_M.custom_block_url /block.html
 ```
 
 the redirect URL will be:
@@ -313,7 +313,7 @@ function handleCaptcha(response) {
 #### Configuration example:
  
 ```lua
-_M.custom_block_page /block.html
+_M.custom_block_url /block.html
 ```
 
 
