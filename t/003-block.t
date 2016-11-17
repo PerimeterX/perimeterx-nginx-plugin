@@ -106,7 +106,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 PX DEBUG: Visitor score is higher than allowed threshold: 100
 
 === TEST 2: Custom block page workflow
-Process a valid cookie
+Test the redirect flow
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
