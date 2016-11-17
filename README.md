@@ -256,8 +256,8 @@ _M.px_debug = true
 
 #### <a name="customblockpage"></a> Custom Block Page
 
-Block page could be customize.
-Under this configuration you need to specify the URI to an blocking page html file (relative to servers root).
+Users can customize the blocking page to meet their branding and message requirements. Specify the URL to a blocking page html file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
+
 
 **default:** nil
 
@@ -269,23 +269,23 @@ _M.custom_block_page = nil
 
 ##### Blocked user example: 
 
-If I'm blocked when browsing to `http://www.mysite.com/coolpage`, and the server configuration is: 
+If a user is blocked when browsing to `http://www.mysite.com/coolpage`, and the server configuration is: 
 
 ```lua
 _M.custom_block_page /block.html
 ```
 
-Redirect URL will be:
+the redirect URL will be:
 
 ```
-http://www.mysite.com/block.html&url=coolpage&uuid=uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
+http://www.mysite.com/block.html&url=/coolpage&uuid=uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
 ```
-
-When captcha is enabled, the block page **must** include:
 
 ###### Custom blockpage requirements:
 
-* Inside `<head>` section:
+When captcha is enabled, the block page **must** include:
+
+* Inside the `<head>` section:
 
 ```html
 <script src="https://www.google.com/recaptcha/api.js"></script>
@@ -302,7 +302,7 @@ function handleCaptcha(response) {
 }
 </script>
 ```
-* Inside `<body>` section:
+* Inside the `<body>` section:
 
 ```
 <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div>
@@ -310,7 +310,7 @@ function handleCaptcha(response) {
 
 * [PerimeterX Javascript snippet](https://console.perimeterx.com/#/app/applicationsmgmt).
 
-#### configuration example:
+#### Configuration example:
  
 ```lua
 _M.custom_block_page /block.html
