@@ -27,7 +27,7 @@ function _M.new_request_object(call_reason)
     risk.cid = ''
     risk.request = {}
     risk.request.ip = ngx.var.remote_addr
-    risk.request.uri = ngx.var.uri
+    risk.request.uri = ngx.var.request_uri
     risk.request.headers = {}
     local h = ngx_req_get_headers()
     for k, v in pairs(h) do
