@@ -20,6 +20,7 @@ Table of Contents
   *   [API Timeout Milliseconds](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
+  *   [Custom Block Page](#customblockpage)
 -   [Whitelisting](#whitelisting)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -251,6 +252,109 @@ Enables debug logging mode.
 
 ```
 _M.px_debug = true
+```
+
+#### <a name="customblockpage"></a> Custom Block Page
+
+Users can customize the blocking page to meet their branding and message requirements. Specify the URL to a blocking page html file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
+
+
+**default:** nil
+
+```
+_M.custom_block_url = nil
+```
+
+> Note: This URI is whitelisted automatically under `_M.Whitelist['uri_full'] ` to avoid infinite redirects.
+
+##### Blocked user example: 
+
+If a user is blocked when browsing to `http://www.mysite.com/coolpage`, and the server configuration is: 
+
+```lua
+_M.custom_block_url /block.html
+```
+
+the redirect URL will be:
+
+```
+http://www.mysite.com/block.html&url=/coolpage&uuid=uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
+```
+
+###### Custom blockpage requirements:
+
+When captcha is enabled, the block page **must** include:
+
+* Inside the `<head>` section:
+
+```html
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+function handleCaptcha(response) {
+    var vid = getQueryString("vid"); // getQueryString should be implemented 
+    var name = '_pxCaptcha';
+    var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
+    var cookieParts = [name, '=', response + ':' + vid + '; expires=', expiryUtc, '; path=/'];
+    document.cookie = cookieParts.join('');
+    var originalURL = getQueryString("url");
+    var originalHost = window.location.host;
+    window.location.href = window.location.protocol + "//" +  originalHost + originalURL;
+}
+</script>
+```
+* Inside the `<body>` section:
+
+```
+<div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div>
+```
+
+* [PerimeterX Javascript snippet](https://console.perimeterx.com/#/app/applicationsmgmt).
+
+#### Configuration example:
+ 
+```lua
+_M.custom_block_url /block.html
+```
+
+
+#### Block page implementation example: 
+
+```html
+<html>
+    <head>
+        <script src="https://www.google.com/recaptcha/api.js"></script>
+        <script>
+        function handleCaptcha(response) {
+            var vid = getQueryString("vid");
+            var name = '_pxCaptcha';
+            var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
+            var cookieParts = [name, '=', response + ':' + vid, '; expires=', expiryUtc, '; path=/'];
+            document.cookie = cookieParts.join('');
+            // after getting resopnse we want to reaload the original page requested
+            var originalURL = getQueryString("url");
+            var originalHost = window.location.host;
+            window.location.href = window.location.protocol + "//" +  originalHost + originalURL;
+        }
+       
+       // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+		function getQueryString(name, url) {
+		    if (!url) url = window.location.href;
+		    name = name.replace(/[\[\]]/g, "\\$&");
+		    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+		        results = regex.exec(url);
+		    if (!results) return null;
+		    if (!results[2]) return '';
+		    return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+
+        </script>
+    </head>
+    <body>
+        <h1>You are Blocked</h1>
+        <p>Try and solve the captcha</p> 
+        <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div>
+    </body>
+<html>
 ```
 
 <a name="whitelisting"></a> Whitelisting
