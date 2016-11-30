@@ -47,11 +47,11 @@ local function new_captcha_request_object(captcha, vid, uuid)
     end
     captcha_reset.pxCaptcha = captcha;
     captcha_reset.hostname = ngx.var.host;
-    if vid then
+    if vid and uuid then
         captcha_reset.vid = vid
         captcha_reset.uuid = uuid
     else
-        px_logger.error('VID not present for CAPTCHA. VID is required. Please check risk cookie policy')
+        px_logger.error('VID and UUID not present for CAPTCHA. VID and UUID are required. Please check risk cookie policy')
     end
 
     px_logger.debug('CAPTCHA object completed')
