@@ -21,6 +21,7 @@ Table of Contents
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
   *   [Custom Block Page](#customblockpage)
+  *   [Multiple App Support](#multipleapps)
 -   [Whitelisting](#whitelisting)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -83,12 +84,16 @@ Or by downoading the sources for this repository and run `sudo make install`
 
 To apply the PerimeterX enforcement add the following line in your location block.
 
-`access_by_lua_file /usr/local/lib/lua/px/pxnginx.lua;`
+```
+access_by_lua_block { 
+	require("px.pxnginx").application()
+}
+```
 
 Below is a complete example of nginx.conf containing the required directives and with enforcement applied to the location block /.
 
 #### nginx.conf
-```
+```lua
 worker_processes  1;
 error_log /var/log/nginx/error.log;
 events {
@@ -111,7 +116,9 @@ http {
 
         location / {
             #----- PerimeterX protect location -----#
-            access_by_lua_file /usr/local/lib/lua/px/pxnginx.lua;
+			access_by_lua_block { 
+				require("px.pxnginx").application()
+			}
             #----- PerimeterX Module End  -----#
 
             root   /nginx/www;
@@ -356,6 +363,19 @@ _M.custom_block_url /block.html
     </body>
 <html>
 ```
+
+#### <a name="multipleapps"></a> Multiple App Support
+The PerimeterX Enforcer allows for multiple configurations for different apps.
+
+If your PerimeterX account contains several Applications (as defined via the portal), follow these steps to create different configurations for each Application.
+
+- First, open the `nginx.conf` file, and find the following line : `require("px.pxnginx").application()` inside your location block.
+- Pass the desired application name into the `application()` function, as such : `require("px.pxnginx").application("mySpecialApp")`
+- Then, find your `pxconfig.lua` file, and make a copy of it. name that copy using the following pattern : `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) - The <AppName> placeholder must be replaced by the exact name given in the previous section.
+- Change the configuration inside the newly created file, as per your app's needs. (Save it. *duh*) 
+- Make sure to save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
+- Thats it, in every `location` block of your app - make sure to place the code mentioned on stage 2 with the correct AppName.
+
 
 <a name="whitelisting"></a> Whitelisting
 -----------------------------------------------
