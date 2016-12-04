@@ -166,7 +166,7 @@ At the end of that html, you will find the ref_str variable.
 You may change the html as you wish, keeping the `<br> <br>
 </br>' .. ref_str .. '​</div></body></html>')` in place.
 
-[Custom Blocking Page Example](http://github.somewhere)
+[Custom Blocking Page Example](https://github.com/PerimeterX/perimeterx-nginx-plugin/tree/dev-MultipleAppSupport/examples/BlockPage)
 
 ######Customizing the reCAPTCHA Page
 Open the file `pxblock.lua` located at `/lib/px/block/`.
@@ -190,7 +190,7 @@ data­callback="handleCaptcha" data­theme="dark"></div><br> </br> ' .. ref_st
 ```
 These code bits are required in order to use our reCAPTCHA, and allow cleaning of user's bad score.
 
-[Custom reCAPTCHA Page Example](http://github.somewhere)
+[Custom reCAPTCHA Page Example](https://github.com/PerimeterX/perimeterx-nginx-plugin/tree/dev-MultipleAppSupport/examples/reCAPTCHA)
 
 #### <a name="monitoring-mode"></a> Monitoring Mode
 By default the PerimeterX module will block users crossing the block score threshold you define, meaning, if a user crosses the minimum block score he will receive the block page. The PerimeterX plugin can also be activated in monitor only mode.
