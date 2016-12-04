@@ -4,6 +4,7 @@
 -- Release date: 07.11.2016
 ----------------------------------------------
 local px_logger = require "px.utils.pxlogger"
+local px_config = require "px.pxconfig"
 local string_sub = string.sub
 local string_find = string.find
 local string_len = string.len
@@ -19,7 +20,8 @@ _M.Whitelist = {};
 -- filter: example.com/api_server_full?data=data
 -- will not filter: example.com/api_server?data=data
 -- _M.Whitelist['uri_full'] = {'/', '/api_server_full' }
-_M.Whitelist['uri_full'] = {}
+-- Note: px_config.custom_block_url should not be removed from here if using custom_block_url configuration
+_M.Whitelist['uri_full'] = { px_config.custom_block_url }
 
 -- URI Prefixes filter
 -- will filter requests where the uri starts with any of the list below.
