@@ -22,7 +22,6 @@ function _M.application(file_name)
 	    end
 	    local buflen = buffer.getBufferLength()
 	    if buflen > 0 then
-	    	px_logger.debug('Timer submitting')
 	        pxclient.submit(buffer.dumpEvents(), config.nginx_collector_path)
 	    end
 	    return

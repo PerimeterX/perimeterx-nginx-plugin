@@ -66,7 +66,9 @@ In CentOS/RHEL systems the CA bundle location may be located at `/etc/pki/tls/ce
 Add the init by lua script.
 
 ```
-init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+init_worker_by_lua_block {
+    require ("px.utils.pxtimer").application()
+}
 ```
 
 <a name="installation"></a> Installation
@@ -104,7 +106,9 @@ http {
     lua_package_path "/usr/local/lib/lua/?.lua;;";
 
     # -- initializing the perimeterx module -- #
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+	init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
 
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
     lua_ssl_verify_depth 3;
@@ -369,9 +373,11 @@ The PerimeterX Enforcer allows for multiple configurations for different apps.
 
 If your PerimeterX account contains several Applications (as defined via the portal), follow these steps to create different configurations for each Application.
 
+>Note: The application initialises a timed worker. The worker must be initialised using any one of the applications in your account. Be sure to pass the correct configuration file name to the `require ("px.utils.pxtimer").application("AppName"|empty)` block in the server initialization.
+
 - First, open the `nginx.conf` file, and find the following line : `require("px.pxnginx").application()` inside your location block.
 - Pass the desired application name into the `application()` function, as such : `require("px.pxnginx").application("mySpecialApp")`
-- Then, find your `pxconfig.lua` file, and make a copy of it. name that copy using the following pattern : `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) - The <AppName> placeholder must be replaced by the exact name given in the previous section.
+- Then, find your `pxconfig.lua` file, and make a copy of it. name that copy using the following pattern : `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) - The <AppName> placeholder must be replaced by the exact name provided to the application function in the previous section.
 - Change the configuration inside the newly created file, as per your app's needs. (Save it. *duh*) 
 - Make sure to save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
 - Thats it, in every `location` block of your app - make sure to place the code mentioned on stage 2 with the correct AppName.
