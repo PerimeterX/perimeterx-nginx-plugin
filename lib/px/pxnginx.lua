@@ -24,9 +24,9 @@
 
 local _M = {}
 
-function _M.application(var)
+function _M.application(file_name)
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
-    local config_file = ((var == nil or var == '') and "px.pxconfig" or "px.pxconfig-" .. var)
+    local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
     local px_config = require (config_file)
     local px_filters = require ("px.utils.pxfilters").load(config_file)

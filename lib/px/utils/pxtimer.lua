@@ -5,7 +5,9 @@
 ----------------------------------------------
 local _M = {}
 
-function _M.load(config_file)
+function _M.application(file_name)
+	local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
+
 	local config = require (config_file)
 	local pxclient = require ("px.utils.pxclient").load(config_file)
 	local px_logger = require ("px.utils.pxlogger").load(config_file)
@@ -20,6 +22,7 @@ function _M.load(config_file)
 	    end
 	    local buflen = buffer.getBufferLength()
 	    if buflen > 0 then
+	    	px_logger.debug('Timer submitting')
 	        pxclient.submit(buffer.dumpEvents(), config.nginx_collector_path)
 	    end
 	    return
