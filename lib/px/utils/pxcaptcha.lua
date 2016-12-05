@@ -26,13 +26,13 @@ local function split_cookie(cookie)
         a[b] = i
         b = b + 1
     end
-    return a[1], a[2]
+    return a[1], a[2], a[3]
 end
 
 -- new_request_object --
 -- takes no arguments
 -- returns table
-local function new_captcha_request_object(captcha, vid)
+local function new_captcha_request_object(captcha, vid, uuid)
     px_logger.debug('New CAPTCHA request')
 
     local captcha_reset = {}
@@ -47,10 +47,11 @@ local function new_captcha_request_object(captcha, vid)
     end
     captcha_reset.pxCaptcha = captcha;
     captcha_reset.hostname = ngx.var.host;
-    if vid then
+    if vid and uuid then
         captcha_reset.vid = vid
+        captcha_reset.uuid = uuid
     else
-        px_logger.error('VID not present for CAPTCHA. VID is required. Please check risk cookie policy')
+        px_logger.error('VID and UUID not present for CAPTCHA. VID and UUID are required. Please check risk cookie policy')
     end
 
     px_logger.debug('CAPTCHA object completed')
@@ -64,10 +65,11 @@ function _M.process(captcha)
     end
     px_logger.debug('Processing new CAPTCHA object');
 
-    local _captcha, vid = split_cookie(captcha)
+    local _captcha, vid , uuid = split_cookie(captcha)
     px_logger.debug('CAPTCHA value: ' .. _captcha);
+    px_logger.debug('uuid value: ' .. uuid);
 
-    local request_data = new_captcha_request_object(_captcha, vid)
+    local request_data = new_captcha_request_object(_captcha, vid, uuid)
     local success, response = pcall(px_api.call_s2s, request_data, captcha_api_path, auth_token)
     if success then
         return response.status
