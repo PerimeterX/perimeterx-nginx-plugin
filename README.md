@@ -43,24 +43,24 @@ Table of Contents
 
 
 ### Resolver
-Add the directive `resolver A.B.C.D;` to your NGINX configuration file in the http section. This is required so NGINX can resolve the PerimeterX API DNS name.
+Add the directive `resolver A.B.C.D;` to your NGINX configuration file in the HTTP section. This is required so NGINX can resolve the PerimeterX API DNS name.
 
 ### Lua Package Path
-Update your lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
+Update your Lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
 
 ```
 lua_package_path "/usr/local/lib/lua/?.lua;;";
 ```
 
 ### Lua CA Certificates
-To support TLS to the collector you must point Lua to the trusted certificate location (actual location may differ between Linux distributions)
+To support TLS to the collector, you must point Lua to the trusted certificate location (actual location may differ between Linux distributions).
 
 ```
 lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
 lua_ssl_verify_depth 3;
 ```
 
-In CentOS/RHEL systems the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`
+In CentOS/RHEL systems, the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`.
 
 ### Lua Timer Initialization
 Add the init by lua script.
@@ -74,17 +74,17 @@ init_worker_by_lua_block {
 <a name="installation"></a> Installation
 ----------------------------------------
 
-Installation can be done using [luarocks](https://luarocks.org/)
+Installation can be done using [luarocks](https://luarocks.org/).
 
 ```sh
 $ luarocks install perimeterx-nginx-plugin
 ```
 
-Or by downoading the sources for this repository and run `sudo make install`
+It can also be accomplished by downoading the sources for this repository and running `sudo make install`.
 
 ### <a name="basic-usage"></a> Basic Usage Example
 
-To apply the PerimeterX enforcement add the following line in your location block.
+To apply PerimeterX enforcement, add the following line to your location block:
 
 ```
 access_by_lua_block { 
@@ -92,7 +92,7 @@ access_by_lua_block {
 }
 ```
 
-Below is a complete example of nginx.conf containing the required directives and with enforcement applied to the location block /.
+Below is a complete example of nginx.conf containing the required directives and with enforcement applied to the location block..
 
 #### nginx.conf
 ```lua
@@ -136,7 +136,7 @@ http {
 
 > Note: IP extraction, according to your network setup, is very important. It is common to have a load balancer/proxy on top of your applications, in which case the PerimeterX module will send the system's internal IP as the user's. In order to properly perform processing and detection on server-to-server calls, the PerimeterX module requires the user's real IP address.
 
-For the NGINX module to work with the real user's IP you need to set the `set_real_ip_from` NGINX directive in your nginx.conf, this will make sure the socket IP used in nginx is not coming from one of the network levels below it.
+For the NGINX module to work with the real user's IP, you need to set the `set_real_ip_from` NGINX directive in your nginx.conf. This will make sure the socket IP used in NGINX is not coming from one of the network levels below it.
 
 example:
 ```
@@ -148,7 +148,7 @@ example:
 
 #### Configuring Required Parameters
 
-Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`:
+Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`.
 
 #### Required parameters:
 
@@ -165,16 +165,16 @@ _M.blocking_score = 60
 ```
 
 #### <a name="custom-block"></a> Serve a Custom Block/reCAPTCHA Page
-The Perimeterx allows serving the client a customized block page, when a user crosses the defined blocking thershold, and the Enforcer is set to Blocking Mode (default behaviour).
+The PerimeterX allows serving the client a customized block page, when a user crosses the defined blocking thershold, and the Enforcer is set to Blocking Mode (default behaviour).
 >Note: Perimeterx will serve the user with our default blocking screen when no custom page is defined.
 
 ######Customizing the Block Page
 Open the file `pxblock.lua` located at `/lib/px/block/`.
 Create a copy of the file for backup purposes. `pxblock.lua.orig`.
-In this file (line 51), under `ngx_say`, there is an inline html containing PerimeterX's default blocking page.
-At the end of that html, you will find the ref_str variable.
+In this file (line 51), under `ngx_say`, there is an inline HTML containing PerimeterX's default blocking page.
+At the end of that HTML, you will find the ref_str variable.
 
-You may change the html as you wish, keeping the `<br> <br>
+You may change the HTML as you wish, but keep the `<br> <br>
 </br>' .. ref_str .. '​</div></body></html>')` in place.
 
 [Custom Blocking Page Example](http://github.somewhere)
@@ -182,30 +182,30 @@ You may change the html as you wish, keeping the `<br> <br>
 ######Customizing the reCAPTCHA Page
 Open the file `pxblock.lua` located at `/lib/px/block/`.
 Create a copy of the file for backup purposes. `pxblock.lua.orig`.
-In this file,there are 2 variables storing HTML - `head` and `body`. Both of these variables are changable, but must not alter the contents of the part quoted below:
+In this file, there are 2 variables storing HTML: `head` and `body`. Both of these variables are changable, but you must not alter the contents of the part quoted below:
 
 For `head` :
 
 ```javascript
 <script src="https://www.google.com/recaptcha/api.js"></script>
-<script> window.px_vid = "' .. vid .. '"; function handleCaptcha(response) { var 
-name = "_pxCaptcha"; var expiryUtc = new Date( Date.now() + 1000 * 10 ).toUTCString(); 
-var cookieParts = [name, "=", response + ":" + window.px_vid, "; expires=", expiryUtc, ";
-path=/"]; document.cookie = cookieParts.join(""); location.reload(); } </script>
+<script> window.px_vid = "' .. vid .. '"; function handleCaptcha(response) { var 
+name = "_pxCaptcha"; var expiryUtc = new Date( Date.now() + 1000 * 10 ).toUTCString(); 
+var cookieParts = [name, "=", response + ":" + window.px_vid, "; expires=", expiryUtc, ";
+path=/"]; document.cookie = cookieParts.join(""); location.reload(); } </script>
 ```
 For `body` :
 
 ```
 <div class="g­recaptcha" data­sitekey="6Lcj­R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" 
-data­callback="handleCaptcha" data­theme="dark"></div><br> </br> ' .. ref_str .. ' </div>; 
+data­callback="handleCaptcha" data­theme="dark"></div><br> </br> ' .. ref_str .. ' </div>; 
 ```
 These code bits are required in order to use our reCAPTCHA, and allow cleaning of user's bad score.
 
 [Custom reCAPTCHA Page Example](http://github.somewhere)
 
 #### <a name="monitoring-mode"></a> Monitoring Mode
-By default the PerimeterX module will block users crossing the block score threshold you define, meaning, if a user crosses the minimum block score he will receive the block page. The PerimeterX plugin can also be activated in monitor only mode.
-Setting the block_enalbed flag to false will prevent the block page from being displayed to the user, but the data will still be available in the PerimeterX Portal.
+By default, the PerimeterX module will block users crossing the block score threshold that you define. This means that if a user crosses the minimum block score he will receive the block page. The PerimeterX plugin can also be activated in monitor only mode.
+Setting the block_enalbed flag to *false* will prevent the block page from being displayed to the user, but the data will still be available in the PerimeterX Portal.
 
 ```
 _M.block_enabled = false
@@ -267,7 +267,7 @@ _M.px_debug = true
 
 #### <a name="customblockpage"></a> Custom Block Page
 
-Users can customize the blocking page to meet their branding and message requirements. Specify the URL to a blocking page html file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
+Users can customize the blocking page to meet their branding and message requirements by specifying the URL to a blocking page HTML file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
 
 
 **default:** nil
@@ -294,7 +294,7 @@ http://www.mysite.com/block.html&url=/coolpage&uuid=uuid=e8e6efb0-8a59-11e6-815c
 
 ###### Custom blockpage requirements:
 
-When captcha is enabled, the block page **must** include:
+When captcha is enabled, the block page **must** include the following:
 
 * Inside the `<head>` section:
 
@@ -407,20 +407,20 @@ Create a branch on your fork, preferably using a self descriptive branch name.
 ###Code/Run
 Code your way out of your mess, and help improve our project by implementing missing features, adding capabilites or fixing bugs.
 
-To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
+To run the code, follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
 
-Feel free to check out the [Example App](https://nginx-sample-app.perimeterx.com), to have a feel of the project.
+Feel free to check out the [Example App](https://nginx-sample-app.perimeterx.com), to get familiar with the project.
 
 ###<a name="tests"></a>Test
 > Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
 
 **Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
-Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
+Before you create any pull request, make sure your project has passed all tests. If any new features require it, write your own.
 
-To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`
+To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`.
 
 ###Pull Request
-After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
+After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember, this code has to be read by our maintainers, so keep it simple, smart and accurate.
 
 ###Thanks
 After all, you are helping us by contributing to this project, and we want to thank you for it.
