@@ -92,7 +92,8 @@ function _M.application(file_name)
 
         -- validating captcha value and if reset was successful then pass the request
         if success and result == 0 then
-            ngx.header['Set-Cookie'] = '_pxCaptcha=; Expires=Thu, 01 Jan 1970 00:00:00 GMT;'
+            ngx.header["Content-Type"] = nil
+            ngx.header["Set-Cookie"] = "_pxCaptcha=; Expires=Thu, 01 Jan 1970 00:00:00 GMT;"
             return true
         end
     end
