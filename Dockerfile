@@ -32,7 +32,9 @@ RUN curl -sSL https://ftp.gnu.org/gnu/nettle/nettle-3.2.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/pintsized/lua-resty-http/archive/v0.08.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/bungle/lua-resty-nettle/archive/v0.95.tar.gz | tar -C /usr/local --strip-components 1 -xzf - && mkdir -p /usr/local/lib/lua/resty && mv /usr/local/lib/resty/* /usr/local/lib/lua/resty
 # Install CPAN dependencies for unit tests
-RUN echo yes | cpan Test::Nginx CryptX
+RUN curl -sSL http://cpanmin.us | perl - App::cpanminus
+RUN cpanm --quiet --notest --skip-satisfied Test::Nginx 
+RUN cpanm --quiet --notest --skip-satisfied CryptX
 # ***** BUILD FROM SOURCE *****
 # LuaJIT
 WORKDIR /LuaJIT-${VER_LUAJIT}

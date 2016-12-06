@@ -9,19 +9,19 @@ local _M = {}
 _M.px_enabled = true
 
 -- ##  Configuration Block ##
-_M.px_appId = 'APP_ID'
-_M.cookie_secret = 'COOKIE_SECRET'
-_M.auth_token = 'JWT_AUTH_TOKEN'
-_M.blocking_score = 60
+_M.px_appId = 'APP_ID_APP2'
+_M.cookie_secret = 'COOKIE_SECRET_APP2'
+_M.auth_token = 'JWT_AUTH_TOKEN_APP2'
+_M.blocking_score = 50
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = false
-_M.block_enabled = true
+_M.block_enabled = false 
 _M.captcha_enabled = true
 _M.custom_block_url = nil
 _M.score_header_name = 'X-PX-SCORE'
 _M.score_header_enabled = false
-_M.px_debug = false
+_M.px_debug = true
 
 _M.s2s_timeout = 1000
 _M.px_maxbuflen = 10

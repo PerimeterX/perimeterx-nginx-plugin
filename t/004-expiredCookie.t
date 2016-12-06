@@ -70,7 +70,9 @@ __DATA__
     lua_ssl_verify_depth 3;
     lua_socket_pool_size 500;
     resolver 8.8.8.8;
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
 
@@ -78,14 +80,17 @@ __DATA__
     location = /t {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-	    pxconfig = require "px.pxconfig"
-	    pxconfig.cookie_secret = "perimeterx"
-	    pxconfig.px_debug = true
-	    pxconfig.block_enabled = true
+    	    pxconfig = require "px.pxconfig"
+    	    pxconfig.cookie_secret = "perimeterx"
+    	    pxconfig.px_debug = true
+    	    pxconfig.block_enabled = true
             return true
-    }
+        }
+        
+    	access_by_lua_block { 
+            require("px.pxnginx").application()
+        }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }
