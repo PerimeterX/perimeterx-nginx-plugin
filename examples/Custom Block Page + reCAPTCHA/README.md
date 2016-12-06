@@ -1,6 +1,6 @@
 reCATPCHA Example 
 -----------------
-####This folder contains an example of a reCAPTCHA implementation. The original PerimeterX reCAPTCHA page has been customized, with a different color background, some icons and some colored texts.
+> This folder contains an example of a reCAPTCHA implementation. The original PerimeterX reCAPTCHA page has been customized, with a different color background, some icons and some colored texts.
 
 In order to use the contents of this page, first seperate the head and body tags from the rest of the html.
 
@@ -112,9 +112,3 @@ Repeat the same process for the body elemnt.
 
 Uncomment the `' .. ref_str ..'` part, and convert to a one-liner.
 Paste the one-liner into the `local body` variable.
-
-###Thats it, you are good to go !
-
-
-
-
