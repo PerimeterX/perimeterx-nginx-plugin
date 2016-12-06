@@ -385,13 +385,27 @@ If your PerimeterX account contains several Applications (as defined via the por
 
 <a name="whitelisting"></a> Whitelisting
 -----------------------------------------------
-Whitelisting (bypassing enforcement) is configured in the file `/usr/local/lib/lua/px/utils/pxfilter.lua`
+Whitelisting (bypassing enforcement) is configured in the file `pxconfig.lua`
 
-There are three types of filters that can be configured.
+There are several different types of filters that can be configured.
 
-* Full URI
-* URI prefix
-* IP addresses
+```javascript
+whitlelist = {
+	uri_full = { _M.custom_block_url },
+	uri_prefixes = {},
+	uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
+	ip_addresses = {},
+	ua_full = {},
+	ua_sub = {}
+}
+```
+
+- **uri_full** : for value `{'/api_server_full'}` - will filter requests to `/api_server_full?data=1` but not to `/api_server?data=1`
+- **uri_prefixes** : for value `{'/api_server'}` - will filter requests to `/api_server_full?data=1` but not to `/full_api_server?data=1` 
+- **uri_suffixes** : for value `{'.css'}` - will filter requests to `/style.css` but not to `/style.js`
+- **ip_addresses** : for value `{'192.168.99.1'}` - will filter requests coming from any of the listed ips.
+- **ua_full** : for value `{'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}` - will filter all requests matching this exact UA. 
+- **ua_sub** : for value `{'GoogleCloudMonitoring'}` - will filter requests containing the provided string in their UA.
 
 <a name="nginxplus"></a> NGINX Plus
 -----------------------------------------------
