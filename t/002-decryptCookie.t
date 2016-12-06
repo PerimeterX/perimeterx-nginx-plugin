@@ -87,7 +87,10 @@ Process a valid cookie
             return true
     }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+    	access_by_lua_block { 
+	    require("px.pxnginx").application()
+	}
+
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }

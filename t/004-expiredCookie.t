@@ -84,8 +84,10 @@ __DATA__
 	    pxconfig.block_enabled = true
             return true
     }
+    	access_by_lua_block { 
+	    require("px.pxnginx").application()
+	}
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }

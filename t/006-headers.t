@@ -85,13 +85,17 @@ __DATA__
 			pxconfig.send_page_requested_activity = false
      		return true
 		}
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+    	access_by_lua_block { 
+	    require("px.pxnginx").application()
+	}
 	    try_files $uri $uri/ /internal; 
 		}
 
     location = /internal {
         resolver 8.8.8.8;
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+    	access_by_lua_block { 
+	    require("px.pxnginx").application()
+	}
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }
@@ -138,7 +142,9 @@ Request is internal. PerimeterX processing skipped.
 			pxconfig.score_header_enabled = true
 			return true
 		}
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+    	access_by_lua_block { 
+	    require("px.pxnginx").application()
+	}
         content_by_lua_block {
             ngx.say(ngx.req.get_headers()['X-PX-SCORE']) 
         }
@@ -182,13 +188,17 @@ X-PX-SCORE: 0
 			pxconfig.score_header_enabled = true
      		return true
 		}
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+    	access_by_lua_block { 
+	    require("px.pxnginx").application()
+	}
 	    try_files $uri $uri/ /internal; 
 		}
 
     location = /internal {
         resolver 8.8.8.8;
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+    	access_by_lua_block { 
+	    require("px.pxnginx").application()
+	}
         content_by_lua_block {
             ngx.say(ngx.req.get_headers()['X-PX-SCORE']) 
         }
