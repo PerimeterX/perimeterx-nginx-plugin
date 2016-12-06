@@ -32,6 +32,18 @@ _M.nginx_collector_path = '/api/v1/collector/s2s'
 _M.risk_api_path = '/api/v1/risk'
 _M.captcha_api_path = '/api/v1/risk/captcha'
 _M.enabled_routes = {}
+
+-- ## Filter Configuration ##
+
+_M.whitlelist = {
+	uri_full = { _M.custom_block_url },
+	uri_prefixes = {},
+	uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
+	ip_addresses = {},
+	ua_full = {},
+	ua_sub = {}
+}
+
 -- -- ## END - Configuration block ##
 
 return _M
