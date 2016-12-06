@@ -60,7 +60,7 @@ run_tests();
 
 __DATA__
 
-=== TEST 1: Whitelist - IP
+=== TEST 1: Whitelist - IP 
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -68,7 +68,9 @@ __DATA__
     lua_ssl_verify_depth 3;
     lua_socket_pool_size 500;
     resolver 8.8.8.8;
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
 
@@ -76,22 +78,24 @@ __DATA__
     location = /t {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-	    pxconfig = require "px.pxconfig"
-	    pxconfig.cookie_secret = "perimeterx"
-	    pxconfig.px_debug = true
-	    pxconfig.block_enabled = true
+            pxconfig = require "px.pxconfig"
+    	    pxconfig.cookie_secret = "perimeterx"
+    	    pxconfig.px_debug = true
+    	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            px_filters = require "px.utils.pxfilters"
-            px_filters.Whitelist['ip_addresses'] = {'1.2.3.4'}
+            pxconfig.whitelist.ip_addresses = {'1.2.3.4'}
             return true
-    }
+        }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+        access_by_lua_block { 
+            require("px.pxnginx").application()
+        }
+
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }
-}
+    }
 
 --- request
 GET /t
@@ -116,7 +120,9 @@ PX DEBUG: Whitelisted: IP address  1.2.3.4
     lua_ssl_verify_depth 3;
     lua_socket_pool_size 500;
     resolver 8.8.8.8;
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
 
@@ -124,19 +130,21 @@ PX DEBUG: Whitelisted: IP address  1.2.3.4
     location = /t/full/uri {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-	    pxconfig = require "px.pxconfig"
-	    pxconfig.cookie_secret = "perimeterx"
-	    pxconfig.px_debug = true
-	    pxconfig.block_enabled = true
+    	    pxconfig = require "px.pxconfig"
+    	    pxconfig.cookie_secret = "perimeterx"
+    	    pxconfig.px_debug = true
+    	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            px_filters = require "px.utils.pxfilters"
-            px_filters.Whitelist['ip_addresses'] = {}
-            px_filters.Whitelist['uri_full'] = {'/t/full/uri'}
+            pxconfig.whitelist.ip_addresses = {}
+            pxconfig.whitelist.uri_full = {'/t/full/uri'}
             return true
-    }
+        }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+        access_by_lua_block { 
+            require("px.pxnginx").application()
+        }
+
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }
@@ -166,7 +174,9 @@ PX DEBUG: Whitelisted: uri_full. /t/full/uri
     lua_ssl_verify_depth 3;
     lua_socket_pool_size 500;
     resolver 8.8.8.8;
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
 
@@ -174,20 +184,22 @@ PX DEBUG: Whitelisted: uri_full. /t/full/uri
     location = /t/prefix/uri {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-	    pxconfig = require "px.pxconfig"
-	    pxconfig.cookie_secret = "perimeterx"
-	    pxconfig.px_debug = true
-	    pxconfig.block_enabled = true
+	       pxconfig = require "px.pxconfig"
+    	    pxconfig.cookie_secret = "perimeterx"
+    	    pxconfig.px_debug = true
+    	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            px_filters = require "px.utils.pxfilters"
-            px_filters.Whitelist['ip_addresses'] = {}
-            px_filters.Whitelist['uri_full'] = {}
-            px_filters.Whitelist['uri_prefixes'] = {'/t/prefix'}
+            pxconfig.whitelist.ip_addresses = {}
+            pxconfig.whitelist.uri_full = {}
+            pxconfig.whitelist.uri_prefixes = {'/t/prefix'}
             return true
-    }
+        }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+        access_by_lua_block { 
+            require("px.pxnginx").application()
+        }
+
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }
@@ -217,7 +229,9 @@ PX DEBUG: Whitelisted: uri_prefixes. /t/prefix
     lua_ssl_verify_depth 3;
     lua_socket_pool_size 500;
     resolver 8.8.8.8;
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
 
@@ -225,20 +239,22 @@ PX DEBUG: Whitelisted: uri_prefixes. /t/prefix
     location = /t/t.css {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-	    pxconfig = require "px.pxconfig"
-	    pxconfig.cookie_secret = "perimeterx"
-	    pxconfig.px_debug = true
-	    pxconfig.block_enabled = true
+    	    pxconfig = require "px.pxconfig"
+    	    pxconfig.cookie_secret = "perimeterx"
+    	    pxconfig.px_debug = true
+    	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            px_filters = require "px.utils.pxfilters"
-            px_filters.Whitelist['ip_addresses'] = {}
-            px_filters.Whitelist['uri_full'] = {}
-            px_filters.Whitelist['uri_prefixes'] = {}
+            pxconfig.whitelist.ip_addresses = {}
+            pxconfig.whitelist.uri_full = {}
+            pxconfig.whitelist.uri_prefixes = {}
             return true
-    }
+        }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+        access_by_lua_block { 
+            require("px.pxnginx").application()
+        }
+        
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }
@@ -271,7 +287,9 @@ PX DEBUG: Whitelisted: uri_suffix. .css
     lua_ssl_verify_depth 3;
     lua_socket_pool_size 500;
     resolver 8.8.8.8;
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
 
@@ -279,21 +297,23 @@ PX DEBUG: Whitelisted: uri_suffix. .css
     location = /t/t.css {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-	    pxconfig = require "px.pxconfig"
-	    pxconfig.cookie_secret = "perimeterx"
-	    pxconfig.px_debug = true
-	    pxconfig.block_enabled = true
+    	    pxconfig = require "px.pxconfig"
+    	    pxconfig.cookie_secret = "perimeterx"
+    	    pxconfig.px_debug = true
+    	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            px_filters = require "px.utils.pxfilters"
-            px_filters.Whitelist['ip_addresses'] = {}
-            px_filters.Whitelist['uri_full'] = {}
-            px_filters.Whitelist['uri_prefixes'] = {}
-            px_filters.Whitelist['ua_full'] = {'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36'}
+            pxconfig.whitelist.ip_addressesß = {}
+            pxconfig.whitelist.uri_full = {}
+            pxconfig.whitelist.uri_prefixes = {}
+            pxconfig.whitelist.ua_full = {'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36'}
             return true
-    }
+        }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+        access_by_lua_block { 
+            require("px.pxnginx").application()
+        }
+
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }
@@ -326,7 +346,9 @@ PX DEBUG: Whitelisted: UA strict match Mozilla/5.0 (Macintosh; Intel Mac OS X 10
     lua_ssl_verify_depth 3;
     lua_socket_pool_size 500;
     resolver 8.8.8.8;
-    init_worker_by_lua_file "/usr/local/lib/lua/px/utils/pxtimer.lua";
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
 
@@ -334,22 +356,24 @@ PX DEBUG: Whitelisted: UA strict match Mozilla/5.0 (Macintosh; Intel Mac OS X 10
     location = /t/t.css {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-	    pxconfig = require "px.pxconfig"
-	    pxconfig.cookie_secret = "perimeterx"
-	    pxconfig.px_debug = true
-	    pxconfig.block_enabled = true
+    	    pxconfig = require "px.pxconfig"
+    	    pxconfig.cookie_secret = "perimeterx"
+    	    pxconfig.px_debug = true
+    	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            px_filters = require "px.utils.pxfilters"
-            px_filters.Whitelist['ip_addresses'] = {}
-            px_filters.Whitelist['uri_full'] = {}
-            px_filters.Whitelist['uri_prefixes'] = {}
-            px_filters.Whitelist['ua_full'] = {}
-            px_filters.Whitelist['ua_sub'] = {'Mozilla/5.0'}
+            pxconfig.whitelist.ip_addresses = {}
+            pxconfig.whitelist.uri_full = {}
+            pxconfig.whitelist.uri_prefixes = {}
+            pxconfig.whitelist.ua_full = {}
+            pxconfig.whitelist.ua_sub = {'Mozilla/5.0'}
             return true
-    }
+        }
 
-        access_by_lua_file "/usr/local/lib/lua/px/pxnginx.lua";
+        access_by_lua_block { 
+            require("px.pxnginx").application()
+        }
+
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
         }

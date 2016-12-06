@@ -390,7 +390,7 @@ Whitelisting (bypassing enforcement) is configured in the file `pxconfig.lua`
 There are several different types of filters that can be configured.
 
 ```javascript
-whitlelist = {
+whitelist = {
 	uri_full = { _M.custom_block_url },
 	uri_prefixes = {},
 	uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
