@@ -13,6 +13,8 @@ function _M.load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local ngx_time = ngx.time
     local tostring = tostring
+    local auth_token = px_config.auth_token
+
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path)
         local px_server = px_config.px_server
@@ -42,6 +44,7 @@ function _M.load(config_file)
             body = data,
             headers = {
                 ["Content-Type"] = "application/json",
+                ["Authorization"] = "Bearer " .. auth_token
             }
         })
         if not res then
@@ -54,7 +57,6 @@ function _M.load(config_file)
             px_logger.debug("POST response status: " .. res.status)
         end
         -- Must read the response body to clear the buffer in order for set keepalive to work properly.
-        local body = res:read_body()
         -- Check for connection reuse
         if px_debug == true then
             local times, err = httpc:get_reused_times()
