@@ -56,7 +56,10 @@ function _M.load(config_file)
         else
             px_logger.debug("POST response status: " .. res.status)
         end
+
         -- Must read the response body to clear the buffer in order for set keepalive to work properly.
+        local body = res:read_body()
+
         -- Check for connection reuse
         if px_debug == true then
             local times, err = httpc:get_reused_times()
