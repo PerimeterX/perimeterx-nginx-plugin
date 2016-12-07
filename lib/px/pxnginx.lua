@@ -99,6 +99,8 @@ function _M.application(file_name)
     end
 
     local success, result = pcall(px_cookie.process, _px)
+    local details = {};
+    details["px_cookie"] = ngx.ctx.px_cookie;
     -- cookie verification passed - checking result.
     if success then
         -- score crossed threshold
@@ -106,7 +108,7 @@ function _M.application(file_name)
             return px_block.block('cookie_high_score')
                 -- score did not cross the blocking threshold
         else
-            px_client.send_to_perimeterx("page_requested")
+            px_client.send_to_perimeterx("page_requested", details)
             return true
         end
         -- cookie verification failed/cookie does not exist. performing s2s query
@@ -120,18 +122,18 @@ function _M.application(file_name)
             if result == false then
                 px_logger.error("blocking s2s")
                 return px_block.block('s2s_high_score')
-                    -- score did not cross the blocking threshold
+            -- score did not cross the blocking threshold
             else
-                px_client.send_to_perimeterx("page_requested")
+                px_client.send_to_perimeterx("page_requested", details)
                 return true
             end
         else
             -- server2server call failed, passing traffic
-            px_client.send_to_perimeterx("page_requested")
+            px_client.send_to_perimeterx("page_requested", details)
             return true
         end
     else
-        px_client.send_to_perimeterx("page_requested")
+        px_client.send_to_perimeterx("page_requested", details)
         return true
     end
 end

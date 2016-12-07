@@ -89,6 +89,9 @@ function _M.load(config_file)
         pxdata['socket_ip'] = ngx.var.remote_addr;
         pxdata['details'] = details;
 
+        if event_type == 'page_requested' then
+            px_logger.debug("Sent page requested acitvity")
+        end
         -- Experimental Buffer Support --
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
