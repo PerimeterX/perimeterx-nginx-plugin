@@ -16,6 +16,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Updated README.
 - Updated Examples.
 
+<br>
+
+> **REQUIRES ACTION** :
+> <br>
+> **Updating from a previous version requires several changes** to the `pxconfig.lua` and `nginx.conf`.
+> See `examples/Multiple Applications` files for reference.
+
+1. In your `nginx.conf` file, replace `init_worker_by_lua_file` with `init_worker_by_lua_block { require ("px.utils.pxtimer").application() }`
+
+2. In each of the location blocks in your app (each route protected with the module), replace `access_by_lua_file` (in each block of location) with `access_by_lua_block { require("px.pxnginx").application() }`
+
+3. Compare your local `pxconfig.lua` file, with the config file located at `lib/px/pxconfig.lua`, adding in the whitelist filters to the configuration file. 
+
 <br><br>
 
 
