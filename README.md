@@ -249,7 +249,7 @@ _M.s2s_timeout = 250
 
 Boolean flag to enable or disable sending of activities and metrics to PerimeterX on each page request. Enabling this feature will provide data that populates the PerimeterX portal with valuable information such as the amount of requests blocked and additional API usage statistics.
 
-**Default:** false
+**Default:** true
 
 ```php
 _M.send_page_requested_activity = false
