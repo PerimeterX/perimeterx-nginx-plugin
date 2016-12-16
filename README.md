@@ -13,7 +13,6 @@ Table of Contents
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
-  *   [Custom Block Page](#custom-block)
   *   [Monitoring mode](#monitoring-mode)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Enabled Routes](#enabled-routes)
@@ -163,45 +162,6 @@ Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`.
 ```
 _M.blocking_score = 60
 ```
-
-#### <a name="custom-block"></a> Serve a Custom Block/reCAPTCHA Page
-The PerimeterX allows serving the client a customized block page, when a user crosses the defined blocking thershold, and the Enforcer is set to Blocking Mode (default behaviour).
->Note: Perimeterx will serve the user with our default blocking screen when no custom page is defined.
-
-######Customizing the Block Page
-Open the file `pxblock.lua` located at `/lib/px/block/`.
-Create a copy of the file for backup purposes. `pxblock.lua.orig`.
-In this file (line 51), under `ngx_say`, there is an inline HTML containing PerimeterX's default blocking page.
-At the end of that HTML, you will find the ref_str variable.
-
-You may change the HTML as you wish, but keep the `<br> <br>
-</br>' .. ref_str .. '​</div></body></html>')` in place.
-
-[Custom Blocking Page Example](https://github.com/PerimeterX/perimeterx-nginx-plugin/tree/dev-MultipleAppSupport/examples/BlockPage)
-
-######Customizing the reCAPTCHA Page
-Open the file `pxblock.lua` located at `/lib/px/block/`.
-Create a copy of the file for backup purposes. `pxblock.lua.orig`.
-In this file, there are 2 variables storing HTML: `head` and `body`. Both of these variables are changable, but you must not alter the contents of the part quoted below:
-
-For `head` :
-
-```javascript
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script> window.px_vid = "' .. vid .. '"; function handleCaptcha(response) { var 
-name = "_pxCaptcha"; var expiryUtc = new Date( Date.now() + 1000 * 10 ).toUTCString(); 
-var cookieParts = [name, "=", response + ":" + window.px_vid, "; expires=", expiryUtc, ";
-path=/"]; document.cookie = cookieParts.join(""); location.reload(); } </script>
-```
-For `body` :
-
-```
-<div class="g­recaptcha" data­sitekey="6Lcj­R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" 
-data­callback="handleCaptcha" data­theme="dark"></div><br> </br> ' .. ref_str .. ' </div>; 
-```
-These code bits are required in order to use our reCAPTCHA, and allow cleaning of user's bad score.
-
-[Custom reCAPTCHA Page Example](https://github.com/PerimeterX/perimeterx-nginx-plugin/tree/dev-MultipleAppSupport/examples/reCAPTCHA)
 
 #### <a name="monitoring-mode"></a> Monitoring Mode
 By default, the PerimeterX module will block users crossing the block score threshold that you define. This means that if a user crosses the minimum block score he will receive the block page. The PerimeterX plugin can also be activated in monitor only mode.
