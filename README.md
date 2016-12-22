@@ -249,7 +249,7 @@ _M.custom_block_url /block.html
 the redirect URL will be:
 
 ```
-http://www.mysite.com/block.html&url=/coolpage&uuid=uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
+http://www.mysite.com/block.html&url=/coolpage&uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
 ```
 
 ###### Custom blockpage requirements:
