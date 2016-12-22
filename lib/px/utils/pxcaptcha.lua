@@ -67,6 +67,11 @@ function _M.load(config_file)
         px_logger.debug('Processing new CAPTCHA object');
 
         local _captcha, vid , uuid = split_cookie(captcha)
+        if not vid or not uuid then
+            px_logger.debug('CAPTCHA content is not valid');
+            return -1;
+        end
+
         px_logger.debug('CAPTCHA value: ' .. _captcha);
         px_logger.debug('uuid value: ' .. uuid);
 

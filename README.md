@@ -262,14 +262,26 @@ When captcha is enabled, the block page **must** include the following:
 <script src="https://www.google.com/recaptcha/api.js"></script>
 <script>
 function handleCaptcha(response) {
-    var vid = getQueryString("vid"); // getQueryString should be implemented 
+    var vid = getQueryString("vid"); // getQueryString is implemented below
+    var uuid = getQueryString("uuid");
     var name = '_pxCaptcha';
     var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-    var cookieParts = [name, '=', response + ':' + vid + '; expires=', expiryUtc, '; path=/'];
+    var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
     document.cookie = cookieParts.join('');
     var originalURL = getQueryString("url");
     var originalHost = window.location.host;
     window.location.href = window.location.protocol + "//" +  originalHost + originalURL;
+}
+
+// http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+function getQueryString(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 </script>
 ```
@@ -288,7 +300,7 @@ _M.custom_block_url /block.html
 ```
 
 
-#### Block page implementation example: 
+#### Block page implementation full example: 
 
 ```html
 <html>
@@ -297,9 +309,10 @@ _M.custom_block_url /block.html
         <script>
         function handleCaptcha(response) {
             var vid = getQueryString("vid");
+            var uuid = getQueryString("uuid");
             var name = '_pxCaptcha';
             var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-            var cookieParts = [name, '=', response + ':' + vid, '; expires=', expiryUtc, '; path=/'];
+            var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
             document.cookie = cookieParts.join('');
             // after getting resopnse we want to reaload the original page requested
             var originalURL = getQueryString("url");
