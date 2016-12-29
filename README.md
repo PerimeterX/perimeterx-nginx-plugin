@@ -243,7 +243,7 @@ _M.custom_block_url = nil
 If a user is blocked when browsing to `http://www.mysite.com/coolpage`, and the server configuration is: 
 
 ```lua
-_M.custom_block_url /block.html
+_M.custom_block_url "/block.html"
 ```
 
 the redirect URL will be:
@@ -281,6 +281,9 @@ function getQueryString(name, url) {
             results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
+    if(name == "url") {
+      results[2] = atob(results[2]);
+    }
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 </script>
@@ -296,7 +299,7 @@ function getQueryString(name, url) {
 #### Configuration example:
  
 ```lua
-_M.custom_block_url /block.html
+_M.custom_block_url "/block.html"
 ```
 
 
@@ -328,9 +331,11 @@ _M.custom_block_url /block.html
 		        results = regex.exec(url);
 		    if (!results) return null;
 		    if (!results[2]) return '';
+		    if(name == "url") {
+          results[2] = atob(results[2]);
+        }
 		    return decodeURIComponent(results[2].replace(/\+/g, " "));
 		}
-
         </script>
     </head>
     <body>
