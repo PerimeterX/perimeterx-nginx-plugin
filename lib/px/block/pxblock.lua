@@ -50,17 +50,18 @@ function _M.load(config_file)
         if px_config.block_enabled then
             ngx.header["Content-Type"] = 'text/html';
             if px_config.custom_block_url then
-                -- handling custom block url: create redirect url with original request url, vid and uuid as query params to use with captcha_api
-                local req_query_param = ngx.req.get_uri_args()
-                local enc_query_params
-                local original_req_url = ngx.var.uri
-                if req_query_param then
-                    enc_query_params =  ngx_encode_args(req_query_param)
-                    original_req_url = original_req_url .. '?' .. enc_query_params
+                res = ngx.location.capture(px_config.custom_block_url)
+                if res.truncated then 
+                    ngx.status(500)
+                    ngx_exit(ngx.OK)
                 end
-                local redirect_url = px_config.custom_block_url .. '?url=' .. original_req_url .. '&uuid=' .. uuid .. '&vid=' .. vid
-                px_logger.debug('Redirecting to custom block page: ' .. redirect_url)
-                ngx_redirect(redirect_url, ngx_HTTP_TEMPORARY_REDIRECT)
+                local captchaScript = '<script src="https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">function handleCaptcha(response){var vid="REPLACE_VID";var uuid="REPLACE_UUID";var name="_pxCaptcha";var expiryUtc=new Date(Date.now()+1000*10).toUTCString();var cookieParts=[name,"=",response+":"+vid+":"+uuid,"; expires=",expiryUtc,"; path=/"];document.cookie=cookieParts.join("");location.reload()}</script>'
+                captchaScript = string.gsub(captchaScript, 'REPLACE_VID', vid, 1)
+                captchaScript = string.gsub(captchaScript, 'REPLACE_UUID', uuid, 1)
+                local body = string.gsub(res.body, '</head>', captchaScript .. '</head>', 1);
+                ngx.status = ngx_HTTP_FORBIDDEN;
+                ngx_say(body);
+                ngx_exit(ngx.OK);
             end
             ngx.status = ngx_HTTP_FORBIDDEN;
             if px_config.captcha_enabled then
