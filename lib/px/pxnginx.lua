@@ -29,12 +29,19 @@ function _M.application(file_name)
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
     local px_config = require (config_file)
+    package.loaded[ 'px.utils.pxfilters' ] = nil
+    package.loaded[ 'px.utils.pxclient' ] = nil
+    package.loaded[ 'px.utils.pxcookie' ] = nil
+    package.loaded[ 'px.utils.pxcaptcha' ] = nil
+    package.loaded[ 'px.block.pxblock' ] = nil
+    package.loaded[ 'px.utils.pxapi' ] = nil
+    package.loaded[ 'px.utils.pxlogger' ] = nil
+    package.loaded[ 'px.utils.pxheaders' ] = nil
+
     local px_filters = require ("px.utils.pxfilters").load(config_file)
     local px_client = require ("px.utils.pxclient").load(config_file)
     local px_cookie = require ("px.utils.pxcookie").load(config_file)
     local px_captcha = require ("px.utils.pxcaptcha").load(config_file)
-
-    package.loaded[ 'px.block.pxblock' ] = nil
     local px_block = require ("px.block.pxblock").load(config_file)
     local px_api = require ("px.utils.pxapi").load(config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)

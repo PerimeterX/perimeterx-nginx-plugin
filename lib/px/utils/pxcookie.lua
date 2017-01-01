@@ -22,6 +22,8 @@ function _M.load(config_file)
 
     -- localized config
     local px_config = require (config_file)
+    package.loaded[ 'px.utils.pxlogger' ] = nil
+    package.loaded[ 'px.utils.pxheaders' ] = nil
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local px_headers = require ("px.utils.pxheaders").load(config_file)
     local cookie_encrypted = px_config.cookie_encrypted

@@ -9,6 +9,7 @@ local _M = {}
 
 function _M.load(config_file)
     local px_config = require (config_file)
+    package.loaded[ 'px.utils.pxlogger' ] = nil
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local string_sub = string.sub
     local string_find = string.find

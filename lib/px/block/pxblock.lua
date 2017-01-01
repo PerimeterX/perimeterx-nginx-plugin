@@ -13,6 +13,8 @@ function _M.load(config_file)
     local ngx_say = ngx.say
     local ngx_encode_args = ngx.encode_args
     local px_config = require (config_file)
+    package.loaded[ 'px.utils.pxclient' ] = nil
+    package.loaded[ 'px.utils.pxlogger' ] = nil
     local px_client = require ("px.utils.pxclient").load(config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"

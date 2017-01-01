@@ -10,6 +10,8 @@ function _M.load(config_file)
     local http = require "resty.http"
     local cjson = require "cjson"
     local px_config = require (config_file)
+    package.loaded[ 'px.utils.pxlogger' ] = nil
+    package.loaded[ 'px.utils.pxheaders' ] = nil
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local px_headers = require ("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"

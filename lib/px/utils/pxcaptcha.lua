@@ -8,6 +8,8 @@ local _M = {}
 
 function _M.load(config_file)
     local px_config = require (config_file)
+    package.loaded[ 'px.utils.pxapi' ] = nil
+    package.loaded[ 'px.utils.pxlogger' ] = nil
     local px_api = require ("px.utils.pxapi").load(config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local cjson = require "cjson"

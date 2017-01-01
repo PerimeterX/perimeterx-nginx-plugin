@@ -9,6 +9,7 @@ function _M.load(config_file)
 
     local http = require "resty.http"
     local px_config = require (config_file)
+    package.loaded[ 'px.utils.pxlogger' ] = nil    
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local ngx_time = ngx.time
