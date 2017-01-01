@@ -33,6 +33,8 @@ function _M.application(file_name)
     local px_client = require ("px.utils.pxclient").load(config_file)
     local px_cookie = require ("px.utils.pxcookie").load(config_file)
     local px_captcha = require ("px.utils.pxcaptcha").load(config_file)
+
+    package.loaded[ 'px.block.pxblock' ] = nil
     local px_block = require ("px.block.pxblock").load(config_file)
     local px_api = require ("px.utils.pxapi").load(config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)
