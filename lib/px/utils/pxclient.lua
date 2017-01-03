@@ -6,11 +6,11 @@
 local _M = {}
 
 function _M.load(config_file)
+    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
 
     local http = require "resty.http"
     local px_config = require (config_file)
-    package.loaded[ 'px.utils.pxlogger' ] = nil    
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local ngx_time = ngx.time
     local tostring = tostring

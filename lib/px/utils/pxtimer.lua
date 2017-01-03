@@ -8,11 +8,11 @@ local _M = {}
 function _M.application(file_name)
 	local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
+    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
+
 	local config = require (config_file)
-    package.loaded[ 'px.utils.pxclient' ] = nil
-    package.loaded[ 'px.utils.pxlogger' ] = nil
-	local pxclient = require ("px.utils.pxclient").load(config_file)
-	local px_logger = require ("px.utils.pxlogger").load(config_file)
+	local pxclient = px_require ("px.utils.pxclient").load(config_file)
+	local px_logger = px_require ("px.utils.pxlogger").load(config_file)
 	local buffer = require "px.utils.pxbuffer"
 
 	local ngx_timer_at = ngx.timer.at

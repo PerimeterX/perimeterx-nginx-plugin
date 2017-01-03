@@ -6,6 +6,7 @@
 local _M = {}
 
 function _M.load(config_file)
+    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
 
     local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
     local ngx_HTTP_TEMPORARY_REDIRECT = 307
@@ -13,10 +14,8 @@ function _M.load(config_file)
     local ngx_say = ngx.say
     local ngx_encode_args = ngx.encode_args
     local px_config = require (config_file)
-    package.loaded[ 'px.utils.pxclient' ] = nil
-    package.loaded[ 'px.utils.pxlogger' ] = nil
-    local px_client = require ("px.utils.pxclient").load(config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_client = px_require ("px.utils.pxclient").load(config_file)
+    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
 

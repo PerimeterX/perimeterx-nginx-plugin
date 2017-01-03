@@ -7,6 +7,8 @@
 local _M = {}
 
 function _M.load(config_file)
+    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
+
     -- localized functions
     local string_sub = string.sub
     local string_gsub = string.gsub
@@ -22,10 +24,8 @@ function _M.load(config_file)
 
     -- localized config
     local px_config = require (config_file)
-    package.loaded[ 'px.utils.pxlogger' ] = nil
-    package.loaded[ 'px.utils.pxheaders' ] = nil
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
-    local px_headers = require ("px.utils.pxheaders").load(config_file)
+    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
+    local px_headers = px_require ("px.utils.pxheaders").load(config_file)
     local cookie_encrypted = px_config.cookie_encrypted
     local blocking_score = px_config.blocking_score
     local cookie_secret = px_config.cookie_secret

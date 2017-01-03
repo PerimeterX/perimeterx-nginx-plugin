@@ -8,9 +8,10 @@
 local _M = {}
 
 function _M.load(config_file)
+    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
+
     local px_config = require (config_file)
-    package.loaded[ 'px.utils.pxlogger' ] = nil
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
     local string_sub = string.sub
     local string_find = string.find
     local string_len = string.len

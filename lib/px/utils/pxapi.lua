@@ -6,14 +6,13 @@
 local _M = {}
 
 function _M.load(config_file)
+    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
 
     local http = require "resty.http"
     local cjson = require "cjson"
     local px_config = require (config_file)
-    package.loaded[ 'px.utils.pxlogger' ] = nil
-    package.loaded[ 'px.utils.pxheaders' ] = nil
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
-    local px_headers = require ("px.utils.pxheaders").load(config_file)
+    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
+    local px_headers = px_require ("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
