@@ -12,6 +12,7 @@ function _M.load(config_file)
     local ngx_HTTP_TEMPORARY_REDIRECT = 307
     local ngx_redirect = ngx.redirect
     local ngx_say = ngx.say
+    local ngx_endcode_64 = ngx.encode_base64
     local ngx_encode_args = ngx.encode_args
     local px_config = require (config_file)
     local px_client = px_require ("px.utils.pxclient").load(config_file)
@@ -53,13 +54,13 @@ function _M.load(config_file)
             if px_config.custom_block_url then
                 -- handling custom block url: create redirect url with original request url, vid and uuid as query params to use with captcha_api
                 local req_query_param = ngx.req.get_uri_args()
-                local enc_query_params
+                local enc_url, enc_args
                 local original_req_url = ngx.var.uri
                 if req_query_param then
-                    enc_query_params =  ngx_encode_args(req_query_param)
-                    original_req_url = original_req_url .. '?' .. enc_query_params
+                    enc_args = ngx_encode_args(req_query_param)
+                    enc_url = ngx_endcode_64(original_req_url .. '?' .. enc_args)
                 end
-                local redirect_url = px_config.custom_block_url .. '?url=' .. original_req_url .. '&uuid=' .. uuid .. '&vid=' .. vid
+                local redirect_url = px_config.custom_block_url .. '?url=' .. enc_url .. '&uuid=' .. uuid .. '&vid=' .. vid
                 px_logger.debug('Redirecting to custom block page: ' .. redirect_url)
                 ngx_redirect(redirect_url, ngx_HTTP_TEMPORARY_REDIRECT)
             end
