@@ -5,9 +5,10 @@
 ----------------------------------------------
 
 
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
+function M.load(config_file)
+    local _M = {}
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
     local px_config = require (config_file)
@@ -46,4 +47,4 @@ function _M.load(config_file)
     end
     return _M
 end
-return _M
+return M

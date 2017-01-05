@@ -19,6 +19,7 @@ _M.send_page_requested_activity = true
 _M.block_enabled = true
 _M.captcha_enabled = true
 _M.custom_block_url = nil
+_M.redirect_on_custom_url = true
 _M.score_header_name = 'X-PX-SCORE'
 _M.score_header_enabled = false
 _M.px_debug = false

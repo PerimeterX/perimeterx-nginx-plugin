@@ -3,16 +3,14 @@
 -- Version 1.1.4
 -- Release date: 07.11.2016
 ----------------------------------------------
-local _M = {}
+local M = {}
 
-function _M.application(file_name)
+function M.application(file_name)
 	local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
-    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
-
 	local config = require (config_file)
-	local pxclient = px_require ("px.utils.pxclient").load(config_file)
-	local px_logger = px_require ("px.utils.pxlogger").load(config_file)
+	local pxclient = require ("px.utils.pxclient").load(config_file)
+	local px_logger = require ("px.utils.pxlogger").load(config_file)
 	local buffer = require "px.utils.pxbuffer"
 
 	local ngx_timer_at = ngx.timer.at
@@ -29,6 +27,5 @@ function _M.application(file_name)
 	    return
 	end
 	submit_on_timer()
-	return _M
 end
-return _M
+return M

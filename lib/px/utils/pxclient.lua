@@ -3,14 +3,14 @@
 -- Version 1.1.4
 -- Release date: 07.11.2016
 ----------------------------------------------
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
-    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
+function M.load(config_file)
+    local _M = {}
 
     local http = require "resty.http"
     local px_config = require (config_file)
-    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
+    local px_logger = require ("px.utils.pxlogger").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local ngx_time = ngx.time
     local tostring = tostring
@@ -109,4 +109,4 @@ function _M.load(config_file)
 
     return _M
 end
-return _M
+return M

@@ -4,14 +4,14 @@
 -- Release date: 07.11.2016
 ----------------------------------------------
 
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
-    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
+function M.load(config_file)
+    local _M = {}
     
     local px_config = require (config_file)
-    local px_api = px_require ("px.utils.pxapi").load(config_file)
-    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
+    local px_api = require ("px.utils.pxapi").load(config_file)
+    local px_logger = require ("px.utils.pxlogger").load(config_file)
     local cjson = require "cjson"
     local string_gmatch = string.gmatch
     local auth_token = px_config.auth_token
@@ -89,4 +89,4 @@ function _M.load(config_file)
 
     return _M
 end
-return _M
+return M

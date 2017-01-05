@@ -5,13 +5,13 @@
 ----------------------------------------------
 
 
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
-    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
+function M.load(config_file)
+    local _M = {}
 
     local px_config = require (config_file)
-    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
+    local px_logger = require ("px.utils.pxlogger").load(config_file)
     local string_sub = string.sub
     local string_find = string.find
     local string_len = string.len
@@ -136,4 +136,4 @@ function _M.load(config_file)
     end
     return _M
 end
-return _M
+return M

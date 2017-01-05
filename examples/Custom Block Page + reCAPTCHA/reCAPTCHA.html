@@ -1,97 +1,91 @@
-<html lang="en">
-<head>
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
-          media="screen, print" rel="stylesheet" type="text/css">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <meta charset="utf-8">
-    <title>
-        Access to This Page Has Been Blocked
-    </title>
-    <style>
-        h2 {
-            color: white;
-            font-size: 32px;
-        }
+<html>
+    <head>
+         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+              media="screen, print" rel="stylesheet" type="text/css">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+              integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <meta charset="utf-8">
+        <title>
+            Access to This Page Has Been Blocked
+        </title>
+        <style>
+            h2 {
+                color: white;
+                font-size: 32px;
+            }
 
-        p {
-            width: 60%;
-            margin: 0 auto;
-            font-size: 35px;
-        }
+            p {
+                width: 60%;
+                margin: 0 auto;
+                font-size: 35px;
+            }
 
-        body {
-            background-color: black;
-            font-family: "Open Sans";
-            margin: 5%;
-            color: white;
-            text-align: center;
-        }
+            div {
+                font-size: 24px;
+            }
 
-        img {
-            widht: 180px;
-        }
+            body {
+                background-color: black;
+                font-family: "Open Sans";
+                margin: 5%;
+                color: white;
+                text-align: center;
+            }
 
-        a {
-            color: #2020B1;
-            text-decoration: blink;
-        }
+            img {
+                widht: 180px;
+            }
 
-        a:hover {
-            color: white;
-        }
+            a {
+                color: #2020B1;
+                text-decoration: blink;
+                font-size: 16px;
+            }
 
-        i {
-            color:#E5001D;
-        }
-    </style>
-    <script src="https://www.google.com/recaptcha/api.js">
-    </script>
-    <!-- <script>
-        window.px_vid = "' .. vid .. '"; function handleCaptcha(response) { var name = "_pxCaptcha"; var expiryUtc = new Date( Date.now() + 1000 * 10 ).toUTCString(); var cookieParts = [name, "=", response + ":" + window.px_vid + ":' .. uuid .. '", "; expires=", expiryUtc, "; path=/"]; document.cookie = cookieParts.join(""); location.reload(); }
-    </script> -->
-</head>
-<body cz-shortcut-listen="true">
-<div>
-    <img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png">
-    </img>
-</div>
-<h2>
-    Custom Main Title
-</h2>
-<div style="font-size: 24px;">
-    <br>
-    <div style="color:#E5001D">
-        <i class="fa fa-user-secret fa-6" aria-hidden="true" style="font-size: 130px"></i><br>
-        For some reason, we think you are a bot !
-    </div>
-    <br>
-    <div style="margin-bottom: 20px; color: gold">
-        This may have happend because:
-    </div>
-    <div>
-        <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly.
-    </div>
-    <div>
-        <i class="fa fa-dot-circle-o" aria-hidden="true"></i> Your browsing behaviour is not likely to be that of a regular user.
-    </div>
-    <br>
-    To read more about the bot defender solution:
-    <a href="https://www.perimeterx.com/bot-defender">
-        https://www.perimeterx.com/bot-defender
-    </a>
-    <br>
-    If you think the blocking was done by mistake, contact the site administrator.
-    <br>
-    <br>
-    <div>
-        <div class="g-recaptcha" data-callback="handleCaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b"
-             data-theme="dark" style="margin:0 auto; width:304px">
+            a:hover {
+                color: white;
+            }
+
+            i {
+                color:#E5001D;
+            }
+
+            span {
+                font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"></img>
         </div>
-        <span style="font-size: 14px; color:#E5001D ">Solve the reCAPTCHA above to prove you are not a bot!</span>
-    </div>
-    <br>
-    <!-- ' .. ref_str .. ' -->
-</div>
-</body>
+        <h2 id="main-title">
+            Access to This Page Has Been Blocked!
+        </h2>
+        <div>
+            <br>
+            <div style="color:#E5001D">
+                <i class="fa fa-user-secret fa-6" aria-hidden="true" style="font-size: 130px"></i>
+                <br>
+                For some reason, we think you are a bot !
+            </div>
+            <br>
+            <div style="margin-bottom: 20px; color: gold">
+                This may have happend because:
+            </div>
+            <div>
+                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly on your machine.
+            </div>
+            <div>
+                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> Your browsing behaviour is not likely to be that of a regular user.
+            </div>
+            <br>
+            <span id="read-more">Read more about our Bot Defender solution:</span>
+            <a href="https://www.perimeterx.com/bot-defender">
+                https://www.perimeterx.com/bot-defender
+            </a>
+            <br>
+            <span>If you think this blocking was done by mistake, contact your site's administrator.</span>
+        </div>
+    </body>
 </html>

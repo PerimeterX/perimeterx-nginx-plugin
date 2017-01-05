@@ -3,16 +3,16 @@
 -- Version 1.1.4
 -- Release date: 07.11.2016
 ----------------------------------------------
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
-    local px_require = require ("px.utils.pxrequire").require -- internal require for PerimeterX modules (MultiApp support)
+function M.load(config_file)
+    local _M = {}
 
     local http = require "resty.http"
     local cjson = require "cjson"
     local px_config = require (config_file)
-    local px_logger = px_require ("px.utils.pxlogger").load(config_file)
-    local px_headers = px_require ("px.utils.pxheaders").load(config_file)
+    local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_headers = require ("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
@@ -134,4 +134,4 @@ function _M.load(config_file)
 
     return _M
 end
-return _M
+return M
