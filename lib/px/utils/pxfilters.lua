@@ -5,9 +5,11 @@
 ----------------------------------------------
 
 
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
+function M.load(config_file)
+    local _M = {}
+
     local px_config = require (config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local string_sub = string.sub
@@ -134,4 +136,4 @@ function _M.load(config_file)
     end
     return _M
 end
-return _M
+return M

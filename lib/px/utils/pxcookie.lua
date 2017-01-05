@@ -4,9 +4,11 @@
 -- Release date: 07.11.2016
 ----------------------------------------------
 
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
+function M.load(config_file)
+    local _M = {}
+
     -- localized functions
     local string_sub = string.sub
     local string_gsub = string.gsub
@@ -215,4 +217,4 @@ function _M.load(config_file)
 
     return _M
 end
-return _M
+return M

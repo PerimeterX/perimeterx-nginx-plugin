@@ -243,20 +243,39 @@ _M.custom_block_url = nil
 If a user is blocked when browsing to `http://www.mysite.com/coolpage`, and the server configuration is: 
 
 ```lua
-_M.custom_block_url /block.html
+_M.custom_block_url = '/block.html'
 ```
 
-the redirect URL will be:
+#### <a name="redirect_on_custom_url"></a> Redirect on Custom URL
+The `_M.redirect_on_custom_url` flag provides 2 options for redirecting users to a block page.
+
+**default:** false
+
+```lua
+_M.redirect_on_custom_url = false
+```
+
+By default, when a user crosses the blocking threshold and blocking is enabled, the user will be redirected to the block page defined by the `_M.custom_block_url` variable, responding with a 307 (Temporary Redirect) HTTP Response Code.
+
+
+Setting the flag to flase will *consume* the page and serve it under the current URL, responding with a 403 (Unauthorized) HTTP Response Code.
+
+>_Setting the flag to **false** does not require the block page to include any of the coming examples, as they are injected into the blocking page via the PerimeterX Nginx Enforcer._
+
+Setting the flag to **true** (enabling redirects) will result with the following URL upon blocking:
 
 ```
-http://www.mysite.com/block.html&url=/coolpage&uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
+http://www.example.com/block.html?url=L3NvbWVwYWdlP2ZvbyUzRGJhcg==&uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
 ```
+>Note: the **url** variable is comprised of URL Encoded query parameters (of the originating request) and then both the original path and variables are Base64 Encoded (to avoid collisions with block page query params). 
+
+ 
 
 ###### Custom blockpage requirements:
 
-When captcha is enabled, the block page **must** include the following:
+When captcha is enabled, and `_M.redirect_on_custom_url` is set to **true**, the block page **must** include the following:
 
-* Inside the `<head>` section:
+* The `<head>` section **must** include:
 
 ```html
 <script src="https://www.google.com/recaptcha/api.js"></script>
@@ -273,7 +292,8 @@ function handleCaptcha(response) {
     window.location.href = window.location.protocol + "//" +  originalHost + originalURL;
 }
 
-// http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+// for reference : http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+
 function getQueryString(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -281,22 +301,26 @@ function getQueryString(name, url) {
             results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
+    if(name == "url") {
+      results[2] = atob(results[2]); //Not supported on IE Browsers
+    }
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 </script>
 ```
-* Inside the `<body>` section:
+* The `<body>` section **must** include:
 
 ```
 <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div>
 ```
 
-* [PerimeterX Javascript snippet](https://console.perimeterx.com/#/app/applicationsmgmt).
+* And the [PerimeterX Javascript snippet](https://console.perimeterx.com/#/app/applicationsmgmt) (availabe on the PerimeterX Portal via this link) must be pasted in.
 
 #### Configuration example:
  
 ```lua
-_M.custom_block_url /block.html
+_M.custom_block_url = '/block.html'
+_M.redirect_on_custom_url = true
 ```
 
 
@@ -321,15 +345,18 @@ _M.custom_block_url /block.html
         }
        
        // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-	function getQueryString(name, url) {
-		if (!url) url = window.location.href;
-		name = name.replace(/[\[\]]/g, "\\$&");
-		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-			results = regex.exec(url);
-		if (!results) return null;
-		if (!results[2]) return '';
-		return decodeURIComponent(results[2].replace(/\+/g, " "));
-	}
+    function getQueryString(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        if(name == "url") {
+          results[2] = atob(results[2]); //Not supported on IE Browsers
+        }
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
 
         </script>
     </head>

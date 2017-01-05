@@ -4,10 +4,12 @@ Block Page Example
 
 In order to use the example:
 
-1. Uncomment the `' .. ref_str .. '` part of the html.
-2. Create a one liner from the edited html, Place it inside the `ngx_say` function, on the `else` part of the `if px_config.captcha_enabled then`. 
-  - an easy way is to use an online tool such as [Compress HTML](http://www.textfixer.com/html/compress-html-compression.php).
+1. Create a block.html file in your application (or copy the one in this folder), and define a route for it in your nginx.conf file.
+2. Set the `_M.custom_block_url` to the location you have just defined (e.g. /block.html)
+3. Set the `_M.captcha_enabled` flag to **false**
+4. Set the `_M.redirect_on_custom_url` flag to **false** 
 
+You are now Blocking requests without providing a CAPTCHA.
 
 
 

@@ -4,9 +4,11 @@
 -- Release date: 07.11.2016
 ----------------------------------------------
 
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
+function M.load(config_file)
+    local _M = {}
+    
     local px_config = require (config_file)
     local px_api = require ("px.utils.pxapi").load(config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)
@@ -67,7 +69,7 @@ function _M.load(config_file)
         px_logger.debug('Processing new CAPTCHA object');
 
         local _captcha, vid , uuid = split_cookie(captcha)
-        if not vid or not uuid then
+        if not _captcha or not vid or not uuid then
             px_logger.debug('CAPTCHA content is not valid');
             return -1;
         end
@@ -87,4 +89,4 @@ function _M.load(config_file)
 
     return _M
 end
-return _M
+return M

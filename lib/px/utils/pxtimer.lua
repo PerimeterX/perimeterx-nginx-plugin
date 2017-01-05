@@ -3,9 +3,9 @@
 -- Version 1.1.4
 -- Release date: 07.11.2016
 ----------------------------------------------
-local _M = {}
+local M = {}
 
-function _M.application(file_name)
+function M.application(file_name)
 	local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
 	local config = require (config_file)
@@ -27,6 +27,5 @@ function _M.application(file_name)
 	    return
 	end
 	submit_on_timer()
-	return _M
 end
-return _M
+return M

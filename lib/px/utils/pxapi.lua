@@ -3,9 +3,10 @@
 -- Version 1.1.4
 -- Release date: 07.11.2016
 ----------------------------------------------
-local _M = {}
+local M = {}
 
-function _M.load(config_file)
+function M.load(config_file)
+    local _M = {}
 
     local http = require "resty.http"
     local cjson = require "cjson"
@@ -133,4 +134,4 @@ function _M.load(config_file)
 
     return _M
 end
-return _M
+return M

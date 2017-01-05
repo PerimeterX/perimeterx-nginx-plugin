@@ -22,9 +22,10 @@
 -- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-local _M = {}
+local M = {}
 
-function _M.application(file_name)
+function M.application(file_name)
+    local _M = {}
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
@@ -37,6 +38,7 @@ function _M.application(file_name)
     local px_api = require ("px.utils.pxapi").load(config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)
     local px_headers = require ("px.utils.pxheaders").load(config_file)
+
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
     local risk_api_path = px_config.risk_api_path
@@ -138,4 +140,4 @@ function _M.application(file_name)
     end
 end
 
-return _M
+return M

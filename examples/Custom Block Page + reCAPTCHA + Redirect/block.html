@@ -54,6 +54,35 @@
                 font-size: 16px;
             }
         </style>
+        <script>
+        function handleCaptcha(response) {
+            debugger;
+            var vid = getQueryString("vid");
+            var uuid = getQueryString("uuid");
+            var name = '_pxCaptcha';
+            var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
+            var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
+            document.cookie = cookieParts.join('');
+            // after getting resopnse we want to reaload the original page requested
+            var originalURL = getQueryString("url");
+            var originalHost = window.location.host;
+            window.location.href = window.location.protocol + "//" +  originalHost + originalURL;
+        }
+
+        function getQueryString(name, url) {
+            debugger;
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            if(name == "url") {
+                results[2] = atob(results[2]);
+            }
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+        </script>
     </head>
     <body>
         <div>
@@ -74,18 +103,27 @@
                 This may have happend because:
             </div>
             <div>
-                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly on your machine.
+                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly.
             </div>
             <div>
                 <i class="fa fa-dot-circle-o" aria-hidden="true"></i> Your browsing behaviour is not likely to be that of a regular user.
             </div>
             <br>
-            <span id="read-more">Read more about our Bot Defender solution:</span>
+            <span id="read-more">To read more about PerimeterX Bot Defender solution:</span>
             <a href="https://www.perimeterx.com/bot-defender">
                 https://www.perimeterx.com/bot-defender
             </a>
             <br>
-            <span>If you think this blocking was done by mistake, contact the site administrator.</span>
+                <span>If you think the blocking was done by mistake, contact the site administrator.</span>
+            <br>
+            <br>
+            <div>
+                <div class="g-recaptcha" data-callback="handleCaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b"
+                     data-theme="dark" style="margin:0 auto; width:304px">
+                </div>
+                <span style="font-size: 14px; color:#E5001D ">Solve the reCAPTCHA above to prove you are not a bot!</span>
+            </div>
+            <br>
         </div>
     </body>
 </html>
