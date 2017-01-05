@@ -125,6 +125,11 @@ Test the redirect flow
     real_ip_header     X-Forwarded-For;
 
 --- config
+    location = /block.html {
+        content_by_lua_block {
+            ngx.say("BLOCKPAGE")
+        }
+    }
     location = /t {
         resolver 8.8.8.8;
 	    set_by_lua_block $config {
@@ -151,8 +156,8 @@ X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
 --- response_body_like
-.*307 Temporary Redirect.*
---- error_code: 307
+.*BLOCKPAGE.*
+--- error_code: 403
 
 --- error_log
 PX DEBUG: Visitor score is higher than allowed threshold: 100
