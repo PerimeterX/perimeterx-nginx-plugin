@@ -5,7 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.0.0] - 2016-12-7
+## [2.2.0] - 2017-01-05
+### Added
+- Added Optional Redirect Method (Inner Redirect / Browser Redirect).
+- Added Redirection Methos Example Folder.
+
+### Modified
+- Updated README.
+- Updated Examples.
+- Modified The Default Block Page Look
+
+
+### Fixed
+- Fixed Multiple Application Support Caching Issue.
+- Fixed URL Encoding Collisions
+
+>Note: The Nginx module is currently supported up to version **1.11.6**
+
+<br>
+
+
+
+
+## [2.0.0] - 2016-12-07
 ### Added
 - Multiple Application Support.
 - Multiple Application Support Example.
