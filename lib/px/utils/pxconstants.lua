@@ -15,7 +15,7 @@ local function readonlytable(table)
 end
 
 local _M = readonlytable {
-    MODULE_VERSION = "NGINX Module v2.1.2"
+    MODULE_VERSION = "NGINX Module v2.2.0"
 }
 
 return _M
