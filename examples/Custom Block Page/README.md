@@ -8,6 +8,8 @@ In order to use the example:
 2. Set the `_M.custom_block_url` to the location you have just defined (e.g. /block.html)
 3. Set the `_M.captcha_enabled` flag to **false**
 4. Set the `_M.redirect_on_custom_url` flag to **false** 
+5. Change the `<APP_ID>` placeholder on the block.html page to the Application ID provided on the PerimeterX Portal.
+
 
 You are now Blocking requests without providing a CAPTCHA.
 

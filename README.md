@@ -29,7 +29,7 @@ Table of Contents
 
 <a name="dependencies"></a> Dependencies
 ----------------------------------------
-- [NGINX >= v1.7](http://nginx.org/) with [Lua NGINX Module](https://github.com/openresty/lua-nginx-module) support (>= v0.9.11) or [Openresty](https://openresty.org/en/)
+- [NGINX 1.7 up to 1.11.6](http://nginx.org/) with [Lua NGINX Module](https://github.com/openresty/lua-nginx-module) support (>= v0.9.11) or [Openresty](https://openresty.org/en/)
 - [LuaJIT](http://luajit.org/)
 - [Lua CJSON](http://www.kyne.com.au/~mark/software/lua-cjson.php)
 - [Lua Resty HTTP](https://github.com/pintsized/lua-resty-http)
