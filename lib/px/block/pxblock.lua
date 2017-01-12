@@ -61,7 +61,8 @@ function M.load(config_file)
                 if not px_config.redirect_on_custom_url then
                     local res = ngx.location.capture(px_config.custom_block_url)
                     if res.truncated or res.status >= 300 then
-                        ngx.status(500)
+                        ngx.status = 500
+                        ngx_say('Unable to fetch custom block url. Status: ' .. tostring(res.status))
                         ngx_exit(ngx.OK)
                     end
                     local body = res.body
