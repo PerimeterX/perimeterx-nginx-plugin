@@ -1,7 +1,7 @@
----------------------------------------------
+----------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.4
--- Release date: 07.11.2016
+-- Version 1.5.0
+-- Release date: 05.04.2016
 ----------------------------------------------
 
 local _M = {}
@@ -9,30 +9,29 @@ local _M = {}
 _M.px_enabled = true
 
 -- ##  Configuration Block ##
-_M.px_appId = 'APP_ID'
-_M.cookie_secret = 'COOKIE_SECRET'
-_M.auth_token = 'JWT_AUTH_TOKEN'
+_M.px_appId = 'PXvRfnOj4y'
+_M.cookie_secret = 'f7pwHxYoDYC9JxHxDK9sreWi5uNCdWB/HXaFN6CS8uL9smhsAQRNGooDzIqrlxoS'
+_M.auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ3MjE3NTkxNiwic3ViIjoiUFh2UmZuT2o0eSIsImp0aSI6IjgzMDJmNDRhLTgwNTktNDRkZi05ZGJkLWRhZWRjNzE1NjhmNyJ9.giB48Fl02FFhLw15UujLVzq8Q7PRhweBC_wCtweXerU'
 _M.blocking_score = 60
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
 _M.block_enabled = true
 _M.captcha_enabled = true
-_M.custom_block_url = nil
-_M.redirect_on_custom_url = true
-_M.score_header_name = 'X-PX-SCORE'
-_M.score_header_enabled = false
-_M.px_debug = false
+_M.px_debug = true
 
 _M.s2s_timeout = 1000
 _M.px_maxbuflen = 10
-_M.px_server = _M.px_appId == 'APP_ID' and 'sapi.perimeterx.com' or 'sapi-' .. string.lower(_M.px_appId) .. 'glb1.perimeterx.net'
+_M.score_header_name = 'X-PX-SCORE'
+_M.px_server = 'us-east-1-1.glb1.perimeterx.net'
 _M.px_port = 443
 _M.ssl_enabled = true
 _M.nginx_collector_path = '/api/v1/collector/s2s'
 _M.risk_api_path = '/api/v1/risk'
 _M.captcha_api_path = '/api/v1/risk/captcha'
+_M.custom_block_url ='/block.html'
 _M.enabled_routes = {}
+-- -- ## END - Configuration block ##
 
 -- ## Filter Configuration ##
 
@@ -44,7 +43,5 @@ _M.whitelist = {
     ua_full = {},
     ua_sub = {}
 }
-
--- -- ## END - Configuration block ##
 
 return _M

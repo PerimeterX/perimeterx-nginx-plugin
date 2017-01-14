@@ -85,8 +85,7 @@ function M.application(file_name)
     end
 
     px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. user_agent)
-    -- process _px cookie if present
-    local _px = ngx.var.cookie__px
+    -- process _pxCaptcha cookie if present
     local _pxCaptcha = ngx.var.cookie__pxCaptcha
 
     if px_config.captcha_enabled and _pxCaptcha then
@@ -100,11 +99,13 @@ function M.application(file_name)
         end
     end
 
+    -- process _px cookie if present
+    local _px = ngx.var.cookie__px
     local success, result = pcall(px_cookie.process, _px)
     local details = {};
-    details["px_cookie"] = ngx.ctx.px_cookie;
     -- cookie verification passed - checking result.
     if success then
+        details["px_cookie"] = ngx.ctx.px_cookie;
         -- score crossed threshold
         if result == false then
             return px_block.block('cookie_high_score')
