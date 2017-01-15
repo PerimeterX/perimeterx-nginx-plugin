@@ -23,12 +23,8 @@ _M.px_debug = true
 _M.s2s_timeout = 1000
 _M.px_maxbuflen = 10
 _M.score_header_name = 'X-PX-SCORE'
-_M.px_server = 'us-east-1-1.glb1.perimeterx.net'
 _M.px_port = 443
 _M.ssl_enabled = true
-_M.nginx_collector_path = '/api/v1/collector/s2s'
-_M.risk_api_path = '/api/v1/risk'
-_M.captcha_api_path = '/api/v1/risk/captcha'
 _M.custom_block_url ='/block.html'
 _M.enabled_routes = {}
 -- -- ## END - Configuration block ##

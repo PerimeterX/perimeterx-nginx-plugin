@@ -39,10 +39,11 @@ function M.application(file_name)
     local px_api = require("px.utils.pxapi").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_constants = require("px.utils.pxconstants")
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
-    local risk_api_path = px_config.risk_api_path
+    local risk_api_path = px_constants.RISK_PATH
     local enabled_routes = px_config.enabled_routes
     local remote_addr = ngx.var.remote_addr or ""
     local user_agent = ngx.var.http_user_agent or ""

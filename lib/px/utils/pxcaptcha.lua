@@ -8,14 +8,16 @@ local M = {}
 
 function M.load(config_file)
     local _M = {}
-    
-    local px_config = require (config_file)
-    local px_api = require ("px.utils.pxapi").load(config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
+
+    local px_config = require(config_file)
+    local px_api = require("px.utils.pxapi").load(config_file)
+    local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_constants = require "px.utils.pxconstants"
+
     local cjson = require "cjson"
     local string_gmatch = string.gmatch
     local auth_token = px_config.auth_token
-    local captcha_api_path = px_config.captcha_api_path
+    local captcha_api_path = px_constants.CAPTCHA_PATH
     local pcall = pcall
     local ngx_req_get_headers = ngx.req.get_headers
 
@@ -68,7 +70,7 @@ function M.load(config_file)
         end
         px_logger.debug('Processing new CAPTCHA object');
 
-        local _captcha, vid , uuid = split_cookie(captcha)
+        local _captcha, vid, uuid = split_cookie(captcha)
         if not _captcha or not vid or not uuid then
             px_logger.debug('CAPTCHA content is not valid');
             return -1;
@@ -82,11 +84,12 @@ function M.load(config_file)
         if success then
             return response.status
         else
-            px_logger.error("Failed to connecto CAPTCHA API: " ..  cjson.encode(response))
+            px_logger.error("Failed to connecto CAPTCHA API: " .. cjson.encode(response))
         end
         return -1;
     end
 
     return _M
 end
+
 return M

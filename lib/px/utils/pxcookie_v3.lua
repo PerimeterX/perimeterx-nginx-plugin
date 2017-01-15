@@ -137,13 +137,9 @@ function M.load(config_file)
 
     local function validate(data, hash)
         local request_data = data .. ngx.var.http_user_agent
-        px_logger.debug("[COOKIE V3] - req_data: " .. request_data)
         local digest = hmac("sha256", cookie_secret, request_data)
-        px_logger.debug("[COOKIE V3] - digest: " .. digest)
         digest = to_hex(digest)
 
-        px_logger.debug("[COOKIE V3] - digest: " .. digest)
-        px_logger.debug("[COOKIE V3] - hash: " .. hash)
         -- policy with ip
         if digest == string_upper(hash) then
             return true
@@ -157,10 +153,7 @@ function M.load(config_file)
     -- takes one argument - cookie
     -- returns boolean,
     function _M.process(cookie)
-        px_logger.debug("[COOKIE V3] -start processing cookie v3")
-
         if not cookie then
-            px_logger.debug("[COOKIE V3] -Risk cookie not present")
             error({ message = "no_cookie" })
         end
 
@@ -185,8 +178,6 @@ function M.load(config_file)
             data = result
         end
 
-        px_logger.debug("[COOKIE V3] - " .. type(data))
-        px_logger.debug("[COOKIE V3] - start decoding" .. data)
         -- Deserialize the JSON payload
         local success, result = pcall(decode, data)
         if not success then
@@ -194,9 +185,7 @@ function M.load(config_file)
             error({ message = "cookie_decryption_failed" })
         end
 
-        px_logger.debug("[COOKIE V3] -cookie v3 decoded " .. data)
         local fields = result
-        px_logger.debug("[COOKIE V3] - " .. type(fields))
         ngx.ctx.px_cookie = data;
         if fields.u then
             ngx.ctx.uuid = fields.u
@@ -206,8 +195,6 @@ function M.load(config_file)
         end
 
         -- cookie expired
-        px_logger.debug("[COOKIE V3] - os time " .. os_time())
-        px_logger.debug("[COOKIE V3] - os time " .. fields.t)
         if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
             px_logger.error("Cookie expired - " .. data)
             error({ message = "cookie_expired" })
@@ -216,12 +203,11 @@ function M.load(config_file)
         -- Set the score header for upstream applications
         px_headers.set_score_header(fields.s)
         -- Check bot score and block if it is >= to the configured block score
-        --        if fields.s and fields.s >= blocking_score then
-        --            px_logger.debug("[COOKIE V3] -Visitor score is higher than allowed threshold: " .. fields.s)
-        --            ngx.ctx.block_score = fields.s
-        --            ngx.ctx.block_action = fields.a
-        --            return false
-        --        end
+        if fields.s and fields.s >= blocking_score then
+            ngx.ctx.block_score = fields.s
+            ngx.ctx.block_action = fields.a
+            return false
+        end
 
         -- Validate the cookie integrity
         local success, result = pcall(validate, orig_cookie, hash)
@@ -229,8 +215,6 @@ function M.load(config_file)
             px_logger.error("Could not validate cookie signature - " .. orig_cookie)
             error({ message = "cookie_validation_failed" })
         end
-
-        px_logger.debug("[COOKIE V3] -Cookie v3 processed well")
         return true
     end
 
