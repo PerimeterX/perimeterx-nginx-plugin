@@ -178,6 +178,13 @@ function M.load(config_file)
             data = result
         end
 
+        -- Validate the cookie integrity
+        local success, result = pcall(validate, orig_cookie, hash)
+        if not success or result == false then
+            px_logger.error("Could not validate cookie signature - " .. orig_cookie)
+            error({ message = "cookie_validation_failed" })
+        end
+
         -- Deserialize the JSON payload
         local success, result = pcall(decode, data)
         if not success then
@@ -212,12 +219,6 @@ function M.load(config_file)
             return false
         end
 
-        -- Validate the cookie integrity
-        local success, result = pcall(validate, orig_cookie, hash)
-        if not success or result == false then
-            px_logger.error("Could not validate cookie signature - " .. orig_cookie)
-            error({ message = "cookie_validation_failed" })
-        end
         return true
     end
 
