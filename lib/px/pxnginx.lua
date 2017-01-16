@@ -159,6 +159,7 @@ function M.application(file_name)
             details["px_cookie_version"] = 'v1';
             -- score crossed threshold
             if result == false then
+                ngx.ctx.px_action = 'c'
                 return px_block.block('cookie_high_score')
                 -- score did not cross the blocking threshold
             else

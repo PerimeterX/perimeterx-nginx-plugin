@@ -194,7 +194,7 @@ function M.load(config_file)
             ngx.ctx.vid = fields.v
         end
         if fields.a then
-            ngx.ctx.action = fields.a
+            ngx.ctx.px_action = fields.a
         end
 
         -- cookie expired

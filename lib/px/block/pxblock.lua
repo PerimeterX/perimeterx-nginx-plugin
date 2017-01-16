@@ -58,7 +58,6 @@ function M.load(config_file)
         end
 
         px_client.send_to_perimeterx('block', details);
-
         if px_config.block_enabled then
             ngx.header["Content-Type"] = 'text/html';
             if px_config.custom_block_url then
@@ -70,7 +69,7 @@ function M.load(config_file)
                         ngx_exit(ngx.OK)
                     end
                     local body = res.body
-                    if px_config.captcha_enabled and ngx.ctx.action == 'c' then
+                    if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
                         body = string.gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
                         body = string.gsub(body, '::BLOCK_REF::', uuid);
                     end
@@ -92,7 +91,7 @@ function M.load(config_file)
                 end
             else
                 ngx.status = ngx_HTTP_FORBIDDEN;
-                if px_config.captcha_enabled and ngx.ctx.action == 'c' then
+                if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
                     local head = '<head><link type="text/css" rel="stylesheet" media="screen, print" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"> <meta charset="UTF-8"> <title>Access to This Page Has Been Blocked</title> <style> p { width: 60%; margin: 0 auto; font-size: 35px; } body { background-color: #a2a2a2; font-family: "Open Sans"; margin: 5%; } img { widht: 180px; } a { color: #2020B1; text-decoration: blink; } a:hover { color: #2b60c6; } </style> <style type="text/css"></style> ' .. inject_captcha_script(vid, uuid) .. inject_px_snippet() .. ' </head>'
                     local body = '<body cz-shortcut-listen="true"> <div><img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"> </div> <span style="color: white; font-size: 34px;">Access to This Page Has Been Blocked</span> <div style="font-size: 24px;color: #000042;"><br> Access to this page is blocked according to the website security policy. <br> Your browsing activity made us think you may be a bot. <br> <br> This may happen as a result of the following: <ul> <li>JavaScript is disabled or not running properly.</li> <li>Your browsing behaviour is not likely to be a regular user.</li> </ul> To read more about the bot defender solution: <a href="https://www.perimeterx.com/bot-defender">https://www.perimeterx.com/bot-defender</a> <br> If you think the blocking was done by mistake, contact the site administrator. <br> <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div><br> </br> ' .. ref_str .. ' </div>';
                     ngx_say('<html lang="en">' .. head .. body .. '</html>');
