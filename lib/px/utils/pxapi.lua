@@ -10,9 +10,9 @@ function M.load(config_file)
 
     local http = require "resty.http"
     local cjson = require "cjson"
-    local px_config = require (config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
-    local px_headers = require ("px.utils.pxheaders").load(config_file)
+    local px_config = require(config_file)
+    local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
@@ -53,16 +53,20 @@ function M.load(config_file)
     -- takes one argument - table
     -- returns boolean
     function _M.process(data)
-        px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.scores))
-        px_headers.set_score_header(data.scores.non_human)
+        px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.score))
+        px_headers.set_score_header(data.score)
 
         if data.uuid then
             ngx.ctx.uuid = data.uuid
         end
 
-        if data.scores.non_human >= px_config.blocking_score then
-            ngx.ctx.block_score = data.scores.non_human
-            px_logger.error("Block reason - non human score: " .. data.scores.non_human)
+        if data.action then
+            ngx.ctx.px_action = data.action
+        end
+
+        if data.score >= px_config.blocking_score then
+            ngx.ctx.block_score = data.score
+            px_logger.error("Block reason - non human score: " .. data.score)
             return false
         end
         return true
@@ -72,7 +76,7 @@ function M.load(config_file)
     -- takes three values, data , path, and auth_token
     -- returns response body as a table
     function _M.call_s2s(data, path, auth_token)
-        local px_server = px_config.px_server
+        local px_server = 'sapi-' .. string.lower(px_config.px_appId) .. '.glb1.perimeterx.net'
         local px_port = px_config.px_port
         local ssl_enabled = px_config.ssl_enabled
 
@@ -134,4 +138,5 @@ function M.load(config_file)
 
     return _M
 end
+
 return M

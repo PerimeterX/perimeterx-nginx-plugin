@@ -11,7 +11,9 @@ function M.application(file_name)
 	local config = require (config_file)
 	local pxclient = require ("px.utils.pxclient").load(config_file)
 	local px_logger = require ("px.utils.pxlogger").load(config_file)
+	local px_constants = require("px.utils.pxconstants")
 	local buffer = require "px.utils.pxbuffer"
+
 
 	local ngx_timer_at = ngx.timer.at
 
@@ -22,7 +24,7 @@ function M.application(file_name)
 	    end
 	    local buflen = buffer.getBufferLength()
 	    if buflen > 0 then
-	        pxclient.submit(buffer.dumpEvents(), config.nginx_collector_path)
+	        pxclient.submit(buffer.dumpEvents(), px_constants.ACTIVITIES_PATH)
 	    end
 	    return
 	end

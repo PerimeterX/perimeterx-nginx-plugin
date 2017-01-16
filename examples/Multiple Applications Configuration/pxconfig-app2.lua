@@ -26,12 +26,8 @@ _M.px_debug = false
 
 _M.s2s_timeout = 1000
 _M.px_maxbuflen = 10
-_M.px_server = _M.px_appId == 'APP_ID' and 'sapi.perimeterx.com' or 'sapi-' .. string.lower(_M.px_appId) .. '.glb1.perimeterx.net'
 _M.px_port = 443
 _M.ssl_enabled = true
-_M.nginx_collector_path = '/api/v1/collector/s2s'
-_M.risk_api_path = '/api/v1/risk'
-_M.captcha_api_path = '/api/v1/risk/captcha'
 _M.enabled_routes = {}
 
 -- ## Filter Configuration ##
