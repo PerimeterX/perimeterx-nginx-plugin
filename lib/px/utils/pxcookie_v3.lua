@@ -193,6 +193,9 @@ function M.load(config_file)
         if fields.v then
             ngx.ctx.vid = fields.v
         end
+        if fields.a then
+            ngx.ctx.action = fields.a
+        end
 
         -- cookie expired
         if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
