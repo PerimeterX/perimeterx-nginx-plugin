@@ -62,7 +62,7 @@ __DATA__
 
 
 === TEST 1: Procoss Workflow
-Process a valid cookie
+Process a valid V1 cookie
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";

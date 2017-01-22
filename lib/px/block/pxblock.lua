@@ -19,6 +19,7 @@ function M.load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
+    local string_gsub = string.gsub
 
     local function inject_captcha_script(vid, uuid)
         return '<script src="https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
@@ -27,7 +28,7 @@ function M.load(config_file)
     end
 
     local function inject_px_snippet()
-        return '<script type="text/javascript">(function(){window._pxAppId="' .. px_config.px_appid .. '";varp=document.getElementsByTagName("script")[0],s=document.createElement("script");s.async=1;s.src="//client.perimeterx.net/' .. px_config.px_appid .. '/main.min.js";p.parentNode.insertBefore(s,p);}());</script>';
+        return '<script type="text/javascript">(function(){window._pxAppId="' .. px_config.px_appid .. '";var p=document.getElementsByTagName("script")[0],s=document.createElement("script");s.async=1;s.src="//client.perimeterx.net/' .. px_config.px_appid .. '/main.min.js";p.parentNode.insertBefore(s,p);}());</script>';
     end
 
     function _M.block(reason)
@@ -70,8 +71,8 @@ function M.load(config_file)
                     end
                     local body = res.body
                     if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
-                        body = string.gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
-                        body = string.gsub(body, '::BLOCK_REF::', uuid);
+                        body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
+                        body = string_gsub(body, '::BLOCK_REF::', uuid);
                     end
                     ngx.status = ngx_HTTP_FORBIDDEN;
                     ngx_say(body);
