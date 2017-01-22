@@ -28,7 +28,11 @@ function M.load(config_file)
     end
 
     local function inject_px_snippet()
-        return '<script type="text/javascript">(function(){window._pxAppId="' .. px_config.px_appid .. '";var p=document.getElementsByTagName("script")[0],s=document.createElement("script");s.async=1;s.src="//client.perimeterx.net/' .. px_config.px_appid .. '/main.min.js";p.parentNode.insertBefore(s,p);}());</script>';
+        local app_id = ''
+        if px_config.px_appId then
+            app_id = px_config.px_appId
+        end
+        return '<script type="text/javascript">(function(){window._pxAppId="' .. app_id .. '";var p=document.getElementsByTagName("script")[0],s=document.createElement("script");s.async=1;s.src="//client.perimeterx.net/' .. app_id .. '/main.min.js";p.parentNode.insertBefore(s,p);}());</script>';
     end
 
     function _M.block(reason)

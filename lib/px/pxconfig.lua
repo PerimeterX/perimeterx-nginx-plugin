@@ -16,16 +16,18 @@ _M.blocking_score = 60
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
-_M.block_enabled = true
-_M.captcha_enabled = true
-_M.px_debug = true
+_M.block_enabled = false
+_M.captcha_enabled = false
+_M.px_debug = false
 
 _M.s2s_timeout = 1000
 _M.px_maxbuflen = 10
 _M.score_header_name = 'X-PX-SCORE'
+_M.score_header_enabled = false
 _M.px_port = 443
 _M.ssl_enabled = true
-_M.custom_block_url ='/block.html'
+_M.custom_block_url = nil
+_M.redirect_on_custom_url = false
 _M.enabled_routes = {}
 -- -- ## END - Configuration block ##
 
