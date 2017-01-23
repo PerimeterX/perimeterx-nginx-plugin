@@ -9,8 +9,8 @@ function M.load(config_file)
     local _M = {}
 
     local http = require "resty.http"
-    local px_config = require (config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_config = require(config_file)
+    local px_logger = require("px.utils.pxlogger").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
     local ngx_time = ngx.time
@@ -94,6 +94,23 @@ function M.load(config_file)
         pxdata['px_app_id'] = px_config.px_appId;
         pxdata['timestamp'] = tostring(ngx_time());
         pxdata['socket_ip'] = ngx.var.remote_addr;
+
+        if ngx.ctx.vid then
+            details['vid'] = ngx.ctx.vid
+        end
+
+        if ngx.ctx.uuid then
+            details['uuid'] = ngx.ctx.uuid
+        end
+
+        if ngx.ctx.px_cookie then
+            details['px_cookie'] = ngx.ctx.px_cookie
+        end
+
+        if ngx.ctx.px_cookie then
+            details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
+        end
+
         pxdata['details'] = details;
 
         if event_type == 'page_requested' then
@@ -110,4 +127,5 @@ function M.load(config_file)
 
     return _M
 end
+
 return M

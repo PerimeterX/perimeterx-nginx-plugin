@@ -134,6 +134,7 @@ function M.application(file_name)
         if success then
             px_logger.debug("PX-CookieV3 Processed Succesfuly")
             details["px_cookie"] = ngx.ctx.px_cookie;
+            details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
             details["px_cookie_version"] = 'v3';
             -- score crossed threshold
             if result == false then
@@ -158,6 +159,7 @@ function M.application(file_name)
         if success then
             px_logger.debug("PX-CookieV1 Processed Succesfuly")
             details["px_cookie"] = ngx.ctx.px_cookie;
+            details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
             details["px_cookie_version"] = 'v1';
             -- score crossed threshold
             if result == false then

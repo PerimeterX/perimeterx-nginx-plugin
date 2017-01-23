@@ -145,7 +145,7 @@ function M.load(config_file)
             return true
         end
 
-        px_logger.error('Failed to verify cookie content ' .. data);
+        px_logger.error('Failed to verify cookie v3 content ' .. data);
         return false
     end
 
@@ -178,13 +178,6 @@ function M.load(config_file)
             data = result
         end
 
-        -- Validate the cookie integrity
-        local success, result = pcall(validate, orig_cookie, hash)
-        if not success or result == false then
-            px_logger.error("Could not validate cookie signature - " .. orig_cookie)
-            error({ message = "cookie_validation_failed" })
-        end
-
         -- Deserialize the JSON payload
         local success, result = pcall(decode, data)
         if not success then
@@ -193,7 +186,8 @@ function M.load(config_file)
         end
 
         local fields = result
-        ngx.ctx.px_cookie = data;
+        ngx.ctx.px_cookie = data
+        ngx.ctx.px_cookie_hmac = hash
         if fields.u then
             ngx.ctx.uuid = fields.u
         end
@@ -217,6 +211,13 @@ function M.load(config_file)
             ngx.ctx.block_score = fields.s
             ngx.ctx.block_action = fields.a
             return false
+        end
+
+        -- Validate the cookie integrity
+        local success, result = pcall(validate, orig_cookie, hash)
+        if not success or result == false then
+            px_logger.error("Could not validate cookie v3 signature - " .. orig_cookie)
+            error({ message = "cookie_validation_failed" })
         end
 
         return true

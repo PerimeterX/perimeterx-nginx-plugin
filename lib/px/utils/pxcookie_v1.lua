@@ -143,7 +143,7 @@ function M.load(config_file)
             return true
         end
 
-        px_logger.error('Failed to verify cookie content ' .. cjson.encode(data));
+        px_logger.error('Failed to verify cookie v1 content ' .. cjson.encode(data));
         return false
     end
 
@@ -183,9 +183,12 @@ function M.load(config_file)
 
         local fields = result
         ngx.ctx.px_cookie = data;
+        ngx.ctx.px_cookie_hmac = fields.h
+
         if fields.u then
             ngx.ctx.uuid = fields.u
         end
+
         if fields.v then
             ngx.ctx.vid = fields.v
         end
@@ -208,7 +211,7 @@ function M.load(config_file)
         -- Validate the cookie integrity
         local success, result = pcall(validate, fields)
         if not success or result == false then
-            px_logger.error("Could not validate cookie signature - " .. data)
+            px_logger.error("Could not validate cookie v1 signature - " .. data)
             error({ message = "cookie_validation_failed" })
         end
 

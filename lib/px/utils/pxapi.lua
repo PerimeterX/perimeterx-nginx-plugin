@@ -37,9 +37,10 @@ function M.load(config_file)
 
         if call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then
             risk.additional.px_cookie = ngx.ctx.px_cookie
-            local dec_cookie = cjson.decode(ngx.ctx.px_cookie)
-            risk.vid = dec_cookie.v
-            risk.uuid = dec_cookie.u
+            risk.additional.px_cookie_hmac = ngx.ctx.px_cookie_hmac
+
+            risk.vid = ngx.ctx.vid
+            risk.uuid = ngx.ctx.uuid
         end
 
         risk.additional.http_version = ngx_req_http_version()
