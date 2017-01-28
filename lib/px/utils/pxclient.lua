@@ -9,16 +9,17 @@ function M.load(config_file)
     local _M = {}
 
     local http = require "resty.http"
-    local px_config = require (config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_config = require(config_file)
+    local px_logger = require("px.utils.pxlogger").load(config_file)
     local buffer = require "px.utils.pxbuffer"
+    local px_constants = require "px.utils.pxconstants"
     local ngx_time = ngx.time
     local tostring = tostring
     local auth_token = px_config.auth_token
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path)
-        local px_server = px_config.px_server
+        local px_server = 'sapi-' .. string.lower(px_config.px_appId) .. '.glb1.perimeterx.net'
         local px_port = px_config.px_port
         local ssl_enabled = px_config.ssl_enabled
         local px_debug = px_config.px_debug
@@ -93,6 +94,23 @@ function M.load(config_file)
         pxdata['px_app_id'] = px_config.px_appId;
         pxdata['timestamp'] = tostring(ngx_time());
         pxdata['socket_ip'] = ngx.var.remote_addr;
+
+        if ngx.ctx.vid then
+            details['vid'] = ngx.ctx.vid
+        end
+
+        if ngx.ctx.uuid then
+            details['client_uuid'] = ngx.ctx.uuid
+        end
+
+        if ngx.ctx.px_cookie then
+            details['px_cookie'] = ngx.ctx.px_cookie
+        end
+
+        if ngx.ctx.px_cookie then
+            details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
+        end
+
         pxdata['details'] = details;
 
         if event_type == 'page_requested' then
@@ -102,11 +120,12 @@ function M.load(config_file)
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
-            _M.submit(buffer.dumpEvents(), px_config.nginx_collector_path);
+            _M.submit(buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
         end
     end
 
 
     return _M
 end
+
 return M

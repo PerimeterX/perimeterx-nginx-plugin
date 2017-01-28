@@ -29,25 +29,49 @@ function M.application(file_name)
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
-    local px_config = require (config_file)
-    local px_filters = require ("px.utils.pxfilters").load(config_file)
-    local px_client = require ("px.utils.pxclient").load(config_file)
-    local px_cookie = require ("px.utils.pxcookie").load(config_file)
-    local px_captcha = require ("px.utils.pxcaptcha").load(config_file)
-    local px_block = require ("px.block.pxblock").load(config_file)
-    local px_api = require ("px.utils.pxapi").load(config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
-    local px_headers = require ("px.utils.pxheaders").load(config_file)
+    local px_config = require(config_file)
+    local px_filters = require("px.utils.pxfilters").load(config_file)
+    local px_client = require("px.utils.pxclient").load(config_file)
+    local px_cookie_v1 = require("px.utils.pxcookie_v1").load(config_file)
+    local px_cookie_v3 = require("px.utils.pxcookie_v3").load(config_file)
+    local px_captcha = require("px.utils.pxcaptcha").load(config_file)
+    local px_block = require("px.block.pxblock").load(config_file)
+    local px_api = require("px.utils.pxapi").load(config_file)
+    local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_constants = require("px.utils.pxconstants")
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
-    local risk_api_path = px_config.risk_api_path
+    local risk_api_path = px_constants.RISK_PATH
     local enabled_routes = px_config.enabled_routes
     local remote_addr = ngx.var.remote_addr or ""
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
     local string_len = string.len
     local pcall = pcall
+
+    local function perform_s2s(result, details)
+        local request_data = px_api.new_request_object(result.message)
+        local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
+        local result
+        if success then
+            result = px_api.process(response)
+            -- score crossed threshold
+            if result == false then
+                px_logger.error("blocking s2s")
+                return px_block.block('s2s_high_score')
+                -- score did not cross the blocking threshold
+            else
+                px_client.send_to_perimeterx("page_requested", details)
+                return true
+            end
+        else
+            -- server2server call failed, passing traffic
+            px_client.send_to_perimeterx("page_requested", details)
+            return true
+        end
+    end
 
     if not px_config.px_enabled then
         return true
@@ -85,8 +109,7 @@ function M.application(file_name)
     end
 
     px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. user_agent)
-    -- process _px cookie if present
-    local _px = ngx.var.cookie__px
+    -- process _pxCaptcha cookie if present
     local _pxCaptcha = ngx.var.cookie__pxCaptcha
 
     if px_config.captcha_enabled and _pxCaptcha then
@@ -100,43 +123,60 @@ function M.application(file_name)
         end
     end
 
-    local success, result = pcall(px_cookie.process, _px)
     local details = {};
-    details["px_cookie"] = ngx.ctx.px_cookie;
-    -- cookie verification passed - checking result.
-    if success then
-        -- score crossed threshold
-        if result == false then
-            return px_block.block('cookie_high_score')
-                -- score did not cross the blocking threshold
-        else
-            px_client.send_to_perimeterx("page_requested", details)
-            return true
-        end
-        -- cookie verification failed/cookie does not exist. performing s2s query
-    elseif enable_server_calls == true then
-        local request_data = px_api.new_request_object(result.message)
-        local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
-        local result
+    -- process _px cookie v3 if present
+    local _px3 = ngx.var.cookie__px3
+    local _px = ngx.var.cookie__px
+
+    if _px3 then
+        local success, result = pcall(px_cookie_v3.process, _px3)
+        -- cookie verification passed - checking result.
         if success then
-            result = px_api.process(response)
+            px_logger.debug("PX-CookieV3 Processed Succesfuly")
+            details["px_cookie"] = ngx.ctx.px_cookie;
+            details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
+            details["px_cookie_version"] = 'v3';
             -- score crossed threshold
             if result == false then
-                px_logger.error("blocking s2s")
-                return px_block.block('s2s_high_score')
-            -- score did not cross the blocking threshold
+                return px_block.block('cookie_high_score')
+                -- score did not cross the blocking threshold
             else
                 px_client.send_to_perimeterx("page_requested", details)
                 return true
             end
+            -- cookie verification failed/cookie does not exist. performing s2s query
+        elseif enable_server_calls == true then
+            return perform_s2s(result, details)
         else
-            -- server2server call failed, passing traffic
             px_client.send_to_perimeterx("page_requested", details)
             return true
         end
     else
-        px_client.send_to_perimeterx("page_requested", details)
-        return true
+        -- process _px cookie v1
+        local success, result = pcall(px_cookie_v1.process, _px)
+        local details = {};
+        -- cookie verification passed - checking result.
+        if success then
+            px_logger.debug("PX-CookieV1 Processed Succesfuly")
+            details["px_cookie"] = ngx.ctx.px_cookie;
+            details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
+            details["px_cookie_version"] = 'v1';
+            -- score crossed threshold
+            if result == false then
+                ngx.ctx.px_action = 'c'
+                return px_block.block('cookie_high_score')
+                -- score did not cross the blocking threshold
+            else
+                px_client.send_to_perimeterx("page_requested", details)
+                return true
+            end
+            -- cookie verification failed/cookie does not exist. performing s2s query
+        elseif enable_server_calls == true then
+            return perform_s2s(result, details)
+        else
+            px_client.send_to_perimeterx("page_requested", details)
+            return true
+        end
     end
 end
 

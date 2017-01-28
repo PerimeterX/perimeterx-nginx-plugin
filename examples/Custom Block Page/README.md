@@ -12,8 +12,3 @@ In order to use the example:
 
 
 You are now Blocking requests without providing a CAPTCHA.
-
-
-
-
-

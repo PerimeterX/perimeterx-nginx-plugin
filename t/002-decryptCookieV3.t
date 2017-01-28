@@ -7,7 +7,6 @@ sub bake_cookie {
     use Crypt::Mode::CBC;
 
     my ( $ip, $ua, $score, $uuid, $vid, $time ) = @_;
-    my $data = $time . '0' . $score . $uuid . $vid . $ip . $ua;
 
     my $password        = "perimeterx";
     my $salt            = '12345678123456781234567812345678';
@@ -18,23 +17,14 @@ sub bake_cookie {
     my $km = pbkdf2( $password, $salt, $iteration_count, $hash_name, $len );
     my $key = substr( $km, 0,  32 );
     my $iv  = substr( $km, 32, 48 );
-
+    my $action = 'a';
     my $m         = Crypt::Mode::CBC->new('AES');
-    my $hmac      = hmac_hex( 'SHA256', $password, $data );
-    my $plaintext = '{"t":'
-      . $time
-      . ', "s":{"b":'
-      . $score
-      . ', "a":0}, "u":"'
-      . $uuid
-      . '", "v":"'
-      . $vid
-      . '", "h":"'
-      . $hmac . '"}';
+    my $plaintext = '{"u":"' . $uuid. '", "v":"' . $vid . '", "t":' . $time . ', "s":'. $score . ', "a":"' . $action . '"}';
     my $ciphertext = $m->encrypt( $plaintext, $key, $iv );
-
     my $cookie = encode_b64($salt) . ":" . 1000 . ":" . encode_b64($ciphertext);
-    return 'Cookie: _px=' . $cookie;
+    my $hmac      = hmac_hex( 'SHA256', $password, $cookie . $ua );
+    $cookie = $hmac . ":" . $cookie;
+    return 'Cookie: _px3=' . $cookie;
 }
 
 add_block_preprocessor(
@@ -62,7 +52,7 @@ __DATA__
 
 
 === TEST 1: Procoss Workflow
-Process a valid cookie
+Process a valid V1 cookie
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -112,4 +102,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-PX DEBUG: New request process
+PX DEBUG: PX-CookieV3 Processed Succesfuly
