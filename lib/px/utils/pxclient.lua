@@ -100,7 +100,7 @@ function M.load(config_file)
         end
 
         if ngx.ctx.uuid then
-            details['uuid'] = ngx.ctx.uuid
+            details['client_uuid'] = ngx.ctx.uuid
         end
 
         if ngx.ctx.px_cookie then
