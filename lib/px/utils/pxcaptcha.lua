@@ -52,11 +52,11 @@ function M.load(config_file)
         end
         captcha_reset.pxCaptcha = captcha;
         captcha_reset.hostname = ngx.var.host;
-        if vid and uuid then
+        if vid then
             captcha_reset.vid = vid
+        end
+        if uuid then
             captcha_reset.uuid = uuid
-        else
-            px_logger.error('VID and UUID not present for CAPTCHA. VID and UUID are required. Please check risk cookie policy')
         end
 
         px_logger.debug('CAPTCHA object completed')
@@ -71,14 +71,14 @@ function M.load(config_file)
         px_logger.debug('Processing new CAPTCHA object');
 
         local _captcha, vid, uuid = split_cookie(captcha)
-        if not _captcha or not uuid then
+        if not _captcha then
             px_logger.debug('CAPTCHA content is not valid');
             return -1;
         end
 
         px_logger.debug('CAPTCHA value: ' .. _captcha);
         px_logger.debug('uuid value: ' .. uuid);
-        px_logger.debug('vid value: ' .. vid);
+        px_logger.debug('uuid value: ' .. vid);
 
         local request_data = new_captcha_request_object(_captcha, vid, uuid)
         local success, response = pcall(px_api.call_s2s, request_data, captcha_api_path, auth_token)
