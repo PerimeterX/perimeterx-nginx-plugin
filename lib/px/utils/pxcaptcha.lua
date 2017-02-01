@@ -77,9 +77,6 @@ function M.load(config_file)
         end
 
         px_logger.debug('CAPTCHA value: ' .. _captcha);
-        px_logger.debug('uuid value: ' .. uuid);
-        px_logger.debug('uuid value: ' .. vid);
-
         local request_data = new_captcha_request_object(_captcha, vid, uuid)
         local success, response = pcall(px_api.call_s2s, request_data, captcha_api_path, auth_token)
         if success then
