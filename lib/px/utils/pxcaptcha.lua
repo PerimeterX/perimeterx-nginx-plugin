@@ -14,24 +14,22 @@ function M.load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
 
-    local cjson = require "cjson"
-    local string_gmatch = string.gmatch
     local auth_token = px_config.auth_token
     local captcha_api_path = px_constants.CAPTCHA_PATH
     local pcall = pcall
-    local ngx_req_get_headers = ngx.req.get_headers
 
-    -- split_captcha --
-    -- takes one argument - a value of pxCaptcha (vid:captcha)
-    -- returns two values - vid and captcha
-    local function split_cookie(cookie)
-        local a = {}
-        local b = 1
-        for i in string_gmatch(cookie, "[^:]+") do
-            a[b] = i
-            b = b + 1
+    local ngx_req_get_headers = ngx.req.get_headers
+    local function split_s(str, delimiter)
+        local result = {}
+        local from = 1
+        local delim_from, delim_to = string.find(str, delimiter, from)
+        while delim_from do
+            table.insert(result, string.sub(str, from, delim_from - 1))
+            from = delim_to + 1
+            delim_from, delim_to = string.find(str, delimiter, from)
         end
-        return a[1], a[2], a[3]
+        table.insert(result, string.sub(str, from))
+        return result
     end
 
     -- new_request_object --
@@ -70,10 +68,20 @@ function M.load(config_file)
         end
         px_logger.debug('Processing new CAPTCHA object');
 
-        local _captcha, vid, uuid = split_cookie(captcha)
-        if not _captcha then
+        local split_cookie = split_s(captcha, ":")
+        if not split_cookie[1] then
             px_logger.debug('CAPTCHA content is not valid');
             return -1;
+        end
+        local vid = '';
+        local uuid = '';
+        local _captcha = split_cookie[1]
+        if split_cookie[2] then
+            vid = split_cookie[2]
+        end
+
+        if split_cookie[3] then
+            uuid = split_cookie[3]
         end
 
         px_logger.debug('CAPTCHA value: ' .. _captcha);
