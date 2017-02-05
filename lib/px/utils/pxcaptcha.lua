@@ -84,13 +84,14 @@ function M.load(config_file)
             uuid = split_cookie[3]
         end
 
-        px_logger.debug('CAPTCHA value: ' .. _captcha);
         local request_data = new_captcha_request_object(_captcha, vid, uuid)
+        px_logger.debug('Sending Captcha API call to eval cookie');
         local success, response = pcall(px_api.call_s2s, request_data, captcha_api_path, auth_token)
         if success then
+            px_logger.debug('Captcha API call successfully returned');
             return response.status
         else
-            px_logger.error("Failed to connecto CAPTCHA API: " .. cjson.encode(response))
+            px_logger.error("Failed to connec to CAPTCHA API: " .. cjson.encode(response))
         end
         return -1;
     end

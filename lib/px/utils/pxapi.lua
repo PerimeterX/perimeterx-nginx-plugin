@@ -82,7 +82,6 @@ function M.load(config_file)
         local ssl_enabled = px_config.ssl_enabled
 
         data = cjson.encode(data)
-
         -- timeout in milliseconds
         local timeout = px_config.s2s_timeout
         -- create new HTTP connection
