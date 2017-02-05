@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.4.0] - 2017-01-28
+### Added
+- New default block page design 
+### Fixed
+- Bug preventing valid users to get cleaned up when module used default block page
+ 
 ## [2.3.0] - 2017-01-28
 ### Added
 - Support Cookie V3 and Risk API V2 - single numeric score value, action on response
