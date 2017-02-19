@@ -1,4 +1,4 @@
-![image](http://media.marketwire.com/attachments/201604/34215_PerimeterX_logo.jpg)
+![image](https://s.perimeterx.net/logo.png)
 
 [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 =============================================================
