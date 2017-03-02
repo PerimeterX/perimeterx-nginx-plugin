@@ -19,7 +19,7 @@ function M.load(config_file)
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path)
-        local px_server = 'sapi-' .. string.lower(px_config.px_appId) .. '.glb1.perimeterx.net'
+        local px_server = 'sapi-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
         local px_port = px_config.px_port
         local ssl_enabled = px_config.ssl_enabled
         local px_debug = px_config.px_debug
