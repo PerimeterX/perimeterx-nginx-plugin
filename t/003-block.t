@@ -90,7 +90,7 @@ Process a valid cookie
             return true
         }
 
-    	access_by_lua_block { 
+    	access_by_lua_block {
             require("px.pxnginx").application()
         }
     }
@@ -103,7 +103,7 @@ X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
 --- response_body_like
-.*Please verify you are not a bot.*
+.*Please click "I am not a robot" to continue*
 --- error_code: 403
 
 --- error_log
@@ -143,7 +143,7 @@ Test the redirect flow
             return true
         }
 
-    	access_by_lua_block { 
+    	access_by_lua_block {
             require("px.pxnginx").application()
         }
     }
