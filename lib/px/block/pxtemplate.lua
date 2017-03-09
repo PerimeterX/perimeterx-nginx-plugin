@@ -5,20 +5,15 @@
 ----------------------------------------------
 local M = {}
 
-function M.load(px_config, uuid, vid,config_file)
+function M.load(config_file)
 
   local _M = {}
 
+  local px_config = require(config_file)
   local lustache = require "lustache"
   local px_logger = require("px.utils.pxlogger").load(config_file)
 
-  local px_config = px_config
-  local uuid = uuid
-  local vid = vid
-  local __dirname
-
   local function get_props(px_config, uuid, vid)
-    px_logger.debug("get_props started")
     local logo_css_style = 'visible'
     if (px_config.custom_logo == nil) then
       logo_css_style = 'hidden'
@@ -41,9 +36,10 @@ function M.load(px_config, uuid, vid,config_file)
   end
 
   local function get_content(template)
-    __dirname = get_path()
+    local __dirname = get_path()
     local template_path = string.format("%stemplates/%s.mustache",__dirname,template)
-    px_logger.debug("get_content fetch template: " .. template_path)
+
+    px_logger.debug("fetching template from: " .. template_path)
     local file = io.open(template_path, "r")
     if (file == nil) then
       px_logger.error("the template " .. string.format("%s.mustache", template) .. " was not found")
@@ -53,8 +49,7 @@ function M.load(px_config, uuid, vid,config_file)
     return content
   end
 
-  function _M.get_template(template)
-    px_logger.debug("get_template started")
+  function _M.get_template(template, uuid, vid)
 
     local props = get_props(px_config, uuid, vid)
     local templateStr = get_content(template)

@@ -7,8 +7,6 @@ local M = {}
 
 function M.load(config_file)
     local _M = {}
-
-    local config_file = config_file
     local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
     local ngx_HTTP_TEMPORARY_REDIRECT = 307
     local ngx_redirect = ngx.redirect
@@ -16,6 +14,8 @@ function M.load(config_file)
     local ngx_encode_args = ngx.encode_args
     local ngx_endcode_64 = ngx.encode_base64
     local px_config = require(config_file)
+
+    local px_template = require("px.block.pxtemplate").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
@@ -26,14 +26,6 @@ function M.load(config_file)
         return '<script src="https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
                 '"; function handleCaptcha(response){var vid="' .. vid .. '";var uuid="' .. uuid .. '";var name="_pxCaptcha";var expiryUtc=new Date(Date.now()+1000*10).toUTCString();' ..
                 'var cookieParts=[name,"=",response+":"+vid+":"+uuid,"; expires=",expiryUtc,"; path=/"];document.cookie=cookieParts.join("");location.reload()}</script>'
-    end
-
-    local function inject_px_snippet()
-        local app_id = ''
-        if px_config.px_appId then
-            app_id = px_config.px_appId
-        end
-        return '<script type="text/javascript">(function(){window._pxAppId="' .. app_id .. '";var p=document.getElementsByTagName("script")[0],s=document.createElement("script");s.async=1;s.src="//client.perimeterx.net/' .. app_id .. '/main.min.js";p.parentNode.insertBefore(s,p);}());</script>';
     end
 
     function _M.block(reason)
@@ -103,12 +95,8 @@ function M.load(config_file)
                   template = 'captcha'
                 end
                 px_logger.debug('Fetching template: ' .. template)
-                px_logger.debug('u: ' .. uuid)
-                px_logger.debug('v: ' .. vid)
-                px_logger.debug('c: ' .. px_config.px_appId)
-                local px_template = require("px.block.pxtemplate").load(px_config, uuid, vid,config_file)
 
-                html = px_template.get_template(template)
+                html = px_template.get_template(template, uuid, vid)
                 ngx_say(html);
                 ngx_exit(ngx.OK);
             end
