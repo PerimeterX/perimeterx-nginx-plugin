@@ -5,9 +5,9 @@ INSTALL ?= install
 
 .PHONY: all package install docker test
 
-all: 
+all:
 
-docker: 
+docker:
 	docker build -t perimeterx/pxnginx .
 
 package:
@@ -19,9 +19,12 @@ install:
 		echo "pxconfig.lua exists - skipping"; \
 	else \
 		$(INSTALL) lib/px/pxconfig.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/pxconfig.lua; fi
+
 	$(INSTALL) lib/px/pxnginx.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/pxnginx.lua
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/block
 	$(INSTALL) lib/px/block/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/block
+	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/block/templates
+	$(INSTALL) lib/px/block/templates/* $(DESTDIR)/$(LUA_LIB_DIR)/px/block/templates
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 	$(INSTALL) lib/px/utils/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 
@@ -32,4 +35,4 @@ test:
 	prove -v t
 
 clean:
-	rm -rf pxNginxPlugin.tgz 
+	rm -rf pxNginxPlugin.tgz
