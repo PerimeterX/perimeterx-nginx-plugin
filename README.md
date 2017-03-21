@@ -227,8 +227,21 @@ _M.px_debug = true
 
 #### <a name="customblockpage"></a> Custom Block Page
 
-Users can customize the blocking page to meet their branding and message requirements by specifying the URL to a blocking page HTML file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
+Customizing block page can be done by 2 methods:
+##### Modifying default block pages
+PerimeterX default block page can be modified by injecting custom css, javascript and logo to page
 
+**default values:** nil
+
+Example:
+
+```
+_M.custom_logo = "http://www.example.com/logo.png"
+_M.css_ref = "http://www.example.com/style.css"
+_M.js_ref = "http://www.example.com/script.js"
+```
+##### Redirect to a custom block page url
+Users can customize the blocking page to meet their branding and message requirements by specifying the URL to a blocking page HTML file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
 
 **default:** nil
 
