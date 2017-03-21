@@ -7,7 +7,6 @@ local M = {}
 
 function M.load(config_file)
     local _M = {}
-
     local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
     local ngx_HTTP_TEMPORARY_REDIRECT = 307
     local ngx_redirect = ngx.redirect
@@ -15,6 +14,8 @@ function M.load(config_file)
     local ngx_encode_args = ngx.encode_args
     local ngx_endcode_64 = ngx.encode_base64
     local px_config = require(config_file)
+
+    local px_template = require("px.block.pxtemplate").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
@@ -25,14 +26,6 @@ function M.load(config_file)
         return '<script src="https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
                 '"; function handleCaptcha(response){var vid="' .. vid .. '";var uuid="' .. uuid .. '";var name="_pxCaptcha";var expiryUtc=new Date(Date.now()+1000*10).toUTCString();' ..
                 'var cookieParts=[name,"=",response+":"+vid+":"+uuid,"; expires=",expiryUtc,"; path=/"];document.cookie=cookieParts.join("");location.reload()}</script>'
-    end
-
-    local function inject_px_snippet()
-        local app_id = ''
-        if px_config.px_appId then
-            app_id = px_config.px_appId
-        end
-        return '<script type="text/javascript">(function(){window._pxAppId="' .. app_id .. '";var p=document.getElementsByTagName("script")[0],s=document.createElement("script");s.async=1;s.src="//client.perimeterx.net/' .. app_id .. '/main.min.js";p.parentNode.insertBefore(s,p);}());</script>';
     end
 
     function _M.block(reason)
@@ -95,20 +88,15 @@ function M.load(config_file)
                 end
             else
                 ngx.status = ngx_HTTP_FORBIDDEN;
-                local includes = '<link type="text/css" rel="stylesheet" media="screen, print" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">'
-                local styles = ' <style> p { width: 60%; margin: 0 auto; font-size: 35px; } body { background-color: #f4f4f4; font-family: "Open Sans"; } #bodyWrapper { margin: 2%; } img { widht: 180px; } ul { margin: 2px; } a { color: #2020B1; text-decoration: blink; } a:hover { color: #2b60c6; } @media only screen and (min-width: 1000px) { .paraDiv { width: 30%; } } .paraDiv { font-size: 20px; color: #000042; } </style>'
-                local px_snippet = '(function () { window._pxAppId = "' .. px_config.px_appId .. '"; var p = document.getElementsByTagName("script")[0], s = document.createElement("script"); s.async = 1; s.src = "//client.perimeterx.net/' .. px_config.px_appId .. '/main.min.js"; p.parentNode.insertBefore(s, p); }());'
-                local html = '';
 
+                local html = '';
+                local template = 'block'
                 if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
-                    local captcha_script_include = '<script src="https://www.google.com/recaptcha/api.js"></script>'
-                    local captcha_script = 'function handleCaptcha(response) { var vid = "' .. vid .. '"; var uuid = "' .. uuid .. '"; var name = "_pxCaptcha"; var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString(); var cookieParts = [name, "=", response + ":" + vid + ":" + uuid, "; expires=", expiryUtc, "; path=/"]; document.cookie = cookieParts.join(""); document.cookie=cookieParts.join("");location.reload()}'
-                    local captcha_body = '<body> <div id="bodyWrapper"> <span style="font-size: 28px;">Please verify you are not a bot</span> <div class="paraDiv"><br> Access to this page has been blocked because we believe you are violating our Terms of Use by using automation to browse the site. </div> <div class="paraDiv"><br> This may happen as a result of the following: <ul> <li> Javascript is disabled or blocked </li> <li> Your browser does not support cookies </li> </ul> </div> <div class="paraDiv"><br> Please note, Javascript and Cookies must be enabled on your browser to access the website. </div> <div class="paraDiv"> Please verify below that you are not a bot in order to proceed. <br/> <div style="margin: 10px 0px 10px 0px" class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div> </div> <div style="font-size: 20px;color: #000042;"> Reference ID: #' .. uuid .. ' </div> </div> <div style="position: fixed; bottom: 20px; width: 100%"> <hr/> Powered by <img style="width: 80px; vertical-align: -5px" src="https://storage.googleapis.com/px-assets/px.png"> </div> </body>'
-                    html = '<html><head>' .. captcha_script_include .. includes .. styles .. '<script>' .. captcha_script .. px_snippet .. '</script></head><body>' .. captcha_body .. '</body></html>'
-                else
-                    local block_body = '<body> <div id="bodyWrapper"> <span style="font-size: 28px;">Please verify you are not a bot</span> <div class="paraDiv"><br> You have been blocked because we believe you are violating our Terms of Use by using automation to browse the website. </div> <div class="paraDiv"><br> Please note, Javascript and Cookies must be enabled on your browser to access the website. </div> <br/> <div class="paraDiv"> If you think you have been blocked by mistake, please contact website administrator. </div> <br/> <div style="font-size: 20px;color: #000042;"> Reference ID: #' .. uuid .. '</div> </div> <div style="position: fixed; bottom: 20px; width: 100%"> <hr/> Powered by <img style="width: 80px; vertical-align: -5px" src="https://storage.googleapis.com/px-assets/px.png"> </div> </body>'
-                    html = '<html><head>' .. includes .. styles .. '<script>' .. px_snippet .. '</script></head><body>' .. block_body .. '</body></html>'
+                  template = 'captcha'
                 end
+                px_logger.debug('Fetching template: ' .. template)
+
+                html = px_template.get_template(template, uuid, vid)
                 ngx_say(html);
                 ngx_exit(ngx.OK);
             end

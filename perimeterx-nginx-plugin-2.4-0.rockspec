@@ -14,7 +14,8 @@
  dependencies = {
     "lua-cjson",
     "lua-resty-http",
-    "lua-resty-nettle"
+    "lua-resty-nettle",
+    "lustache"
  }
 
  build = {
