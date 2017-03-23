@@ -6,26 +6,24 @@
 Table of Contents
 -----------------
 
--   [Usage](#usage)
   *   [Dependencies](#dependencies)
   *   [Requirements](#requirements)
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
--   [Configuration](#configuration)
-  *   [Blocking Score](#blocking-score)
-  *   [Monitoring mode](#monitoring-mode)
-  *   [Enable/Disable Captcha](#captcha-support)
-  *   [Enabled Routes](#enabled-routes)
-  *   [API Timeout Milliseconds](#api-timeout)
-  *   [Send Page Activities](#send-page-activities)
-  *   [Debug Mode](#debug-mode)
-  *   [Custom Block Page](#customblockpage)
-  *   [Multiple App Support](#multipleapps)
--   [Whitelisting](#whitelisting)
--   [Contributing](#contributing)
-  *   [Tests](#tests)
+  *   [Configuration](#configuration)
+      *   [Blocking Score](#blocking-score)
+      *   [Monitoring mode](#monitoring-mode)
+      *   [Enable/Disable Captcha](#captcha-support)
+      *   [Enabled Routes](#enabled-routes)
+      *   [API Timeout Milliseconds](#api-timeout)
+      *   [Send Page Activities](#send-page-activities)
+      *   [Debug Mode](#debug-mode)
+      *   [Custom Block Page](#customblockpage)
+      *   [Multiple App Support](#multipleapps)
+  *   [Whitelisting](#whitelisting)
+  *   [Contributing](#contributing)
+        *   [Tests](#tests)
 
-<a name="Usage"></a>
 
 <a name="dependencies"></a> Dependencies
 ----------------------------------------
@@ -81,7 +79,8 @@ $ luarocks install perimeterx-nginx-plugin
 
 It can also be accomplished by downoading the sources for this repository and running `sudo make install`.
 
-### <a name="basic-usage"></a> Basic Usage Example
+<a name="basic-usage"></a> Basic Usage Example
+----------------------------------------------
 
 To apply PerimeterX enforcement, add the following line to your location block:
 
@@ -236,9 +235,18 @@ PerimeterX default block page can be modified by injecting custom css, javascrip
 Example:
 
 ```
+_M.custom_logo = "http://www.mysite.com/logo.png"
+_M.css_ref = "http://www.mysite.com/style.css"
+_M.js_ref = "http://www.mysite.com/script.js"
+=======
+
+Example:
+
+```
 _M.custom_logo = "http://www.example.com/logo.png"
 _M.css_ref = "http://www.example.com/style.css"
 _M.js_ref = "http://www.example.com/script.js"
+
 ```
 ##### Redirect to a custom block page url
 Users can customize the blocking page to meet their branding and message requirements by specifying the URL to a blocking page HTML file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
@@ -278,7 +286,7 @@ Setting the flag to flase will *consume* the page and serve it under the current
 Setting the flag to **true** (enabling redirects) will result with the following URL upon blocking:
 
 ```
-http://www.example.com/block.html?url=L3NvbWVwYWdlP2ZvbyUzRGJhcg==&uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
+http://www.mysite.com/block.html?url=L3NvbWVwYWdlP2ZvbyUzRGJhcg==&uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
 ```
 >Note: the **url** variable is comprised of URL Encoded query parameters (of the originating request) and then both the original path and variables are Base64 Encoded (to avoid collisions with block page query params). 
 
@@ -427,18 +435,20 @@ The PerimeterX NGINX module is compatible with NGINX Plus. Users or administrato
 <a name="contributing"></a> Contributing
 ----------------------------------------
 The following steps are welcome when contributing to our project.
-###Fork/Clone
+
+### Fork/Clone
 First and foremost, [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
 Create a branch on your fork, preferably using a self descriptive branch name.
 
-###Code/Run
+### Code/Run
 Code your way out of your mess, and help improve our project by implementing missing features, adding capabilites or fixing bugs.
 
 To run the code, follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
 
 Feel free to check out the [Example App](https://nginx-sample-app.perimeterx.com), to get familiar with the project.
 
-###<a name="tests"></a>Test
+### <a name="tests"></a>Tests
+
 > Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
 
 **Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
@@ -446,9 +456,9 @@ Before you create any pull request, make sure your project has passed all tests.
 
 To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`.
 
-###Pull Request
+### Pull Request
 After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember, this code has to be read by our maintainers, so keep it simple, smart and accurate.
 
-###Thanks
+### Thanks
 After all, you are helping us by contributing to this project, and we want to thank you for it.
 We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
