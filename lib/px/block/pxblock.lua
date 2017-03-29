@@ -65,10 +65,15 @@ function M.load(config_file)
                         ngx_say('Unable to fetch custom block url. Status: ' .. tostring(res.status))
                         ngx_exit(ngx.OK)
                     end
-                    local body = res.body
-                    if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
-                        body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
-                        body = string_gsub(body, '::BLOCK_REF::', uuid);
+                    local body = ''
+                    if ngx.ctx.px_action == 'j' then
+                        body = ngx.ctx.px_action_data
+                    else
+                        body = res.body
+                        if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
+                            body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
+                            body = string_gsub(body, '::BLOCK_REF::', uuid);
+                        end
                     end
                     ngx.status = ngx_HTTP_FORBIDDEN;
                     ngx_say(body);
@@ -91,12 +96,16 @@ function M.load(config_file)
 
                 local html = '';
                 local template = 'block'
-                if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
-                  template = 'captcha'
-                end
-                px_logger.debug('Fetching template: ' .. template)
+                if ngx.ctx.px_action == 'j' then
+                    html = ngx.ctx.px_action_data
+                else
+                    if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
+                        template = 'captcha'
+                    end
+                    px_logger.debug('Fetching template: ' .. template)
 
-                html = px_template.get_template(template, uuid, vid)
+                    html = px_template.get_template(template, uuid, vid)
+                end
                 ngx_say(html);
                 ngx_exit(ngx.OK);
             end

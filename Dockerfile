@@ -22,9 +22,9 @@ RUN apt-get update && apt-get --force-yes -qq -y install \
     m4 \
     rsyslog \
     wget \
-    zlib1g-dev
+    zlib1g-dev \
+    luarocks
 # ***** DOWNLOAD AND UNTAR *****
-RUN apt-get install luarocks -y
 RUN luarocks install lustache
 RUN curl -sSL http://nginx.org/download/nginx-${VER_NGINX}.tar.gz | tar xzf -
 RUN curl -sSL http://luajit.org/download/LuaJIT-${VER_LUAJIT}.tar.gz | tar xzf -

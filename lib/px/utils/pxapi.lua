@@ -63,6 +63,9 @@ function M.load(config_file)
 
         if data.action then
             ngx.ctx.px_action = data.action
+            if data.action == 'j' then
+                ngx.ctx.px_action_data = data.action_data.body
+            end
         end
 
         if data.score >= px_config.blocking_score then
