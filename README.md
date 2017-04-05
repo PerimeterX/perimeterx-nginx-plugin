@@ -6,7 +6,7 @@
 Table of Contents
 -----------------
 
--   [Usage](#usage)
+-   [Getting Started](#gettingstarted)
   *   [Dependencies](#dependencies)
   *   [Requirements](#requirements)
   *   [Installation](#installation)
@@ -25,7 +25,8 @@ Table of Contents
 -   [Contributing](#contributing)
   *   [Tests](#tests)
 
-<a name="Usage"></a>
+<a name="gettingstarted"></a> Getting Started
+----------------------------------------
 
 <a name="dependencies"></a> Dependencies
 ----------------------------------------
