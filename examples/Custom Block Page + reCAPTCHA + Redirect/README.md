@@ -43,10 +43,11 @@ function getQueryString(name, url) {
             results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
+    results[2] = decodeURIComponent(results[2].replace(/\+/g, " "));
     if(name == "url") {
       results[2] = atob(results[2]); //Not supported on IE Browsers
     }
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+    return results[2];
 }
 </script>
 ```
