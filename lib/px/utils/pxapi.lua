@@ -35,10 +35,11 @@ function M.load(config_file)
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
 
-        if call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then
-            risk.additional.px_cookie = ngx.ctx.px_cookie
+        if call_reason == 'cookie_decryption_failed' then
+            px_logger.debug("Attaching px_orig_cookie to request")
+            risk.additional.px_orig_cookie = ngx.ctx.px_orig_cookie
+        elseif call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then            risk.additional.px_cookie = ngx.ctx.px_cookie
             risk.additional.px_cookie_hmac = ngx.ctx.px_cookie_hmac
-
             risk.vid = ngx.ctx.vid
             risk.uuid = ngx.ctx.uuid
         end

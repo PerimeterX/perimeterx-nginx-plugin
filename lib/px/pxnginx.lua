@@ -129,6 +129,7 @@ function M.application(file_name)
     local _px = ngx.var.cookie__px
 
     if _px3 then
+        ngx.ctx.px_orig_cookie = _px3
         local success, result = pcall(px_cookie_v3.process, _px3)
         -- cookie verification passed - checking result.
         if success then
@@ -153,6 +154,7 @@ function M.application(file_name)
         end
     else
         -- process _px cookie v1
+        ngx.ctx.px_orig_cookie = _px
         local success, result = pcall(px_cookie_v1.process, _px)
         local details = {};
         -- cookie verification passed - checking result.
