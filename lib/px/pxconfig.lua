@@ -9,9 +9,10 @@ local _M = {}
 _M.px_enabled = true
 
 -- ##  Configuration Block ##
-_M.px_appId = 'APP_ID'
-_M.cookie_secret = 'COOKIE_KEY'
-_M.auth_token = 'AUTH_TOKEN'
+
+_M.px_appId = 'PX_APP_ID'
+_M.cookie_secret = 'COOKIE_SECRET'
+_M.auth_token = 'PX_AUTH_TOKEN'
 _M.blocking_score = 60
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
