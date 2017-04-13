@@ -63,7 +63,7 @@ function M.load(config_file)
 
         if data.action then
             ngx.ctx.px_action = data.action
-            if data.action == 'j' then
+            if data.action == 'j' and data.action_data and data.action_data.body then
                 ngx.ctx.px_action_data = data.action_data.body
             end
         end
