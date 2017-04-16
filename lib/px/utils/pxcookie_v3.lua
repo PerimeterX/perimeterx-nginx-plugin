@@ -200,7 +200,7 @@ function M.load(config_file)
 
         -- cookie expired
         if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
-            px_logger.error("Cookie expired - " .. data)
+            px_logger.debug("Cookie expired - " .. data)
             error({ message = "cookie_expired" })
         end
 
