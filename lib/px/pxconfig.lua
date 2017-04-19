@@ -9,6 +9,7 @@ local _M = {}
 _M.px_enabled = true
 
 -- ##  Configuration Block ##
+
 _M.px_appId = 'PX_APP_ID'
 _M.cookie_secret = 'COOKIE_SECRET'
 _M.auth_token = 'PX_AUTH_TOKEN'

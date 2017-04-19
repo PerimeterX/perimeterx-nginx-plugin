@@ -16,14 +16,16 @@ Table of Contents
   *   [Monitoring mode](#monitoring-mode)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Enabled Routes](#enabled-routes)
-  *   [API Timeout Milliseconds](#api-timeout)
+  *   [API Timeout](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
   *   [Custom Block Page](#customblockpage)
   *   [Multiple App Support](#multipleapps)
--   [Whitelisting](#whitelisting)
--   [Contributing](#contributing)
-  *   [Tests](#tests)
+  *   [Whitelisting](#whitelisting)
+-   [Appendix](#appendix)
+  *   [NGINX Plus](#nginxplus)
+  *   [NGINX Dynamic Modules](#dynamicmodules)
+  *   [Contributing](#contributing)
 
 <a name="gettingstarted"></a> Getting Started
 ----------------------------------------
@@ -35,41 +37,14 @@ Table of Contents
 - [Lua CJSON](http://www.kyne.com.au/~mark/software/lua-cjson.php)
 - [Lua Resty HTTP](https://github.com/pintsized/lua-resty-http)
 - [Lua Resty Nettle](https://github.com/bungle/lua-resty-nettle)
+- [lustache](https://github.com/Olivine-Labs/lustache)
 - [GNU Nettle >= v3.2](https://www.lysator.liu.se/~nisse/nettle/)
 
+To install package dependecies on Ubuntu run:
 
-<a name="requirements"></a> Requirements
------------------------------------------------
+`sudo apt-get update && sudo apt-get install lua-cjson libnettle6 nettle-dev luarocks luajit libluajit-5.1-dev ca-certificates`
 
-
-### Resolver
-Add the directive `resolver A.B.C.D;` to your NGINX configuration file in the HTTP section. This is required so NGINX can resolve the PerimeterX API DNS name.
-
-### Lua Package Path
-Update your Lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
-
-```
-lua_package_path "/usr/local/lib/lua/?.lua;;";
-```
-
-### Lua CA Certificates
-To support TLS to the collector, you must point Lua to the trusted certificate location (actual location may differ between Linux distributions).
-
-```
-lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
-lua_ssl_verify_depth 3;
-```
-
-In CentOS/RHEL systems, the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`.
-
-### Lua Timer Initialization
-Add the init by lua script.
-
-```
-init_worker_by_lua_block {
-    require ("px.utils.pxtimer").application()
-}
-```
+All Lua dependecies are automatically fulfilled with Luarocks.
 
 <a name="installation"></a> Installation
 ----------------------------------------
@@ -80,9 +55,45 @@ Installation can be done using [luarocks](https://luarocks.org/).
 $ luarocks install perimeterx-nginx-plugin
 ```
 
-It can also be accomplished by downoading the sources for this repository and running `sudo make install`.
+Manual installation can accomplished by downoading the sources for this repository and running `sudo make install`.
+
+
+<a name="requirements"></a> NGINX Configuration File Requirements
+-----------------------------------------------
+
+
+### Resolver
+Add the directive `resolver A.B.C.D;` in the HTTP section of your configuration. This is required so NGINX can resolve the PerimeterX API DNS name. `A.B.C.D` is the IP address of your DNS resolver.
+
+### Lua Package Path
+Update your Lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
+
+```
+lua_package_path "/usr/local/lib/lua/?.lua;;";
+```
+
+### Lua CA Certificates
+To support TLS to PerimeterX servers, you must point Lua to the trusted certificate location (actual location may differ between Linux distributions).
+
+```
+lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
+lua_ssl_verify_depth 3;
+```
+
+In CentOS/RHEL systems, the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`.
+
+### Lua Timer Initialization
+Add the init by lua script. This is used by PerimeterX to hold and send metrics on regular intervals.
+
+```
+init_worker_by_lua_block {
+    require ("px.utils.pxtimer").application()
+}
+```
 
 ### <a name="basic-usage"></a> Basic Usage Example
+
+Ensure that you followed the NGINX Configuration Requirements section before proceeding.
 
 To apply PerimeterX enforcement, add the following line to your location block:
 
@@ -92,7 +103,7 @@ access_by_lua_block {
 }
 ```
 
-Below is a complete example of nginx.conf containing the required directives and with enforcement applied to the location block..
+Below is a complete example of nginx.conf containing the required directives and with enforcement applied to the location block.
 
 #### nginx.conf
 ```lua
@@ -134,15 +145,17 @@ http {
 
 ### Extracting the real IP address from a request
 
-> Note: IP extraction, according to your network setup, is very important. It is common to have a load balancer/proxy on top of your applications, in which case the PerimeterX module will send the system's internal IP as the user's. In order to properly perform processing and detection on server-to-server calls, the PerimeterX module requires the user's real IP address.
+> Note: It is important that the real connection IP is properly extracted when your NGINX server sits behind a load balancer or CDN. The PerimeterX module requires the user's real IP address.
 
-For the NGINX module to work with the real user's IP, you need to set the `set_real_ip_from` NGINX directive in your nginx.conf. This will make sure the socket IP used in NGINX is not coming from one of the network levels below it.
+For the PerimeterX NGINX module to see the real user's IP address, you need to have the `set_real_ip_from` and `real_ip_header` NGINX directives in your nginx.conf. This will make sure the connecting IP is properly derived from a trusted source.
 
-example:
+Example:
+
 ```
   set_real_ip_from 172.0.0.0/8;
-  set_real_ip_from 107.178.0.0/16;	
- ```
+  set_real_ip_from 107.178.0.0/16; 
+  real_ip_header X-Forwarded-For;
+```
 
 ### <a name="configuration"></a> Configuration Options
 
@@ -422,34 +435,41 @@ whitelist = {
 - **ua_full** : for value `{'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}` - will filter all requests matching this exact UA. 
 - **ua_sub** : for value `{'GoogleCloudMonitoring'}` - will filter requests containing the provided string in their UA.
 
+<a name="appendix"></a> Appendix
+-----------------------------------------------
+
 <a name="nginxplus"></a> NGINX Plus
 -----------------------------------------------
 The PerimeterX NGINX module is compatible with NGINX Plus. Users or administrators should install the NGINX Plus Lua dynamic module (LuaJIT).
 
+<a name="dynamicmodules"></a> NGINX Dynamic Modules
+-----------------------------------------------
+If you are using NGINX with [dynamic module support](https://www.nginx.com/products/modules/) you can load the Lua module with the following lines at the beginning of your NGINX configuration file.
+
+```
+load_module modules/ndk_http_module.so;
+load_module modules/ngx_http_lua_module.so;
+```
+
 <a name="contributing"></a> Contributing
 ----------------------------------------
 The following steps are welcome when contributing to our project.
+
 ###Fork/Clone
-First and foremost, [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
-Create a branch on your fork, preferably using a self descriptive branch name.
+[Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
+Create a branch on your fork, preferably using a descriptive branch name.
 
-###Code/Run
-Code your way out of your mess, and help improve our project by implementing missing features, adding capabilites or fixing bugs.
-
-To run the code, follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
-
-Feel free to check out the [Example App](https://nginx-sample-app.perimeterx.com), to get familiar with the project.
 
 ###<a name="tests"></a>Test
 > Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
 
-**Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
+**Dont forget to test**. This project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
 Before you create any pull request, make sure your project has passed all tests. If any new features require it, write your own.
 
 To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`.
 
 ###Pull Request
-After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember, this code has to be read by our maintainers, so keep it simple, smart and accurate.
+After you have completed the process, create a pull request. Please provide a complete and thorough description explaining the changes. Remember, this code has to be read by our maintainers, so keep it simple, smart and accurate.
 
 ###Thanks
 After all, you are helping us by contributing to this project, and we want to thank you for it.
