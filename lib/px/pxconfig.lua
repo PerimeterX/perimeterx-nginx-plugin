@@ -12,8 +12,8 @@ _M.px_enabled = true
 
 _M.px_appId = 'PX_APP_ID'
 _M.cookie_secret = 'COOKIE_SECRET'
-_M.auth_token = 'PX_AUTH_TOKEN'
-_M.blocking_score = 60
+_M.auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ3MjE3NTkxNiwic3ViIjoiUFh2UmZuT2o0eSIsImp0aSI6IjgzMDJmNDRhLTgwNTktNDRkZi05ZGJkLWRhZWRjNzE1NjhmNyJ9.giB48Fl02FFhLw15UujLVzq8Q7PRhweBC_wCtweXerU'
+_M.blocking_score = 0
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
