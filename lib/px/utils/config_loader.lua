@@ -42,6 +42,8 @@ function _M.get_configuration()
         config.cookie_secret = body.cookieKey
         config.px_appId = body.appId
         config.blocking_score = body.blockingScore
+        config.block_page_template = body.blockPageTemplate
+        config.captcha_page_template = body.captchaPageTemplate
    end
 end
 
