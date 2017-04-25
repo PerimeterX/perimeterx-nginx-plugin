@@ -62,7 +62,7 @@ run_tests();
 __DATA__
 
 
-=== TEST 1: Validate cookie expiration 
+=== TEST 1: Validate cookie expiration
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -86,8 +86,8 @@ __DATA__
     	    pxconfig.block_enabled = true
             return true
         }
-        
-    	access_by_lua_block { 
+
+    	access_by_lua_block {
             require("px.pxnginx").application()
         }
 
@@ -110,4 +110,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-PX ERROR: Cookie expired 
+PX DEBUG: Cookie expired 
