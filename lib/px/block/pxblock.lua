@@ -70,7 +70,7 @@ function M.load(config_file)
                         body = ngx.ctx.px_action_data
                     else
                         body = res.body
-                        if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
+                        if ngx.ctx.px_action == 'c' then
                             body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
                             body = string_gsub(body, '::BLOCK_REF::', uuid);
                         end
@@ -99,7 +99,7 @@ function M.load(config_file)
                 if ngx.ctx.px_action == 'j' then
                     html = ngx.ctx.px_action_data
                 else
-                    if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
+                    if ngx.ctx.px_action == 'c' then
                         template = 'captcha'
                     end
                     px_logger.debug('Fetching template: ' .. template)

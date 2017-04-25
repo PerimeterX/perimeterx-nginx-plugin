@@ -116,7 +116,7 @@ function M.application(file_name)
     -- process _pxCaptcha cookie if present
     local _pxCaptcha = ngx.var.cookie__pxCaptcha
 
-    if px_config.captcha_enabled and _pxCaptcha then
+    if _pxCaptcha then
         local success, result = pcall(px_captcha.process, _pxCaptcha)
 
         -- validating captcha value and if reset was successful then pass the request

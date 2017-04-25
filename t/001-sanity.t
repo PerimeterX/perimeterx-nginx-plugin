@@ -28,7 +28,6 @@ Initial test to verify basic settings.
             pxconfig = require "px.pxconfig"
             pxconfig.cookie_secret = "perimeterx"
             pxconfig.enable_server_calls = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.px_debug = true
             return true
         }

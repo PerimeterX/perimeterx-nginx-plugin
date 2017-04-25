@@ -15,14 +15,8 @@ _M.auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY2
 
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
-_M.send_page_requested_activity = true
-_M.block_enabled = true
-_M.captcha_enabled = true
-_M.px_debug = true
 
-_M.s2s_timeout = 1000
 _M.px_maxbuflen = 10
-_M.score_header_name = 'X-PX-SCORE'
 _M.px_port = 443
 _M.ssl_enabled = true
 _M.custom_block_url = nil
@@ -40,6 +34,11 @@ _M.cookie_secret = 'COOKIE_SECRET'
 _M.blocking_score = 60
 _M.block_page_template = ''
 _M.captcha_page_template = ''
+_M.px_debug = false
+_M.score_header_name = ''
+_M.block_enabled = true
+_M.s2s_timeout = 1000
+_M.client_timeout = 1000
 
 -- ## END Dynamic Configuration Block ##
 

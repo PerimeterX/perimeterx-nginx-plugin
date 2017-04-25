@@ -186,17 +186,6 @@ _M.block_enabled = false
 ```
 Disabling blocking means users crossing the blocking threshold will not be activly blocked, but you will still be able to consume their score through a custom request header `X-PX-SCORE`.
 
-#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
-
-By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
-
-**Default: true**
-
-```
-_M.captcha_enabled = false
-```
-
-
 #### <a name="enabled-routes"></a> Enabled Routes
 
 The enabled routes variable allow you to implicitly define a set of routes which the plugin will be active on. Supplying an empty list will set all application routes as active.
@@ -217,16 +206,6 @@ API Timeout in milliseconds (float) to wait for the PerimeterX server API respon
 
 ```
 _M.s2s_timeout = 250
-```
-
-#### <a name="send-page-activities"></a> Send Page Activities
-
-A boolean flag to determine whether or not to send activities and metrics to PerimeterX, on each page request. Disabling this feature will prevent PerimeterX from receiving data populating the PerimeterX portal, containing valuable information such as the amount of requests blocked and other API usage statistics.
-
-**Default:** true
-
-```php
-_M.send_page_requested_activity = false
 ```
 
 #### <a name="debug-mode"></a> Debug Mode

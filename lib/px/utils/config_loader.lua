@@ -32,16 +32,23 @@ function _M.get_configuration()
     })
     if err or not res then
         px_logger.error("Failed to make HTTP POST: " .. err)
-    elseif res.status ~= 200 then
-        px_logger.error("Non 200 response code: " .. res.status)
+    elseif res.status > 204 then
+        px_logger.error("Non 20x response code: " .. res.status)
     end
-    local body = cjson.decode(res:read_body())
+
     -- new configurations available
-    if body.appId ~= nil then
+    if res.status == 200 then
+        local body = cjson.decode(res:read_body())
+        px_logger.debug("Applying new configuration")
         config.checksum = body.checksum
         config.cookie_secret = body.cookieKey
         config.px_appId = body.appId
         config.blocking_score = body.blockingScore
+        config.px_debug = body.debugMode
+        config.score_header_name = body.scoreHeader
+        config.block_enabled = body.moduleMode ~= "monitoring"
+        config.client_timeout = body.connectTimeout
+        config.s2s_timeout = body.riskTimeout
         config.block_page_template = body.blockPageTemplate
         config.captcha_page_template = body.captchaPageTemplate
    end

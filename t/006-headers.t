@@ -82,8 +82,7 @@ __DATA__
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
 			pxconfig.enable_server_calls  = false
-			pxconfig.send_page_requested_activity = false
-     		return true
+			return true
 		}
     	access_by_lua_block { 
 	    require("px.pxnginx").application()
@@ -138,7 +137,6 @@ Request is internal. PerimeterX processing skipped.
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
 			pxconfig.enable_server_calls  = false
-			pxconfig.send_page_requested_activity = false
 			pxconfig.score_header_enabled = true
 			return true
 		}
@@ -184,7 +182,6 @@ X-PX-SCORE: 0
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
 			pxconfig.enable_server_calls  = false
-			pxconfig.send_page_requested_activity = false
 			pxconfig.score_header_enabled = true
      		return true
 		}

@@ -86,7 +86,6 @@ Process a valid cookie
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
     	    pxconfig.enable_server_calls = false
-            pxconfig.send_page_requested_activity = false
             return true
         }
 
@@ -132,9 +131,7 @@ Process a valid cookie
     	    pxconfig.cookie_secret = "perimeterx"
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
-          pxconfig.captcha_enabled = false
     	    pxconfig.enable_server_calls = false
-          pxconfig.send_page_requested_activity = false
           return true
         }
 
@@ -187,7 +184,6 @@ Test the redirect flow
     	    pxconfig.block_enabled = true
     	    pxconfig.custom_block_url = "/block.html"
     	    pxconfig.enable_server_calls = false
-            pxconfig.send_page_requested_activity = false
             return true
         }
 

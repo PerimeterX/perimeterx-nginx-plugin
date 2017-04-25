@@ -85,7 +85,6 @@ Process a valid V1 cookie
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
-            pxconfig.send_page_requested_activity = false
             return true
         }
 

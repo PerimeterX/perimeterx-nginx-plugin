@@ -24,7 +24,7 @@ function M.load(config_file)
         local ssl_enabled = px_config.ssl_enabled
         local px_debug = px_config.px_debug
         -- timeout in milliseconds
-        local timeout = 2000
+        local timeout = px_config.client_timeout
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
@@ -82,10 +82,6 @@ function M.load(config_file)
         local buflen = buffer.getBufferLength();
         local maxbuflen = px_config.px_maxbuflen;
         local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
-
-        if event_type == 'page_requested' and not px_config.send_page_requested_activity then
-            return
-        end
 
         local pxdata = {};
         pxdata['type'] = event_type;

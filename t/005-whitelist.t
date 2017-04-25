@@ -83,7 +83,6 @@ __DATA__
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.whitelist.ip_addresses = {'1.2.3.4'}
             return true
         }
@@ -135,7 +134,6 @@ PX DEBUG: Whitelisted: IP address  1.2.3.4
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.whitelist.ip_addresses = {}
             pxconfig.whitelist.uri_full = {'/t/full/uri'}
             return true
@@ -189,7 +187,6 @@ PX DEBUG: Whitelisted: uri_full. /t/full/uri
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.whitelist.ip_addresses = {}
             pxconfig.whitelist.uri_full = {}
             pxconfig.whitelist.uri_prefixes = {'/t/prefix'}
@@ -244,7 +241,6 @@ PX DEBUG: Whitelisted: uri_prefixes. /t/prefix
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.whitelist.ip_addresses = {}
             pxconfig.whitelist.uri_full = {}
             pxconfig.whitelist.uri_prefixes = {}
@@ -302,7 +298,6 @@ PX DEBUG: Whitelisted: uri_suffix. .css
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.whitelist.ip_addressesß = {}
             pxconfig.whitelist.uri_full = {}
             pxconfig.whitelist.uri_prefixes = {}
@@ -361,7 +356,6 @@ PX DEBUG: Whitelisted: UA strict match Mozilla/5.0 (Macintosh; Intel Mac OS X 10
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.whitelist.ip_addresses = {}
             pxconfig.whitelist.uri_full = {}
             pxconfig.whitelist.uri_prefixes = {}
