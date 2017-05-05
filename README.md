@@ -10,6 +10,7 @@ Table of Contents
   *   [Dependencies](#dependencies)
   *   [Requirements](#requirements)
   *   [Installation](#installation)
+  *   [Installing on Amazon Linux](#awsinstall)
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
@@ -55,8 +56,36 @@ Installation can be done using [luarocks](https://luarocks.org/).
 $ luarocks install perimeterx-nginx-plugin
 ```
 
-Manual installation can accomplished by downoading the sources for this repository and running `sudo make install`.
+Manual installation can accomplished by downoading the sources for this repository and running `sudo make install`.  
 
+<a name="awsinstall"></a> Installing on Amazon Linux
+----------------------------------------  
+In order to properly configure the plugin for use on Amazon Linux EC2 instances please follow the steps below.
+
+First, if you are running Nginx+ install the lua modules provided by the Nginx team via yum as shown below as well as the CA certificate bundle which will be required when you configure Nginx.
+
+```
+yum -y install nginx-plus-module-lua ca-certificates.noarch
+```
+
+Once installation is complete you will now need to download and compile nettle. In this example I am using the latest version. However, you can use the version neccessary for your environment. 
+
+```
+yum -y install m4 # prerequisite for nettle
+cd /tmp/
+wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
+tar -xzf nettle-3.3.tar.gz
+cd nettle-3.3
+./configure
+make clean && make install
+cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so . 
+```
+
+These steps should satisfy the plugin requirements however you will need to slightly change the path shown below in the "Lua CA Certificates" section as Amazon Linux stores the CA required in a different location than shown. If running Amazon Linux this is the trusted certificate path you will want too use:  
+
+```
+lua_ssl_trusted_certificate "/etc/pki/tls/certs/ca-bundle.crt";
+```
 
 <a name="requirements"></a> NGINX Configuration File Requirements
 -----------------------------------------------
