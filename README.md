@@ -58,7 +58,7 @@ $ luarocks install perimeterx-nginx-plugin
 
 Manual installation can accomplished by downoading the sources for this repository and running `sudo make install`.  
 
-<a name="awsinstall"></a> Installing on Amazon Linux
+<a name="awsinstall"></a> Additional steps for installing on Amazon Linux
 ----------------------------------------  
 In order to properly configure the plugin for use on Amazon Linux EC2 instances please follow the steps below.
 
