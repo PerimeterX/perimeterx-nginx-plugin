@@ -60,7 +60,7 @@ Manual installation can accomplished by downoading the sources for this reposito
 
 <a name="awsinstall"></a> Additional steps for installing on Amazon Linux
 ----------------------------------------  
-##For Nginx+: 
+### For Nginx+: 
 Install the lua modules provided by the Nginx team via yum as shown below as well as the CA certificates bundle which will be required when you configure Nginx.
 
 ```
