@@ -60,15 +60,15 @@ Manual installation can accomplished by downoading the sources for this reposito
 
 <a name="awsinstall"></a> Additional steps for installing on Amazon Linux
 ----------------------------------------  
-In order to properly configure the plugin for use on Amazon Linux EC2 instances please follow the steps below.
-
-First, if you are running Nginx+ install the lua modules provided by the Nginx team via yum as shown below as well as the CA certificate bundle which will be required when you configure Nginx.
+##For Nginx+: 
+Install the lua modules provided by the Nginx team via yum as shown below as well as the CA certificates bundle which will be required when you configure Nginx.
 
 ```
 yum -y install nginx-plus-module-lua ca-certificates.noarch
 ```
 
-Once installation is complete you will now need to download and compile nettle. In this example I am using the latest version. However, you can use the version neccessary for your environment. 
+Download and compile nettle. 
+>> Side note: Use the version neccessary for your environment. 
 
 ```
 yum -y install m4 # prerequisite for nettle
@@ -81,7 +81,9 @@ make clean && make install
 cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so . 
 ```
 
-These steps should satisfy the plugin requirements however you will need to slightly change the path shown below in the "Lua CA Certificates" section as Amazon Linux stores the CA required in a different location than shown. If running Amazon Linux this is the trusted certificate path you will want too use:  
+Make sure to change the path shown below in the "Lua CA Certificates" section as Amazon Linux stores the CA required in a different location than shown.
+
+If running Amazon Linux this is the trusted certificate path please use:  
 
 ```
 lua_ssl_trusted_certificate "/etc/pki/tls/certs/ca-bundle.crt";
