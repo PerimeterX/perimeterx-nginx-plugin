@@ -25,15 +25,15 @@
 local M = {}
 M.configLoaded = false
 function M.application(file_name)
-    local _M = {}
-    -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
-    if not M.configLoaded then
-        require("px.utils.config_loader").load()
-        M.configLoaded = true
-    end
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
     local px_config = require(config_file)
+    local _M = {}
+    -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
+    if px_config.dynamic_configurations and not M.configLoaded then
+        require("px.utils.config_loader").load()
+        M.configLoaded = true
+    end
     local px_filters = require("px.utils.pxfilters").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local px_cookie_v1 = require("px.utils.pxcookie_v1").load(config_file)

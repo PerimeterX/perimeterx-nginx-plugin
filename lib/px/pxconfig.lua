@@ -27,8 +27,11 @@ _M.js_ref = nil
 -- -- ## END - Configuration block ##
 
 -- ## Dynamic Configuration Block ##
--- These values are dynamically loaded and updated when changed
+_M.dynamic_configurations = true
+_M.configuration_server = '10.20.1.148'
+_M.configuration_server_port = '3000'
 
+-- These values are dynamically loaded and updated when changed
 _M.px_appId = 'PX_APP_ID'
 _M.cookie_secret = 'COOKIE_SECRET'
 _M.blocking_score = 60

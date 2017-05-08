@@ -6,8 +6,8 @@ function _M.get_configuration()
     local px_logger = require("px.utils.pxlogger").load("px.pxconfig")
     px_logger.debug("Fetching configuration")
     local cjson = require "cjson"
-    local px_server = '10.20.1.148'
-    local px_port = 8080
+    local px_server = config.configuration_server
+    local px_port = config.configuration_server_port
     local path = '/module/'
     local checksum = config.checksum
     local query
