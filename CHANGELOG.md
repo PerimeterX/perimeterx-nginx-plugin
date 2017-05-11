@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [2.6.0] - 2017-03-22
+### Added
+- Added Javascript Challenge support
+- Sending original cookie value when decryption fails
+### Modified
+- Using debug instead of error on several cases
+
 ## [2.5.0] - 2017-03-22
 ### Added
 - New default block page design
