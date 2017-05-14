@@ -17,6 +17,7 @@ Table of Contents
   *   [Monitoring mode](#monitoring-mode)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Enabled Routes](#enabled-routes)
+  *   [Sensitive Routes](#sensitive-routes)
   *   [API Timeout](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
@@ -230,12 +231,23 @@ _M.captcha_enabled = false
 
 #### <a name="enabled-routes"></a> Enabled Routes
 
-The enabled routes variable allow you to implicitly define a set of routes which the plugin will be active on. Supplying an empty list will set all application routes as active.
+The enabled routes variable allows you to implicitly define a set of routes which the plugin will be active on. Supplying an empty list will set all application routes as active.
 
 **Default: Empty list (all routes)**
 
-```php
+```lua
 _M.enabled_routes = {'/blockhere'}
+```
+
+#### <a name="sensitive-routes"></a> Sensitive Routes
+
+Lists of route prefixes and suffixes. The PerimeterX module will always match the request URI with these lists, and if a match is found will create a server-to-server call, even if the cookie is valid and its score is low.
+
+**Default: Empty list**
+
+```lua
+_M.sensitive_routes_prefix = {'/login', '/user/profile'}
+_M.sensitive_routes_suffix = {'/download'}
 ```
 
 

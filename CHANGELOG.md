@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.7.0] - 2017-05-14
+### Added
+- Added support for sensitive routes
+
 ## [2.6.0] - 2017-03-22
 ### Added
 - Added Javascript Challenge support
