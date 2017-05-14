@@ -128,7 +128,7 @@ function M.load(config_file)
     end
 
     -- decode --
-    -- tales one argument - string
+    -- takes one argument - string
     -- returns one value - table
     local function decode(data)
         local fields = cjson.decode(data)
@@ -146,6 +146,26 @@ function M.load(config_file)
         end
 
         px_logger.error('Failed to verify cookie v3 content ' .. data);
+        return false
+    end
+
+    local function is_sensitive_route()
+        if px_config.sensitive_routes_prefix ~= nil then
+            -- find if any of the sensitive routes is the start of the URI
+            for i, prefix in ipairs(px_config.sensitive_routes_prefix) do
+                if string.sub(ngx.var.uri, 1, string.len(prefix)) == prefix then
+                    return true
+                end
+            end
+        end
+        if px_config.sensitive_routes_suffix ~= nil then
+            -- find if any of the sensitive routes is the end of the URI
+            for i, suffix in ipairs(px_config.sensitive_routes_suffix) do
+                if string.sub(ngx.var.uri, -string.len(suffix)) == suffix then
+                    return true
+                end
+            end
+        end
         return false
     end
 
@@ -218,6 +238,11 @@ function M.load(config_file)
         if not success or result == false then
             px_logger.error("Could not validate cookie v3 signature - " .. orig_cookie)
             error({ message = "cookie_validation_failed" })
+        end
+
+        if is_sensitive_route() then
+            px_logger.debug("cookie verification passed, risk api triggered by sensitive route")
+            error({ message = "sensitive_route" })
         end
 
         return true
