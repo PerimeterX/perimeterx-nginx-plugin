@@ -150,13 +150,20 @@ function M.load(config_file)
     end
 
     local function is_sensitive_route()
-        if px_config.sensitive_routes == nil then
-            return false
+        if px_config.sensitive_routes_prefix ~= nil then
+            -- find if any of the sensitive routes is the start of the URI
+            for i, prefix in ipairs(px_config.sensitive_routes_prefix) do
+                if string.sub(ngx.var.uri, 1, string.len(prefix)) == prefix then
+                    return true
+                end
+            end
         end
-        -- find if any of the sensitive routes is the start of the URI
-        for i, prefix in ipairs(px_config.sensitive_routes) do
-            if string.sub(ngx.var.uri, 1, string.len(prefix)) == prefix then
-                return true
+        if px_config.sensitive_routes_suffix ~= nil then
+            -- find if any of the sensitive routes is the end of the URI
+            for i, suffix in ipairs(px_config.sensitive_routes_suffix) do
+                if string.sub(ngx.var.uri, -string.len(suffix)) == suffix then
+                    return true
+                end
             end
         end
         return false
