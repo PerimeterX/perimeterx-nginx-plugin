@@ -234,7 +234,7 @@ function M.load(config_file)
         end
 
         if is_sensitive_route() then
-            px_logger.info("cookie verification passed, risk api triggered by sensitive route")
+            px_logger.debug("cookie verification passed, risk api triggered by sensitive route")
             error({ message = "sensitive_route" })
         end
 

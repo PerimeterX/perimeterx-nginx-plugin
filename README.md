@@ -210,7 +210,7 @@ _M.enabled_routes = {'/blockhere'}
 
 #### <a name="sensitive-routes"></a> Sensitive Routes
 
-List of route prefixes. The Perimeterx module will always match the request URI with this prefix list, and if a match is found will create a server-to-server call, even if the cookie is valid and its score is low.
+List of route prefixes. The PerimeterX module will always match the request URI with this prefix list, and if a match is found will create a server-to-server call, even if the cookie is valid and its score is low.
 
 **Default: Empty list**
 
