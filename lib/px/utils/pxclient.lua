@@ -86,6 +86,11 @@ function M.load(config_file)
         if event_type == 'page_requested' and not px_config.send_page_requested_activity then
             return
         end
+			
+		if px_config.additional_activity_handler ~= nil then
+			px_logger.debug("additional_activity_handler was triggered");
+			px_config.additional_activity_handler(event_type, ngx.ctx, details)
+		end
 
         local pxdata = {};
         pxdata['type'] = event_type;
