@@ -22,6 +22,7 @@ Table of Contents
   *   [Debug Mode](#debug-mode)
   *   [Custom Block Page](#customblockpage)
   *   [Multiple App Support](#multipleapps)
+  *   [Additional Activity Handler](#add-activity-handler)
   *   [Whitelisting](#whitelisting)
 -   [Appendix](#appendix)
   *   [NGINX Plus](#nginxplus)
@@ -422,6 +423,23 @@ If your PerimeterX account contains several Applications (as defined via the por
 - Make sure to save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
 - Thats it, in every `location` block of your app - make sure to place the code mentioned on stage 2 with the correct AppName.
 
+
+#### <a name="add-activity-handler"></a> Additional Activity Handler
+Adding an additional activity handler is done by setting '_M.additional_activity_handler' with a user defined function on the 'pxconfig.lua' file. The 'additional_activity_handler' function will be executed before sending the data to the PerimeterX portal.
+
+Default: Only send activity to PerimeterX as controlled by 'pxconfig.lua'.
+
+```lua
+_M.additional_activity_handler = function(event_type, ctx, details)
+	local cjson = require "cjson"
+	if (event_type == 'block') then
+        $logger->warning('PerimeterX {activityType} details', ['activityType' => $activityType, 'details' => $details]);
+		logger.warning("PerimeterX " + event_type + " blocked with score: " + ctx.score + "details " + cjson.encode(details))
+	else
+		logger.info("PerimeterX " + event_type + " details " +  cjson.encode(details))
+	end
+end
+```
 
 <a name="whitelisting"></a> Whitelisting
 -----------------------------------------------
