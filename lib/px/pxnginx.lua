@@ -52,10 +52,10 @@ function M.application(file_name)
     local pcall = pcall
 
     local function perform_s2s(result, details)
-		ngx.ctx.s2s_call_reason = result.message
+	ngx.ctx.s2s_call_reason = result.message
         local request_data = px_api.new_request_object(result.message)
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
-		ngx.ctx.is_made_s2s_api_call = true
+	ngx.ctx.is_made_s2s_api_call = true
         local result
         if success then
             result = px_api.process(response)
