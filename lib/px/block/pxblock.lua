@@ -29,7 +29,7 @@ function M.load(config_file)
     end
 
     function _M.block(reason)
-				ngx.ctx.block_reason = reason
+	ngx.ctx.block_reason = reason
         local details = {}
         local ref_str = ''
         local vid = ''
