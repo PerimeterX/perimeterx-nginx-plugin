@@ -100,7 +100,11 @@ function M.load(config_file)
                     html = ngx.ctx.px_action_data
                 else
                     if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
-                        template = 'captcha'
+                        if px_config.captcha_provider == 'funCaptcha' then
+                            template = 'funcaptcha'
+                        else
+                            template = 'captcha'
+                        end
                     end
                     px_logger.debug('Fetching template: ' .. template)
 

@@ -86,10 +86,10 @@
         }
     </style>
     <!-- Custom CSS -->
-    {{#cssRef}}
-        <link rel="stylesheet" type="text/css" href="{{cssRef}}"/>
-    {{/cssRef}}
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    {{# cssRef }}
+        <link rel="stylesheet" type="text/css" href="{{ . }}"/>
+    {{/ cssRef }}
+    <script src="https://funcaptcha.com/fc/api/?onload=loadFunCaptcha" async defer></script>
 </head>
 
 <body>
@@ -107,11 +107,9 @@
     <div class="content-wrapper">
         <div class="content">
             <p>
-                Please click "I am not a robot" to continue
+                Please click "Verify" to continue
             </p>
-            <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b"
-                 data-callback="handleCaptcha" data-theme="dark">
-            </div>
+            <div id="CAPTCHA"></div>
             <p>
                 Access to this page has been denied because we believe you are using automation tools to browse the
                 website.
@@ -161,31 +159,37 @@
 </script>
 <!-- Captcha -->
 <script>
-    window.px_vid = '{{vid}}';
-    function handleCaptcha(response) {
+
+    function loadFunCaptcha() {
         var vid = '{{vid}}';
         var uuid = '{{uuid}}';
         var delimiter = '|,|';
-        var name = "_pxCaptcha";
 
-        var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
+        new FunCaptcha({
+            public_key: "19E4B3B8-6CBE-35CC-4205-FC79ECDDA765",
+            target_html: "CAPTCHA",
+            callback: function () {
+                var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
+                var pxCaptcha = "_pxCaptcha=" + document.getElementById("FunCaptcha-Token").value + delimiter + uuid;
+                if (vid) {
+                    pxCaptcha = pxCaptcha + delimiter + vid
+                }
+                var cookieParts = [
+                    pxCaptcha,
+                    "; expires=",
+                    expiryUtc,
+                    "; path=/"
+                ];
 
-        var cookieParts = [
-            name,
-            "=",
-            response + delimiter + vid + delimiter + uuid,
-            "; expires=",
-            expiryUtc,
-            "; path=/"
-        ];
-
-        document.cookie = cookieParts.join("");
-        location.reload();
+                document.cookie = cookieParts.join("");
+                location.reload();
+            }
+        });
     }
 </script>
 <!-- Custom Script -->
-{{#jsRef}}
-    <script src="{{jsRef}}"></script>
-{{/jsRef}}
+{{# jsRef }}
+    <script src="{{ . }}"></script>
+{{/ jsRef }}
 </body>
 </html>
