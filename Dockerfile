@@ -26,6 +26,7 @@ RUN apt-get update && apt-get --force-yes -qq -y install \
     luarocks
 # ***** DOWNLOAD AND UNTAR *****
 RUN luarocks install lustache
+RUN luarocks install luasocket
 RUN curl -sSL http://nginx.org/download/nginx-${VER_NGINX}.tar.gz | tar xzf -
 RUN curl -sSL http://luajit.org/download/LuaJIT-${VER_LUAJIT}.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/simpl/ngx_devel_kit/archive/v${VER_NGINX_DEVEL_KIT}.tar.gz | tar xzf -

@@ -101,6 +101,7 @@ function M.load(config_file)
         local ok, err = httpc:connect(px_server, px_port)
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
+            error('HTTPC connection error:'  .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
