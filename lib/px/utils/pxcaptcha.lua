@@ -13,6 +13,7 @@ function M.load(config_file)
     local px_api = require("px.utils.pxapi").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
+    local px_timer = require "px.utils.pxtimer"
 
     local auth_token = px_config.auth_token
     local captcha_api_path = px_constants.CAPTCHA_PATH
@@ -35,7 +36,7 @@ function M.load(config_file)
     -- new_request_object --
     -- takes no arguments
     -- returns table
-    local function new_captcha_request_object(captcha, vid, uuid)
+    local function new_captcha_request_object(captcha)
         px_logger.debug('New CAPTCHA request')
 
         local captcha_reset = {}
@@ -43,6 +44,7 @@ function M.load(config_file)
         captcha_reset.request = {}
         captcha_reset.request.ip = ngx.var.remote_addr
         captcha_reset.request.uri = ngx.var.uri
+        captcha_reset.request.captchaType = px_config.captcha_provider
         captcha_reset.request.headers = {}
         local h = ngx_req_get_headers()
         for k, v in pairs(h) do
@@ -50,12 +52,6 @@ function M.load(config_file)
         end
         captcha_reset.pxCaptcha = captcha;
         captcha_reset.hostname = ngx.var.host;
-        if vid then
-            captcha_reset.vid = vid
-        end
-        if uuid then
-            captcha_reset.uuid = uuid
-        end
 
         px_logger.debug('CAPTCHA object completed')
         return captcha_reset
@@ -68,32 +64,22 @@ function M.load(config_file)
         end
         px_logger.debug('Processing new CAPTCHA object');
 
-        local split_cookie = split_s(captcha, ":")
-        if not split_cookie[1] then
-            px_logger.debug('CAPTCHA content is not valid');
-            return -1;
-        end
-        local vid = '';
-        local uuid = '';
-        local _captcha = split_cookie[1]
-        if split_cookie[2] then
-            vid = split_cookie[2]
-        end
-
-        if split_cookie[3] then
-            uuid = split_cookie[3]
-        end
-
-        local request_data = new_captcha_request_object(_captcha, vid, uuid)
+        local request_data = new_captcha_request_object(captcha)
         px_logger.debug('Sending Captcha API call to eval cookie');
+        local start_risk_rtt = px_timer.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, captcha_api_path, auth_token)
+        ngx.ctx.risk_rtt =  px_timer.get_time_in_milliseconds() - start_risk_rtt
         if success then
             px_logger.debug('Captcha API call successfully returned');
+            ngx.ctx.pass_reason = 'captcha'
             return response.status
-        else
-            px_logger.error("Failed to connec to CAPTCHA API: " .. cjson.encode(response))
+        elseif string.match(response,'timeout') then
+            px_logger.error('captcha timeout')
+            ngx.ctx.pass_reason = 'captcha_timeout'
+            return 0
         end
-        return -1;
+        px_logger.error("Failed to process CAPTCHA, passing request: " .. cjson.encode(response))
+        return 0;
     end
 
     return _M

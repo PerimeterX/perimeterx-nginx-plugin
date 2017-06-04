@@ -22,6 +22,8 @@ _M.captcha_enabled = true
 _M.px_debug = true
 _M.sensitive_routes_prefix = {}
 _M.sensitive_routes_suffix = {}
+_M.captcha_provider = "reCaptcha"
+_M.additional_activity_handler = nil
 
 _M.s2s_timeout = 1000
 _M.px_maxbuflen = 10

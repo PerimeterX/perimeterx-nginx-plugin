@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.8.0] - 2017-06-04
+### Added
+- Support for funCaptcha. It is now possible to choose between reCaptcha and funCaptcha for the captcha page. 
+- New functionality - additional activity handler. The `additional_activity_handler` function will be executed before sending the data to the PerimeterX portal.
+- Support for pass reason and risk RTT for better analytics.
+
 ## [2.7.0] - 2017-05-14
 ### Added
 - Added support for sensitive routes
