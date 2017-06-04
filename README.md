@@ -15,12 +15,13 @@ Table of Contents
   *   [Blocking Score](#blocking-score)
   *   [Monitoring mode](#monitoring-mode)
   *   [Enable/Disable Captcha](#captcha-support)
+  *   [Select Captcha Provider](#captcha-provider)
   *   [Enabled Routes](#enabled-routes)
   *   [Sensitive Routes](#sensitive-routes)
   *   [API Timeout](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
-  *   [Custom Block Page](#customblockpage)
+  *   [Custom Block Page](#customblockpage)  
   *   [Multiple App Support](#multipleapps)
   *   [Additional Activity Handler](#add-activity-handler)
   *   [Whitelisting](#whitelisting)
@@ -198,6 +199,16 @@ By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page,
 _M.captcha_enabled = false
 ```
 
+#### <a name="captcha-provider"></a>Select CAPTCHA Provider
+
+The CAPTCHA part of the block page can use one of the following:
+* [reCAPTCHA](https://www.google.com/recaptcha)
+* [FunCaptcha](https://www.funcaptcha.com/)
+
+**Default: 'reCaptcha'**
+```lua
+_M.captcha_provider = "funCaptcha"
+```
 
 #### <a name="enabled-routes"></a> Enabled Routes
 
