@@ -40,6 +40,7 @@ function M.application(file_name)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require("px.utils.pxconstants")
+    local px_timer = require("px.utils.pxtimer")
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
@@ -52,8 +53,14 @@ function M.application(file_name)
     local pcall = pcall
 
     local function perform_s2s(result, details)
+	ngx.ctx.s2s_call_reason = result.message
         local request_data = px_api.new_request_object(result.message)
+        local start_risk_rtt = px_timer.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
+
+        ngx.ctx.risk_rtt = px_timer.get_time_in_milliseconds() - start_risk_rtt
+	    ngx.ctx.is_made_s2s_api_call = true
+
         local result
         if success then
             result = px_api.process(response)
@@ -63,11 +70,17 @@ function M.application(file_name)
                 return px_block.block('s2s_high_score')
                 -- score did not cross the blocking threshold
             else
+                ngx.ctx.pass_reason = 's2s'
                 px_client.send_to_perimeterx("page_requested", details)
                 return true
             end
         else
             -- server2server call failed, passing traffic
+            ngx.ctx.pass_reason = 'error'
+            if string.match(response,'timeout') then
+                px_logger.error('s2s timeout')
+                ngx.ctx.pass_reason = 's2s_timeout'
+            end
             px_client.send_to_perimeterx("page_requested", details)
             return true
         end
@@ -111,6 +124,7 @@ function M.application(file_name)
     px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. user_agent)
     -- process _pxCaptcha cookie if present
     local _pxCaptcha = ngx.var.cookie__pxCaptcha
+    local details = {};
 
     if px_config.captcha_enabled and _pxCaptcha then
         local success, result = pcall(px_captcha.process, _pxCaptcha)
@@ -119,11 +133,11 @@ function M.application(file_name)
         if success and result == 0 then
             ngx.header["Content-Type"] = nil
             ngx.header["Set-Cookie"] = "_pxCaptcha=; Expires=Thu, 01 Jan 1970 00:00:00 GMT;"
+            px_client.send_to_perimeterx("page_requested", details)
             return true
         end
     end
 
-    local details = {};
     -- process _px cookie v3 if present
     local _px3 = ngx.var.cookie__px3
     local _px = ngx.var.cookie__px
@@ -142,6 +156,7 @@ function M.application(file_name)
                 return px_block.block('cookie_high_score')
                 -- score did not cross the blocking threshold
             else
+                ngx.ctx.pass_reason = 'cookie'
                 px_client.send_to_perimeterx("page_requested", details)
                 return true
             end
@@ -149,6 +164,7 @@ function M.application(file_name)
         elseif enable_server_calls == true then
             return perform_s2s(result, details)
         else
+            ngx.ctx.pass_reason = 'error'
             px_client.send_to_perimeterx("page_requested", details)
             return true
         end
@@ -169,6 +185,7 @@ function M.application(file_name)
                 return px_block.block('cookie_high_score')
                 -- score did not cross the blocking threshold
             else
+                ngx.ctx.pass_reason = 'cookie';
                 px_client.send_to_perimeterx("page_requested", details)
                 return true
             end
@@ -176,6 +193,7 @@ function M.application(file_name)
         elseif enable_server_calls == true then
             return perform_s2s(result, details)
         else
+            ngx.ctx.pass_reason = 'error'
             px_client.send_to_perimeterx("page_requested", details)
             return true
         end

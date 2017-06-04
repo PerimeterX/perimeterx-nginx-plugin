@@ -86,6 +86,11 @@ function M.load(config_file)
         if event_type == 'page_requested' and not px_config.send_page_requested_activity then
             return
         end
+			
+	if px_config.additional_activity_handler ~= nil then
+		px_logger.debug("additional_activity_handler was triggered");
+		px_config.additional_activity_handler(event_type, ngx.ctx, details)
+	end
 
         local pxdata = {};
         pxdata['type'] = event_type;
@@ -94,6 +99,11 @@ function M.load(config_file)
         pxdata['px_app_id'] = px_config.px_appId;
         pxdata['timestamp'] = tostring(ngx_time());
         pxdata['socket_ip'] = ngx.var.remote_addr;
+
+        details['risk_rtt'] = 0
+        if ngx.ctx.risk_rtt then
+            details['risk_rtt'] = math.ceil(ngx.ctx.risk_rtt)
+        end
 
         if ngx.ctx.vid then
             details['vid'] = ngx.ctx.vid
@@ -111,11 +121,13 @@ function M.load(config_file)
             details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
         end
 
-        pxdata['details'] = details;
-
         if event_type == 'page_requested' then
             px_logger.debug("Sent page requested acitvity")
+            details['pass_reason'] = ngx.ctx.pass_reason
         end
+
+        pxdata['details'] = details;
+
         -- Experimental Buffer Support --
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
