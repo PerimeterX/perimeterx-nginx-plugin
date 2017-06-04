@@ -33,7 +33,6 @@ function M.application(file_name)
 	submit_on_timer()
 
 	function M.get_time_in_milliseconds()
-		px_logger.error('current time in milliseconds ' .. socket.gettime() * 10000)
 		return socket.gettime() * 1000
 	end
 end
