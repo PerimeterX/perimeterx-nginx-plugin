@@ -165,7 +165,6 @@
     function handleCaptcha(response) {
         var vid = '{{vid}}';
         var uuid = '{{uuid}}';
-        var delimiter = '|,|';
         var name = "_pxCaptcha";
 
         var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
@@ -173,7 +172,7 @@
         var cookieParts = [
             name,
             "=",
-            response + delimiter + vid + delimiter + uuid,
+            JSON.stringify({r: response, v: vid, u: uuid}),
             "; expires=",
             expiryUtc,
             "; path=/"

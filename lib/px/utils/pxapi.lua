@@ -88,7 +88,7 @@ function M.load(config_file)
     -- takes three values, data , path, and auth_token
     -- returns response body as a table
     function _M.call_s2s(data, path, auth_token)
-        local px_server = 'sapi-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+        local px_server = '9b623926.ngrok.io'--'sapi-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
         local px_port = px_config.px_port
         local ssl_enabled = px_config.ssl_enabled
 
