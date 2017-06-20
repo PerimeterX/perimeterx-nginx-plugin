@@ -8,7 +8,7 @@ function _M.get_configuration()
     local cjson = require "cjson"
     local px_server = config.configuration_server
     local px_port = config.configuration_server_port
-    local path = '/module/'
+    local path = '/module'
     local checksum = config.checksum
     local query
     if checksum ~= nil then
@@ -32,6 +32,9 @@ function _M.get_configuration()
     })
     if err or not res then
         px_logger.error("Failed to make HTTP POST: " .. err)
+        if (checksum == nil) then --no configs yet and can't get configs - disable module
+            config.px_enabled = false
+        end
     elseif res.status > 204 then
         px_logger.error("Non 20x response code: " .. res.status)
     end
@@ -41,6 +44,7 @@ function _M.get_configuration()
         local body = cjson.decode(res:read_body())
         px_logger.debug("Applying new configuration")
         config.checksum = body.checksum
+        config.px_enabled = body.moduleEnabled
         config.cookie_secret = body.cookieKey
         config.px_appId = body.appId
         config.blocking_score = body.blockingScore
