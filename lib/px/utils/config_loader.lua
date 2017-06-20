@@ -30,15 +30,21 @@ function _M.get_configuration()
         },
         query = query
     })
-    if err or not res then
-        px_logger.error("Failed to make HTTP POST: " .. err)
+
+    if err ~= nil or res == nil then
+        px_logger.error("Failed to make HTTP request: " .. err)
         if (checksum == nil) then --no configs yet and can't get configs - disable module
             config.px_enabled = false
+            return
         end
     elseif res.status > 204 then
         px_logger.error("Non 20x response code: " .. res.status)
+        return
     end
-
+    if res.status == 204 then
+        px_logger.debug("Configuration was not changed")
+        return
+    end
     -- new configurations available
     if res.status == 200 then
         local body = cjson.decode(res:read_body())
@@ -59,11 +65,11 @@ function _M.get_configuration()
 end
 
 function _M.load()
-
+    local config = require("px.pxconfig")
     local ngx_timer_at = ngx.timer.at
     -- set interval
     local function load_on_timer()
-        local ok, err = ngx_timer_at(60, load_on_timer)
+        local ok, err = ngx_timer_at(config.load_intreval, load_on_timer)
         if not ok then
             px_logger.error("Failed to schedule submit timer: " .. err)
         end
