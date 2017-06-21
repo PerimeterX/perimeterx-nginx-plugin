@@ -3,7 +3,7 @@ local _M = {}
 function _M.get_configuration(config_file)
     local http = require "resty.http"
     local config = require(config_file)
-    local px_logger = require("px.utils.pxlogger").load("px.pxconfig")
+    local px_logger = require("px.utils.pxlogger").load(config_file)
     px_logger.debug("Fetching configuration")
     local cjson = require "cjson"
     local px_server = config.configuration_server
@@ -16,6 +16,7 @@ function _M.get_configuration(config_file)
     else
         query = ''
     end
+
     local httpc = http.new()
     local ok, err = httpc:connect(px_server, px_port)
     if not ok then
@@ -67,6 +68,7 @@ end
 function _M.load(config_file)
     local config = require(config_file)
     local ngx_timer_at = ngx.timer.at
+    local px_logger = require("px.utils.pxlogger").load(config_file)
     -- set interval
     local function load_on_timer()
         local ok, err = ngx_timer_at(config.load_intreval, load_on_timer)
