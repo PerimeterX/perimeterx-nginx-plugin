@@ -14,6 +14,11 @@ _M.px_enabled = true
 _M.auth_token = ''
 
 _M.cookie_encrypted = true
+_M.send_page_requested_activity = true
+_M.sensitive_routes_prefix = {}
+_M.sensitive_routes_suffix = {}
+_M.captcha_provider = "reCaptcha"
+_M.additional_activity_handler = nil
 _M.enable_server_calls = true
 
 _M.px_maxbuflen = 10

@@ -36,17 +36,18 @@ function M.load(config_file)
         risk.additional.s2s_call_reason = call_reason
 
         if ngx.ctx.vid then
-          risk.vid = ngx.ctx.vid
+            risk.vid = ngx.ctx.vid
         end
 
         if ngx.ctx.uuid then
-          risk.uuid = ngx.ctx.uuid
+            risk.uuid = ngx.ctx.uuid
         end
 
         if call_reason == 'cookie_decryption_failed' then
             px_logger.debug("Attaching px_orig_cookie to request")
             risk.additional.px_orig_cookie = ngx.ctx.px_orig_cookie
-        elseif call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then            risk.additional.px_cookie = ngx.ctx.px_cookie
+        elseif call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then
+            risk.additional.px_cookie = ngx.ctx.px_cookie
             risk.additional.px_cookie_hmac = ngx.ctx.px_cookie_hmac
         end
 
@@ -100,6 +101,7 @@ function M.load(config_file)
         local ok, err = httpc:connect(px_server, px_port)
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
+            error('HTTPC connection error:'  .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then

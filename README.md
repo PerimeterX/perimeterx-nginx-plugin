@@ -10,17 +10,21 @@ Table of Contents
   *   [Dependencies](#dependencies)
   *   [Requirements](#requirements)
   *   [Installation](#installation)
+  *   [Installing on Amazon Linux](#awsinstall)
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
   *   [Monitoring mode](#monitoring-mode)
   *   [Enable/Disable Captcha](#captcha-support)
+  *   [Select Captcha Provider](#captcha-provider)
   *   [Enabled Routes](#enabled-routes)
+  *   [Sensitive Routes](#sensitive-routes)
   *   [API Timeout](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
-  *   [Custom Block Page](#customblockpage)
+  *   [Custom Block Page](#customblockpage)  
   *   [Multiple App Support](#multipleapps)
+  *   [Additional Activity Handler](#add-activity-handler)
   *   [Whitelisting](#whitelisting)
 -   [Appendix](#appendix)
   *   [NGINX Plus](#nginxplus)
@@ -55,8 +59,38 @@ Installation can be done using [luarocks](https://luarocks.org/).
 $ luarocks install perimeterx-nginx-plugin
 ```
 
-Manual installation can accomplished by downoading the sources for this repository and running `sudo make install`.
+Manual installation can accomplished by downoading the sources for this repository and running `sudo make install`.  
 
+<a name="awsinstall"></a> Additional steps for installing on Amazon Linux
+----------------------------------------  
+### For Nginx+: 
+Install the lua modules provided by the Nginx team via yum as shown below as well as the CA certificates bundle which will be required when you configure Nginx.
+
+```
+yum -y install nginx-plus-module-lua ca-certificates.noarch
+```
+
+Download and compile nettle. 
+>> Side note: Use the version neccessary for your environment. 
+
+```
+yum -y install m4 # prerequisite for nettle
+cd /tmp/
+wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
+tar -xzf nettle-3.3.tar.gz
+cd nettle-3.3
+./configure
+make clean && make install
+cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so . 
+```
+
+Make sure to change the path shown below in the "Lua CA Certificates" section as Amazon Linux stores the CA required in a different location than shown.
+
+If running Amazon Linux this is the trusted certificate path please use:  
+
+```
+lua_ssl_trusted_certificate "/etc/pki/tls/certs/ca-bundle.crt";
+```
 
 <a name="requirements"></a> NGINX Configuration File Requirements
 -----------------------------------------------
@@ -186,14 +220,46 @@ _M.block_enabled = false
 ```
 Disabling blocking means users crossing the blocking threshold will not be activly blocked, but you will still be able to consume their score through a custom request header `X-PX-SCORE`.
 
+#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
+
+By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
+
+**Default: true**
+
+```
+_M.captcha_enabled = false
+```
+
+#### <a name="captcha-provider"></a>Select CAPTCHA Provider
+
+The CAPTCHA part of the block page can use one of the following:
+* [reCAPTCHA](https://www.google.com/recaptcha)
+* [FunCaptcha](https://www.funcaptcha.com/)
+
+**Default: 'reCaptcha'**
+```lua
+_M.captcha_provider = "funCaptcha"
+```
+
 #### <a name="enabled-routes"></a> Enabled Routes
 
-The enabled routes variable allow you to implicitly define a set of routes which the plugin will be active on. Supplying an empty list will set all application routes as active.
+The enabled routes variable allows you to implicitly define a set of routes which the plugin will be active on. Supplying an empty list will set all application routes as active.
 
 **Default: Empty list (all routes)**
 
-```php
+```lua
 _M.enabled_routes = {'/blockhere'}
+```
+
+#### <a name="sensitive-routes"></a> Sensitive Routes
+
+Lists of route prefixes and suffixes. The PerimeterX module will always match the request URI with these lists, and if a match is found will create a server-to-server call, even if the cookie is valid and its score is low.
+
+**Default: Empty list**
+
+```lua
+_M.sensitive_routes_prefix = {'/login', '/user/profile'}
+_M.sensitive_routes_suffix = {'/download'}
 ```
 
 
@@ -206,6 +272,16 @@ API Timeout in milliseconds (float) to wait for the PerimeterX server API respon
 
 ```
 _M.s2s_timeout = 250
+```
+
+#### <a name="send-page-activities"></a> Send Page Activities
+
+A boolean flag to determine whether or not to send activities and metrics to PerimeterX, on each page request. Disabling this feature will prevent PerimeterX from receiving data populating the PerimeterX portal, containing valuable information such as the amount of requests blocked and other API usage statistics.
+
+**Default:** true
+
+```php
+_M.send_page_requested_activity = false
 ```
 
 #### <a name="debug-mode"></a> Debug Mode
@@ -389,6 +465,22 @@ If your PerimeterX account contains several Applications (as defined via the por
 - Make sure to save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
 - Thats it, in every `location` block of your app - make sure to place the code mentioned on stage 2 with the correct AppName.
 
+
+#### <a name="add-activity-handler"></a> Additional Activity Handler
+Adding an additional activity handler is done by setting '_M.additional_activity_handler' with a user defined function on the 'pxconfig.lua' file. The 'additional_activity_handler' function will be executed before sending the data to the PerimeterX portal.
+
+Default: Only send activity to PerimeterX as controlled by 'pxconfig.lua'.
+
+```lua
+_M.additional_activity_handler = function(event_type, ctx, details)
+	local cjson = require "cjson"
+	if (event_type == 'block') then
+		logger.warning("PerimeterX " + event_type + " blocked with score: " + ctx.score + "details " + cjson.encode(details))
+	else
+		logger.info("PerimeterX " + event_type + " details " +  cjson.encode(details))
+	end
+end
+```
 
 <a name="whitelisting"></a> Whitelisting
 -----------------------------------------------
