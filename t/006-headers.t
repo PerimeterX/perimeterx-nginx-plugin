@@ -81,6 +81,7 @@ __DATA__
 			pxconfig.cookie_secret = "perimeterx"
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
+			pxconfig.send_page_requested_activity = false
 			pxconfig.enable_server_calls  = false
 			return true
 		}
@@ -137,6 +138,7 @@ Request is internal. PerimeterX processing skipped.
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
 			pxconfig.enable_server_calls  = false
+			pxconfig.send_page_requested_activity = false
 			pxconfig.score_header_enabled = true
 			return true
 		}
@@ -182,6 +184,7 @@ X-PX-SCORE: 0
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
 			pxconfig.enable_server_calls  = false
+			pxconfig.send_page_requested_activity = false
 			pxconfig.score_header_enabled = true
      		return true
 		}

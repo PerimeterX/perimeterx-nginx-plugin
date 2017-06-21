@@ -84,6 +84,7 @@ Process a valid V1 cookie
     	    pxconfig.cookie_secret = "perimeterx"
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
+    	    pxconfig.send_page_requested_activity = false
             pxconfig.enable_server_calls  = false
             return true
         }

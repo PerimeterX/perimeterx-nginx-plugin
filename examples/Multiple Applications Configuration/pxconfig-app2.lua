@@ -15,6 +15,7 @@ _M.auth_token = 'JWT_AUTH_TOKEN_APP2'
 _M.blocking_score = 50
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
+_M.send_page_requested_activity = true
 _M.block_enabled = false 
 _M.captcha_enabled = true
 _M.custom_block_url = nil

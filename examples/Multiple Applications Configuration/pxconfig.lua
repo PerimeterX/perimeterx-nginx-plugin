@@ -15,6 +15,7 @@ _M.auth_token = 'JWT_AUTH_TOKEN'
 _M.blocking_score = 60
 _M.cookie_encrypted = true
 _M.enable_server_calls = true
+_M.send_page_requested_activity = true
 _M.block_enabled = true
 _M.captcha_enabled = true
 _M.custom_block_url = nil
