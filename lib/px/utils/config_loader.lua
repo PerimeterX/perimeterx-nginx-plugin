@@ -1,8 +1,8 @@
 local _M = {}
 
-function _M.get_configuration()
+function _M.get_configuration(config_file)
     local http = require "resty.http"
-    local config = require("px.pxconfig")
+    local config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load("px.pxconfig")
     px_logger.debug("Fetching configuration")
     local cjson = require "cjson"
@@ -64,8 +64,8 @@ function _M.get_configuration()
    end
 end
 
-function _M.load()
-    local config = require("px.pxconfig")
+function _M.load(config_file)
+    local config = require(config_file)
     local ngx_timer_at = ngx.timer.at
     -- set interval
     local function load_on_timer()
@@ -73,7 +73,7 @@ function _M.load()
         if not ok then
             px_logger.error("Failed to schedule submit timer: " .. err)
         end
-        _M.get_configuration()
+        _M.get_configuration(config_file)
         return
     end
     load_on_timer()
