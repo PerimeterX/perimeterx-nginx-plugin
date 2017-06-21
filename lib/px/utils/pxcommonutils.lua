@@ -1,10 +1,4 @@
---
--- Created by IntelliJ IDEA.
--- User: nitzangoldfeder
--- Date: 16/06/2017
--- Time: 12:17
--- To change this template use File | Settings | File Templates.
---
+
 local M = {}
 function M.load()
     local _M = {}
