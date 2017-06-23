@@ -15,7 +15,7 @@
     "lua-cjson",
     "lua-resty-http",
     "lua-resty-nettle",
-    "luasockrt",
+    "luasocket",
     "lustache"
  }
 
