@@ -13,9 +13,6 @@ function M.application(file_name)
 	local px_logger = require ("px.utils.pxlogger").load(config_file)
 	local px_constants = require("px.utils.pxconstants")
 	local buffer = require "px.utils.pxbuffer"
-	local socket = require("socket")
-
-
 
 	local ngx_timer_at = ngx.timer.at
 
@@ -32,8 +29,5 @@ function M.application(file_name)
 	end
 	submit_on_timer()
 
-	function M.get_time_in_milliseconds()
-		return socket.gettime() * 1000
-	end
 end
 return M

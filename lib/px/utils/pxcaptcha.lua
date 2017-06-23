@@ -13,7 +13,7 @@ function M.load(config_file)
     local px_api = require("px.utils.pxapi").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
-    local px_timer = require "px.utils.pxtimer"
+    local px_common_utils = require "px.utils.pxcommonutils".load()
 
     local auth_token = px_config.auth_token
     local captcha_api_path = px_constants.CAPTCHA_PATH
@@ -66,9 +66,9 @@ function M.load(config_file)
 
         local request_data = new_captcha_request_object(captcha)
         px_logger.debug('Sending Captcha API call to eval cookie');
-        local start_risk_rtt = px_timer.get_time_in_milliseconds()
+        local start_risk_rtt = px_common_utils.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, captcha_api_path, auth_token)
-        ngx.ctx.risk_rtt =  px_timer.get_time_in_milliseconds() - start_risk_rtt
+        ngx.ctx.risk_rtt =  px_common_utils.get_time_in_milliseconds() - start_risk_rtt
         if success then
             px_logger.debug('Captcha API call successfully returned');
             ngx.ctx.pass_reason = 'captcha'
