@@ -32,15 +32,12 @@ function _M.get_configuration(config_file)
         query = query
     })
 
-    if err ~= nil or res == nil then
-        px_logger.error("Failed to make HTTP request: " .. err)
+    if err ~= nil or res == nil or res.status > 204 then
+        px_logger.error("Failed to get configurations: " .. (err ~= nil and err or ''))
         if (checksum == nil) then --no configs yet and can't get configs - disable module
-            px_logger.debug("Disabling PX module since no configuration is available")
+            px_logger.error("Disabling PX module since no configuration is available")
             config.px_enabled = false
-            return
         end
-    elseif res.status > 204 then
-        px_logger.error("Non 20x response code: " .. res.status)
         return
     end
     if res.status == 204 then
@@ -72,7 +69,7 @@ function _M.load(config_file)
         local ok, err = ngx_timer_at(config.load_intreval, load_on_timer)
         if not ok then
             px_logger.error("Failed to schedule submit timer: " .. err)
-            px_logger.debug("Disabling PX module since timer failed")
+            px_logger.error("Disabling PX module since timer failed")
             config.px_enabled = false
         else
             _M.get_configuration(config_file)
