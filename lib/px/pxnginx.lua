@@ -23,13 +23,17 @@
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 local M = {}
-
+M.configLoaded = false
 function M.application(file_name)
-    local _M = {}
-    -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
     local px_config = require(config_file)
+    local _M = {}
+    -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
+    if px_config.dynamic_configurations and not M.configLoaded then
+        require("px.utils.config_loader").load(config_file)
+        M.configLoaded = true
+    end
     local px_filters = require("px.utils.pxfilters").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local px_cookie_v1 = require("px.utils.pxcookie_v1").load(config_file)
@@ -126,7 +130,7 @@ function M.application(file_name)
     local _pxCaptcha = ngx.var.cookie__pxCaptcha
     local details = {};
 
-    if px_config.captcha_enabled and _pxCaptcha then
+    if _pxCaptcha then
         local success, result = pcall(px_captcha.process, _pxCaptcha)
 
         -- validating captcha value and if reset was successful then pass the request

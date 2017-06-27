@@ -81,9 +81,9 @@ __DATA__
 			pxconfig.cookie_secret = "perimeterx"
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
-			pxconfig.enable_server_calls  = false
 			pxconfig.send_page_requested_activity = false
-     		return true
+			pxconfig.enable_server_calls  = false
+			return true
 		}
     	access_by_lua_block { 
 	    require("px.pxnginx").application()
