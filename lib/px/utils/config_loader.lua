@@ -35,6 +35,7 @@ function _M.get_configuration(config_file)
     if err ~= nil or res == nil then
         px_logger.error("Failed to make HTTP request: " .. err)
         if (checksum == nil) then --no configs yet and can't get configs - disable module
+            px_logger.debug("Disabling PX module since no configuration is available")
             config.px_enabled = false
             return
         end
@@ -56,12 +57,9 @@ function _M.get_configuration(config_file)
         config.px_appId = body.appId
         config.blocking_score = body.blockingScore
         config.px_debug = body.debugMode
-        config.score_header_name = body.scoreHeader
         config.block_enabled = body.moduleMode ~= "monitoring"
         config.client_timeout = body.connectTimeout
         config.s2s_timeout = body.riskTimeout
-        config.block_page_template = body.blockPageTemplate
-        config.captcha_page_template = body.captchaPageTemplate
    end
 end
 
@@ -74,8 +72,11 @@ function _M.load(config_file)
         local ok, err = ngx_timer_at(config.load_intreval, load_on_timer)
         if not ok then
             px_logger.error("Failed to schedule submit timer: " .. err)
+            px_logger.debug("Disabling PX module since timer failed")
+            config.px_enabled = false
+        else
+            _M.get_configuration(config_file)
         end
-        _M.get_configuration(config_file)
         return
     end
     load_on_timer()

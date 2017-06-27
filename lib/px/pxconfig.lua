@@ -15,6 +15,7 @@ _M.auth_token = ''
 
 _M.cookie_encrypted = true
 _M.send_page_requested_activity = true
+_M.score_header_name = 'X-PX-SCORE'
 _M.sensitive_routes_prefix = {}
 _M.sensitive_routes_suffix = {}
 _M.captcha_provider = "reCaptcha"
@@ -32,7 +33,7 @@ _M.js_ref = nil
 -- -- ## END - Configuration block ##
 
 -- ## Dynamic Configuration Block ##
-_M.dynamic_configurations = true
+_M.dynamic_configurations = false
 _M.configuration_server = 'px-conf-mgmt-stg.perimeterx.net'
 _M.configuration_server_port = '80'
 _M.load_intreval = 5
@@ -44,7 +45,6 @@ _M.blocking_score = 60
 _M.block_page_template = ''
 _M.captcha_page_template = ''
 _M.px_debug = false
-_M.score_header_name = ''
 _M.block_enabled = true
 _M.s2s_timeout = 1000
 _M.client_timeout = 1000
