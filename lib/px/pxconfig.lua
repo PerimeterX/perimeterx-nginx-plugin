@@ -11,7 +11,7 @@ _M.px_enabled = true
 -- ##  Configuration Block ##
 
 
-_M.auth_token = ''
+_M.auth_token = 'AUTH_TOKEN'
 
 _M.cookie_encrypted = true
 _M.send_page_requested_activity = true
