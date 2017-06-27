@@ -2,13 +2,14 @@ local _M = {}
 
 function _M.get_configuration(config_file)
     local http = require "resty.http"
+    local px_constants = require "px.utils.pxconstants"
     local config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     px_logger.debug("Fetching configuration")
     local cjson = require "cjson"
     local px_server = config.configuration_server
     local px_port = config.configuration_server_port
-    local path = '/module'
+    local path = px_constants.REMOTE_CONFIGURATIONS_PATH
     local checksum = config.checksum
     local query
     if checksum ~= nil then
