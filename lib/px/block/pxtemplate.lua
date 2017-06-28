@@ -52,15 +52,7 @@ function M.load(config_file)
     function _M.get_template(template, uuid, vid)
 
         local props = get_props(px_config, uuid, vid)
-
-        local templateStr
-        if template == 'block' and px_config.block_page_template ~= '' then
-            templateStr = px_config.block_page_template
-        elseif template == 'captcha' and px_config.captcha_page_template ~= '' then
-            templateStr = px_config.captcha_page_template
-        else
-            templateStr = get_content(template)
-        end
+        local templateStr = get_content(template)
 
         return lustache:render(templateStr, props)
     end

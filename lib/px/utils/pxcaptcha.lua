@@ -13,7 +13,7 @@ function M.load(config_file)
     local px_api = require("px.utils.pxapi").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_constants = require "px.utils.pxconstants"
-    local px_common_utils = require "px.utils.pxcommonutils".load()
+    local px_common_utils = require "px.utils.pxcommonutils"
 
     local auth_token = px_config.auth_token
     local captcha_api_path = px_constants.CAPTCHA_PATH

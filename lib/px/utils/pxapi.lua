@@ -14,6 +14,7 @@ function M.load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
+    local px_common_utils = require("px.utils.pxcommonutils")
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_get_headers = ngx.req.get_headers
@@ -30,7 +31,10 @@ function M.load(config_file)
         risk.request.headers = {}
         local h = ngx_req_get_headers()
         for k, v in pairs(h) do
-            risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
+            -- filter sensitive headers
+            if px_common_utils.array_index_of(px_config.sensitive_headers, k) == -1 then
+                risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
+            end
         end
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason

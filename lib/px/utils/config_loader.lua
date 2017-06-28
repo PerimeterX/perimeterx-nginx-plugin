@@ -54,6 +54,7 @@ function _M.get_configuration(config_file)
         config.cookie_secret = body.cookieKey
         config.px_appId = body.appId
         config.blocking_score = body.blockingScore
+        config.sensitive_headers = body.sensitiveHeaders
         config.px_debug = body.debugMode
         config.block_enabled = body.moduleMode ~= "monitoring"
         config.client_timeout = body.connectTimeout

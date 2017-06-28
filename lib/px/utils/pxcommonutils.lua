@@ -1,15 +1,17 @@
+local socket = require("socket")
+local _M = {}
 
-local M = {}
-function M.load()
-    local _M = {}
-
-    local socket = require("socket")
-
-    function _M.get_time_in_milliseconds()
-        return socket.gettime() * 1000
-    end
-
-    return _M
+function _M.get_time_in_milliseconds()
+    return socket.gettime() * 1000
 end
 
-return M
+function _M.array_index_of(array, item)
+    for i, value in ipairs(array) do
+        if value == item then
+            return i
+        end
+    end
+    return -1
+end
+
+return _M

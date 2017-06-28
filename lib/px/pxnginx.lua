@@ -44,7 +44,7 @@ function M.application(file_name)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require("px.utils.pxconstants")
-    local px_common_utils = require("px.utils.pxcommonutils").load()
+    local px_common_utils = require("px.utils.pxcommonutils")
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
