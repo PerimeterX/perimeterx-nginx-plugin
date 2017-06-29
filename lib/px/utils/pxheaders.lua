@@ -67,9 +67,6 @@ function M.load(config_file)
     function _M.get_ip()
         if px_config.ip_headers ~= nil then
             local req_headers = ngx.req.get_headers()
-            for k,v in ipairs(req_headers) do
-                px_logger.debug('header ' .. k .. ': ' .. v)
-            end
             for i, header in ipairs(px_config.ip_headers) do
                 if req_headers[header] ~= nil then
                     return req_headers[header]
