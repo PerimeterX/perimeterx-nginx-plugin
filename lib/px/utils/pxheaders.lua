@@ -74,7 +74,6 @@ function M.load(config_file)
             end
         end
         local ip = ngx.var.remote_addr
-        px_logger.debug('ip ' .. ip)
         return ip or ""
     end
 
