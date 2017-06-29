@@ -50,7 +50,7 @@ function M.application(file_name)
     local enable_server_calls = px_config.enable_server_calls
     local risk_api_path = px_constants.RISK_PATH
     local enabled_routes = px_config.enabled_routes
-    local remote_addr = ngx.var.remote_addr or ""
+    local remote_addr = px_headers.get_ip()
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
     local string_len = string.len

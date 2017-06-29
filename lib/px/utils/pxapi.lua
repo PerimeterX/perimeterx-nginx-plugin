@@ -26,7 +26,7 @@ function M.load(config_file)
         local risk = {}
         risk.cid = ''
         risk.request = {}
-        risk.request.ip = ngx.var.remote_addr
+        risk.request.ip = px_headers.get_ip()
         risk.request.uri = ngx.var.request_uri
         risk.request.headers = {}
         local h = ngx_req_get_headers()

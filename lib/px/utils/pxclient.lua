@@ -11,6 +11,7 @@ function M.load(config_file)
     local http = require "resty.http"
     local px_config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_headers = require("px.utils.pxheaders").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
     local ngx_time = ngx.time
@@ -96,9 +97,9 @@ function M.load(config_file)
         pxdata['type'] = event_type;
         pxdata['headers'] = ngx.req.get_headers()
         pxdata['url'] = full_url;
-        pxdata['px_app_id'] = px_config.px_appId;
-        pxdata['timestamp'] = tostring(ngx_time());
-        pxdata['socket_ip'] = ngx.var.remote_addr;
+        pxdata['px_app_id'] = px_config.px_appId
+        pxdata['timestamp'] = tostring(ngx_time())
+        pxdata['socket_ip'] = px_headers.get_ip()
 
         details['risk_rtt'] = 0
         if ngx.ctx.risk_rtt then

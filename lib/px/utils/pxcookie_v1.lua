@@ -123,7 +123,7 @@ function M.load(config_file)
             request_data = request_data .. data.a
         end
 
-        local request_data_ip = request_data .. ngx.var.remote_addr .. ngx.var.http_user_agent
+        local request_data_ip = request_data .. px_headers.get_ip() .. ngx.var.http_user_agent
         local digest_ip = hmac("sha256", cookie_secret, request_data_ip)
         digest_ip = to_hex(digest_ip)
 
