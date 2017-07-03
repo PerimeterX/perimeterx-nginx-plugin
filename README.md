@@ -15,10 +15,11 @@ Table of Contents
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
   *   [Monitoring mode](#monitoring-mode)
-  *   [Enable/Disable Captcha](#captcha-support)
   *   [Select Captcha Provider](#captcha-provider)
   *   [Enabled Routes](#enabled-routes)
   *   [Sensitive Routes](#sensitive-routes)
+  *   [Extracting Real IP Address](#real-ip)
+  *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeout](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
@@ -177,19 +178,30 @@ http {
 }
 ```
 
-### Extracting the real IP address from a request
+#### <a name="real-ip"></a> Extracting the real IP address from a request
 
 > Note: It is important that the real connection IP is properly extracted when your NGINX server sits behind a load balancer or CDN. The PerimeterX module requires the user's real IP address.
 
-For the PerimeterX NGINX module to see the real user's IP address, you need to have the `set_real_ip_from` and `real_ip_header` NGINX directives in your nginx.conf. This will make sure the connecting IP is properly derived from a trusted source.
+For the PerimeterX NGINX module to see the real user's IP address, you need to have one (or both) of the following:
+* The `set_real_ip_from` and `real_ip_header` NGINX directives in your nginx.conf. This will make sure the connecting IP is properly derived from a trusted source.
 
-Example:
-
-```
-  set_real_ip_from 172.0.0.0/8;
-  set_real_ip_from 107.178.0.0/16; 
-  real_ip_header X-Forwarded-For;
-```
+    Example:
+    
+    ```
+      set_real_ip_from 172.0.0.0/8;
+      set_real_ip_from 107.178.0.0/16; 
+      real_ip_header X-Forwarded-For;
+    ```
+* Set `ip_headers`, a list of headers to extract the real IP from, ordered by priority.
+    
+    **Default with no predefined header: `ngx.var.remote_addr`**
+    
+    Example:
+    
+    ```lua
+      _M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
+    ```
+    
 
 ### <a name="configuration"></a> Configuration Options
 
@@ -219,16 +231,6 @@ Setting the block_enalbed flag to *false* will prevent the block page from being
 _M.block_enabled = false
 ```
 Disabling blocking means users crossing the blocking threshold will not be activly blocked, but you will still be able to consume their score through a custom request header `X-PX-SCORE`.
-
-#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
-
-By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
-
-**Default: true**
-
-```
-_M.captcha_enabled = false
-```
 
 #### <a name="captcha-provider"></a>Select CAPTCHA Provider
 
@@ -262,6 +264,14 @@ _M.sensitive_routes_prefix = {'/login', '/user/profile'}
 _M.sensitive_routes_suffix = {'/download'}
 ```
 
+#### <a name="sensitive-headers"></a> Filter sensitive headers
+A list of sensitive headers can be configured to prevent specific headers from being sent to PerimeterX servers (lower case header names). Filtering cookie headers for privacy is set by default, and can be overridden on the `pxConfig` variable.
+
+**Default: cookie, cookies**
+
+```lua
+_M.sensitive_headers = {'cookie', 'cookies', 'secret-header'}
+```
 
 #### <a name="api-timeout"></a>API Timeout Milliseconds
 > Note: Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, or is expired or invalid.

@@ -12,6 +12,7 @@ function M.load(config_file)
 
     local px_config = require (config_file)
     local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_headers = require ("px.utils.pxheaders").load(config_file)
     local string_sub = string.sub
     local string_find = string.find
     local string_len = string.len
@@ -97,7 +98,7 @@ function M.load(config_file)
         end
 
         -- By IP address
-        local ip_address = ngx.var.remote_addr
+        local ip_address = px_headers.get_ip()
         local wlips = _M.Whitelist['ip_addresses']
         for i = 1, #wlips do
             if ip_address == wlips[i] then

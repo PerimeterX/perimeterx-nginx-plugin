@@ -44,13 +44,13 @@ function M.application(file_name)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require("px.utils.pxconstants")
-    local px_common_utils = require("px.utils.pxcommonutils").load()
+    local px_common_utils = require("px.utils.pxcommonutils")
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
     local risk_api_path = px_constants.RISK_PATH
     local enabled_routes = px_config.enabled_routes
-    local remote_addr = ngx.var.remote_addr or ""
+    local remote_addr = px_headers.get_ip()
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
     local string_len = string.len

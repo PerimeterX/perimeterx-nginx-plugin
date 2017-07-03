@@ -46,6 +46,8 @@ _M.block_page_template = ''
 _M.captcha_page_template = ''
 _M.px_debug = false
 _M.block_enabled = true
+_M.sensitive_headers = {'cookie', 'cookies'}
+_M.ip_headers = {}
 _M.s2s_timeout = 1000
 _M.client_timeout = 1000
 
