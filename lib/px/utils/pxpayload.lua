@@ -7,6 +7,19 @@ function PXPayload:new(t)
     return t
 end
 
+function PXPayload:handleHeader(header)
+    if header == "1" then
+        return nil, nil
+    end
+    if string.match(header, ":") then
+        local version = string.sub(header, 1,1);
+        local cookie = string.sub(header, 3);
+        return version, cookie
+    else
+        return nil,nil
+    end
+end
+
 function PXPayload:load(config_file)
     -- localized config
     self.px_config = require (config_file)
@@ -17,6 +30,9 @@ function PXPayload:load(config_file)
     self.cookie_secret = self.px_config.cookie_secret
     self.cookie_v3 = require "px.utils.pxcookiev3"
     self.cookie_v1 = require "px.utils.pxcookiev1"
+    self.token_v3 = require "px.utils.pxtokenv3"
+    self.token_v1 = require "px.utils.pxtokenv1"
+
 
     -- localized modules
     self.cjson = require "cjson"
@@ -26,8 +42,19 @@ function PXPayload:load(config_file)
 end
 
 function PXPayload:get_payload()
-    -- check for cookie, and if found return the right object
-    if ngx.var.cookie__px3 then
+    if (ngx.req.get_headers()['X-PX-AUTHORIZATION']) then
+        local pxHeader = ngx.req.get_headers()['X-PX-AUTHORIZATION']
+        local version, cookie = self:handleHeader(pxHeader)
+        if version ~= nil and cookie ~= nil then
+            ngx.ctx.px_orig_cookie = cookie
+            ngx.ctx.px_cookie_origin = "header"
+            if version == "3" then
+                return self.token_v3:new{}
+            else
+                return self.token_v1:new{}
+            end
+        end
+    elseif ngx.var.cookie__px3 then
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px3
         ngx.ctx.px_cookie_origin = "cookie"
         return self.cookie_v3:new{}
@@ -36,6 +63,7 @@ function PXPayload:get_payload()
         ngx.ctx.px_cookie_origin = "cookie"
         return self.cookie_v1:new{}
     end
+    -- check for cookie, and if found return the right object
 end
 
 -- split_cookie --
@@ -54,6 +82,16 @@ function PXPayload:split_cookie(cookie)
         return a[2],a[3],a[4]
     end
     return a[1], a[2], a[3]
+end
+
+function PXPayload:split_decoded_cookie(cookie)
+    local a = {}
+    local b = 1
+    for i in string.gmatch(cookie, "[^:]+") do
+        a[b] = i
+        b = b + 1
+    end
+    return a[1], a[2]
 end
 
 -- to_hex --

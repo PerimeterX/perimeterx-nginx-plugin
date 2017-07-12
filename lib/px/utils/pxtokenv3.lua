@@ -1,17 +1,16 @@
-local PXCookie = require('px.utils.pxcookie')
+local PXToken = require('px.utils.pxtoken')
 
-PXCookieV3 = PXCookie:new{}
+TokenV3 = PXToken:new{}
 
-function PXCookieV3:new(t)
+function TokenV3:new(t)
     t = t or {}
     setmetatable(t, self)
     self.__index = self
     return t
 end
 
-function PXCookieV3:validate(data)
-    local request_data = data .. ngx.var.http_user_agent
-    local digest = self.hmac("sha256", self.cookie_secret, request_data)
+function TokenV3:validate(data)
+    local digest = self.hmac("sha256", self.cookie_secret, data)
     digest = self:to_hex(digest)
 
     -- policy with ip
@@ -23,12 +22,11 @@ function PXCookieV3:validate(data)
     return false
 end
 
-function PXCookieV3:process()
+function TokenV3:process()
     cookie = ngx.ctx.px_orig_cookie
     if not cookie then
         error({ message = "no_cookie" })
     end
-
 
     if self.cookie_encrypted == true then
         self.px_logger.error("cookie is encyrpted")
@@ -99,4 +97,4 @@ function PXCookieV3:process()
     return true
 end
 
-return PXCookieV3
+return TokenV3
