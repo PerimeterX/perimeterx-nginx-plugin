@@ -43,7 +43,7 @@ function TokenV1:validate(data)
     return false
 end
 
-function PXCookieV1:process()
+function TokenV1:process()
     cookie = ngx.ctx.px_orig_cookie
     if not cookie then
         error({ message = "no_cookie" })

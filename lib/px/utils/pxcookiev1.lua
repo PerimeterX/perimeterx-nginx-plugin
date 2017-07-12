@@ -30,7 +30,7 @@ function PXCookieV1:validate(data)
     end
 
     local request_data_noip = request_data .. ngx.var.http_user_agent
-    local digest_noip = hmac("sha256", self.cookie_secret, request_data_noip)
+    local digest_noip = self.hmac("sha256", self.cookie_secret, request_data_noip)
     digest_noip = self:to_hex(digest_noip)
 
     -- policy with no ip
@@ -39,7 +39,7 @@ function PXCookieV1:validate(data)
         return true
     end
 
-    self.px_logger.error('Failed to verify cookie v1 content ' .. cjson.encode(data));
+    self.px_logger.error('Failed to verify cookie v1 content ' .. self.cjson.encode(data));
     return false
 end
 
@@ -51,13 +51,17 @@ function PXCookieV1:process()
 
     -- Decrypt AES-256 or base64 decode cookie
     local data
+
+
+
     if self.cookie_encrypted == true then
         local success, result = pcall(self.decrypt, self, cookie, self.cookie_secret)
+
         if not success then
             self.px_logger.error("Could not decrpyt cookie - " .. result)
             error({ message = "cookie_decryption_failed" })
         end
-        data = result
+        data = result["plaintext"]
     else
         local success, result = pcall(ngx.decode_base64, cookie)
         if not success then

@@ -49,18 +49,22 @@ function PXPayload:get_payload()
             ngx.ctx.px_orig_cookie = cookie
             ngx.ctx.px_cookie_origin = "header"
             if version == "3" then
+                ngx.ctx.px_cookie_version = "v3";
                 return self.token_v3:new{}
             else
+                ngx.ctx.px_cookie_version = "v1";
                 return self.token_v1:new{}
             end
         end
     elseif ngx.var.cookie__px3 then
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px3
+        ngx.ctx.px_cookie_version = "v3";
         ngx.ctx.px_cookie_origin = "cookie"
         return self.cookie_v3:new{}
     else
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px
         ngx.ctx.px_cookie_origin = "cookie"
+        ngx.ctx.px_cookie_version = "v1";
         return self.cookie_v1:new{}
     end
     -- check for cookie, and if found return the right object

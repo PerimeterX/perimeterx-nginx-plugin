@@ -149,10 +149,10 @@ function M.application(file_name)
     local success, result = pcall(px_cookie.process, px_cookie)
     -- cookie verification passed - checking result.
     if success then
-        px_logger.debug("PX-Cookie Processed Succesfuly")
+        px_logger.debug("PX-Cookie Processed Successfully")
         details["px_cookie"] = ngx.ctx.px_cookie;
         details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
-        details["px_cookie_version"] = 'v3';
+        details["px_cookie_version"] = ngx.ctx.px_cookie_version;
 
         -- score crossed threshold
         if result == false then

@@ -79,7 +79,7 @@ Process a valid V1 cookie
             return true
         }
 
-    	access_by_lua_block { 
+    	access_by_lua_block {
 	    require("px.pxnginx").application()
 	}
 
@@ -102,4 +102,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-PX DEBUG: PX-CookieV3 Processed Succesfuly
+PX DEBUG: PX-Cookie Processed Successfully
