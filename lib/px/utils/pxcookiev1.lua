@@ -51,9 +51,6 @@ function PXCookieV1:process()
 
     -- Decrypt AES-256 or base64 decode cookie
     local data
-
-
-
     if self.cookie_encrypted == true then
         local success, result = pcall(self.decrypt, self, cookie, self.cookie_secret)
 

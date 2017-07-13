@@ -43,8 +43,9 @@ end
 
 function PXPayload:get_payload()
     ngx.ctx.px_cookie_origin = "cookie"
-    if (ngx.req.get_headers()['X-PX-AUTHORIZATION']) then
-        local pxHeader = ngx.req.get_headers()['X-PX-AUTHORIZATION']
+    local pxHeader = ngx.req.get_headers()['X-PX-AUTHORIZATION'] or nil
+
+    if (pxHeader) then
         local version, cookie = self:handleHeader(pxHeader)
         ngx.ctx.px_orig_cookie = cookie
         ngx.ctx.px_cookie_origin = "header"
