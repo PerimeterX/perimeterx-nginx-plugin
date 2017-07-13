@@ -14,6 +14,7 @@ function M.load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
+    local px_common_utils = require("px.utils.pxcommonutils")
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_get_headers = ngx.req.get_headers
@@ -25,22 +26,33 @@ function M.load(config_file)
         local risk = {}
         risk.cid = ''
         risk.request = {}
-        risk.request.ip = ngx.var.remote_addr
+        risk.request.ip = px_headers.get_ip()
         risk.request.uri = ngx.var.request_uri
         risk.request.headers = {}
         local h = ngx_req_get_headers()
         for k, v in pairs(h) do
-            risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
+            -- filter sensitive headers
+            if px_common_utils.array_index_of(px_config.sensitive_headers, k) == -1 then
+                risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
+            end
         end
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
 
-        if call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then
+        if ngx.ctx.vid then
+            risk.vid = ngx.ctx.vid
+        end
+
+        if ngx.ctx.uuid then
+            risk.uuid = ngx.ctx.uuid
+        end
+
+        if call_reason == 'cookie_decryption_failed' then
+            px_logger.debug("Attaching px_orig_cookie to request")
+            risk.additional.px_orig_cookie = ngx.ctx.px_orig_cookie
+        elseif call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then
             risk.additional.px_cookie = ngx.ctx.px_cookie
             risk.additional.px_cookie_hmac = ngx.ctx.px_cookie_hmac
-
-            risk.vid = ngx.ctx.vid
-            risk.uuid = ngx.ctx.uuid
         end
 
         risk.additional.http_version = ngx_req_http_version()
@@ -63,6 +75,9 @@ function M.load(config_file)
 
         if data.action then
             ngx.ctx.px_action = data.action
+            if data.action == 'j' and data.action_data and data.action_data.body then
+                ngx.ctx.px_action_data = data.action_data.body
+            end
         end
 
         if data.score >= px_config.blocking_score then
@@ -90,6 +105,7 @@ function M.load(config_file)
         local ok, err = httpc:connect(px_server, px_port)
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
+            error('HTTPC connection error:'  .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then

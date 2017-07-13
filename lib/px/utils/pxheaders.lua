@@ -32,7 +32,7 @@ function M.load(config_file)
     end
 
     local function header_token()
-        local remote_addr = ngx.var.remote_addr or ""
+        local remote_addr = _M.get_ip()
         local user_agent = ngx.var.http_user_agent or ""
         local data = remote_addr .. user_agent
         local digest = hmac("sha256", cookie_secret, data)
@@ -62,6 +62,19 @@ function M.load(config_file)
         else
             return
         end
+    end
+
+    function _M.get_ip()
+        if px_config.ip_headers ~= nil then
+            local req_headers = ngx.req.get_headers()
+            for i, header in ipairs(px_config.ip_headers) do
+                if req_headers[header] ~= nil then
+                    return req_headers[header]
+                end
+            end
+        end
+        local ip = ngx.var.remote_addr
+        return ip or ""
     end
 
     return _M

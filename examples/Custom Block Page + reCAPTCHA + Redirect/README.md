@@ -6,9 +6,8 @@ In order to use the example:
 
 1. Create a block.html file in your application (or copy the one in this folder), and define a route for it in your nginx.conf file.
 2. Set the `_M.custom_block_url` to the location you have just defined (e.g. /block.html)
-3. Set the `_M.captcha_enabled` flag to **true**
-4. Set the `_M.redirect_on_custom_url` flag to **true** 
-5. Change the `<APP_ID>` placeholder on the block.html page to the Application ID provided on the PerimeterX Portal.
+3. Set the `_M.redirect_on_custom_url` flag to **true** 
+4. Change the `<APP_ID>` placeholder on the block.html page to the Application ID provided on the PerimeterX Portal.
 
 
 You are now Blocking requests providing a CAPTCHA to the user for cleanup.
@@ -27,7 +26,7 @@ function handleCaptcha(response) {
     var uuid = getQueryString("uuid");
     var name = '_pxCaptcha';
     var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-    var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
+    var cookieParts = [name, '=', JSON.stringify({r: response, v: vid, u: uuid}), '; expires=', expiryUtc, '; path=/'];
     document.cookie = cookieParts.join('');
     var originalURL = getQueryString("url");
     var originalHost = window.location.host;
@@ -43,10 +42,11 @@ function getQueryString(name, url) {
             results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
+    results[2] = decodeURIComponent(results[2].replace(/\+/g, " "));
     if(name == "url") {
       results[2] = atob(results[2]); //Not supported on IE Browsers
     }
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+    return results[2];
 }
 </script>
 ```

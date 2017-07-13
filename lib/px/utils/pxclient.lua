@@ -11,6 +11,7 @@ function M.load(config_file)
     local http = require "resty.http"
     local px_config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_headers = require("px.utils.pxheaders").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
     local ngx_time = ngx.time
@@ -24,7 +25,7 @@ function M.load(config_file)
         local ssl_enabled = px_config.ssl_enabled
         local px_debug = px_config.px_debug
         -- timeout in milliseconds
-        local timeout = 2000
+        local timeout = px_config.client_timeout
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
@@ -87,13 +88,23 @@ function M.load(config_file)
             return
         end
 
+        if px_config.additional_activity_handler ~= nil then
+            px_logger.debug("additional_activity_handler was triggered");
+            px_config.additional_activity_handler(event_type, ngx.ctx, details)
+        end
+
         local pxdata = {};
         pxdata['type'] = event_type;
         pxdata['headers'] = ngx.req.get_headers()
         pxdata['url'] = full_url;
-        pxdata['px_app_id'] = px_config.px_appId;
-        pxdata['timestamp'] = tostring(ngx_time());
-        pxdata['socket_ip'] = ngx.var.remote_addr;
+        pxdata['px_app_id'] = px_config.px_appId
+        pxdata['timestamp'] = tostring(ngx_time())
+        pxdata['socket_ip'] = px_headers.get_ip()
+
+        details['risk_rtt'] = 0
+        if ngx.ctx.risk_rtt then
+            details['risk_rtt'] = math.ceil(ngx.ctx.risk_rtt)
+        end
 
         if ngx.ctx.vid then
             details['vid'] = ngx.ctx.vid
@@ -111,11 +122,13 @@ function M.load(config_file)
             details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
         end
 
-        pxdata['details'] = details;
-
         if event_type == 'page_requested' then
             px_logger.debug("Sent page requested acitvity")
+            details['pass_reason'] = ngx.ctx.pass_reason
         end
+
+        pxdata['details'] = details;
+
         -- Experimental Buffer Support --
         buffer.addEvent(pxdata)
         -- Perform the HTTP action

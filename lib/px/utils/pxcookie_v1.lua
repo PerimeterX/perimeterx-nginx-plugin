@@ -123,7 +123,7 @@ function M.load(config_file)
             request_data = request_data .. data.a
         end
 
-        local request_data_ip = request_data .. ngx.var.remote_addr .. ngx.var.http_user_agent
+        local request_data_ip = request_data .. px_headers.get_ip() .. ngx.var.http_user_agent
         local digest_ip = hmac("sha256", cookie_secret, request_data_ip)
         digest_ip = to_hex(digest_ip)
 
@@ -144,6 +144,26 @@ function M.load(config_file)
         end
 
         px_logger.error('Failed to verify cookie v1 content ' .. cjson.encode(data));
+        return false
+    end
+
+    local function is_sensitive_route()
+        if px_config.sensitive_routes_prefix ~= nil then
+            -- find if any of the sensitive routes is the start of the URI
+            for i, prefix in ipairs(px_config.sensitive_routes_prefix) do
+                if string.sub(ngx.var.uri, 1, string.len(prefix)) == prefix then
+                    return true
+                end
+            end
+        end
+        if px_config.sensitive_routes_suffix ~= nil then
+            -- find if any of the sensitive routes is the end of the URI
+            for i, suffix in ipairs(px_config.sensitive_routes_suffix) do
+                if string.sub(ngx.var.uri, -string.len(suffix)) == suffix then
+                    return true
+                end
+            end
+        end
         return false
     end
 
@@ -195,7 +215,7 @@ function M.load(config_file)
 
         -- cookie expired
         if fields.t and fields.t > 0 and fields.t / 1000 < os_time() then
-            px_logger.error("Cookie expired - " .. data)
+            px_logger.debug("Cookie expired - " .. data)
             error({ message = "cookie_expired" })
         end
 
@@ -213,6 +233,11 @@ function M.load(config_file)
         if not success or result == false then
             px_logger.error("Could not validate cookie v1 signature - " .. data)
             error({ message = "cookie_validation_failed" })
+        end
+
+        if is_sensitive_route() then
+            px_logger.debug("cookie verification passed, risk api triggered by sensitive route")
+            error({ message = "sensitive_route" })
         end
 
         return true

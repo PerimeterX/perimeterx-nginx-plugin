@@ -30,7 +30,6 @@ Initial test to verify basic settings.
             pxconfig.cookie_secret = "perimeterx"
             pxconfig.px_debug = true
             pxconfig.block_enabled = true
-            pxconfig.captcha_enabled = true
             return true
         }
 
@@ -48,7 +47,7 @@ GET /t
 
 --- more_headers
 X-Forwarded-For: 1.2.3.4
-Cookie: _pxCaptcha=cpathcavalue:628a96c0-ebb0-11e6-b1b9-8bb13181c15e:628a96c1-ebb0-11e6-b1b9-8bb13181c15e
+Cookie: _pxCaptcha={"r":"cpathcavalue","u":"628a96c0-ebb0-11e6-b1b9-8bb13181c15e","v":"628a96c1-ebb0-11e6-b1b9-8bb13181c15e"}
 
 --- error_code: 200
 
