@@ -18,6 +18,7 @@ function M.load(config_file)
     local px_template = require("px.block.pxtemplate").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
+    local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
     local string_gsub = string.gsub
@@ -26,6 +27,18 @@ function M.load(config_file)
         return '<script src="https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
                 '"; function handleCaptcha(response){var vid="' .. vid .. '";var uuid="' .. uuid .. '";var name="_pxCaptcha";var expiryUtc=new Date(Date.now()+1000*10).toUTCString();' ..
                 'var cookieParts=[name,"=",response+":"+vid+":"+uuid,"; expires=",expiryUtc,"; path=/"];document.cookie=cookieParts.join("");location.reload()}</script>'
+    end
+
+    local function parse_action(action)
+        if action == "c" then
+            return "captcha"
+        elseif action == "b" then
+            return "block"
+        elseif action == "j" then
+            return "challenge"
+        else
+            return "captcha"
+        end
     end
 
     function _M.block(reason)
@@ -57,62 +70,85 @@ function M.load(config_file)
 
         px_client.send_to_perimeterx('block', details);
         if px_config.block_enabled then
-            ngx.header["Content-Type"] = 'text/html';
-            if px_config.custom_block_url then
-                if not px_config.redirect_on_custom_url then
-                    local res = ngx.location.capture(px_config.custom_block_url)
-                    if res.truncated or res.status >= 300 then
-                        ngx.status = 500
-                        ngx_say('Unable to fetch custom block url. Status: ' .. tostring(res.status))
-                        ngx_exit(ngx.OK)
-                    end
-                    local body = ''
-                    if ngx.ctx.px_action == 'j' then
-                        body = ngx.ctx.px_action_data
-                    else
-                        body = res.body
-                        if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
-                            body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
-                            body = string_gsub(body, '::BLOCK_REF::', uuid);
-                        end
-                    end
-                    ngx.status = ngx_HTTP_FORBIDDEN;
-                    ngx_say(body);
-                    ngx_exit(ngx.OK);
+            if ngx.ctx.px_cookie_origin == "header" then
+                local html = px_template.get_template("captcha.mobile", details.block_uuid, vid)
+                local collectorUrlBase = ''
+                if px_config.ssl_enabled then
+                    collectorUrlBase = 'https://sapi-'
                 else
-                    -- handling custom block url: create redirect url with original request url, vid and uuid as query params to use with captcha_api
-                    local req_query_param = ngx.req.get_uri_args()
-                    local enc_url, enc_args
-                    local original_req_url = ngx.var.uri
-                    if req_query_param then
-                        enc_args = ngx_encode_args(req_query_param)
-                        enc_url = ngx_endcode_64(original_req_url .. '?' .. enc_args)
-                    end
-                    local redirect_url = px_config.custom_block_url .. '?url=' .. enc_url .. '&uuid=' .. uuid .. '&vid=' .. vid
-                    px_logger.debug('Redirecting to custom block page: ' .. redirect_url)
-                    ngx_redirect(redirect_url, ngx_HTTP_TEMPORARY_REDIRECT)
+                    collectorUrlBase = 'http://sapi-'
                 end
-            else
+                local collectorUrl = collectorUrlBase .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+                local result = {
+                    action = parse_action(ngx.ctx.px_action),
+                    uuid = details.block_uuid,
+                    vid = vid,
+                    appId = px_config.px_appId,
+                    page = ngx.encode_base64(html),
+                    collectorUrl = collectorUrl
+                }
+                ngx.header["Content-Type"] = 'application/json';
                 ngx.status = ngx_HTTP_FORBIDDEN;
-
-                local html = '';
-                local template = 'block'
-                if ngx.ctx.px_action == 'j' then
-                    html = ngx.ctx.px_action_data
-                else
-                    if px_config.captcha_enabled and ngx.ctx.px_action == 'c' then
-                        if px_config.captcha_provider == 'funCaptcha' then
-                            template = 'funcaptcha'
-                        else
-                            template = 'captcha'
+                ngx.say(cjson.encode(result))
+                ngx_exit(ngx.OK)
+            else
+                ngx.header["Content-Type"] = 'text/html';
+                if px_config.custom_block_url then
+                    if not px_config.redirect_on_custom_url then
+                        local res = ngx.location.capture(px_config.custom_block_url)
+                        if res.truncated or res.status >= 300 then
+                            ngx.status = 500
+                            ngx_say('Unable to fetch custom block url. Status: ' .. tostring(res.status))
+                            ngx_exit(ngx.OK)
                         end
+                        local body = ''
+                        if ngx.ctx.px_action == 'j' then
+                            body = ngx.ctx.px_action_data
+                        else
+                            body = res.body
+                            if ngx.ctx.px_action == 'c' then
+                                body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
+                                body = string_gsub(body, '::BLOCK_REF::', uuid);
+                            end
+                        end
+                        ngx.status = ngx_HTTP_FORBIDDEN;
+                        ngx_say(body);
+                        ngx_exit(ngx.OK);
+                    else
+                        -- handling custom block url: create redirect url with original request url, vid and uuid as query params to use with captcha_api
+                        local req_query_param = ngx.req.get_uri_args()
+                        local enc_url, enc_args
+                        local original_req_url = ngx.var.uri
+                        if req_query_param then
+                            enc_args = ngx_encode_args(req_query_param)
+                            enc_url = ngx_endcode_64(original_req_url .. '?' .. enc_args)
+                        end
+                        local redirect_url = px_config.custom_block_url .. '?url=' .. enc_url .. '&uuid=' .. uuid .. '&vid=' .. vid
+                        px_logger.debug('Redirecting to custom block page: ' .. redirect_url)
+                        ngx_redirect(redirect_url, ngx_HTTP_TEMPORARY_REDIRECT)
                     end
-                    px_logger.debug('Fetching template: ' .. template)
+                else
+                    ngx.status = ngx_HTTP_FORBIDDEN;
 
-                    html = px_template.get_template(template, uuid, vid)
+                    local html = '';
+                    local template = 'block'
+                    if ngx.ctx.px_action == 'j' then
+                        html = ngx.ctx.px_action_data
+                    else
+                        if ngx.ctx.px_action == 'c' then
+                            if px_config.captcha_provider == 'funCaptcha' then
+                                template = 'funcaptcha'
+                            else
+                                template = 'captcha'
+                            end
+                        end
+                        px_logger.debug('Fetching template: ' .. template)
+
+                        html = px_template.get_template(template, uuid, vid)
+                    end
+                    ngx_say(html);
+                    ngx_exit(ngx.OK);
                 end
-                ngx_say(html);
-                ngx_exit(ngx.OK);
             end
         else
             return true

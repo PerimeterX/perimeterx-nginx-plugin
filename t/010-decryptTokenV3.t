@@ -6,7 +6,7 @@ sub bake_cookie {
     use Crypt::Mac::HMAC 'hmac_hex';
     use Crypt::Mode::CBC;
 
-    my ( $ip, $ua, $score, $uuid, $vid, $time ) = @_;
+    my ( $ip, $score, $uuid, $vid, $time ) = @_;
 
     my $password        = "perimeterx";
     my $salt            = '12345678123456781234567812345678';
@@ -22,9 +22,9 @@ sub bake_cookie {
     my $plaintext = '{"u":"' . $uuid. '", "v":"' . $vid . '", "t":' . $time . ', "s":'. $score . ', "a":"' . $action . '"}';
     my $ciphertext = $m->encrypt( $plaintext, $key, $iv );
     my $cookie = encode_b64($salt) . ":" . 1000 . ":" . encode_b64($ciphertext);
-    my $hmac      = hmac_hex( 'SHA256', $password, $cookie . $ua );
+    my $hmac      = hmac_hex( 'SHA256', $password, $cookie);
     $cookie = $hmac . ":" . $cookie;
-    return 'Cookie: _px3=' . $cookie;
+    return 'X-PX-AUTHORIZATION: 3:' . $cookie;
 }
 
 add_block_preprocessor(
@@ -33,7 +33,6 @@ add_block_preprocessor(
         my $time   = ( time() + 360 ) * 1000;
         my $cookie = bake_cookie(
             "1.2.3.4",
-'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36',
             '0',
             "57ecdc10-0e97-11e6-80b6-095df820282c",
             "vid",
@@ -52,7 +51,7 @@ __DATA__
 
 
 === TEST 1: Procoss Workflow
-Process a valid V1 cookie
+Process a valid V3 token
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -70,18 +69,18 @@ Process a valid V1 cookie
     location = /t {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-    	    pxconfig = require "px.pxconfig"
-    	    pxconfig.cookie_secret = "perimeterx"
-    	    pxconfig.px_debug = true
-    	    pxconfig.block_enabled = true
-    	    pxconfig.send_page_requested_activity = false
+            pxconfig = require "px.pxconfig"
+            pxconfig.cookie_secret = "perimeterx"
+            pxconfig.px_debug = true
+            pxconfig.block_enabled = true
+            pxconfig.send_page_requested_activity = false
             pxconfig.enable_server_calls  = false
             return true
         }
 
-    	access_by_lua_block {
-	    require("px.pxnginx").application()
-	}
+        access_by_lua_block {
+        require("px.pxnginx").application()
+    }
 
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)

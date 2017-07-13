@@ -12,8 +12,9 @@ function M.load(config_file)
     local px_config = require(config_file)
     local px_api = require("px.utils.pxapi").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
-    local px_common_utils = require "px.utils.pxcommonutils".load()
+    local px_common_utils = require "px.utils.pxcommonutils"
 
     local auth_token = px_config.auth_token
     local captcha_api_path = px_constants.CAPTCHA_PATH
@@ -42,7 +43,7 @@ function M.load(config_file)
         local captcha_reset = {}
         captcha_reset.cid = ''
         captcha_reset.request = {}
-        captcha_reset.request.ip = ngx.var.remote_addr
+        captcha_reset.request.ip = px_headers.get_ip()
         captcha_reset.request.uri = ngx.var.uri
         captcha_reset.request.captchaType = px_config.captcha_provider
         captcha_reset.request.headers = {}

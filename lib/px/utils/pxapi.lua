@@ -14,6 +14,7 @@ function M.load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
+    local px_common_utils = require("px.utils.pxcommonutils")
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_get_headers = ngx.req.get_headers
@@ -25,12 +26,15 @@ function M.load(config_file)
         local risk = {}
         risk.cid = ''
         risk.request = {}
-        risk.request.ip = ngx.var.remote_addr
+        risk.request.ip = px_headers.get_ip()
         risk.request.uri = ngx.var.request_uri
         risk.request.headers = {}
         local h = ngx_req_get_headers()
         for k, v in pairs(h) do
-            risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
+            -- filter sensitive headers
+            if px_common_utils.array_index_of(px_config.sensitive_headers, k) == -1 then
+                risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
+            end
         end
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
@@ -54,6 +58,7 @@ function M.load(config_file)
         risk.additional.http_version = ngx_req_http_version()
         risk.additional.http_method = ngx_req_get_method()
         risk.additional.module_version = px_constants.MODULE_VERSION
+        risk.additional.cookie_origin = ngx.ctx.px_cookie_origin
 
         return risk
     end
