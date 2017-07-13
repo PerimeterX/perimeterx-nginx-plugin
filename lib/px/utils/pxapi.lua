@@ -58,6 +58,7 @@ function M.load(config_file)
         risk.additional.http_version = ngx_req_http_version()
         risk.additional.http_method = ngx_req_get_method()
         risk.additional.module_version = px_constants.MODULE_VERSION
+        risk.additional.cookie_origin = ngx.ctx.px_cookie_origin
 
         return risk
     end

@@ -102,6 +102,7 @@ function M.load(config_file)
         pxdata['socket_ip'] = px_headers.get_ip()
 
         details['risk_rtt'] = 0
+        details['cookie_origin'] = ngx.ctx.px_cookie_origin
         if ngx.ctx.risk_rtt then
             details['risk_rtt'] = math.ceil(ngx.ctx.risk_rtt)
         end

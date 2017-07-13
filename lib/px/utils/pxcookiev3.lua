@@ -79,6 +79,7 @@ function PXCookieV3:process()
     self.px_headers.set_score_header(fields.s)
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s >= self.blocking_score then
+        self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s)
         ngx.ctx.block_score = fields.s
         ngx.ctx.block_action = fields.a
         return false

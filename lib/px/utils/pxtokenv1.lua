@@ -30,7 +30,7 @@ function TokenV1:validate(data)
     end
 
     local request_data_noip = request_data
-    local digest_noip = hmac("sha256", self.cookie_secret, request_data_noip)
+    local digest_noip = self.hmac("sha256", self.cookie_secret, request_data_noip)
     digest_noip = self:to_hex(digest_noip)
 
     -- policy with no ip
@@ -45,8 +45,9 @@ end
 
 function TokenV1:process()
     cookie = ngx.ctx.px_orig_cookie
-    if not cookie then
+    if not cookie or cookie == "1" then
         error({ message = "no_cookie" })
+        return false
     end
 
     -- Decrypt AES-256 or base64 decode cookie
@@ -57,7 +58,7 @@ function TokenV1:process()
             self.px_logger.error("Could not decrpyt cookie - " .. result)
             error({ message = "cookie_decryption_failed" })
         end
-        data = result
+        data = result["plaintext"]
     else
         local success, result = pcall(ngx.decode_base64, cookie)
         if not success then
@@ -97,6 +98,7 @@ function TokenV1:process()
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b and fields.s.b >= self.blocking_score then
         self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s.b)
+        ngx.ctx.px_action = 'c'
         ngx.ctx.block_score = fields.s.b
         return false
     end

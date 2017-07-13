@@ -9,7 +9,7 @@ end
 
 function PXPayload:handleHeader(header)
     if header == "1" then
-        return nil, nil
+        return nil, header
     end
     if string.match(header, ":") then
         local version = string.sub(header, 1,1);
@@ -42,28 +42,25 @@ function PXPayload:load(config_file)
 end
 
 function PXPayload:get_payload()
+    ngx.ctx.px_cookie_origin = "cookie"
     if (ngx.req.get_headers()['X-PX-AUTHORIZATION']) then
         local pxHeader = ngx.req.get_headers()['X-PX-AUTHORIZATION']
         local version, cookie = self:handleHeader(pxHeader)
-        if version ~= nil and cookie ~= nil then
-            ngx.ctx.px_orig_cookie = cookie
-            ngx.ctx.px_cookie_origin = "header"
-            if version == "3" then
-                ngx.ctx.px_cookie_version = "v3";
-                return self.token_v3:new{}
-            else
-                ngx.ctx.px_cookie_version = "v1";
-                return self.token_v1:new{}
-            end
+        ngx.ctx.px_orig_cookie = cookie
+        ngx.ctx.px_cookie_origin = "header"
+        if version == "3" then
+            ngx.ctx.px_cookie_version = "v3";
+            return self.token_v3:new{}
+        else
+            ngx.ctx.px_cookie_version = "v1";
+            return self.token_v1:new{}
         end
     elseif ngx.var.cookie__px3 then
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px3
         ngx.ctx.px_cookie_version = "v3";
-        ngx.ctx.px_cookie_origin = "cookie"
         return self.cookie_v3:new{}
     else
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px
-        ngx.ctx.px_cookie_origin = "cookie"
         ngx.ctx.px_cookie_version = "v1";
         return self.cookie_v1:new{}
     end
