@@ -70,7 +70,7 @@ function M.load(config_file)
         local success, response = pcall(px_api.call_s2s, request_data, captcha_api_path, auth_token)
         ngx.ctx.risk_rtt =  px_common_utils.get_time_in_milliseconds() - start_risk_rtt
         if success then
-            px_logger.debug('Captcha API call successfully returned ' .. response.uuid .. ' ' .. response.vid);
+            px_logger.debug('Captcha API call successfully returned');
             ngx.ctx.pass_reason = 'captcha'
             return response.status
         elseif string.match(response,'timeout') then
