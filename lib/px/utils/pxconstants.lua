@@ -18,8 +18,7 @@ local _M = readonlytable {
     MODULE_VERSION = "NGINX Module v2.9.0",
     RISK_PATH = "/api/v2/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
-    ACTIVITIES_PATH = "/api/v1/collector/s2s",
-    REMOTE_CONFIGURATIONS_PATH = "/module"
+    ACTIVITIES_PATH = "/api/v1/collector/s2s"
 }
 
 return _M
