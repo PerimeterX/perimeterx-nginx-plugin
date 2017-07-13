@@ -172,7 +172,7 @@
         var cookieParts = [
             name,
             "=",
-            JSON.stringify({r: response, v: vid, u: uuid}),
+            btoa(JSON.stringify({r: response, v: vid, u: uuid})),
             "; expires=",
             expiryUtc,
             "; path=/"

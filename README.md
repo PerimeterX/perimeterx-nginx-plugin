@@ -19,6 +19,8 @@ Table of Contents
   *   [Select Captcha Provider](#captcha-provider)
   *   [Enabled Routes](#enabled-routes)
   *   [Sensitive Routes](#sensitive-routes)
+  *   [Extracting Real IP Address](#real-ip)
+  *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeout](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
@@ -71,7 +73,7 @@ yum -y install nginx-plus-module-lua ca-certificates.noarch
 ```
 
 Download and compile nettle. 
->> Side note: Use the version neccessary for your environment. 
+> Side note: Use the version neccessary for your environment. 
 
 ```
 yum -y install m4 # prerequisite for nettle
@@ -177,19 +179,30 @@ http {
 }
 ```
 
-### Extracting the real IP address from a request
+#### <a name="real-ip"></a> Extracting the real IP address from a request
 
 > Note: It is important that the real connection IP is properly extracted when your NGINX server sits behind a load balancer or CDN. The PerimeterX module requires the user's real IP address.
 
-For the PerimeterX NGINX module to see the real user's IP address, you need to have the `set_real_ip_from` and `real_ip_header` NGINX directives in your nginx.conf. This will make sure the connecting IP is properly derived from a trusted source.
+For the PerimeterX NGINX module to see the real user's IP address, you need to have one (or both) of the following:
+* The `set_real_ip_from` and `real_ip_header` NGINX directives in your nginx.conf. This will make sure the connecting IP is properly derived from a trusted source.
 
-Example:
-
-```
-  set_real_ip_from 172.0.0.0/8;
-  set_real_ip_from 107.178.0.0/16; 
-  real_ip_header X-Forwarded-For;
-```
+    Example:
+    
+    ```
+      set_real_ip_from 172.0.0.0/8;
+      set_real_ip_from 107.178.0.0/16; 
+      real_ip_header X-Forwarded-For;
+    ```
+* Set `ip_headers`, a list of headers to extract the real IP from, ordered by priority.
+    
+    **Default with no predefined header: `ngx.var.remote_addr`**
+    
+    Example:
+    
+    ```lua
+      _M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
+    ```
+    
 
 ### <a name="configuration"></a> Configuration Options
 
@@ -230,6 +243,7 @@ By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page,
 _M.captcha_enabled = false
 ```
 
+
 #### <a name="captcha-provider"></a>Select CAPTCHA Provider
 
 The CAPTCHA part of the block page can use one of the following:
@@ -262,6 +276,14 @@ _M.sensitive_routes_prefix = {'/login', '/user/profile'}
 _M.sensitive_routes_suffix = {'/download'}
 ```
 
+#### <a name="sensitive-headers"></a> Filter sensitive headers
+A list of sensitive headers can be configured to prevent specific headers from being sent to PerimeterX servers (lower case header names). Filtering cookie headers for privacy is set by default, and can be overridden on the `pxConfig` variable.
+
+**Default: cookie, cookies**
+
+```lua
+_M.sensitive_headers = {'cookie', 'cookies', 'secret-header'}
+```
 
 #### <a name="api-timeout"></a>API Timeout Milliseconds
 > Note: Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, or is expired or invalid.
@@ -526,12 +548,12 @@ load_module modules/ngx_http_lua_module.so;
 ----------------------------------------
 The following steps are welcome when contributing to our project.
 
-###Fork/Clone
+### Fork/Clone
 [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
 Create a branch on your fork, preferably using a descriptive branch name.
 
 
-###<a name="tests"></a>Test
+### <a name="tests"></a>Test
 > Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
 
 **Dont forget to test**. This project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
@@ -539,9 +561,9 @@ Before you create any pull request, make sure your project has passed all tests.
 
 To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`.
 
-###Pull Request
+### Pull Request
 After you have completed the process, create a pull request. Please provide a complete and thorough description explaining the changes. Remember, this code has to be read by our maintainers, so keep it simple, smart and accurate.
 
-###Thanks
+### Thanks
 After all, you are helping us by contributing to this project, and we want to thank you for it.
 We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.

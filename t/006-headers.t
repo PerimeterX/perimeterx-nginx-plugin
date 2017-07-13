@@ -81,19 +81,19 @@ __DATA__
 			pxconfig.cookie_secret = "perimeterx"
 			pxconfig.px_debug = true
 			pxconfig.block_enabled = false
-			pxconfig.enable_server_calls  = false
 			pxconfig.send_page_requested_activity = false
-     		return true
+			pxconfig.enable_server_calls  = false
+			return true
 		}
-    	access_by_lua_block { 
+    	access_by_lua_block {
 	    require("px.pxnginx").application()
 	}
-	    try_files $uri $uri/ /internal; 
+	    try_files $uri $uri/ /internal;
 		}
 
     location = /internal {
         resolver 8.8.8.8;
-    	access_by_lua_block { 
+    	access_by_lua_block {
 	    require("px.pxnginx").application()
 	}
         content_by_lua_block {
@@ -117,7 +117,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_log
 Request is internal. PerimeterX processing skipped.
 
-=== TEST 2: Clear protected header from request 
+=== TEST 2: Clear protected header from request
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -142,11 +142,11 @@ Request is internal. PerimeterX processing skipped.
 			pxconfig.score_header_enabled = true
 			return true
 		}
-    	access_by_lua_block { 
+    	access_by_lua_block {
 	    require("px.pxnginx").application()
 	}
         content_by_lua_block {
-            ngx.say(ngx.req.get_headers()['X-PX-SCORE']) 
+            ngx.say(ngx.req.get_headers()['X-PX-SCORE'])
         }
 }
 
@@ -188,19 +188,19 @@ X-PX-SCORE: 0
 			pxconfig.score_header_enabled = true
      		return true
 		}
-    	access_by_lua_block { 
+    	access_by_lua_block {
 	    require("px.pxnginx").application()
 	}
-	    try_files $uri $uri/ /internal; 
+	    try_files $uri $uri/ /internal;
 		}
 
     location = /internal {
         resolver 8.8.8.8;
-    	access_by_lua_block { 
+    	access_by_lua_block {
 	    require("px.pxnginx").application()
 	}
         content_by_lua_block {
-            ngx.say(ngx.req.get_headers()['X-PX-SCORE']) 
+            ngx.say(ngx.req.get_headers()['X-PX-SCORE'])
         }
 }
 

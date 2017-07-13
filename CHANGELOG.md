@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.10.0] - 2017-07-13
+### Added
+- Mobile SDK support
+- Sensitive headers
+- True IP headers list in configuration
+### Modified
+- Captcha cookie in base64 format in default captcha pages and examples
+
 ## [2.9.0] - 2017-06-27
 ### Modified
 - Changed structure of captcha cookie

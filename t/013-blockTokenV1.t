@@ -6,7 +6,8 @@ sub bake_cookie {
     use Crypt::Mac::HMAC 'hmac_hex';
     use Crypt::Mode::CBC;
 
-    my ( $ip, $ua, $score, $uuid, $vid, $time ) = @_;
+    my ( $ip, $score, $uuid, $vid, $time ) = @_;
+    my $data = $time . '0' . $score . $uuid . $vid . $ip;
 
     my $password        = "perimeterx";
     my $salt            = '12345678123456781234567812345678';
@@ -17,14 +18,23 @@ sub bake_cookie {
     my $km = pbkdf2( $password, $salt, $iteration_count, $hash_name, $len );
     my $key = substr( $km, 0,  32 );
     my $iv  = substr( $km, 32, 48 );
-    my $action = 'a';
+
     my $m         = Crypt::Mode::CBC->new('AES');
-    my $plaintext = '{"u":"' . $uuid. '", "v":"' . $vid . '", "t":' . $time . ', "s":'. $score . ', "a":"' . $action . '"}';
+    my $hmac      = hmac_hex( 'SHA256', $password, $data );
+    my $plaintext = '{"t":'
+      . $time
+      . ', "s":{"b":'
+      . $score
+      . ', "a":0}, "u":"'
+      . $uuid
+      . '", "v":"'
+      . $vid
+      . '", "h":"'
+      . $hmac . '"}';
     my $ciphertext = $m->encrypt( $plaintext, $key, $iv );
+
     my $cookie = encode_b64($salt) . ":" . 1000 . ":" . encode_b64($ciphertext);
-    my $hmac      = hmac_hex( 'SHA256', $password, $cookie . $ua );
-    $cookie = $hmac . ":" . $cookie;
-    return 'Cookie: _px3=' . $cookie;
+    return 'X-PX-AUTHORIZATION: 1:' . $cookie;
 }
 
 add_block_preprocessor(
@@ -33,8 +43,7 @@ add_block_preprocessor(
         my $time   = ( time() + 360 ) * 1000;
         my $cookie = bake_cookie(
             "1.2.3.4",
-'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36',
-            '0',
+            '100',
             "57ecdc10-0e97-11e6-80b6-095df820282c",
             "vid",
             $time
@@ -70,18 +79,18 @@ Process a valid V1 cookie
     location = /t {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-    	    pxconfig = require "px.pxconfig"
-    	    pxconfig.cookie_secret = "perimeterx"
-    	    pxconfig.px_debug = true
-    	    pxconfig.block_enabled = true
-    	    pxconfig.send_page_requested_activity = false
+            pxconfig = require "px.pxconfig"
+            pxconfig.cookie_secret = "perimeterx"
+            pxconfig.px_debug = true
+            pxconfig.block_enabled = true
+            pxconfig.send_page_requested_activity = false
             pxconfig.enable_server_calls  = false
             return true
         }
 
-    	access_by_lua_block {
-	    require("px.pxnginx").application()
-	}
+        access_by_lua_block {
+        require("px.pxnginx").application()
+    }
 
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
@@ -96,10 +105,10 @@ GET /t
 X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
---- response_body
-1.2.3.4
+--- response_headers
+Content-Type: application/json
 
---- error_code: 200
+--- error_code: 403
 
 --- error_log
 PX DEBUG: PX-Cookie Processed Successfully

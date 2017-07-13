@@ -85,8 +85,8 @@ Process a valid cookie
     	    pxconfig.cookie_secret = "perimeterx"
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
+    	    pxconfig.send_page_requested_activity = false
     	    pxconfig.enable_server_calls = false
-            pxconfig.send_page_requested_activity = false
             return true
         }
 
@@ -132,9 +132,8 @@ Process a valid cookie
     	    pxconfig.cookie_secret = "perimeterx"
     	    pxconfig.px_debug = true
     	    pxconfig.block_enabled = true
-          pxconfig.captcha_enabled = false
     	    pxconfig.enable_server_calls = false
-          pxconfig.send_page_requested_activity = false
+    	    pxconfig.send_page_requested_activity = false
           return true
         }
 
@@ -151,7 +150,7 @@ X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
 --- response_body_like
-.* you are using automation tools to browse the website.*
+.* Access to this page has been denied.*
 --- error_code: 403
 
 --- error_log
@@ -187,7 +186,6 @@ Test the redirect flow
     	    pxconfig.block_enabled = true
     	    pxconfig.custom_block_url = "/block.html"
     	    pxconfig.enable_server_calls = false
-            pxconfig.send_page_requested_activity = false
             return true
         }
 
