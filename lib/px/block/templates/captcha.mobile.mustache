@@ -164,12 +164,11 @@
                 var appId = '{{appId}}';
                 var vid = '{{vid}}';
                 var uuid = '{{uuid}}';
-                var collectorUrl = '{{hostUrl}}';
+                var collectorUrl = '{{{hostUrl}}}';
                 var req = new XMLHttpRequest();
                 req.open('POST', collectorUrl + '/api/v1/collector/captcha');
                 req.setRequestHeader('Content-Type', 'application/json');
-                req.addEventListener('error', function(err) {
-                    alert(JSON.stringify(err));
+                req.addEventListener('error', function() {
                     captchaSolved({
                         status: 1
                     });
