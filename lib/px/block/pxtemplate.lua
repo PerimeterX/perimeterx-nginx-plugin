@@ -15,16 +15,11 @@ function M.load(config_file)
 
     local function get_props(px_config, uuid, vid)
         local logo_css_style = 'visible'
-        local collectorUrlBase = 'http://sapi-'
         if (px_config.custom_logo == nil) then
             logo_css_style = 'hidden'
         end
 
-        if px_config.ssl_enabled then
-            collectorUrlBase = 'https://sapi-'
-        end
-
-        local collectorUrl = collectorUrlBase .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+        local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
 
         return {
             refId = uuid,
