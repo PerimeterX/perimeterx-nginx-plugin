@@ -80,13 +80,7 @@ function M.load(config_file)
                     end
                 end
                 local html = px_template.get_template(templateName .. ".mobile", details.block_uuid, vid)
-                local collectorUrlBase = ''
-                if px_config.ssl_enabled then
-                    collectorUrlBase = 'https://sapi-'
-                else
-                    collectorUrlBase = 'http://sapi-'
-                end
-                local collectorUrl = collectorUrlBase .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+                local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
                 local result = {
                     action = parse_action(ngx.ctx.px_action),
                     uuid = details.block_uuid,
