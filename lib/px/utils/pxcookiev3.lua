@@ -14,7 +14,6 @@ function PXCookieV3:validate(data)
     local digest = self.hmac("sha256", self.cookie_secret, request_data)
     digest = self:to_hex(digest)
 
-    -- policy with ip
     if digest == string.upper(ngx.ctx.px_cookie_hmac) then
         return true
     end

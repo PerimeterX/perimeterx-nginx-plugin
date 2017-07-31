@@ -128,6 +128,10 @@ function M.load(config_file)
             details['pass_reason'] = ngx.ctx.pass_reason
         end
 
+        if ngx.ctx.px_cookie_version then
+            details["px_cookie_version"] = ngx.ctx.px_cookie_version
+        end
+
         pxdata['details'] = details;
 
         -- Experimental Buffer Support --
