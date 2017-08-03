@@ -34,9 +34,9 @@ _M.js_ref = nil
 
 -- ## Dynamic Configuration Block ##
 _M.dynamic_configurations = false
-_M.configuration_server = 'px-conf-mgmt-stg.perimeterx.net'
-_M.configuration_server_port = '80'
-_M.load_intreval = 5
+_M.configuration_server = 'px-conf.perimeterx.net'
+_M.configuration_server_port = 443
+_M.load_interval = 5
 
 -- These values are dynamically loaded and updated when changed
 _M.px_appId = 'PX_APP_ID'

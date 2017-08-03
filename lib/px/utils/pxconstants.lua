@@ -19,7 +19,7 @@ local _M = readonlytable {
     RISK_PATH = "/api/v2/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
     ACTIVITIES_PATH = "/api/v1/collector/s2s",
-    REMOTE_CONFIGURATIONS_PATH = "/module"
+    REMOTE_CONFIGURATIONS_PATH = "/api/v1/enforcer"
 }
 
 return _M

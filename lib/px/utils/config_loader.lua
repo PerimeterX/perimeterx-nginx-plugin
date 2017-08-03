@@ -23,6 +23,12 @@ function _M.get_configuration(config_file)
     if not ok then
         px_logger.error("HTTPC connection error: " .. err)
     end
+    if config.ssl_enabled == true then
+        local session, err = httpc:ssl_handshake()
+        if not session then
+            px_logger.error("HTTPC SSL handshare error: " .. err)
+        end
+    end
     local res, err = httpc:request({
         path = path,
         method = "GET",
@@ -47,8 +53,9 @@ function _M.get_configuration(config_file)
     end
     -- new configurations available
     if res.status == 200 then
-        local body = cjson.decode(res:read_body())
-        px_logger.debug("Applying new configuration")
+        local body = res:read_body()
+        px_logger.debug("Applying new configuration: " .. body)
+        body = cjson.decode(body)
         config.checksum = body.checksum
         config.px_enabled = body.moduleEnabled
         config.cookie_secret = body.cookieKey
@@ -69,7 +76,7 @@ function _M.load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     -- set interval
     local function load_on_timer()
-        local ok, err = ngx_timer_at(config.load_intreval, load_on_timer)
+        local ok, err = ngx_timer_at(config.load_interval, load_on_timer)
         if not ok then
             px_logger.error("Failed to schedule submit timer: " .. err)
             px_logger.error("Disabling PX module since timer failed")
