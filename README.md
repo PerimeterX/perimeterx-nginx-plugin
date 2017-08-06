@@ -3,6 +3,8 @@
 [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 =============================================================
 
+> Latest stable version: [v2.10.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/2.10-0)
+
 Table of Contents
 -----------------
 
