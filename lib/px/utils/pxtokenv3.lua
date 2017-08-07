@@ -28,6 +28,11 @@ function TokenV3:process()
         error({ message = "no_cookie" })
     end
 
+    if cookie == "2" then
+        self.px_logger.error("Could not connect to server")
+        error({ message = "mobile_sdk_connection_error" })
+    end
+
     if self.cookie_encrypted == true then
         self.px_logger.error("cookie is encyrpted")
         -- self:decrypt(cookie, self.cookie_secret)

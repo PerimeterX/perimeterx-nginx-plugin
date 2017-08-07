@@ -8,7 +8,7 @@ function PXPayload:new(t)
 end
 
 function PXPayload:handleHeader(header)
-    if header == "1" then
+    if header == "1" or header == "2" then
         return nil, header
     end
     if string.match(header, ":") then

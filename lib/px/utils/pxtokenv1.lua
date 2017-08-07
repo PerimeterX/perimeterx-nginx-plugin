@@ -50,6 +50,11 @@ function TokenV1:process()
         return false
     end
 
+    if cookie == "2" then
+        self.px_logger.error("Could not connect to server")
+        error({ message = "mobile_sdk_connection_error" })
+    end
+
     -- Decrypt AES-256 or base64 decode cookie
     local data
     if self.cookie_encrypted == true then
