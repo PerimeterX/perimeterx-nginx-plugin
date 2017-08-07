@@ -23,9 +23,14 @@ function TokenV3:validate(data)
 end
 
 function TokenV3:process()
-    cookie = ngx.ctx.px_orig_cookie
+    local cookie = ngx.ctx.px_orig_cookie
     if not cookie or cookie == "1" then
         error({ message = "no_cookie" })
+    end
+
+    if cookie == "2" then
+        self.px_logger.error("Could not connect to server")
+        error({ message = "mobile_sdk_connection_error" })
     end
 
     if self.cookie_encrypted == true then
