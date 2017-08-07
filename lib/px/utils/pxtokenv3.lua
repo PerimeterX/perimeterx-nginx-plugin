@@ -23,7 +23,7 @@ function TokenV3:validate(data)
 end
 
 function TokenV3:process()
-    cookie = ngx.ctx.px_orig_cookie
+    local cookie = ngx.ctx.px_orig_cookie
     if not cookie or cookie == "1" then
         error({ message = "no_cookie" })
     end
