@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/PerimeterX/perimeterx-nginx-plugin.svg?branch=master)](https://travis-ci.org/PerimeterX/perimeterx-nginx-plugin)
+
 ![image](https://s.perimeterx.net/logo.png)
 
 [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin

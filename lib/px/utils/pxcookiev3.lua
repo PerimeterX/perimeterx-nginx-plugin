@@ -87,8 +87,8 @@ function PXCookieV3:process()
 
     -- Validate the cookie integrity
     local success, result = pcall(self.validate, self, orig_cookie)
-    if not success or result == false then
-        px_logger.error("Could not validate cookie v3 signature - " .. orig_cookie)
+    if success == false or result == false then
+        self.px_logger.error("Could not validate cookie v3 signature - " .. orig_cookie)
         error({ message = "cookie_validation_failed" })
     end
 

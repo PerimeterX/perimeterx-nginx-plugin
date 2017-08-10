@@ -141,19 +141,6 @@
         </div>
       </div>
     </section>
-    <!-- Px -->
-    <script>
-      (
-        function (){
-        window._pxAppId = '{{appId}}';
-        var p = document.getElementsByTagName("script")[0], s = document.createElement("script");
-
-        s.async = 1;
-        s.src = '//client.perimeterx.net/{{appId}}/main.min.js';
-        p.parentNode.insertBefore(s, p);
-       } ()
-      );
-    </script>
     <!-- Captcha -->
     <script>
             function captchaSolved(res) {
@@ -164,7 +151,7 @@
                 var appId = '{{appId}}';
                 var vid = '{{vid}}';
                 var uuid = '{{uuid}}';
-                var collectorUrl = '{{hostUrl}}';
+                var collectorUrl = '{{{hostUrl}}}';
                 var req = new XMLHttpRequest();
                 req.open('POST', collectorUrl + '/api/v1/collector/captcha');
                 req.setRequestHeader('Content-Type', 'application/json');

@@ -44,10 +44,15 @@ function TokenV1:validate(data)
 end
 
 function TokenV1:process()
-    cookie = ngx.ctx.px_orig_cookie
+    local cookie = ngx.ctx.px_orig_cookie
     if not cookie or cookie == "1" then
+        self.px_logger.error("no token available")
         error({ message = "no_cookie" })
-        return false
+    end
+
+    if cookie == "2" then
+        self.px_logger.error("mobile sdk was unable to reach the server ")
+        error({ message = "mobile_sdk_connection_error" })
     end
 
     -- Decrypt AES-256 or base64 decode cookie

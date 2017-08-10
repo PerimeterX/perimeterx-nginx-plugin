@@ -71,14 +71,16 @@ function M.load(config_file)
         px_client.send_to_perimeterx('block', details);
         if px_config.block_enabled then
             if ngx.ctx.px_cookie_origin == "header" then
-                local html = px_template.get_template("captcha.mobile", details.block_uuid, vid)
-                local collectorUrlBase = ''
-                if px_config.ssl_enabled then
-                    collectorUrlBase = 'https://sapi-'
-                else
-                    collectorUrlBase = 'http://sapi-'
+                local templateName = "block";
+                if ngx.ctx.px_action == 'c' then
+                    if px_config.captcha_provider == 'funCaptcha' then
+                        templateName = 'funcaptcha'
+                    else
+                        templateName = 'captcha'
+                    end
                 end
-                local collectorUrl = collectorUrlBase .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+                local html = px_template.get_template(templateName .. ".mobile", details.block_uuid, vid)
+                local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
                 local result = {
                     action = parse_action(ngx.ctx.px_action),
                     uuid = details.block_uuid,
