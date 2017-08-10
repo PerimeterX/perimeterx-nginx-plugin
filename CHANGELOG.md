@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1010] - 2017-08-10
+### Fixed 
+- Removed PX snippet from block/captcha mustache 
+- Update the collectorUrl in mobile sdk response
+- Added s2s_call_reason on mobile sdk connection error
+- Fixed sending call_reason on cookie validation failed
+
 ## [2.10.0] - 2017-07-13
 ### Added
 - Mobile SDK support
