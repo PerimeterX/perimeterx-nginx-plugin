@@ -222,20 +222,23 @@ Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`.
 
 #### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
-**Default blocking value:** 70
+**Default blocking value:** 100
 
 ```
 _M.blocking_score = 60
 ```
 
-#### <a name="monitoring-mode"></a> Monitoring Mode
-By default, the PerimeterX module will block users crossing the block score threshold that you define. This means that if a user crosses the minimum block score he will receive the block page. The PerimeterX plugin can also be activated in monitor only mode.
-Setting the block_enalbed flag to *false* will prevent the block page from being displayed to the user, but the data will still be available in the PerimeterX Portal.
+#### <a name="monitoring-mode"></a> Blocking Mode
 
 ```
 _M.block_enabled = false
 ```
-Disabling blocking means users crossing the blocking threshold will not be activly blocked, but you will still be able to consume their score through a custom request header `X-PX-SCORE`.
+
+The PerimeterX plugin is enabled in monitor only mode by default.
+
+Setting the  block_enabled flag to *true* will activate the module to enforce the blocking score. The PerimeterX module will block users crossing the block score threshold that you define. If a user crosses the minimum block score then the user will receive the block page.
+
+
 
 #### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
 

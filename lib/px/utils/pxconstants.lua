@@ -15,7 +15,7 @@ local function readonlytable(table)
 end
 
 local _M = readonlytable {
-    MODULE_VERSION = "NGINX Module v2.10.1",
+    MODULE_VERSION = "NGINX Module v2.11.0",
     RISK_PATH = "/api/v2/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
     ACTIVITIES_PATH = "/api/v1/collector/s2s"
