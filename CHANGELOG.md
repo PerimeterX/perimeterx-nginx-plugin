@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.1010] - 2017-08-10
+## [2.11.0] - 2017-08-24
+### Changed 
+- Changed default values for module mode to monitor
+- Changed default value of blocksing score to 100
+
+## [2.10.1] - 2017-08-10
 ### Fixed 
 - Removed PX snippet from block/captcha mustache 
 - Update the collectorUrl in mobile sdk response
