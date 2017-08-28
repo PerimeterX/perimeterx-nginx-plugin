@@ -12,7 +12,6 @@
     license = "MIT/PerimeterX"
  }
  dependencies = {
-    "lua-cjson",
     "lua-resty-http",
     "lua-resty-nettle",
     "luasocket",
