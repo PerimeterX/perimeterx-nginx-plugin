@@ -35,6 +35,7 @@ _M.custom_logo = nil
 _M.css_ref = nil
 _M.js_ref = nil
 _M.custom_block_url = nil
+_M.redirect_on_custom_url = false
 
 -- ## Debug Parameters ##
 _M.px_debug = false

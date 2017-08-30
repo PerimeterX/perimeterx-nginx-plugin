@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.12.0] - 2017-08-30
+### Changed 
+- Removed luarocks dependency lua-cjosn (still needs to be installed via apt-get)
+- Changed structure of pxconstants
+
 ## [2.11.0] - 2017-08-24
 ### Changed 
 - Changed default values for module mode to monitor
