@@ -35,7 +35,7 @@ function TokenV3:process()
     end
 
     if self.cookie_encrypted == true then
-        self.px_logger.error("cookie is encyrpted")
+        self.px_logger.debug("cookie is encyrpted")
         -- self:decrypt(cookie, self.cookie_secret)
         local success, result = pcall(self.decrypt, self, cookie, self.cookie_secret)
         if not success then

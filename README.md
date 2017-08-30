@@ -396,7 +396,7 @@ function handleCaptcha(response) {
     var uuid = getQueryString("uuid");
     var name = '_pxCaptcha';
     var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-    var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
+    var cookieParts = [name, '=', btoa(JSON.stringify({r: response, v:vid, u:uuid})), '; expires=', expiryUtc, '; path=/'];
     document.cookie = cookieParts.join('');
     var originalURL = getQueryString("url");
     var originalHost = window.location.host;
@@ -448,7 +448,7 @@ _M.redirect_on_custom_url = true
             var uuid = getQueryString("uuid");
             var name = '_pxCaptcha';
             var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-            var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
+            var cookieParts = [name, '=', btoa(JSON.stringify({r: response, v:vid, u:uuid})), '; expires=', expiryUtc, '; path=/'];
             document.cookie = cookieParts.join('');
             // after getting resopnse we want to reaload the original page requested
             var originalURL = getQueryString("url");
