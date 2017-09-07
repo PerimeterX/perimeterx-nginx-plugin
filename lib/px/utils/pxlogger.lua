@@ -45,6 +45,13 @@ function M.load(config_file)
 
         ngx_log(ngx_ERR, "PX ERROR: " .. message)
     end
+
+    function _M.set_score_variable(score)
+		if ngx.var.pxscore then
+			ngx.var.pxscore = score
+		end
+    end
+
     return _M
 end
 return M
