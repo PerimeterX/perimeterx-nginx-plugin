@@ -69,6 +69,8 @@ function M.load(config_file)
     function _M.process(data)
         px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.score))
         px_headers.set_score_header(data.score)
+        -- Set the pxscore var for logging
+        px_logger.set_score_variable(data.score)
 
         if data.uuid then
             ngx.ctx.uuid = data.uuid

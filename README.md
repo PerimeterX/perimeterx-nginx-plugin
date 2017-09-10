@@ -490,7 +490,7 @@ If your PerimeterX account contains several Applications (as defined via the por
 - First, open the `nginx.conf` file, and find the following line : `require("px.pxnginx").application()` inside your location block.
 - Pass the desired application name into the `application()` function, as such : `require("px.pxnginx").application("mySpecialApp")`
 - Then, find your `pxconfig.lua` file, and make a copy of it. name that copy using the following pattern : `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) - The <AppName> placeholder must be replaced by the exact name provided to the application function in the previous section.
-- Change the configuration inside the newly created file, as per your app's needs. (Save it. *duh*) 
+- Change the configuration inside the newly created file.
 - Make sure to save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
 - Thats it, in every `location` block of your app - make sure to place the code mentioned on stage 2 with the correct AppName.
 
@@ -509,6 +509,29 @@ _M.additional_activity_handler = function(event_type, ctx, details)
 		logger.info("PerimeterX " + event_type + " details " +  cjson.encode(details))
 	end
 end
+```
+
+#### <a name="log-enrichment"></a> Log Enrichment
+Access logs can be enriched with the PerimeterX bot score by creating the NGINX variable named `pxscore`
+
+To configure this variable use the NGINX map directive in the HTTP section of your NGINX configuration file. This should be added before an additional configuration files are included.
+
+```
+....
+http {
+    map score $pxscore {
+        default 'nil';
+    }
+    
+    log_format enriched '$remote_addr - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent" perimeterx_score "$pxscore';
+
+	 access_log /var/log/nginx/access_log enriched;
+
+}
+...
+
 ```
 
 <a name="whitelisting"></a> Whitelisting
