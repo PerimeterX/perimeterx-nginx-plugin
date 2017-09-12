@@ -55,6 +55,11 @@ function TokenV1:process()
         error({ message = "mobile_sdk_connection_error" })
     end
 
+    if cookie == "3" then
+        self.px_logger.error("mobile sdk pinning error")
+        error({ message = "mobile_sdk_pinning_error" })
+    end
+
     -- Decrypt AES-256 or base64 decode cookie
     local data
     if self.cookie_encrypted == true then

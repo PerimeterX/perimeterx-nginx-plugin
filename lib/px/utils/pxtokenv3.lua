@@ -34,6 +34,11 @@ function TokenV3:process()
         error({ message = "mobile_sdk_connection_error" })
     end
 
+    if cookie == "3" then
+        self.px_logger.error("mobile sdk pinning error")
+        error({ message = "mobile_sdk_pinning_error" })
+    end
+
     if self.cookie_encrypted == true then
         self.px_logger.debug("cookie is encyrpted")
         -- self:decrypt(cookie, self.cookie_secret)
