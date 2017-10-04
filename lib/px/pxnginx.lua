@@ -51,7 +51,30 @@ function M.application(file_name)
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
     local string_len = string.len
+    local cjson = require "cjson"
     local pcall = pcall
+
+    local function send_enforcer_telemetry()
+        -- check if report_active_config exist, and true,
+        -- if nil treat as true, for first time send
+        if px_config.report_active_config == nil or px_config.report_active_config then
+            px_config.report_active_config = false
+            local details = {}
+
+            -- copy px_config
+            local copy_px_config = {}
+            for orig_key, orig_value in pairs(px_config) do
+                copy_px_config[orig_key] = orig_value
+            end
+            -- remove unneceery fields
+            copy_px_config.cookie_secret = nil
+            copy_px_config.auth_token = nil
+
+            -- attach to details
+            details['px_enforcer_configs'] = cjson.encode(copy_px_config)
+            px_client.send_to_perimeterx("enforcer_telemetry", details)
+        end
+    end
 
     local function perform_s2s(result, details)
         ngx.ctx.s2s_call_reason = result.message
@@ -139,6 +162,7 @@ function M.application(file_name)
         end
     end
 
+    send_enforcer_telemetry()
     px_payload:load(config_file)
     px_cookie = px_payload:get_payload()
     px_cookie:load(config_file)

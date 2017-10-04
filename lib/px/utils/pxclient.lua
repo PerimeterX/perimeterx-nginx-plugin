@@ -101,6 +101,7 @@ function M.load(config_file)
         pxdata['timestamp'] = tostring(ngx_time())
         pxdata['socket_ip'] = px_headers.get_ip()
 
+        details['module_version'] = px_constants.MODULE_VERSION
         details['risk_rtt'] = 0
         details['cookie_origin'] = ngx.ctx.px_cookie_origin
         if ngx.ctx.risk_rtt then
