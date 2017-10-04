@@ -57,8 +57,8 @@ function M.application(file_name)
     local function send_enforcer_telemetry()
         -- check if report_active_config exist, and true,
         -- if nil treat as true, for first time send
-        if px_config.repot_active_config == nil or px_config.repot_active_config then
-            px_config.repot_active_config = false
+        if px_config.report_active_config == nil or px_config.report_active_config then
+            px_config.report_active_config = false
             local details = {}
 
             -- copy px_config
