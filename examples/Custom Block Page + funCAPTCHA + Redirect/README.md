@@ -21,12 +21,11 @@ When captcha is enabled, and `_M.redirect_on_custom_url` is set to **true**, the
 * The `<head>` section **must** include:
 
 ```html
-<script src="https://www.google.com/recaptcha/api.js"></script>
+<script src="https://funcaptcha.com/fc/api/?onload=loadFunCaptcha" async defer></script>
 <script>
 function loadFunCaptcha() {
             var vid = getQueryString("vid");
             var uuid = getQueryString("uuid");
-            var delimiter = '|,|';
 
             new FunCaptcha({
                 public_key: "19E4B3B8-6CBE-35CC-4205-FC79ECDDA765",
