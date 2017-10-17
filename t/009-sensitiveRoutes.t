@@ -158,7 +158,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-PX DEBUG: PX-CookieV3 Processed Succesfuly
+PX DEBUG: PX-Cookie Processed Successfully
 
 === TEST 3: Call server if match sensitive routes suffix
 
@@ -267,4 +267,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-PX DEBUG: PX-CookieV3 Processed Succesfuly
+PX DEBUG: PX-Cookie Processed Successfully

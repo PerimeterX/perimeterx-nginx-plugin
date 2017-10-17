@@ -30,6 +30,7 @@ Initial test to verify basic settings.
             pxconfig.cookie_secret = "perimeterx"
             pxconfig.px_debug = true
             pxconfig.block_enabled = true
+            pxconfig.captcha_enabled = true
             return true
         }
 

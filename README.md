@@ -1,7 +1,11 @@
+[![Build Status](https://travis-ci.org/PerimeterX/perimeterx-nginx-plugin.svg?branch=master)](https://travis-ci.org/PerimeterX/perimeterx-nginx-plugin)
+
 ![image](https://s.perimeterx.net/logo.png)
 
 [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 =============================================================
+
+> Latest stable version: [v2.12.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/2.12-0)
 
 Table of Contents
 -----------------
@@ -15,6 +19,7 @@ Table of Contents
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
   *   [Monitoring mode](#monitoring-mode)
+  *   [Enable/Disable Captcha](#captcha-support)
   *   [Select Captcha Provider](#captcha-provider)
   *   [Enabled Routes](#enabled-routes)
   *   [Sensitive Routes](#sensitive-routes)
@@ -72,7 +77,7 @@ yum -y install nginx-plus-module-lua ca-certificates.noarch
 ```
 
 Download and compile nettle. 
->> Side note: Use the version neccessary for your environment. 
+> Side note: Use the version neccessary for your environment. 
 
 ```
 yum -y install m4 # prerequisite for nettle
@@ -217,20 +222,34 @@ Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`.
 
 #### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
-**Default blocking value:** 70
+**Default blocking value:** 100
 
 ```
 _M.blocking_score = 60
 ```
 
-#### <a name="monitoring-mode"></a> Monitoring Mode
-By default, the PerimeterX module will block users crossing the block score threshold that you define. This means that if a user crosses the minimum block score he will receive the block page. The PerimeterX plugin can also be activated in monitor only mode.
-Setting the block_enalbed flag to *false* will prevent the block page from being displayed to the user, but the data will still be available in the PerimeterX Portal.
+#### <a name="monitoring-mode"></a> Blocking Mode
 
 ```
 _M.block_enabled = false
 ```
-Disabling blocking means users crossing the blocking threshold will not be activly blocked, but you will still be able to consume their score through a custom request header `X-PX-SCORE`.
+
+The PerimeterX plugin is enabled in monitor only mode by default.
+
+Setting the  block_enabled flag to *true* will activate the module to enforce the blocking score. The PerimeterX module will block users crossing the block score threshold that you define. If a user crosses the minimum block score then the user will receive the block page.
+
+
+
+#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
+
+By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
+
+**Default: true**
+
+```
+_M.captcha_enabled = false
+```
+
 
 #### <a name="captcha-provider"></a>Select CAPTCHA Provider
 
@@ -377,7 +396,7 @@ function handleCaptcha(response) {
     var uuid = getQueryString("uuid");
     var name = '_pxCaptcha';
     var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-    var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
+    var cookieParts = [name, '=', btoa(JSON.stringify({r: response, v:vid, u:uuid})), '; expires=', expiryUtc, '; path=/'];
     document.cookie = cookieParts.join('');
     var originalURL = getQueryString("url");
     var originalHost = window.location.host;
@@ -429,7 +448,7 @@ _M.redirect_on_custom_url = true
             var uuid = getQueryString("uuid");
             var name = '_pxCaptcha';
             var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-            var cookieParts = [name, '=', response + ':' + vid + ':' + uuid, '; expires=', expiryUtc, '; path=/'];
+            var cookieParts = [name, '=', btoa(JSON.stringify({r: response, v:vid, u:uuid})), '; expires=', expiryUtc, '; path=/'];
             document.cookie = cookieParts.join('');
             // after getting resopnse we want to reaload the original page requested
             var originalURL = getQueryString("url");
@@ -471,7 +490,7 @@ If your PerimeterX account contains several Applications (as defined via the por
 - First, open the `nginx.conf` file, and find the following line : `require("px.pxnginx").application()` inside your location block.
 - Pass the desired application name into the `application()` function, as such : `require("px.pxnginx").application("mySpecialApp")`
 - Then, find your `pxconfig.lua` file, and make a copy of it. name that copy using the following pattern : `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) - The <AppName> placeholder must be replaced by the exact name provided to the application function in the previous section.
-- Change the configuration inside the newly created file, as per your app's needs. (Save it. *duh*) 
+- Change the configuration inside the newly created file.
 - Make sure to save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
 - Thats it, in every `location` block of your app - make sure to place the code mentioned on stage 2 with the correct AppName.
 
@@ -490,6 +509,29 @@ _M.additional_activity_handler = function(event_type, ctx, details)
 		logger.info("PerimeterX " + event_type + " details " +  cjson.encode(details))
 	end
 end
+```
+
+#### <a name="log-enrichment"></a> Log Enrichment
+Access logs can be enriched with the PerimeterX bot score by creating the NGINX variable named `pxscore`
+
+To configure this variable use the NGINX map directive in the HTTP section of your NGINX configuration file. This should be added before an additional configuration files are included.
+
+```
+....
+http {
+    map score $pxscore {
+        default 'nil';
+    }
+    
+    log_format enriched '$remote_addr - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent" perimeterx_score "$pxscore';
+
+	 access_log /var/log/nginx/access_log enriched;
+
+}
+...
+
 ```
 
 <a name="whitelisting"></a> Whitelisting
@@ -536,12 +578,12 @@ load_module modules/ngx_http_lua_module.so;
 ----------------------------------------
 The following steps are welcome when contributing to our project.
 
-###Fork/Clone
+### Fork/Clone
 [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
 Create a branch on your fork, preferably using a descriptive branch name.
 
 
-###<a name="tests"></a>Test
+### <a name="tests"></a>Test
 > Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
 
 **Dont forget to test**. This project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
@@ -549,9 +591,9 @@ Before you create any pull request, make sure your project has passed all tests.
 
 To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`.
 
-###Pull Request
+### Pull Request
 After you have completed the process, create a pull request. Please provide a complete and thorough description explaining the changes. Remember, this code has to be read by our maintainers, so keep it simple, smart and accurate.
 
-###Thanks
+### Thanks
 After all, you are helping us by contributing to this project, and we want to thank you for it.
 We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.

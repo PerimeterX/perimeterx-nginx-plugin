@@ -19,6 +19,8 @@ function M.load(config_file)
             logo_css_style = 'hidden'
         end
 
+        local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+
         return {
             refId = uuid,
             vid = vid,
@@ -27,7 +29,8 @@ function M.load(config_file)
             customLogo = px_config.custom_logo,
             cssRef = px_config.css_ref,
             jsRef = px_config.js_ref,
-            logoVisibility = logo_css_style
+            logoVisibility = logo_css_style,
+            hostUrl = collectorUrl
         }
     end
 

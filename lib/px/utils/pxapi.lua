@@ -58,6 +58,7 @@ function M.load(config_file)
         risk.additional.http_version = ngx_req_http_version()
         risk.additional.http_method = ngx_req_get_method()
         risk.additional.module_version = px_constants.MODULE_VERSION
+        risk.additional.cookie_origin = ngx.ctx.px_cookie_origin
 
         return risk
     end
@@ -68,6 +69,8 @@ function M.load(config_file)
     function _M.process(data)
         px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.score))
         px_headers.set_score_header(data.score)
+        -- Set the pxscore var for logging
+        px_logger.set_score_variable(data.score)
 
         if data.uuid then
             ngx.ctx.uuid = data.uuid

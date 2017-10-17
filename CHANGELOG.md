@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.12.0] - 2017-08-30
+### Changed 
+- Removed luarocks dependency lua-cjosn (still needs to be installed via apt-get)
+- Changed structure of pxconstants
+
+## [2.11.0] - 2017-08-24
+### Changed 
+- Changed default values for module mode to monitor
+- Changed default value of blocksing score to 100
+
+## [2.10.1] - 2017-08-10
+### Fixed 
+- Removed PX snippet from block/captcha mustache 
+- Update the collectorUrl in mobile sdk response
+- Added s2s_call_reason on mobile sdk connection error
+- Fixed sending call_reason on cookie validation failed
+
+## [2.10.0] - 2017-07-13
+### Added
+- Mobile SDK support
+- Sensitive headers
+- True IP headers list in configuration
+### Modified
+- Captcha cookie in base64 format in default captcha pages and examples
+
 ## [2.9.0] - 2017-06-27
 ### Modified
 - Changed structure of captcha cookie

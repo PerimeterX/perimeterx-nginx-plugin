@@ -10,7 +10,7 @@ sub bake_cookie {
 
     my $password        = "perimeterx";
     my $salt            = '12345678123456781234567812345678';
-    my $iteration_count = 1000;
+    my $iteration_count = 1000; 
     my $hash_name       = undef;                              #default is SHA256
     my $len             = 48;
 
@@ -34,7 +34,7 @@ add_block_preprocessor(
         my $cookie = bake_cookie(
             "1.2.3.4",
 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36',
-            '0',
+            '100',
             "57ecdc10-0e97-11e6-80b6-095df820282c",
             "vid",
             $time
@@ -51,10 +51,20 @@ run_tests();
 __DATA__
 
 
-=== TEST 1: Procoss Workflow
-Process a valid V1 cookie
+=== TEST 1: Test Score Header
+Set the NGX $pxscore variable
 
 --- http_config
+    map score $pxscore {
+        default 'nil';
+    }
+    
+    log_format enriched '$remote_addr - $remote_user [$time_local] '
+                    '"$request" $status $body_bytes_sent '
+                    '"$http_referer" "$http_user_agent" perimeterx_score "$pxscore';
+
+    access_log /var/log/nginx/access_log enriched;
+
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
     lua_ssl_verify_depth 3;
@@ -73,7 +83,7 @@ Process a valid V1 cookie
     	    pxconfig = require "px.pxconfig"
     	    pxconfig.cookie_secret = "perimeterx"
     	    pxconfig.px_debug = true
-    	    pxconfig.block_enabled = true
+    	    pxconfig.block_enabled = false
     	    pxconfig.send_page_requested_activity = false
             pxconfig.enable_server_calls  = false
             return true
@@ -84,7 +94,7 @@ Process a valid V1 cookie
 	}
 
         content_by_lua_block {
-             ngx.say(ngx.var.remote_addr)
+             ngx.say(ngx.var.pxscore)
         }
 }
 
@@ -97,9 +107,4 @@ X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
 --- response_body
-1.2.3.4
-
---- error_code: 200
-
---- error_log
-PX DEBUG: PX-Cookie Processed Successfully
+100

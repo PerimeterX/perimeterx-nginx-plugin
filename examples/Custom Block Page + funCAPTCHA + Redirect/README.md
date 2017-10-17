@@ -33,7 +33,7 @@ function loadFunCaptcha() {
                 target_html: "CAPTCHA",
                 callback: function () {
                     var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-                    var pxCaptcha = "_pxCaptcha=" + JSON.stringify({r: document.getElementById("FunCaptcha-Token").value, u: uuid, v: vid});
+                    var pxCaptcha = "_pxCaptcha=" + btoa(JSON.stringify({r: document.getElementById("FunCaptcha-Token").value, u: uuid, v: vid}));
               
                     var cookieParts = [
                         pxCaptcha,

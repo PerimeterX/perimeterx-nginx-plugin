@@ -6,6 +6,10 @@ function _M.get_time_in_milliseconds()
 end
 
 function _M.array_index_of(array, item)
+    if array == nil then
+        return -1
+    end
+
     for i, value in ipairs(array) do
         if value == item then
             return i
