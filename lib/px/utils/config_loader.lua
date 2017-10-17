@@ -67,6 +67,7 @@ function _M.get_configuration(config_file)
         config.block_enabled = body.moduleMode ~= "monitoring"
         config.client_timeout = body.connectTimeout
         config.s2s_timeout = body.riskTimeout
+        config.report_active_config = true
    end
 end
 

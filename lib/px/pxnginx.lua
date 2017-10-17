@@ -23,14 +23,17 @@
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 local M = {}
-
+M.configLoaded = false
 function M.application(file_name)
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
     local px_config = require(config_file)
     local _M = {}
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
-
+    if px_config.dynamic_configurations and not M.configLoaded then
+        require("px.utils.config_loader").load(config_file)
+        M.configLoaded = true
+    end
     local px_filters = require("px.utils.pxfilters").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local PXPayload = require('px.utils.pxpayload')
@@ -71,6 +74,11 @@ function M.application(file_name)
             copy_px_config.auth_token = nil
 
             -- attach to details
+            local config_update_reason = 'initial_config'
+            if px_config.checksum ~= nil then
+                config_update_reason = 'remote_config_update'
+            end
+            details['update_reason'] = update_reason
             details['px_enforcer_configs'] = cjson.encode(copy_px_config)
             px_client.send_to_perimeterx("enforcer_telemetry", details)
         end
