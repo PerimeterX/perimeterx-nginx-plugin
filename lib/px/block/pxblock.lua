@@ -132,12 +132,12 @@ function M.load(config_file)
                 else
                     ngx.status = ngx_HTTP_FORBIDDEN;
                     if px_config.api_protection_mode then
-                        local redirectUrl = ngx.req.get_headers()['Referer']
-                        if redirectUrl == nil or redirectUrl == '' then
-                            redirectUrl = px_config.api_protection_default_redirect_url
+                        local redirect_url = ngx.req.get_headers()['Referer']
+                        if redirect_url == nil or redirect_url == '' then
+                            redirect_url = px_config.api_protection_default_redirect_url
                         end
-                        redirectUrl = ngx_endcode_64(redirectUrl)
-                        local url = px_config.api_protection_block_url .. '?url=' .. redirectUrl .. '&uuid=' .. uuid .. '&vid=' .. vid
+                        redirect_url = ngx_endcode_64(redirect_url)
+                        local url = px_config.api_protection_block_url .. '?url=' .. redirect_url .. '&uuid=' .. uuid .. '&vid=' .. vid
                         local result = {
                             reason = "blocked",
                             redirect_to = url
