@@ -37,6 +37,11 @@ _M.js_ref = nil
 _M.custom_block_url = nil
 _M.redirect_on_custom_url = false
 
+-- ## API protection ##
+_M.api_protection_mode = false
+_M.api_protection_block_url = nil
+_M.api_protection_default_redirect_url = nil
+
 -- ## Debug Parameters ##
 _M.px_debug = false
 _M.s2s_timeout = 1000
