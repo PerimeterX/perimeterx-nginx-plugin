@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.13.0] - 2017-10-18
+### Added
+- Support for API protection in Kong plugin
+
 ## [2.12.0] - 2017-08-30
 ### Changed 
 - Removed luarocks dependency lua-cjosn (still needs to be installed via apt-get)
