@@ -90,7 +90,7 @@ function M.application(file_name)
             result = px_api.process(response)
             -- score crossed threshold
             if result == false then
-                px_logger.error("blocking s2s")
+                px_logger.debug("blocking s2s")
                 return px_block.block('s2s_high_score')
                 -- score did not cross the blocking threshold
             else
