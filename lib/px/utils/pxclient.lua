@@ -143,7 +143,7 @@ function M.load(config_file)
     end
 
     function _M.send_enforcer_telmetry(details)
-        local  enforcer_telemetry = {}
+        local enforcer_telemetry = {}
 
         details.os_name = jit.os
         details.node_name = os.getenv("HOSTNAME")
