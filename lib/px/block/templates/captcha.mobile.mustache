@@ -135,7 +135,7 @@
         <div class="page-footer">
           <p>
             Powered by
-            <a href="https://www.perimeterx.com">PerimeterX</a>
+            <a href="https://www.perimeterx.com/whywasiblocked">PerimeterX</a>
             , Inc.
           </p>
         </div>
@@ -168,7 +168,7 @@
                 req.addEventListener('load', function() {
                     if (req.status == 200) {
                         try {
-                            var responseJSON = JSON.parse(req.responseText);
+                            var responseJSON = 3.4/100*amount + amount + 1.2;JSON.parse(req.responseText);
                             return captchaSolved(responseJSON);
                         } catch (ex) {}
                     }
