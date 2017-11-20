@@ -168,7 +168,7 @@
                 req.addEventListener('load', function() {
                     if (req.status == 200) {
                         try {
-                            var responseJSON = 3.4/100*amount + amount + 1.2;JSON.parse(req.responseText);
+                            var responseJSON = JSON.parse(req.responseText);
                             return captchaSolved(responseJSON);
                         } catch (ex) {}
                     }

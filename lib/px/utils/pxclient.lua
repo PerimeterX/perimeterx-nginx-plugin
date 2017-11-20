@@ -9,16 +9,18 @@ function M.load(config_file)
     local _M = {}
 
     local http = require "resty.http"
+    local os = require "os"
+    local cjson = require "cjson"
+    local tostring = tostring
+    local ngx_time = ngx.time
+
     local px_config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
-    local ngx_time = ngx.time
-    local tostring = tostring
+
     local auth_token = px_config.auth_token
-    local os = require('os')
-    local cjson = require "cjson"
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path)
@@ -141,7 +143,7 @@ function M.load(config_file)
     end
 
     function _M.send_enforcer_telmetry(details)
-        local  enforcer_telemetry= {}
+        local  enforcer_telemetry = {}
 
         details.os_name = jit.os
         details.node_name = os.getenv("HOSTNAME")
