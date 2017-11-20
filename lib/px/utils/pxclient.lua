@@ -9,13 +9,17 @@ function M.load(config_file)
     local _M = {}
 
     local http = require "resty.http"
+    local os = require "os"
+    local cjson = require "cjson"
+    local tostring = tostring
+    local ngx_time = ngx.time
+
     local px_config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
-    local ngx_time = ngx.time
-    local tostring = tostring
+
     local auth_token = px_config.auth_token
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
@@ -131,12 +135,26 @@ function M.load(config_file)
 
         pxdata['details'] = details;
 
-        -- Experimental Buffer Support --
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
             _M.submit(buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
         end
+    end
+
+    function _M.send_enforcer_telmetry(details)
+        local enforcer_telemetry = {}
+
+        details.os_name = jit.os
+        details.node_name = os.getenv("HOSTNAME")
+        enforcer_telemetry.type = 'enforcer_telemetry'
+        enforcer_telemetry.px_app_id = px_config.px_appId
+        enforcer_telemetry.timestamp = tostring(ngx_time())
+        enforcer_telemetry.module_version = px_constants.MODULE_VERSION
+        enforcer_telemetry.details = details
+
+        -- Perform the HTTP action
+        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
     end
 
 
