@@ -43,11 +43,12 @@ end
 
 function PXPayload:get_payload()
     ngx.ctx.px_cookie_origin = "cookie"
-    local pxHeader = ngx.req.get_headers()['X-PX-AUTHORIZATION'] or nil
+    local px_header = ngx.req.get_headers()['X-PX-AUTHORIZATION'] or nil
 
-    if (pxHeader) then
-        local version, cookie = self:handleHeader(pxHeader)
+    if (px_header) then
+        local version, cookie = self:handleHeader(px_header)
         ngx.ctx.px_orig_cookie = cookie
+        ngx.ctx.px_header = px_header
         ngx.ctx.px_cookie_origin = "header"
         if version == "3" then
             ngx.ctx.px_cookie_version = "v3";
@@ -125,6 +126,38 @@ function PXPayload:unpad(str)
     end
     return str
 end
+
+
+function PXPayload:pre_decrypt(cookie, key)
+    local px_header = ngx.ctx.px_header
+    if not px_header or px_header == "" then
+        self.px_logger.debug("empty token not allowed")
+        error({ message = "cookie_decryption_failed" })
+    end
+
+    if px_header == "1" then
+        self.px_logger.debug("no token available")
+        error({ message = "no_cookie" })
+    end
+
+    if ngpx_headerader == "2" then
+        self.px_logger.debug("mobile sdk was unable to reach the server ")
+        error({ message = "mobile_sdk_connection_error" })
+    end
+
+    if px_header == "3" then
+        self.px_logger.debug("mobile sdk pinning error")
+        error({ message = "mobile_sdk_pinning_error" })
+    end
+    local success, result = pcall(self.decrypt, self, cookie, key)
+
+    if not success then
+        error({message = "cookie_decryption_failed"})
+    end
+
+    return result
+end
+
 
 function PXPayload:decrypt(cookie, key)
     -- Split the cookie into three parts - salt , iterations, ciphertext
