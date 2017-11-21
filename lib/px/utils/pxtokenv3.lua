@@ -24,31 +24,18 @@ end
 
 function TokenV3:process()
     local cookie = ngx.ctx.px_orig_cookie
-    if not cookie or cookie == "1" then
-        self.px_logger.info("no token available")
-        error({ message = "no_cookie" })
-    end
 
-    if cookie == "2" then
-        self.px_logger.info("mobile sdk was unable to reach the server ")
-        error({ message = "mobile_sdk_connection_error" })
-    end
-
-    if cookie == "3" then
-        self.px_logger.info("mobile sdk pinning error")
-        error({ message = "mobile_sdk_pinning_error" })
-    end
 
     if self.cookie_encrypted == true then
         self.px_logger.debug("cookie is encyrpted")
-        -- self:decrypt(cookie, self.cookie_secret)
-        local success, result = pcall(self.decrypt, self, cookie, self.cookie_secret)
+        local success, result = pcall(self.pre_decrypt, self, cookie, self.cookie_secret)
         if not success then
-            self.px_logger.error("Could not decrpyt px cookie v3")
-            error({ message = "cookie_decryption_failed" })
+            self.px_logger.error("Could not decrpyt px cookie v3" .. result["message"])
+            error({ message =  result["message"] })
         end
         data = result['plaintext']
         orig_cookie = result['cookie']
+        self.px_logger.debug("decryption passed")
     else
         hash, orig_cookie = self:split_decoded_cookie(cookie);
         local success, result = pcall(ngx.decode_base64, orig_cookie)
