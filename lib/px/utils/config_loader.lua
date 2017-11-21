@@ -80,8 +80,10 @@ function _M.load(config_file)
         local ok, err = ngx_timer_at(config.load_interval, load_on_timer)
         if not ok then
             px_logger.error("Failed to schedule submit timer: " .. err)
-            px_logger.error("Disabling PX module since timer failed")
-            config.px_enabled = false
+            if not config.config.checksum then
+                px_logger.error("Disabling PX module since timer failed")
+                config.px_enabled = false
+            end
         else
             _M.get_configuration(config_file)
         end
