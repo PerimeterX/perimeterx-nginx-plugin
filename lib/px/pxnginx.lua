@@ -57,33 +57,6 @@ function M.application(file_name)
     local cjson = require "cjson"
     local pcall = pcall
 
-    local function send_enforcer_telemetry()
-        -- check if report_active_config exist, and true,
-        -- if nil treat as true, for first time send
-        if px_config.report_active_config == nil or px_config.report_active_config then
-            px_config.report_active_config = false
-            local details = {}
-
-            -- copy px_config
-            local copy_px_config = {}
-            for orig_key, orig_value in pairs(px_config) do
-                copy_px_config[orig_key] = orig_value
-            end
-            -- remove unneceery fields
-            copy_px_config.cookie_secret = nil
-            copy_px_config.auth_token = nil
-
-            -- attach to details
-            local config_update_reason = 'initial_config'
-            if px_config.checksum ~= nil then
-                config_update_reason = 'remote_config_update'
-            end
-            details['update_reason'] = update_reason
-            details['px_enforcer_configs'] = cjson.encode(copy_px_config)
-            px_client.send_to_perimeterx("enforcer_telemetry", details)
-        end
-    end
-
     local function perform_s2s(result, details)
         ngx.ctx.s2s_call_reason = result.message
         local request_data = px_api.new_request_object(result.message)
@@ -98,7 +71,7 @@ function M.application(file_name)
             result = px_api.process(response)
             -- score crossed threshold
             if result == false then
-                px_logger.error("blocking s2s")
+                px_logger.debug("blocking s2s")
                 return px_block.block('s2s_high_score')
                 -- score did not cross the blocking threshold
             else
@@ -117,7 +90,6 @@ function M.application(file_name)
             return true
         end
     end
-
     if not px_config.px_enabled then
         return true
     end
@@ -170,7 +142,6 @@ function M.application(file_name)
         end
     end
 
-    send_enforcer_telemetry()
     px_payload:load(config_file)
     px_cookie = px_payload:get_payload()
     px_cookie:load(config_file)

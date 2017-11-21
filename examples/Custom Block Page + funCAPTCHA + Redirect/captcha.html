@@ -75,7 +75,9 @@
                     ];
 
                     document.cookie = cookieParts.join("");
-                    location.reload();
+                    var originalURL = getQueryString("url");
+                    var originalHost = window.location.host;
+                    window.location.href = window.location.protocol + "//" +  originalHost + originalURL;
                 }
             });
         }

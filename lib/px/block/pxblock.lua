@@ -131,25 +131,40 @@ function M.load(config_file)
                     end
                 else
                     ngx.status = ngx_HTTP_FORBIDDEN;
-
-                    local html = '';
-                    local template = 'block'
-                    if ngx.ctx.px_action == 'j' then
-                        html = ngx.ctx.px_action_data
-                    else
-                        if ngx.ctx.px_action == 'c' then
-                            if px_config.captcha_provider == 'funCaptcha' then
-                                template = 'funcaptcha'
-                            else
-                                template = 'captcha'
-                            end
+                    if px_config.api_protection_mode then
+                        local redirect_url = ngx.req.get_headers()['Referer']
+                        if redirect_url == nil or redirect_url == '' then
+                            redirect_url = px_config.api_protection_default_redirect_url
                         end
-                        px_logger.debug('Fetching template: ' .. template)
+                        redirect_url = ngx_endcode_64(redirect_url)
+                        local url = px_config.api_protection_block_url .. '?url=' .. redirect_url .. '&uuid=' .. uuid .. '&vid=' .. vid
+                        local result = {
+                            reason = "blocked",
+                            redirect_to = url
+                        }
+                        ngx.header["Content-Type"] = 'application/json';
+                        ngx_say(cjson.encode(result))
+                        ngx_exit(ngx.OK)
+                    else
+                        local html = '';
+                        local template = 'block'
+                        if ngx.ctx.px_action == 'j' then
+                            html = ngx.ctx.px_action_data
+                        else
+                            if ngx.ctx.px_action == 'c' then
+                                if px_config.captcha_provider == 'funCaptcha' then
+                                    template = 'funcaptcha'
+                                else
+                                    template = 'captcha'
+                                end
+                            end
+                            px_logger.debug('Fetching template: ' .. template)
 
-                        html = px_template.get_template(template, uuid, vid)
+                            html = px_template.get_template(template, uuid, vid)
+                        end
+                        ngx_say(html);
+                        ngx_exit(ngx.OK);
                     end
-                    ngx_say(html);
-                    ngx_exit(ngx.OK);
                 end
             end
         else
