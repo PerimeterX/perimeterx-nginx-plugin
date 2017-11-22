@@ -4,8 +4,9 @@ function _M.get_configuration(config_file)
     local http = require "resty.http"
     local px_constants = require "px.utils.pxconstants"
     local config = require(config_file)
+    local px_client = require("px.utils.pxclient").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
-    px_logger.debug("Fetching configuration")
+    local px_commom_utils = require("px.utils.pxcommonutils")
     local cjson = require "cjson"
     local px_server = config.configuration_server
     local px_port = config.configuration_server_port
@@ -68,6 +69,12 @@ function _M.get_configuration(config_file)
         config.client_timeout = body.connectTimeout
         config.s2s_timeout = body.riskTimeout
         config.report_active_config = true
+
+        -- report enforcer telemetry
+        local details = {}
+        details.px_config = px_commom_utils.filter_config(config);
+        details.update_reason = 'remote_config'
+        px_client.send_enforcer_telmetry(details)
    end
 end
 

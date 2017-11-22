@@ -147,10 +147,11 @@ function M.load(config_file)
 
         details.os_name = jit.os
         details.node_name = os.getenv("HOSTNAME")
+        details.module_version = px_constants.MODULE_VERSION
+
         enforcer_telemetry.type = 'enforcer_telemetry'
         enforcer_telemetry.px_app_id = px_config.px_appId
         enforcer_telemetry.timestamp = tostring(ngx_time())
-        enforcer_telemetry.module_version = px_constants.MODULE_VERSION
         enforcer_telemetry.details = details
 
         -- Perform the HTTP action
