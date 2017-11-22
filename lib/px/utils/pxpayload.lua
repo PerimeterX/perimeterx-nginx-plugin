@@ -140,7 +140,7 @@ function PXPayload:pre_decrypt(cookie, key)
         error({ message = "no_cookie" })
     end
 
-    if ngpx_headerader == "2" then
+    if px_header == "2" then
         self.px_logger.debug("mobile sdk was unable to reach the server ")
         error({ message = "mobile_sdk_connection_error" })
     end
