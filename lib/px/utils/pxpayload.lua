@@ -30,7 +30,6 @@ function PXPayload:load(config_file)
     self.token_v3 = require "px.utils.pxtokenv3"
     self.token_v1 = require "px.utils.pxtokenv1"
 
-
     -- localized modules
     self.cjson = require "cjson"
     self.aes = require "resty.nettle.aes"

@@ -11,14 +11,13 @@ _M.px_enabled = true
 -- ##  Configuration Block ##
 
 -- ## Required Parameters ##
-_M.px_appId = 'PXvRfnOj4y'
-_M.cookie_secret = '1oESDgAkA9xAmsn8skDPobOPKSPwnGzAKcQIniM4aGKxZsBnY41q1m37nIgZEP9h'
-_M.auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ5NjY2MzQ2Niwic3ViIjoiUFh2UmZuT2o0eSIsImp0aSI6IjgwYjY1MmQ2LTZkN2MtNGNkNy1hNTdhLTU4MWUxMGZjN2JlNiJ9.M3QMB7GFndSE6U8slsMmYEU6H2h_elzQtx7_3EoMSIU'
-
+_M.px_appId = 'PX_APP_ID'
+_M.cookie_secret = 'COOKIE_KEY'
+_M.auth_token = 'PX_AUTH_TOKEN'
 
 -- ## Blocking Parameters ##
 _M.blocking_score = 100
-_M.block_enabled = true
+_M.block_enabled = false
 _M.captcha_enabled = true
 
 -- ## Additional Configuration Parameters ##
@@ -34,20 +33,17 @@ _M.enabled_routes = {}
 -- ## Blocking Page Parameters ##
 _M.custom_logo = nil
 _M.css_ref = nil
-_M.js_ref = 'https://f7f17379.ngrok.io/dom.js'
-
--- ## Dynamic Configuration Block ##
-_M.dynamic_configurations = false
-_M.configuration_server = 'px-conf.perimeterx.net'
-_M.configuration_server_port = 443
-_M.load_interval = 5
--- ## END - Configuration block ##
-
+_M.js_ref = nil
 _M.custom_block_url = nil
 _M.redirect_on_custom_url = false
 
+-- ## API protection ##
+_M.api_protection_mode = false
+_M.api_protection_block_url = nil
+_M.api_protection_default_redirect_url = nil
+
 -- ## Debug Parameters ##
-_M.px_debug = true
+_M.px_debug = false
 _M.s2s_timeout = 1000
 _M.client_timeout = 2000
 _M.cookie_encrypted = true

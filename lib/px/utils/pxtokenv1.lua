@@ -50,8 +50,8 @@ function TokenV1:process()
     if self.cookie_encrypted == true then
         local success, result = pcall(self.pre_decrypt, self, cookie, self.cookie_secret)
         if not success then
-            self.px_logger.debug("Could not decrpyt cookie - " .. result.message)
-            error({ message = result.message })
+            self.px_logger.debug("Could not decrpyt cookie - " .. result["message"])
+            error({ message = result["message"] })
         end
         data = result["plaintext"]
     else
