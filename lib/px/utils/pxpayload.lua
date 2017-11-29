@@ -8,15 +8,12 @@ function PXPayload:new(t)
 end
 
 function PXPayload:handleHeader(header)
-    if header == "1" or header == "2" or header == "3"  then
-        return nil, header
-    end
     if string.match(header, ":") then
         local version = string.sub(header, 1,1);
         local cookie = string.sub(header, 3);
         return version, cookie
     else
-        return nil,nil
+        return nil,header
     end
 end
 
@@ -46,27 +43,33 @@ function PXPayload:get_payload()
     local px_header = ngx.req.get_headers()['X-PX-AUTHORIZATION'] or nil
 
     if (px_header) then
+        self.px_logger.debug("Mobile SDK token detected")
         local version, cookie = self:handleHeader(px_header)
         ngx.ctx.px_orig_cookie = cookie
         ngx.ctx.px_header = px_header
         ngx.ctx.px_cookie_origin = "header"
         if version == "3" then
             ngx.ctx.px_cookie_version = "v3";
+            self.px_logger.debug("Token V3 found - Evaluating")
             return self.token_v3:new{}
         else
             ngx.ctx.px_cookie_version = "v1";
+            self.px_logger.debug("Token V1 found - Evaluating")
             return self.token_v1:new{}
         end
     elseif ngx.var.cookie__px3 then
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px3
         ngx.ctx.px_cookie_version = "v3";
+        self.px_logger.debug("Cookie V3 found - Evaluating")
         return self.cookie_v3:new{}
     else
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px
         ngx.ctx.px_cookie_version = "v1";
+        self.px_logger.debug("Cookie V1 found - Evaluating")
         return self.cookie_v1:new{}
     end
     -- check for cookie, and if found return the right object
+    self.px_logger.debug("Cookie is missing")
 end
 
 -- split_cookie --
@@ -129,6 +132,7 @@ end
 
 
 function PXPayload:pre_decrypt(cookie, key)
+    local cjson = require('cjson')
     local px_header = ngx.ctx.px_header
     if not px_header or px_header == "" then
         self.px_logger.debug("empty token not allowed")
@@ -136,23 +140,24 @@ function PXPayload:pre_decrypt(cookie, key)
     end
 
     if px_header == "1" then
-        self.px_logger.debug("no token available")
+        self.px_logger.debug("Mobile invalid token - no token")
         error({ message = "no_cookie" })
     end
 
     if px_header == "2" then
-        self.px_logger.debug("mobile sdk was unable to reach the server ")
+        self.px_logger.debug("Mobile invalid token - connection error ")
         error({ message = "mobile_sdk_connection_error" })
     end
 
     if px_header == "3" then
-        self.px_logger.debug("mobile sdk pinning error")
+        self.px_logger.debug("Mobile invalid token - pinning issue")
         error({ message = "mobile_sdk_pinning_error" })
     end
-    local success, result = pcall(self.decrypt, self, cookie, key)
 
+    local success, result = pcall(self.decrypt, self, cookie, key)
     if not success then
-        error({message = "cookie_decryption_failed"})
+        self.px_logger.debug("Cookie decryption failed, value: " .. cookie)
+        error({ message = "cookie_decryption_failed" })
     end
 
     return result
@@ -160,6 +165,7 @@ end
 
 
 function PXPayload:decrypt(cookie, key)
+
     -- Split the cookie into three parts - salt , iterations, ciphertext
     local orig_salt, orig_iterations, orig_ciphertext = self:split_cookie(cookie)
     local iterations = tonumber(orig_iterations)
@@ -207,6 +213,7 @@ function PXPayload:is_sensitive_route()
         -- find if any of the sensitive routes is the start of the URI
         for i, prefix in ipairs(self.px_config.sensitive_routes_prefix) do
             if string.sub(ngx.var.uri, 1, string.len(prefix)) == prefix then
+                self.px_logger.debug("Sensitive route match, sending Risk API. path:: " .. ngx.var.uri)
                 return true
             end
         end
@@ -215,6 +222,7 @@ function PXPayload:is_sensitive_route()
         -- find if any of the sensitive routes is the end of the URI
         for i, suffix in ipairs(self.px_config.sensitive_routes_suffix) do
             if string.sub(ngx.var.uri, -string.len(suffix)) == suffix then
+                self.px_logger.debug("Sensitive route match, sending Risk API. path:: " .. ngx.var.uri)
                 return true
             end
         end

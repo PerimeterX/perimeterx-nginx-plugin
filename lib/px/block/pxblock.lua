@@ -67,6 +67,8 @@ function M.load(config_file)
         if ngx.ctx.vid then
             vid = ngx.ctx.vid
         end
+        px_logger.debug("Going to render block page")
+
 
         px_client.send_to_perimeterx('block', details);
         if px_config.block_enabled then
@@ -105,6 +107,7 @@ function M.load(config_file)
                         end
                         local body = ''
                         if ngx.ctx.px_action == 'j' then
+                            px_logger.debug("challange page is served")
                             body = ngx.ctx.px_action_data
                         else
                             body = res.body
@@ -149,6 +152,7 @@ function M.load(config_file)
                         local html = '';
                         local template = 'block'
                         if ngx.ctx.px_action == 'j' then
+                            px_logger.debug("challange page is served")
                             html = ngx.ctx.px_action_data
                         else
                             if ngx.ctx.px_action == 'c' then
@@ -158,8 +162,7 @@ function M.load(config_file)
                                     template = 'captcha'
                                 end
                             end
-                            px_logger.debug('Fetching template: ' .. template)
-
+                            px_logger.debug(template .. " page is served")
                             html = px_template.get_template(template, uuid, vid)
                         end
                         ngx_say(html);

@@ -55,6 +55,7 @@ function M.application(file_name)
     local pcall = pcall
 
     local function perform_s2s(result, details)
+        px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local request_data = px_api.new_request_object(result.message)
         local start_risk_rtt = px_common_utils.get_time_in_milliseconds()
@@ -66,6 +67,7 @@ function M.application(file_name)
         local result
         if success then
             result = px_api.process(response)
+            px_logger.debug("Risk API response returned successfully, risk score: ".. ngx.ctx.block_score ..", round_trip_time: " .. ngx.ctx.risk_rtt)
             -- score crossed threshold
             if result == false then
                 px_logger.debug("blocking s2s")
@@ -80,7 +82,7 @@ function M.application(file_name)
             -- server2server call failed, passing traffic
             ngx.ctx.pass_reason = 'error'
             if string.match(response,'timeout') then
-                px_logger.error('s2s timeout')
+                px_logger.debug('Risk API timed out - rtt: ' .. ngx.ctx.risk_rtt)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
             px_client.send_to_perimeterx("page_requested", details)
@@ -88,6 +90,7 @@ function M.application(file_name)
         end
     end
     if not px_config.px_enabled then
+        px_logger.debug("Request will not be verified, module is disabled")
         return true
     end
 
@@ -122,7 +125,7 @@ function M.application(file_name)
         return true
     end
 
-    px_logger.debug("New request process. IP: " .. remote_addr .. ". UA: " .. user_agent)
+    px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent)
     -- process _pxCaptcha cookie if present
     local _pxCaptcha = ngx.var.cookie__pxCaptcha
     local details = {};
@@ -146,7 +149,7 @@ function M.application(file_name)
     local success, result = pcall(px_cookie.process, px_cookie)
     -- cookie verification passed - checking result.
     if success then
-        px_logger.debug("PX-Cookie Processed Successfully")
+        px_logger.debug("Cookie evaluation ended successfully, risk score: " .. ngx.ctx.block_score)
         details["px_cookie"] = ngx.ctx.px_cookie;
         details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
         details["px_cookie_version"] = ngx.ctx.px_cookie_version;

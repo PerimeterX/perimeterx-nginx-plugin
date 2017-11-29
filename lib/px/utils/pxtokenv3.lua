@@ -18,7 +18,8 @@ function TokenV3:validate(data)
         return true
     end
 
-    self.px_logger.error('Failed to verify cookie v3 content ' .. data);
+    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. ngx.req.get_headers()["User-Agent"]);
+    self.px_logger.debug('Failed to verify cookie v3 content ' .. data);
     return false
 end
 
@@ -30,7 +31,7 @@ function TokenV3:process()
         self.px_logger.debug("cookie is encyrpted")
         local success, result = pcall(self.pre_decrypt, self, cookie, self.cookie_secret)
         if not success then
-            self.px_logger.error("Could not decrpyt px cookie v3" .. result["message"])
+            self.px_logger.debug("Could not decrpyt px cookie v3" .. result["message"])
             error({ message =  result["message"] })
         end
         data = result['plaintext']
@@ -40,7 +41,7 @@ function TokenV3:process()
         hash, orig_cookie = self:split_decoded_cookie(cookie);
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then
-            self.px_logger.error("Could not decode b64 cookie - " .. result)
+            self.px_logger.debug("Could not decode b64 cookie - " .. result)
             error({ message = "cookie_decryption_failed" })
         end
         data = result
@@ -49,7 +50,7 @@ function TokenV3:process()
     -- Deserialize the JSON payload
     local success, result = pcall(self.decode, self, data)
     if not success then
-        self.px_logger.error("Could not decode cookie")
+        self.px_logger.debug("Could not decode cookie")
         error({ message = "cookie_decryption_failed" })
     end
 
@@ -67,7 +68,7 @@ function TokenV3:process()
 
     -- cookie expired
     if fields.t and fields.t > 0 and fields.t / 1000 < os.time() then
-        self.px_logger.debug("Cookie expired - " .. data)
+        self.px_logger.debug('Cookie TTL is expired, value: '.. data ..', age: ' .. fields.t / 1000 - os.time())
         error({ message = "cookie_expired" })
     end
 
@@ -87,7 +88,7 @@ function TokenV3:process()
     -- Validate the cookie integrity
     local success, result = pcall(self.validate, self, orig_cookie)
     if not success or result == false then
-        px_logger.error("Could not validate cookie v3 signature - " .. orig_cookie)
+        px_logger.debug("Could not validate cookie v3 signature - " .. orig_cookie)
         error({ message = "cookie_validation_failed" })
     end
 
