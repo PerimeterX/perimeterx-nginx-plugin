@@ -94,10 +94,13 @@ function TokenV1:process()
     self.px_logger.set_score_variable(fields.s.b)
     
     -- Check bot score and block if it is >= to the configured block score
-    if fields.s and fields.s.b and fields.s.b >= self.blocking_score then
+    if fields.s then
         self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s.b)
         ngx.ctx.px_action = 'c'
         ngx.ctx.block_score = fields.s.b
+    end
+
+    if fields.s.b and fields.s.b >= self.blocking_score then
         return false
     end
 

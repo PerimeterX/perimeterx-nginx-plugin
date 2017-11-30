@@ -72,7 +72,7 @@ function M.application(file_name)
             if result == false then
                 px_logger.debug("blocking s2s")
                 return px_block.block('s2s_high_score')
-                -- score did not cross the blocking threshold
+                -- score did not cross the blocking thdreshold
             else
                 ngx.ctx.pass_reason = 's2s'
                 px_client.send_to_perimeterx("page_requested", details)

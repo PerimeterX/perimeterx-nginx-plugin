@@ -112,4 +112,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-[PerimeterX - DEBUG] [ PXvRfnOj4y ] - Cookie evaluation ended successfully, risk score: 0
+[PerimeterX - DEBUG] [ PXvRfnOj4y ] - Cookie evaluation ended successfully

@@ -67,9 +67,6 @@ function M.load(config_file)
         if ngx.ctx.vid then
             vid = ngx.ctx.vid
         end
-        px_logger.debug("Going to render block page")
-
-
         px_client.send_to_perimeterx('block', details);
         if px_config.block_enabled then
             if ngx.ctx.px_cookie_origin == "header" then
@@ -117,6 +114,7 @@ function M.load(config_file)
                             end
                         end
                         ngx.status = ngx_HTTP_FORBIDDEN;
+                        px_logger.debug("rendering html now")
                         ngx_say(body);
                         ngx_exit(ngx.OK);
                     else
@@ -146,6 +144,7 @@ function M.load(config_file)
                             redirect_to = url
                         }
                         ngx.header["Content-Type"] = 'application/json';
+                        px_logger.debug("rendering html now")
                         ngx_say(cjson.encode(result))
                         ngx_exit(ngx.OK)
                     else
@@ -165,16 +164,14 @@ function M.load(config_file)
                             px_logger.debug(template .. " page is served")
                             html = px_template.get_template(template, uuid, vid)
                         end
+                        px_logger.debug("rendering html now")
                         ngx_say(html);
                         ngx_exit(ngx.OK);
                     end
                 end
             end
-        else
-            return true
         end
     end
-
     return _M
 end
 
