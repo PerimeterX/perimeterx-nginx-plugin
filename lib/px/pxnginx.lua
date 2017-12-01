@@ -63,12 +63,12 @@ function M.application(file_name)
                 return px_block.block('s2s_high_score')
                 -- score did not cross the blocking threshold
             else
-                px_client.send_to_perimeterx("page_requested", details)
+                pcall(px_client.send_to_perimeterx, "page_requested", details)
                 return true
             end
         else
             -- server2server call failed, passing traffic
-            px_client.send_to_perimeterx("page_requested", details)
+            pcall(px_client.send_to_perimeterx, "page_requested", details)
             return true
         end
     end
@@ -141,14 +141,14 @@ function M.application(file_name)
                 return px_block.block('cookie_high_score')
                 -- score did not cross the blocking threshold
             else
-                px_client.send_to_perimeterx("page_requested", details)
+                pcall(px_client.send_to_perimeterx, "page_requested", details)
                 return true
             end
             -- cookie verification failed/cookie does not exist. performing s2s query
         elseif enable_server_calls == true then
             return perform_s2s(result, details)
         else
-            px_client.send_to_perimeterx("page_requested", details)
+            pcall(px_client.send_to_perimeterx, "page_requested", details)
             return true
         end
     else
@@ -167,14 +167,14 @@ function M.application(file_name)
                 return px_block.block('cookie_high_score')
                 -- score did not cross the blocking threshold
             else
-                px_client.send_to_perimeterx("page_requested", details)
+                pcall(px_client.send_to_perimeterx, "page_requested", details)
                 return true
             end
             -- cookie verification failed/cookie does not exist. performing s2s query
         elseif enable_server_calls == true then
             return perform_s2s(result, details)
         else
-            px_client.send_to_perimeterx("page_requested", details)
+            pcall(px_client.send_to_perimeterx, "page_requested", details)
             return true
         end
     end

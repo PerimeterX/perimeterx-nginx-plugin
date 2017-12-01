@@ -16,6 +16,7 @@ function M.load(config_file)
     local ngx_time = ngx.time
     local tostring = tostring
     local auth_token = px_config.auth_token
+    local pcall = pcall
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path)
@@ -120,7 +121,7 @@ function M.load(config_file)
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
-            _M.submit(buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
+            pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
         end
     end
 
