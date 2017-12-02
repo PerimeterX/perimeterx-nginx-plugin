@@ -23,7 +23,7 @@ function M.application(file_name)
 	    end
 	    local buflen = buffer.getBufferLength()
 	    if buflen > 0 then
-	        pxclient.submit(buffer.dumpEvents(), px_constants.ACTIVITIES_PATH)
+	        pcall(pxclient.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH)
 	    end
 	    return
 	end
