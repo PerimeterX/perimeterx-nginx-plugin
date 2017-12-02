@@ -13,6 +13,7 @@ function M.application(file_name)
 	local px_logger = require ("px.utils.pxlogger").load(config_file)
 	local px_constants = require("px.utils.pxconstants")
 	local buffer = require "px.utils.pxbuffer"
+	local pcall = pcall
 
 	local ngx_timer_at = ngx.timer.at
 
