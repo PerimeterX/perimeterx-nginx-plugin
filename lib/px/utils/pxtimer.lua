@@ -14,6 +14,7 @@ function M.application(file_name)
 	local px_constants = require("px.utils.pxconstants")
 	local buffer = require "px.utils.pxbuffer"
 	local px_commom_utils = require('px.utils.pxcommonutils')
+
 	local ngx_timer_at = ngx.timer.at
 
 	function send_initial_enforcer_telemetry()
@@ -36,7 +37,7 @@ function M.application(file_name)
 	    end
 	    local buflen = buffer.getBufferLength()
 	    if buflen > 0 then
-	        pxclient.submit(buffer.dumpEvents(), px_constants.ACTIVITIES_PATH)
+	        pcall(pxclient.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH)
 	    end
 	    return
 	end

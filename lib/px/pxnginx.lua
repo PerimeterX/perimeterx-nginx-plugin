@@ -74,7 +74,7 @@ function M.application(file_name)
                 -- score did not cross the blocking threshold
             else
                 ngx.ctx.pass_reason = 's2s'
-                px_client.send_to_perimeterx("page_requested", details)
+                pcall(px_client.send_to_perimeterx, "page_requested", details)
                 return true
             end
         else
@@ -86,6 +86,7 @@ function M.application(file_name)
             end
             px_logger.debug('Risk API failed with error error: ' .. response)
             px_client.send_to_perimeterx("page_requested", details)
+
             return true
         end
     end
@@ -137,7 +138,7 @@ function M.application(file_name)
         if success and result == 0 then
             ngx.header["Content-Type"] = nil
             ngx.header["Set-Cookie"] = "_pxCaptcha=; Expires=Thu, 01 Jan 1970 00:00:00 GMT;"
-            px_client.send_to_perimeterx("page_requested", details)
+            pcall(px_client.send_to_perimeterx, "page_requested", details)
             return true
         end
     end
@@ -159,14 +160,14 @@ function M.application(file_name)
             return px_block.block('cookie_high_score')
         else
             ngx.ctx.pass_reason = 'cookie'
-            px_client.send_to_perimeterx("page_requested", details)
+            pcall(px_client.send_to_perimeterx, "page_requested", details)
             return true
         end
     elseif enable_server_calls == true then
         return perform_s2s(result, details)
     else
         ngx.ctx.pass_reason = 'error'
-        px_client.send_to_perimeterx("page_requested", details)
+        pcall(px_client.send_to_perimeterx, "page_requested", details)
         return true
     end
 end
