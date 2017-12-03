@@ -51,7 +51,7 @@ add_block_preprocessor(
         );
 
         $block->set_value( "more_headers",
-            $block->req_headers . "\n" . $cookie );
+        $block->req_headers . "\n" . $cookie );
     }
 );
 
@@ -112,4 +112,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-PX DEBUG: PX-Cookie Processed Successfully
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Cookie evaluation ended successfully

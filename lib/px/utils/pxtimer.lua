@@ -32,7 +32,7 @@ function M.application(file_name)
  	function submit_on_timer()
 	    local ok, err = ngx_timer_at(1, submit_on_timer)
 	    if not ok then
-	        px_logger.error("Failed to schedule submit timer: " .. err)
+	        px_logger.debug("Failed to schedule submit timer: " .. err)
 	    end
 	    local buflen = buffer.getBufferLength()
 	    if buflen > 0 then
@@ -46,7 +46,7 @@ function M.application(file_name)
 	-- Enforcer telemerty first init
 	local ok, err = ngx_timer_at(1, send_initial_enforcer_telemetry)
 	if not ok then
-		px_logger.error("Failed to schedule telemetry on init: " .. err)
+		px_logger.debug("Failed to schedule telemetry on init: " .. err)
 	end
 
 	-- Init Remote configuration

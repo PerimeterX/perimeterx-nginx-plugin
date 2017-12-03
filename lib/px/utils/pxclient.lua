@@ -58,7 +58,7 @@ function M.load(config_file)
             px_logger.error("Failed to make HTTP POST: " .. err)
             error("Failed to make HTTP POST: " .. err)
         elseif res.status ~= 200 then
-            px_logger.error("Non 200 response code: " .. res.status)
+            px_logger.debug("Non 200 response code: " .. res.status)
             error("Non 200 response code: " .. res.status)
         else
             px_logger.debug("POST response status: " .. res.status)
@@ -71,7 +71,7 @@ function M.load(config_file)
         if px_debug == true then
             local times, err = httpc:get_reused_times()
             if not times then
-                px_logger.debug("Error getting reuse times: " .. err)
+                px_logger.error("Error getting reuse times: " .. err)
             else
                 px_logger.debug("Reused conn times: " .. times)
             end
