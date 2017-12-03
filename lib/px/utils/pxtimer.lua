@@ -16,11 +16,17 @@ function M.application(file_name)
 	local px_commom_utils = require('px.utils.pxcommonutils')
 	local ngx_timer_at = ngx.timer.at
 
-	function send_enforcer_telemetry()
+	function send_initial_enforcer_telemetry()
 		local details = {}
 		details.px_config = px_commom_utils.filter_config(config);
 		details.update_reason = 'initial_config'
 		pxclient.send_enforcer_telmetry(details);
+	end
+
+	function init_remote_config()
+		if config.dynamic_configurations then
+			require("px.utils.config_loader").load(config_file)
+		end
 	end
 
  	function submit_on_timer()
@@ -34,11 +40,19 @@ function M.application(file_name)
 	    end
 	    return
 	end
+	-- Init async activities
 	submit_on_timer()
 
-	local ok, err = ngx_timer_at(1, send_enforcer_telemetry)
+	-- Enforcer telemerty first init
+	local ok, err = ngx_timer_at(1, send_initial_enforcer_telemetry)
 	if not ok then
 		px_logger.error("Failed to schedule telemetry on init: " .. err)
+	end
+
+	-- Init Remote configuration
+	local ok, err = ngx_timer_at(1, init_remote_config)
+	if not ok then
+		px_logger.error("Failed to init remote config: " .. err)
 	end
 
 end

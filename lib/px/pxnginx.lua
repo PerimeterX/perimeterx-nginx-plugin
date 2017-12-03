@@ -23,14 +23,13 @@
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 local M = {}
-
+M.configLoaded = false
 function M.application(file_name)
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
 
     local px_config = require(config_file)
     local _M = {}
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
-
     local px_filters = require("px.utils.pxfilters").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local PXPayload = require('px.utils.pxpayload')

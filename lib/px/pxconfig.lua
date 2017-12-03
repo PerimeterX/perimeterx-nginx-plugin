@@ -34,13 +34,16 @@ _M.enabled_routes = {}
 _M.custom_logo = nil
 _M.css_ref = nil
 _M.js_ref = nil
+
+-- ## Dynamic Configuration Block ##
+_M.dynamic_configurations = false
+_M.configuration_server = 'px-conf.perimeterx.net'
+_M.configuration_server_port = 443
+_M.load_interval = 5
+-- ## END - Configuration block ##
+
 _M.custom_block_url = nil
 _M.redirect_on_custom_url = false
-
--- ## API protection ##
-_M.api_protection_mode = false
-_M.api_protection_block_url = nil
-_M.api_protection_default_redirect_url = nil
 
 -- ## Debug Parameters ##
 _M.px_debug = false
