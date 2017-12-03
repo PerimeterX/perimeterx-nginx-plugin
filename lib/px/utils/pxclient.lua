@@ -35,13 +35,13 @@ function M.load(config_file)
         httpc:set_timeout(timeout)
         local ok, err = httpc:connect(px_server, px_port)
         if not ok then
-            px_logger.debug("HTTPC connection error: " .. err)
+            px_logger.error("HTTPC connection error: " .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
             local session, err = httpc:ssl_handshake()
             if not session then
-                px_logger.debug("HTTPC SSL handshare error: " .. err)
+                px_logger.error("HTTPC SSL handshare error: " .. err)
             end
         end
         -- Perform the HTTP requeset
@@ -55,7 +55,7 @@ function M.load(config_file)
             }
         })
         if not res then
-            px_logger.debug("Failed to make HTTP POST: " .. err)
+            px_logger.error("Failed to make HTTP POST: " .. err)
             error("Failed to make HTTP POST: " .. err)
         elseif res.status ~= 200 then
             px_logger.debug("Non 200 response code: " .. res.status)
@@ -71,7 +71,7 @@ function M.load(config_file)
         if px_debug == true then
             local times, err = httpc:get_reused_times()
             if not times then
-                px_logger.debug("Error getting reuse times: " .. err)
+                px_logger.error("Error getting reuse times: " .. err)
             else
                 px_logger.debug("Reused conn times: " .. times)
             end
@@ -79,7 +79,7 @@ function M.load(config_file)
         -- set keepalive to ensure connection pooling
         local ok, err = httpc:set_keepalive()
         if not ok then
-            px_logger.debug("Failed to set keepalive: " .. err)
+            px_logger.error("Failed to set keepalive: " .. err)
         end
     end
 

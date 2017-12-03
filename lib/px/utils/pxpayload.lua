@@ -134,22 +134,22 @@ function PXPayload:pre_decrypt(cookie, key)
     local cjson = require('cjson')
     local px_header = ngx.ctx.px_header
     if not px_header or px_header == "" then
-        self.px_logger.debug("empty token not allowed")
+        self.px_logger.debug("Mobile empty token not allowed")
         error({ message = "cookie_decryption_failed" })
     end
 
     if px_header == "1" then
-        self.px_logger.debug("Mobile invalid token - no token")
+        self.px_logger.debug("Mobile special token - no token")
         error({ message = "no_cookie" })
     end
 
     if px_header == "2" then
-        self.px_logger.debug("Mobile invalid token - connection error ")
+        self.px_logger.debug("Mobile special token - connection error")
         error({ message = "mobile_sdk_connection_error" })
     end
 
     if px_header == "3" then
-        self.px_logger.debug("Mobile invalid token - pinning issue")
+        self.px_logger.debug("Mobile special token - pinning issue")
         error({ message = "mobile_sdk_pinning_error" })
     end
 

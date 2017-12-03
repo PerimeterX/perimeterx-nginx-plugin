@@ -78,6 +78,7 @@ function M.load(config_file)
                         templateName = 'captcha'
                     end
                 end
+                px_logger.debug("Enforcing action: " .. templateName .. " page is served")
                 local html = px_template.get_template(templateName .. ".mobile", details.block_uuid, vid)
                 local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
                 local result = {
@@ -114,7 +115,6 @@ function M.load(config_file)
                             end
                         end
                         ngx.status = ngx_HTTP_FORBIDDEN;
-                        px_logger.debug("rendering html now")
                         ngx_say(body);
                         ngx_exit(ngx.OK);
                     else
@@ -144,14 +144,13 @@ function M.load(config_file)
                             redirect_to = url
                         }
                         ngx.header["Content-Type"] = 'application/json';
-                        px_logger.debug("rendering html now")
                         ngx_say(cjson.encode(result))
                         ngx_exit(ngx.OK)
                     else
                         local html = '';
                         local template = 'block'
                         if ngx.ctx.px_action == 'j' then
-                            px_logger.debug("challange page is served")
+                            px_logger.debug("Enforcing action: challange page is served")
                             html = ngx.ctx.px_action_data
                         else
                             if ngx.ctx.px_action == 'c' then
@@ -161,10 +160,9 @@ function M.load(config_file)
                                     template = 'captcha'
                                 end
                             end
-                            px_logger.debug(template .. " page is served")
+                            px_logger.debug("Enforcing action: " .. template .. " page is served")
                             html = px_template.get_template(template, uuid, vid)
                         end
-                        px_logger.debug("rendering html now")
                         ngx_say(html);
                         ngx_exit(ngx.OK);
                     end

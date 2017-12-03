@@ -72,7 +72,7 @@ function M.application(file_name)
             if result == false then
                 px_logger.debug("blocking s2s")
                 return px_block.block('s2s_high_score')
-                -- score did not cross the blocking thdreshold
+                -- score did not cross the blocking threshold
             else
                 ngx.ctx.pass_reason = 's2s'
                 px_client.send_to_perimeterx("page_requested", details)
@@ -85,6 +85,7 @@ function M.application(file_name)
                 px_logger.debug('Risk API timed out - rtt: ' .. ngx.ctx.risk_rtt)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
+            px_logger.debug('Risk API failed with error error: ' .. response)
             px_client.send_to_perimeterx("page_requested", details)
             return true
         end
