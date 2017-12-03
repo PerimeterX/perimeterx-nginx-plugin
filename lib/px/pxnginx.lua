@@ -30,10 +30,6 @@ function M.application(file_name)
     local px_config = require(config_file)
     local _M = {}
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
-    if px_config.dynamic_configurations and not M.configLoaded then
-        require("px.utils.config_loader").load(config_file)
-        M.configLoaded = true
-    end
     local px_filters = require("px.utils.pxfilters").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local PXPayload = require('px.utils.pxpayload')
