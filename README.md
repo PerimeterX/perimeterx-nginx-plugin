@@ -5,7 +5,7 @@
 [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 =============================================================
 
-> Latest stable version: [v2.13.1](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/2.13-1)
+> Latest stable version: [v3.0.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/3.0-0)
 
 Table of Contents
 -----------------
@@ -32,6 +32,7 @@ Table of Contents
   *   [Multiple App Support](#multipleapps)
   *   [Additional Activity Handler](#add-activity-handler)
   *   [Whitelisting](#whitelisting)
+  *   [Remote Configurations](#remote-configurations)
 -   [Appendix](#appendix)
   *   [NGINX Plus](#nginxplus)
   *   [NGINX Dynamic Modules](#dynamicmodules)
@@ -557,6 +558,23 @@ whitelist = {
 - **ip_addresses** : for value `{'192.168.99.1'}` - will filter requests coming from any of the listed ips.
 - **ua_full** : for value `{'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}` - will filter all requests matching this exact UA. 
 - **ua_sub** : for value `{'GoogleCloudMonitoring'}` - will filter requests containing the provided string in their UA.
+
+<a name="remote-configurations"></a> Remote Configurations
+-----------------------------------------------
+Remote configuration allows the module to periodically pull configurations from PerimeterX services.
+Once enabled, the configuration can be changed dynamically via PerimeterX portal
+
+Default: false
+
+File: `pxconfig.lua`
+```lua
+...
+_M.dynamic_configurations = true
+_M.load_interval = 5
+...
+```
+
+
 
 <a name="appendix"></a> Appendix
 -----------------------------------------------
