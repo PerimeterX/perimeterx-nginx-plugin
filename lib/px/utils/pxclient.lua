@@ -9,13 +9,17 @@ function M.load(config_file)
     local _M = {}
 
     local http = require "resty.http"
+    local os = require "os"
+    local cjson = require "cjson"
+    local tostring = tostring
+    local ngx_time = ngx.time
+
     local px_config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
-    local ngx_time = ngx.time
-    local tostring = tostring
+
     local auth_token = px_config.auth_token
     local pcall = pcall
 
@@ -55,7 +59,7 @@ function M.load(config_file)
             px_logger.error("Failed to make HTTP POST: " .. err)
             error("Failed to make HTTP POST: " .. err)
         elseif res.status ~= 200 then
-            px_logger.error("Non 200 response code: " .. res.status)
+            px_logger.debug("Non 200 response code: " .. res.status)
             error("Non 200 response code: " .. res.status)
         else
             px_logger.debug("POST response status: " .. res.status)
@@ -68,7 +72,7 @@ function M.load(config_file)
         if px_debug == true then
             local times, err = httpc:get_reused_times()
             if not times then
-                px_logger.debug("Error getting reuse times: " .. err)
+                px_logger.error("Error getting reuse times: " .. err)
             else
                 px_logger.debug("Reused conn times: " .. times)
             end
@@ -102,6 +106,7 @@ function M.load(config_file)
         pxdata['timestamp'] = tostring(ngx_time())
         pxdata['socket_ip'] = px_headers.get_ip()
 
+        details['module_version'] = px_constants.MODULE_VERSION
         details['risk_rtt'] = 0
         details['cookie_origin'] = ngx.ctx.px_cookie_origin
         if ngx.ctx.risk_rtt then
@@ -131,12 +136,27 @@ function M.load(config_file)
 
         pxdata['details'] = details;
 
-        -- Experimental Buffer Support --
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
             pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
         end
+    end
+
+    function _M.send_enforcer_telmetry(details)
+        local enforcer_telemetry = {}
+
+        details.os_name = jit.os
+        details.node_name = os.getenv("HOSTNAME")
+        details.module_version = px_constants.MODULE_VERSION
+
+        enforcer_telemetry.type = 'enforcer_telemetry'
+        enforcer_telemetry.px_app_id = px_config.px_appId
+        enforcer_telemetry.timestamp = tostring(ngx_time())
+        enforcer_telemetry.details = details
+
+        -- Perform the HTTP action
+        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
     end
 
 

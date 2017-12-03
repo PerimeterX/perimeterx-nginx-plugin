@@ -68,7 +68,10 @@ function M.load(config_file)
     -- returns boolean
     function _M.process(data)
         px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.score))
+
         px_headers.set_score_header(data.score)
+        -- Set the pxscore var for logging
+        px_logger.set_score_variable(data.score)
 
         if data.uuid then
             ngx.ctx.uuid = data.uuid
@@ -81,9 +84,9 @@ function M.load(config_file)
             end
         end
 
+        ngx.ctx.block_score = data.score
         if data.score >= px_config.blocking_score then
-            ngx.ctx.block_score = data.score
-            px_logger.error("Block reason - non human score: " .. data.score)
+            px_logger.debug("Block reason - non human score: " .. data.score)
             return false
         end
         return true
@@ -105,14 +108,14 @@ function M.load(config_file)
         httpc:set_timeout(timeout)
         local ok, err = httpc:connect(px_server, px_port)
         if not ok then
-            px_logger.error("HTTPC connection error: " .. err)
+            px_logger.debug("HTTPC connection error: " .. err)
             error('HTTPC connection error:'  .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
             local session, err = httpc:ssl_handshake()
             if not session then
-                px_logger.error("HTTPC SSL handshare error: " .. err)
+                px_logger.debug("HTTPC SSL handshare error: " .. err)
             end
         end
         -- Perform the HTTP requeset
@@ -126,10 +129,10 @@ function M.load(config_file)
             }
         })
         if err or not res then
-            px_logger.error("Failed to make HTTP POST: " .. err)
+            px_logger.debug("Failed to make HTTP POST: " .. err)
             error("Failed to make HTTP POST: " .. err)
         elseif res.status ~= 200 then
-            px_logger.error("Non 200 response code: " .. res.status)
+            px_logger.debug("Non 200 response code: " .. res.status)
             error("Non 200 response code: " .. res.status)
         else
             px_logger.debug("POST response status: " .. res.status)
@@ -147,7 +150,7 @@ function M.load(config_file)
         -- set keepalive to ensure connection pooling
         local ok, err = httpc:set_keepalive()
         if not ok then
-            px_logger.error("Failed to set keepalive: " .. err)
+            px_logger.debug("Failed to set keepalive: " .. err)
         end
 
         return body

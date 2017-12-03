@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.0] - 2017-12-03
+- Added support for remote configurations
+- Enhanced module logs
+- Added support for score variable in logs
+- Added mobile sdk pinning error
+- Added support for enforcer telemetry
+- Fixed mobile sdk header conditions
+
 ## [2.13.1] - 2017-12-01
 ### Fixed
 - Added pcall on sending activities to prevent errors on server

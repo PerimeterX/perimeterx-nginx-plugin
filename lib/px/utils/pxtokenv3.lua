@@ -18,37 +18,30 @@ function TokenV3:validate(data)
         return true
     end
 
-    self.px_logger.error('Failed to verify cookie v3 content ' .. data);
+    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. ngx.req.get_headers()["User-Agent"]);
+    self.px_logger.debug('Failed to verify cookie v3 content ' .. data);
     return false
 end
 
 function TokenV3:process()
     local cookie = ngx.ctx.px_orig_cookie
-    if not cookie or cookie == "1" then
-        self.px_logger.error("no token available")
-        error({ message = "no_cookie" })
-    end
 
-    if cookie == "2" then
-        self.px_logger.error("mobile sdk was unable to reach the server ")
-        error({ message = "mobile_sdk_connection_error" })
-    end
 
     if self.cookie_encrypted == true then
         self.px_logger.debug("cookie is encyrpted")
-        -- self:decrypt(cookie, self.cookie_secret)
-        local success, result = pcall(self.decrypt, self, cookie, self.cookie_secret)
+        local success, result = pcall(self.pre_decrypt, self, cookie, self.cookie_secret)
         if not success then
-            self.px_logger.error("Could not decrpyt px cookie v3")
-            error({ message = "cookie_decryption_failed" })
+            self.px_logger.debug("Could not decrpyt px cookie v3" .. result["message"])
+            error({ message =  result["message"] })
         end
         data = result['plaintext']
         orig_cookie = result['cookie']
+        self.px_logger.debug("decryption passed")
     else
         hash, orig_cookie = self:split_decoded_cookie(cookie);
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then
-            self.px_logger.error("Could not decode b64 cookie - " .. result)
+            self.px_logger.debug("Could not decode b64 cookie - " .. result)
             error({ message = "cookie_decryption_failed" })
         end
         data = result
@@ -57,7 +50,7 @@ function TokenV3:process()
     -- Deserialize the JSON payload
     local success, result = pcall(self.decode, self, data)
     if not success then
-        self.px_logger.error("Could not decode cookie")
+        self.px_logger.debug("Could not decode cookie")
         error({ message = "cookie_decryption_failed" })
     end
 
@@ -75,24 +68,30 @@ function TokenV3:process()
 
     -- cookie expired
     if fields.t and fields.t > 0 and fields.t / 1000 < os.time() then
-        self.px_logger.debug("Cookie expired - " .. data)
+        self.px_logger.debug('Cookie TTL is expired, value: '.. data ..', age: ' .. fields.t / 1000 - os.time())
         error({ message = "cookie_expired" })
     end
 
     -- Set the score header for upstream applications
     self.px_headers.set_score_header(fields.s)
+    -- Set the score variable for logging
+    self.px_logger.set_score_variable(fields.s)
+    
     -- Check bot score and block if it is >= to the configured block score
-    if fields.s and fields.s >= self.blocking_score then
+    if fields.s then
         self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s)
         ngx.ctx.block_score = fields.s
         ngx.ctx.block_action = fields.a
+    end
+
+    if fields.s >= self.blocking_score then
         return false
     end
 
     -- Validate the cookie integrity
     local success, result = pcall(self.validate, self, orig_cookie)
     if not success or result == false then
-        px_logger.error("Could not validate cookie v3 signature - " .. orig_cookie)
+        px_logger.debug("Could not validate cookie v3 signature - " .. orig_cookie)
         error({ message = "cookie_validation_failed" })
     end
 

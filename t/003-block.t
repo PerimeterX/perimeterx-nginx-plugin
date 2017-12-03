@@ -107,7 +107,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 403
 
 --- error_log
-PX DEBUG: Visitor score is higher than allowed threshold: 100
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Visitor score is higher than allowed threshold
 
 === TEST 2: Display default block page
 Process a valid cookie
@@ -154,7 +154,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 403
 
 --- error_log
-PX DEBUG: Visitor score is higher than allowed threshold: 100
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Visitor score is higher than allowed threshold
 
 === TEST 3: Custom block page workflow
 Test the redirect flow
@@ -206,4 +206,4 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 403
 
 --- error_log
-PX DEBUG: Visitor score is higher than allowed threshold: 100
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Visitor score is higher than allowed threshold

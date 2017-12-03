@@ -26,16 +26,8 @@ function M.load(config_file)
         end
 
         if px_config.px_debug == true then
-            ngx_log(ngx_ERR, "PX DEBUG: " .. message)
+            ngx_log(ngx_ERR, "[PerimeterX - DEBUG] [ " .. px_config.px_appId .." ] - " .. message)
         end
-    end
-
-    function _M.info(message)
-        if (not validate_msg(message)) then
-            return
-        end
-
-        ngx_log(ngx_ERR, "PX INFO: " .. message)
     end
 
     function _M.error(message)
@@ -43,8 +35,15 @@ function M.load(config_file)
             return
         end
 
-        ngx_log(ngx_ERR, "PX ERROR: " .. message)
+        ngx_log(ngx_ERR, "[PerimeterX - ERROR] [ " .. px_config.px_appId .." ] - " .. message)
     end
+
+    function _M.set_score_variable(score)
+		if ngx.var.pxscore then
+			ngx.var.pxscore = score
+		end
+    end
+
     return _M
 end
 return M

@@ -45,7 +45,7 @@ function M.load(config_file)
         px_logger.debug("fetching template from: " .. template_path)
         local file = io.open(template_path, "r")
         if (file == nil) then
-            px_logger.error("the template " .. string.format("%s.mustache", template) .. " was not found")
+            px_logger.debug("the template " .. string.format("%s.mustache", template) .. " was not found")
         end
         local content = file:read("*all")
         file:close()

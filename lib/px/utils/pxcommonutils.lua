@@ -18,4 +18,27 @@ function _M.array_index_of(array, item)
     return -1
 end
 
+function clone (t) -- deep-copy a table
+    if type(t) ~= "table" then return t end
+    local meta = getmetatable(t)
+    local target = {}
+    for k, v in pairs(t) do
+        if type(v) == "table" then
+            target[k] = clone(v)
+        else
+            target[k] = v
+        end
+    end
+    setmetatable(target, meta)
+    return target
+end
+
+function  _M.filter_config(px_config)
+    local config_copy = clone(px_config);
+    -- remove
+    config_copy.cookie_secret = nil
+    config_copy.auth_token = nil
+    return config_copy
+end
+
 return _M

@@ -111,4 +111,4 @@ Content-Type: application/json
 --- error_code: 403
 
 --- error_log
-PX DEBUG: PX-Cookie Processed Successfully
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Cookie evaluation ended successfully, risk score: 100

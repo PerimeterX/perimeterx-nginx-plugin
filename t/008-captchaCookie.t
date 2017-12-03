@@ -53,5 +53,5 @@ Cookie: _pxCaptcha={"r":"cpathcavalue","u":"628a96c0-ebb0-11e6-b1b9-8bb13181c15e
 --- error_code: 200
 
 --- error_log
-PX DEBUG: Processing new CAPTCHA object
-PX DEBUG: Sending Captcha API call to eval cookie
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Captcha cookie found, evaluating
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Captcha evaulation completed
