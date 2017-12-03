@@ -101,4 +101,4 @@ Content-Type: application/json
 --- error_code: 403
 
 --- error_log
-PX DEBUG: Visitor score is higher than allowed threshold
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Visitor score is higher than allowed threshold

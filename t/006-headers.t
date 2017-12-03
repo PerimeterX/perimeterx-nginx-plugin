@@ -115,7 +115,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 --- error_code: 200
 
 --- error_log
-Request is internal. PerimeterX processing skipped.
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Request is internal. PerimeterX processing skipped.
 
 === TEST 2: Clear protected header from request
 
@@ -218,4 +218,4 @@ X-PX-SCORE: 0
 --- error_code: 200
 
 --- error_log
-Request is internal. PerimeterX processing skipped.
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Request is internal. PerimeterX processing skipped.
