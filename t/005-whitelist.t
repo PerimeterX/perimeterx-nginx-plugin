@@ -110,7 +110,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-PX DEBUG: Whitelisted: IP address  1.2.3.4
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: IP address  1.2.3.4
 
 === TEST 2: Whitelist - URI Full 
 
@@ -164,7 +164,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-PX DEBUG: Whitelisted: uri_full. /t/full/uri
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: uri_full. /t/full/uri
 
 === TEST 3: Whitelist - URI Prefix
 
@@ -219,7 +219,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-PX DEBUG: Whitelisted: uri_prefixes. /t/prefix
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: uri_prefixes. /t/prefix
 
 === TEST 4: Whitelist - Suffix
 
@@ -277,7 +277,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-PX DEBUG: Whitelisted: uri_suffix. .css
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: uri_suffix. .css,
 
 === TEST 5: Whitelist - Full UA 
 
@@ -336,7 +336,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-PX DEBUG: Whitelisted: UA strict match Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: UA strict match Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
 === TEST 6: Whitelist - UA Partial 
 
@@ -396,4 +396,4 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-PX DEBUG: Whitelisted: UA partial match Mozilla/5.0
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: UA partial match Mozilla/5.0
