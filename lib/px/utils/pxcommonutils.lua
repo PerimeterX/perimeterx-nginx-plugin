@@ -34,11 +34,24 @@ function clone (t) -- deep-copy a table
 end
 
 function  _M.filter_config(px_config)
-    local config_copy = clone(px_config);
+    local config_copy = clone(px_config)
     -- remove
     config_copy.cookie_secret = nil
     config_copy.auth_token = nil
     return config_copy
+end
+
+function  _M.filter_headers(sensitive_headers)
+    local headers = ngx.req.get_headers()
+    local request_headers = {}
+    for k, v in pairs(headers) do
+        -- filter sensitive headers
+        if _M.array_index_of(sensitive_headers, k) == -1 then
+            request_headers[#request_headers + 1] = { ['name'] = k, ['value'] = v }
+        end
+    end
+
+    return request_headers
 end
 
 return _M
