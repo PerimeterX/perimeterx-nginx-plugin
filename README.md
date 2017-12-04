@@ -323,7 +323,9 @@ Enables debug logging mode.
 _M.px_debug = true
 ```
 Once Enabled, debug messages coming out from PerimeterX should be in the following template
+
 `[PerimeterX - DEBUG] [APP_ID] - MESSAGE` - for debug messages
+
 `[PerimeterX - ERROR] [APP_ID] - MESSAGE` - for error messages
 
 Exmple for a valid request flow
