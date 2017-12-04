@@ -41,13 +41,17 @@ function  _M.filter_config(px_config)
     return config_copy
 end
 
-function  _M.filter_headers(sensitive_headers)
+function  _M.filter_headers(sensitive_headers, isRiskRequest)
     local headers = ngx.req.get_headers()
     local request_headers = {}
     for k, v in pairs(headers) do
         -- filter sensitive headers
         if _M.array_index_of(sensitive_headers, k) == -1 then
-            request_headers[#request_headers + 1] = { ['name'] = k, ['value'] = v }
+            if isRiskRequest == true then
+                request_headers[#request_headers + 1] = { ['name'] = k, ['value'] = v }
+            else
+                request_headers[k] = v
+            end
         end
     end
 

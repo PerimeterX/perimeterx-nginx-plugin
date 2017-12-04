@@ -43,7 +43,7 @@ function M.load(config_file)
         captcha_reset.request.ip = px_headers.get_ip()
         captcha_reset.request.uri = ngx.var.uri
         captcha_reset.request.captchaType = px_config.captcha_provider
-        captcha_reset.request.headers = px_common_utils.filter_headers(px_config.sensitive_headers)
+        captcha_reset.request.headers = px_common_utils.filter_headers(px_config.sensitive_headers, false)
         captcha_reset.pxCaptcha = captcha;
         captcha_reset.hostname = ngx.var.host;
 

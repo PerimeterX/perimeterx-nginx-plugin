@@ -101,7 +101,7 @@ function M.load(config_file)
 
         local pxdata = {};
         pxdata['type'] = event_type;
-        pxdata['headers'] = px_common_utils.filter_headers(px_config.sensitive_headers)
+        pxdata['headers'] = px_common_utils.filter_headers(px_config.sensitive_headers, false)
         pxdata['url'] = full_url;
         pxdata['px_app_id'] = px_config.px_appId
         pxdata['timestamp'] = tostring(ngx_time())
