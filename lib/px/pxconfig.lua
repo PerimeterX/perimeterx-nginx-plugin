@@ -29,6 +29,7 @@ _M.sensitive_routes_suffix = {}
 _M.captcha_provider = "reCaptcha"
 _M.additional_activity_handler = nil
 _M.enabled_routes = {}
+_M.first_party_enabled = true
 
 -- ## Blocking Page Parameters ##
 _M.custom_logo = nil
@@ -55,6 +56,11 @@ _M.px_port = 443
 _M.ssl_enabled = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
+_M.base_url = _M.px_appId == 'PX_APP_ID' and 'sapi.perimeterx.net' or string.format('sapi-%s.perimeterx.net', _M.px_appId)
+_M.collector_host = _M.px_appId == 'PX_APP_ID' and 'collector.perimeterx.net' or string.format('collector-%s.perimeterx.net', _M.px_appId)
+_M.client_host = "client.perimeterx.net"
+_M.collector_port_overide = nil
+_M.client_port_overide = nil
 -- ## END - Configuration block ##
 
 -- ## Filter Configuration ##

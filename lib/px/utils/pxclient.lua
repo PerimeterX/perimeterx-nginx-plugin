@@ -13,6 +13,8 @@ function M.load(config_file)
     local cjson = require "cjson"
     local tostring = tostring
     local ngx_time = ngx.time
+    local ngx_req_set_header = ngx.req.set_header
+    local ngx_req_set_uri = ngx.req.set_uri
 
     local px_config = require(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
@@ -20,15 +22,18 @@ function M.load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require "px.utils.pxcommonutils"
+    local pcall = pcall
+
 
     local auth_token = px_config.auth_token
-    local pcall = pcall
+    local ssl_enabled = px_config.ssl_enabled
+    local px_server = px_config.base_url
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path)
-        local px_server = 'sapi-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+
+
         local px_port = px_config.px_port
-        local ssl_enabled = px_config.ssl_enabled
         local px_debug = px_config.px_debug
         -- timeout in milliseconds
         local timeout = px_config.client_timeout
@@ -160,6 +165,74 @@ function M.load(config_file)
         _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
     end
 
+    function _M.forward_to_perimeterx(server, port_overide)
+        ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
+        local port = ngx.var.scheme == 'http' and '80' or '443'
+        if port_overide ~= nil then
+            px_logger.debug('Overrding port ' .. port ..  ' => ' .. port_overide)
+            port =  port_overide
+        end
+        px_logger.debug("Using " .. ngx.var.scheme .. " port " .. port)
+        local httpc = http.new()
+
+        httpc:set_timeout(500)
+
+        local ok, err = httpc:connect(server, port)
+
+        if not ok then
+            ngx.log(ngx.ERR, err)
+            return
+        end
+
+        if port == '443' and ssl_enabled then
+            if ssl_enabled == true then
+                local session, err = httpc:ssl_handshake()
+                if not session then
+                    px_logger.error("HTTPC SSL handshare error: " .. err)
+                end
+            end
+        end
+
+        httpc:set_timeout(2000)
+        httpc:proxy_response(httpc:proxy_request())
+        httpc:set_keepalive()
+    end
+
+    function _M.reverse_px_client()
+        local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
+        px_headers.clear_protected_headers();
+        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to client at " .. px_config.client_host  .. px_request_uri)
+        ngx_req_set_uri(px_request_uri)
+        -- change the host for fastly to direct this to the proper path
+        ngx_req_set_header('host', px_config.client_host)
+        _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
+    end
+
+    function _M.reverse_px_xhr()
+        local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+        local px_request_uri = string.gsub(ngx.var.request_uri, '/' .. reverse_prefix .. '/xhr', '')
+
+        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
+        ngx_req_set_uri(px_request_uri)
+        ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
+
+        local vid = ''
+
+        if ngx.var.cookie__pxvid then
+            vid = ngx.var.cookie__pxvid
+        elseif ngx.var.cookie_vid then
+            vid = ngx.var.cookie_vid
+        end
+
+        px_headers.clear_protected_headers();
+
+        if vid ~= '' then
+            px_logger.debug("Attaching VID cookie")
+            ngx_req_set_header('cookie', 'vid=' .. vid)
+        end
+
+        _M.forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide)
+    end
 
     return _M
 end

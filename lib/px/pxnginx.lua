@@ -90,6 +90,21 @@ function M.application(file_name)
             return true
         end
     end
+
+    if px_config.first_party_enabled then
+        local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+        if string.find(ngx.var.request_uri, "/" .. reverse_prefix .. "/main.min.js") then
+            px_client.reverse_px_client()
+            return true
+        end
+
+        if string.find(ngx.var.request_uri, "/" .. reverse_prefix .. "/xhr") then
+            px_client.reverse_px_xhr()
+            return true
+        end
+    end
+
+
     if not px_config.px_enabled then
         px_logger.debug("Request will not be verified, module is disabled")
         return true
