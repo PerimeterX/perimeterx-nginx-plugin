@@ -32,7 +32,6 @@ function M.load(config_file)
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path)
 
-
         local px_port = px_config.px_port
         local px_debug = px_config.px_debug
         -- timeout in milliseconds

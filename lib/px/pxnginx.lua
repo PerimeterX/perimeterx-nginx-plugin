@@ -105,7 +105,6 @@ function M.application(file_name)
         end
     end
 
-
     if not px_config.px_enabled then
         px_logger.debug("Request will not be verified, module is disabled")
         return true
@@ -134,7 +133,6 @@ function M.application(file_name)
     -- Clean any protected headers from the request.
     -- Prevents header spoofing to upstream application
     px_headers.clear_protected_headers()
-
 
     -- run filter and whitelisting logic
     if (px_filters.process()) then
