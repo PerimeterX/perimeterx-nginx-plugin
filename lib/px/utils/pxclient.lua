@@ -210,7 +210,7 @@ function M.load(config_file)
 
     function _M.reverse_px_xhr()
         local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
-        local px_request_uri = string.gsub(ngx.var.request_uri, '/' .. reverse_prefix .. '/xhr', '')
+        local px_request_uri = string.gsub(ngx.var.request_uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
 
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)

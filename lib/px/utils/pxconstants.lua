@@ -12,7 +12,9 @@ local _M = {
     TELEMETRY_PATH = "/api/v2/risk/telemetry",
     REMOTE_CONFIGURATIONS_PATH = "/api/v1/enforcer",
     ENFORCER_TRUE_IP_HEADER = 'x-px-enforcer-true-ip',
-    FIRST_PARTY_HEADER = 'x-px-first-party'
+    FIRST_PARTY_HEADER = 'x-px-first-party',
+    FIRST_PARTY_VENDOR_PATH = '/main.min.js',
+    FIRST_PARTY_XHR_PATH = '/xhr',
 }
 
 return _M

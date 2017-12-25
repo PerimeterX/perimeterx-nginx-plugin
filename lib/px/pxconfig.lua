@@ -11,9 +11,9 @@ _M.px_enabled = true
 -- ##  Configuration Block ##
 
 -- ## Required Parameters ##
-_M.px_appId = 'PXvRfnOj4y'
-_M.cookie_secret = 'perimeterx'
-_M.auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ5NjY2MzQ2Niwic3ViIjoiUFh2UmZuT2o0eSIsImp0aSI6IjgwYjY1MmQ2LTZkN2MtNGNkNy1hNTdhLTU4MWUxMGZjN2JlNiJ9.M3QMB7GFndSE6U8slsMmYEU6H2h_elzQtx7_3EoMSIU'
+_M.px_appId = 'PX_APP_ID'
+_M.cookie_secret = 'COOKIE_SECERT'
+_M.auth_token = 'AUTH_TOKEN'
 
 -- ## Blocking Parameters ##
 _M.blocking_score = 100
@@ -54,7 +54,7 @@ _M.s2s_timeout = 1000
 _M.client_timeout = 2000
 _M.cookie_encrypted = true
 _M.px_maxbuflen = 10
-_M.px_port = 8080
+_M.px_port = 443
 _M.ssl_enabled = false
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true

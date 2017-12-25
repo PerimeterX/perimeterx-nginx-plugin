@@ -87,4 +87,4 @@ Content-Length: 187
 payload=W3sidCI6IlBYMiIsImQiOnsiUFg2MyI6Ik1hY0ludGVsIiwiUFg5NiI6Imh0dHA6Ly9zYW1wbGUtbmdpbngucHhjaGsubmV0LyJ9fV0=&appId=PXvRfnOj4y&tag=v2.60&uuid=c18ef200-e96c-11e7-8135-099eab567657&ft=14"
 
 --- error_log
-[PerimeterX - DEBUG] [ pxvrfnoj4y ] - Forwarding request from /vrfnoj4y/xhr/api/v1/collector to xhr at collector-PXvRfnOj4y.perimeterx.net/api/v1/collector
+[PerimeterX - DEBUG] [ pxvrfnoj4y ] - Forwarding request from /vrfnoj4y/xhr/api/v1/collector to xhr at collector.perimeterx.net/api/v1/collector
