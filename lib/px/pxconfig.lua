@@ -11,13 +11,13 @@ _M.px_enabled = true
 -- ##  Configuration Block ##
 
 -- ## Required Parameters ##
-_M.px_appId = 'PX_APP_ID'
-_M.cookie_secret = 'COOKIE_KEY'
-_M.auth_token = 'PX_AUTH_TOKEN'
+_M.px_appId = 'PXvRfnOj4y'
+_M.cookie_secret = 'perimeterx'
+_M.auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ5NjY2MzQ2Niwic3ViIjoiUFh2UmZuT2o0eSIsImp0aSI6IjgwYjY1MmQ2LTZkN2MtNGNkNy1hNTdhLTU4MWUxMGZjN2JlNiJ9.M3QMB7GFndSE6U8slsMmYEU6H2h_elzQtx7_3EoMSIU'
 
 -- ## Blocking Parameters ##
 _M.blocking_score = 100
-_M.block_enabled = false
+_M.block_enabled = true
 _M.captcha_enabled = true
 
 -- ## Additional Configuration Parameters ##
@@ -30,6 +30,7 @@ _M.captcha_provider = "reCaptcha"
 _M.additional_activity_handler = nil
 _M.enabled_routes = {}
 _M.first_party_enabled = true
+
 
 -- ## Blocking Page Parameters ##
 _M.custom_logo = nil
@@ -46,14 +47,15 @@ _M.load_interval = 5
 _M.custom_block_url = nil
 _M.redirect_on_custom_url = false
 
+
 -- ## Debug Parameters ##
-_M.px_debug = false
+_M.px_debug = true
 _M.s2s_timeout = 1000
 _M.client_timeout = 2000
 _M.cookie_encrypted = true
 _M.px_maxbuflen = 10
-_M.px_port = 443
-_M.ssl_enabled = true
+_M.px_port = 8080
+_M.ssl_enabled = false
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
 _M.base_url = _M.px_appId == 'PX_APP_ID' and 'sapi.perimeterx.net' or string.format('sapi-%s.perimeterx.net', _M.px_appId)

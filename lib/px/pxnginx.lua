@@ -93,12 +93,13 @@ function M.application(file_name)
 
     if px_config.first_party_enabled then
         local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
-        if string.find(ngx.var.request_uri, "/" .. reverse_prefix .. "/main.min.js") then
+        local lower_request_url = string.lower(ngx.var.request_uri)
+        if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. "/main.min.js")) then
             px_client.reverse_px_client()
             return true
         end
 
-        if string.find(ngx.var.request_uri, "/" .. reverse_prefix .. "/xhr") then
+        if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. "/xhr")) then
             px_client.reverse_px_xhr()
             return true
         end
