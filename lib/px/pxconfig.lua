@@ -12,12 +12,12 @@ _M.px_enabled = true
 
 -- ## Required Parameters ##
 _M.px_appId = 'PX_APP_ID'
-_M.cookie_secret = 'COOKIE_SECERT'
-_M.auth_token = 'AUTH_TOKEN'
+_M.cookie_secret = 'COOKIE_KEY'
+_M.auth_token = 'PX_AUTH_TOKEN'
 
 -- ## Blocking Parameters ##
 _M.blocking_score = 100
-_M.block_enabled = true
+_M.block_enabled = false
 _M.captcha_enabled = true
 
 -- ## Additional Configuration Parameters ##
@@ -49,13 +49,13 @@ _M.redirect_on_custom_url = false
 
 
 -- ## Debug Parameters ##
-_M.px_debug = true
+_M.px_debug = false
 _M.s2s_timeout = 1000
 _M.client_timeout = 2000
 _M.cookie_encrypted = true
 _M.px_maxbuflen = 10
 _M.px_port = 443
-_M.ssl_enabled = false
+_M.ssl_enabled = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
 _M.base_url = _M.px_appId == 'PX_APP_ID' and 'sapi.perimeterx.net' or string.format('sapi-%s.perimeterx.net', _M.px_appId)
