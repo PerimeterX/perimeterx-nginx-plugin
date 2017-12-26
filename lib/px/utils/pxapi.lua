@@ -23,6 +23,7 @@ function M.load(config_file)
     -- returns table
     function _M.new_request_object(call_reason)
         local risk = {}
+        px_logger.enrich_log('pxcall', call_reason)
         risk.cid = ''
         risk.request = {}
         risk.request.ip = px_headers.get_ip()
@@ -68,6 +69,7 @@ function M.load(config_file)
 
         if data.uuid then
             ngx.ctx.uuid = data.uuid
+            px_logger.enrich_log('pxuuid',data.uuid)
         end
 
         if data.action then
