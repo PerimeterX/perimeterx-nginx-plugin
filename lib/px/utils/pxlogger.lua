@@ -2,7 +2,6 @@
 -- PerimeterX(www.perimeterx.com) Nginx plugin
 ----------------------------------------------
 
-
 local M = {}
 
 function M.load(config_file)

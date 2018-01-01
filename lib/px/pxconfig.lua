@@ -29,7 +29,6 @@ _M.additional_activity_handler = nil
 _M.enabled_routes = {}
 _M.first_party_enabled = true
 
-
 -- ## Blocking Page Parameters ##
 _M.custom_logo = nil
 _M.css_ref = nil
