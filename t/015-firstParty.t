@@ -21,7 +21,7 @@ __DATA__
     real_ip_header     X-Forwarded-For;
 --- config
 
-    location  = /vRfnOj4y/main.min.js {
+    location  = /vRfnOj4y/init.js {
         resolver 8.8.8.8;
         set_by_lua_block $config {
             pxconfig = require "px.pxconfig"
@@ -40,10 +40,10 @@ __DATA__
     }
 
 --- request
-GET /vRfnOj4y/main.min.js
+GET /vRfnOj4y/init.js
 
 --- error_log
-[PerimeterX - DEBUG] [ PXvRfnOj4y ] - Forwarding request from /vRfnOj4y/main.min.js to client at client.perimeterx.net/PXvRfnOj4y/main.min.js
+[PerimeterX - DEBUG] [ PXvRfnOj4y ] - Forwarding request from /vRfnOj4y/init.js to client at client.perimeterx.net/PXvRfnOj4y/main.min.js
 
 === TEST 2: Forward XHR requests
 
@@ -58,7 +58,6 @@ GET /vRfnOj4y/main.min.js
     }
     set_real_ip_from   0.0.0.0/0;
     real_ip_header     X-Forwarded-For;
-
 --- config
 
     location  = /vrfnoj4y/xhr/api/v1/collector {
@@ -70,6 +69,7 @@ GET /vRfnOj4y/main.min.js
             pxconfig.send_page_requested_activity = false
             pxconfig.px_debug = true
             pxconfig.px_appId = "pxvrfnoj4y"
+            pxconfig.collector_host = string.format('collector-%s.perimeterx.net', pxconfig.px_appId)
             return true
         }
 
@@ -87,4 +87,4 @@ Content-Length: 187
 payload=W3sidCI6IlBYMiIsImQiOnsiUFg2MyI6Ik1hY0ludGVsIiwiUFg5NiI6Imh0dHA6Ly9zYW1wbGUtbmdpbngucHhjaGsubmV0LyJ9fV0=&appId=PXvRfnOj4y&tag=v2.60&uuid=c18ef200-e96c-11e7-8135-099eab567657&ft=14"
 
 --- error_log
-[PerimeterX - DEBUG] [ pxvrfnoj4y ] - Forwarding request from /vrfnoj4y/xhr/api/v1/collector to xhr at collector.perimeterx.net/api/v1/collector
+[PerimeterX - DEBUG] [ pxvrfnoj4y ] - Forwarding request from /vrfnoj4y/xhr/api/v1/collector to xhr at collector-pxvrfnoj4y.perimeterx.net/api/v1/collector
