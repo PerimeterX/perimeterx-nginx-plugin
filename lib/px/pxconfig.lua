@@ -1,7 +1,5 @@
 ----------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.5.0
--- Release date: 05.04.2016
 ----------------------------------------------
 
 local _M = {}
@@ -29,6 +27,7 @@ _M.sensitive_routes_suffix = {}
 _M.captcha_provider = "reCaptcha"
 _M.additional_activity_handler = nil
 _M.enabled_routes = {}
+_M.first_party_enabled = true
 
 -- ## Blocking Page Parameters ##
 _M.custom_logo = nil
@@ -45,6 +44,7 @@ _M.load_interval = 5
 _M.custom_block_url = nil
 _M.redirect_on_custom_url = false
 
+
 -- ## Debug Parameters ##
 _M.px_debug = false
 _M.s2s_timeout = 1000
@@ -55,6 +55,11 @@ _M.px_port = 443
 _M.ssl_enabled = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
+_M.base_url = string.format('sapi-%s.perimeterx.net', _M.px_appId)
+_M.collector_host = string.format('collector-%s.perimeterx.net', _M.px_appId)
+_M.client_host = "client.perimeterx.net"
+_M.collector_port_overide = nil
+_M.client_port_overide = nil
 -- ## END - Configuration block ##
 
 -- ## Filter Configuration ##
