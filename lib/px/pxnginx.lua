@@ -91,14 +91,19 @@ function M.application(file_name)
         end
     end
 
+    -- Reverse proxy if request are first party
     if px_config.first_party_enabled then
+        -- Construct prefix from px_appId
         local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
         local lower_request_url = string.lower(ngx.var.request_uri)
+
+        -- Match for client
         if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_VENDOR_PATH)) then
             px_client.reverse_px_client()
             return true
         end
 
+        -- Match for XHRs
         if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH)) then
             px_client.reverse_px_xhr()
             return true

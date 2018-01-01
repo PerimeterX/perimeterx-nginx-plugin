@@ -1,7 +1,5 @@
 ----------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.5.0
--- Release date: 05.04.2016
 ----------------------------------------------
 
 local _M = {}
@@ -58,8 +56,8 @@ _M.px_port = 443
 _M.ssl_enabled = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
-_M.base_url = _M.px_appId == 'PX_APP_ID' and 'sapi.perimeterx.net' or string.format('sapi-%s.perimeterx.net', _M.px_appId)
-_M.collector_host = _M.px_appId == 'PX_APP_ID' and 'collector.perimeterx.net' or string.format('collector-%s.perimeterx.net', _M.px_appId)
+_M.base_url = string.format('sapi-%s.perimeterx.net', _M.px_appId)
+_M.collector_host = string.format('collector-%s.perimeterx.net', _M.px_appId)
 _M.client_host = "client.perimeterx.net"
 _M.collector_port_overide = nil
 _M.client_port_overide = nil
