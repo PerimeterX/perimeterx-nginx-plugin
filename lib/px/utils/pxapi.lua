@@ -65,7 +65,7 @@ function M.load(config_file)
 
         px_headers.set_score_header(data.score)
         -- Set the pxscore var for logging
-        px_logger.set_score_variable(data.score)
+        px_logger.enrich_log('pxscore',data.score)
 
         if data.uuid then
             ngx.ctx.uuid = data.uuid

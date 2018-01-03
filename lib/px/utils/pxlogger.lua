@@ -38,12 +38,6 @@ function M.load(config_file)
         ngx_log(ngx_ERR, "[PerimeterX - ERROR] [ " .. px_config.px_appId .." ] - " .. message)
     end
 
-    function _M.set_score_variable(value)
-		if ngx.var.pxscore then
-            ngx.var.pxscore = value
-		end
-    end
-
     function _M.enrich_log(key, value)
         if ngx.var[key] then
            ngx.var[key] = value
