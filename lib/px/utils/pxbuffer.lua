@@ -1,7 +1,5 @@
 ----------------------------------------------
 ---- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.4
--- Release date: 07.11.2016
 ------------------------------------------------
 
 local cjson = require "cjson"
