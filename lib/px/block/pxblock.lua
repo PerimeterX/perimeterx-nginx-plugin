@@ -50,10 +50,12 @@ function M.load(config_file)
         details.module_version = px_constants.MODULE_VERSION
         if reason then
             details.block_reason = reason
+            px_logger.enrich_log("pxblock", reason)
         end
 
         if ngx.ctx.uuid then
             uuid = ngx.ctx.uuid
+            px_logger.enrich_log("pxuuid", ngx.ctx.uuid)
             details.block_uuid = uuid
         end
 
@@ -64,7 +66,11 @@ function M.load(config_file)
 
         if ngx.ctx.vid then
             vid = ngx.ctx.vid
+            px_logger.enrich_log("pxvid", ngx.ctx.vid)
         end
+
+        px_logger.enrich_log('pxaction', ngx.ctx.px_action)
+
         px_client.send_to_perimeterx('block', details);
         if px_config.block_enabled then
             if ngx.ctx.px_cookie_origin == "header" then

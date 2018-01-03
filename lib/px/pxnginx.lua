@@ -84,7 +84,7 @@ function M.application(file_name)
                 px_logger.debug('Risk API timed out - rtt: ' .. ngx.ctx.risk_rtt)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
-            px_logger.debug('Risk API failed with error error: ' .. response)
+            px_logger.debug('Risk API failed with error: ' .. response)
             px_client.send_to_perimeterx("page_requested", details)
 
             return true
@@ -174,6 +174,8 @@ function M.application(file_name)
         details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
         details["px_cookie_version"] = ngx.ctx.px_cookie_version;
 
+        px_logger.enrich_log('pxscore', ngx.ctx.block_score)
+        px_logger.enrich_log('pxcookiets', ngx.ctx.cookie_timestamp)
         -- score crossed threshold
         if result == false then
             return px_block.block('cookie_high_score')

@@ -114,14 +114,17 @@ function M.load(config_file)
         details['cookie_origin'] = ngx.ctx.px_cookie_origin
         if ngx.ctx.risk_rtt then
             details['risk_rtt'] = math.ceil(ngx.ctx.risk_rtt)
+            px_logger.enrich_log('pxrtt', math.ceil(ngx.ctx.risk_rtt))
         end
 
         if ngx.ctx.vid then
             details['vid'] = ngx.ctx.vid
+            px_logger.enrich_log('pxvid', ngx.ctx.vid)
         end
 
         if ngx.ctx.uuid then
             details['client_uuid'] = ngx.ctx.uuid
+            px_logger.enrich_log('pxuuid',ngx.ctx.uuid)
         end
 
         if ngx.ctx.px_cookie then
@@ -135,6 +138,7 @@ function M.load(config_file)
         if event_type == 'page_requested' then
             px_logger.debug("Sent page requested acitvity")
             details['pass_reason'] = ngx.ctx.pass_reason
+            px_logger.enrich_log('pxpass', details.pass_reason)
         end
 
         pxdata['details'] = details;
