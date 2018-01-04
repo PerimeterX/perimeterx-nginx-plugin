@@ -168,6 +168,11 @@ function M.load(config_file)
 
     function _M.forward_to_perimeterx(server, port_overide)
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
+        -- change the host for fastly to direct this to the proper part
+
+        px_logger.debug('setting host to: ' .. server)
+        ngx_req_set_header('host', server)
+
         local port = ngx.var.scheme == 'http' and '80' or '443'
         if port_overide ~= nil then
             px_logger.debug('Overrding port ' .. port ..  ' => ' .. port_overide)
@@ -176,7 +181,7 @@ function M.load(config_file)
         px_logger.debug("Using " .. ngx.var.scheme .. " port " .. port)
         local httpc = http.new()
 
-        httpc:set_timeout(500)
+        httpc:set_timeout(2000)
 
         local ok, err = httpc:connect(server, port)
 
@@ -194,7 +199,6 @@ function M.load(config_file)
             end
         end
 
-        httpc:set_timeout(2000)
         httpc:proxy_response(httpc:proxy_request())
         httpc:set_keepalive()
     end
@@ -202,16 +206,14 @@ function M.load(config_file)
     function _M.reverse_px_client()
         local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
         px_headers.clear_protected_headers();
-        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to client at " .. px_config.client_host  .. px_request_uri)
+        px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
-        -- change the host for fastly to direct this to the proper path
-        ngx_req_set_header('host', px_config.client_host)
         _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
     end
 
     function _M.reverse_px_xhr()
         local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
-        local px_request_uri = string.gsub(ngx.var.request_uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
+        local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
 
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
