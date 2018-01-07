@@ -167,10 +167,10 @@ function M.load(config_file)
     end
 
     function _M.forward_to_perimeterx(server, port_overide)
+        -- Attach real ip from the enforcer
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
-        -- change the host for fastly to direct this to the proper part
 
-        px_logger.debug('setting host to: ' .. server)
+        -- change the host so BE knows where to serve the request
         ngx_req_set_header('host', server)
 
         local port = ngx.var.scheme == 'http' and '80' or '443'
@@ -204,6 +204,13 @@ function M.load(config_file)
     end
 
     function _M.reverse_px_client()
+        if not px_config.first_party_enabled then
+            ngx.header["Content-Type"] = 'application/javascript';
+            ngx.say('')
+            ngx.exit(ngx.OK)
+            return
+        end
+
         local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
         px_headers.clear_protected_headers();
         px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
@@ -212,6 +219,18 @@ function M.load(config_file)
     end
 
     function _M.reverse_px_xhr()
+        if not px_config.first_party_enabled or px_config.reverse_xhr_disabled then
+            if string.match(ngx.var.uri, 'gif') then
+                ngx.header["Content-Type"] = 'image/gif';
+                ngx.say(ngx.decode_base64(px_constants.EMPTY_GIF_B64))
+            else
+                ngx.header["Content-Type"] = 'application/json';
+                ngx.say('{}')
+            end
+            ngx.exit(ngx.OK)
+            return
+        end
+
         local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
         local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
 

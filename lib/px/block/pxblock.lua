@@ -16,6 +16,7 @@ function M.load(config_file)
     local px_template = require("px.block.pxtemplate").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_headers = require("px.utils.pxheaders").load(config_file)
     local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
@@ -137,7 +138,7 @@ function M.load(config_file)
                 else
                     ngx.status = ngx_HTTP_FORBIDDEN;
                     if px_config.api_protection_mode then
-                        local redirect_url = ngx.req.get_headers()['Referer']
+                        local redirect_url = px_headers.get_headers('Referer')
                         if redirect_url == nil or redirect_url == '' then
                             redirect_url = px_config.api_protection_default_redirect_url
                         end
