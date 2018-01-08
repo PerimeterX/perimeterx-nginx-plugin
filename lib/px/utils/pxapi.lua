@@ -27,12 +27,12 @@ function M.load(config_file)
         risk.request.ip = px_headers.get_ip()
         risk.request.uri = ngx.var.request_uri
         risk.request.headers = px_common_utils.filter_headers(px_config.sensitive_headers, true)
+        risk.request.firstParty = px_config.first_party_enaled or false
+        
         px_logger.debug(cjson.encode(risk.request.headers))
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
-
-        risk.additional.first_party_mode = px_config.first_party_enaled or false
-
+        
         if ngx.ctx.vid then
             risk.vid = ngx.ctx.vid
         end
