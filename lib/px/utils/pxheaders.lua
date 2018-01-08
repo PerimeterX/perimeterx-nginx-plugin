@@ -39,7 +39,7 @@ function M.load(config_file)
     end
 
     function _M.validate_internal_request()
-        local px_internal = _M.get_headers('px_internal')
+        local px_internal = _M.get_header('px_internal')
         if px_internal and px_internal == header_token() then
             px_logger.debug('Request is internal. PerimeterX processing skipped.')
             return true
@@ -66,8 +66,8 @@ function M.load(config_file)
     function _M.get_ip()
         if px_config.ip_headers ~= nil then
             for i, header in ipairs(px_config.ip_headers) do
-                if _M.get_headers(header) ~= nil then
-                    return _M.get_headers(header)
+                if _M.get_header(header) ~= nil then
+                    return _M.get_header(header)
                 end
             end
         end
@@ -75,9 +75,8 @@ function M.load(config_file)
         return ip or ""
     end
 
-    function _M.get_headers(name)
-        local req_headers = ngx.req.get_headers()
-        return req_headers[name] or nil
+    function _M.get_header(name)
+        return ngx_req_get_headers()[name] or nil
     end
 
     return _M
