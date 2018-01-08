@@ -38,6 +38,7 @@ function M.load(config_file)
         local captcha_reset = {}
         captcha_reset.cid = ''
         captcha_reset.request = {}
+        captcha_reset.request.firstParty = px_config.first_party_enaled or false
         captcha_reset.request.ip = px_headers.get_ip()
         captcha_reset.request.uri = ngx.var.uri
         captcha_reset.request.captchaType = px_config.captcha_provider
