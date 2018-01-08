@@ -31,7 +31,7 @@ function M.load(config_file)
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
 
-        risk.additional.first_party_mode = px_config.first_part_enaled or false
+        risk.additional.first_party_mode = px_config.first_party_enaled or false
 
         if ngx.ctx.vid then
             risk.vid = ngx.ctx.vid
