@@ -18,7 +18,7 @@ function PXCookieV3:validate(data)
     if digest == string.upper(ngx.ctx.px_cookie_hmac) then
         return true
     end
-    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_headers("User-Agent"));
+    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
     return false
 end
 

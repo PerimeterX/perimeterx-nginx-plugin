@@ -60,7 +60,6 @@ _M.collector_host = string.format('collector-%s.perimeterx.net', _M.px_appId)
 _M.client_host = "client.perimeterx.net"
 _M.collector_port_overide = nil
 _M.client_port_overide = nil
-_M.reverse_xhr_disabled  = false
 -- ## END - Configuration block ##
 
 -- ## Filter Configuration ##

@@ -138,7 +138,7 @@ function M.load(config_file)
                 else
                     ngx.status = ngx_HTTP_FORBIDDEN;
                     if px_config.api_protection_mode then
-                        local redirect_url = px_headers.get_headers('Referer')
+                        local redirect_url = px_headers.get_header('Referer')
                         if redirect_url == nil or redirect_url == '' then
                             redirect_url = px_config.api_protection_default_redirect_url
                         end
