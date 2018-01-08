@@ -167,7 +167,12 @@ function M.load(config_file)
     end
 
     function _M.forward_to_perimeterx(server, port_overide)
+        -- Attach real ip from the enforcer
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
+
+        -- change the host so BE knows where to serve the request
+        ngx_req_set_header('host', server)
+
         local port = ngx.var.scheme == 'http' and '80' or '443'
         if port_overide ~= nil then
             px_logger.debug('Overrding port ' .. port ..  ' => ' .. port_overide)
@@ -176,7 +181,7 @@ function M.load(config_file)
         px_logger.debug("Using " .. ngx.var.scheme .. " port " .. port)
         local httpc = http.new()
 
-        httpc:set_timeout(500)
+        httpc:set_timeout(2000)
 
         local ok, err = httpc:connect(server, port)
 
@@ -194,24 +199,40 @@ function M.load(config_file)
             end
         end
 
-        httpc:set_timeout(2000)
         httpc:proxy_response(httpc:proxy_request())
         httpc:set_keepalive()
     end
 
     function _M.reverse_px_client()
+        if not px_config.first_party_enabled then
+            ngx.header["Content-Type"] = 'application/javascript';
+            ngx.say('')
+            ngx.exit(ngx.OK)
+            return
+        end
+
         local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
         px_headers.clear_protected_headers();
-        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to client at " .. px_config.client_host  .. px_request_uri)
+        px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
-        -- change the host for fastly to direct this to the proper path
-        ngx_req_set_header('host', px_config.client_host)
         _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
     end
 
     function _M.reverse_px_xhr()
+        if not px_config.first_party_enabled or px_config.reverse_xhr_disabled then
+            if string.match(ngx.var.uri, 'gif') then
+                ngx.header["Content-Type"] = 'image/gif';
+                ngx.say(ngx.decode_base64(px_constants.EMPTY_GIF_B64))
+            else
+                ngx.header["Content-Type"] = 'application/json';
+                ngx.say('{}')
+            end
+            ngx.exit(ngx.OK)
+            return
+        end
+
         local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
-        local px_request_uri = string.gsub(ngx.var.request_uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
+        local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
 
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)

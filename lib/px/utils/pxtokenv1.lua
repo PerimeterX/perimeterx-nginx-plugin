@@ -39,7 +39,7 @@ function TokenV1:validate(data)
         return true
     end
 
-    self.px_logger.debug('Cookie HMAC validation failed, value without ip: '.. digest_noip ..' with ip: '.. digest_ip ..', user-agent: ' .. ngx.req.get_headers()["User-Agent"]);
+    self.px_logger.debug('Cookie HMAC validation failed, value without ip: '.. digest_noip ..' with ip: '.. digest_ip ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
     return false
 end
 
