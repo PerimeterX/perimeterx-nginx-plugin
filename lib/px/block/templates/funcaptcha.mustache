@@ -152,7 +152,7 @@
                 var p = document.getElementsByTagName("script")[0], s = document.createElement("script");
 
                 s.async = 1;
-                s.src = '//client.perimeterx.net/{{appId}}/main.min.js';
+                s.src = '{{{jsClientSrc}}}';
                 p.parentNode.insertBefore(s, p);
             }()
     );
