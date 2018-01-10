@@ -67,16 +67,15 @@ function M.application(file_name)
         if success then
             result = px_api.process(response)
             px_logger.debug("Risk API response returned successfully, risk score: ".. ngx.ctx.block_score ..", round_trip_time: " .. ngx.ctx.risk_rtt)
-            -- score crossed threshold
-            if result == false then
-                px_logger.debug("blocking s2s")
-                return px_block.block('s2s_high_score')
-                -- score did not cross the blocking threshold
-            else
-                ngx.ctx.pass_reason = 's2s'
-                pcall(px_client.send_to_perimeterx, "page_requested", details)
-                return true
+            -- case score crossed threshold
+            if not result then
+                px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
+                return px_block.block(ngx.ctx.block_reason)
             end
+            -- score did not cross the blocking threshold
+            ngx.ctx.pass_reason = 's2s'
+            pcall(px_client.send_to_perimeterx, "page_requested", details)
+            return true
         else
             -- server2server call failed, passing traffic
             ngx.ctx.pass_reason = 'error'
@@ -90,6 +89,7 @@ function M.application(file_name)
             return true
         end
     end
+
     if not px_config.px_enabled then
         px_logger.debug("Request will not be verified, module is disabled")
         return true
@@ -157,7 +157,8 @@ function M.application(file_name)
 
         -- score crossed threshold
         if result == false then
-            return px_block.block('cookie_high_score')
+            ngx.ctx.block_reason = 'cookie_high_score'
+            return px_block.block(ngx.ctx.block_reason)
         else
             ngx.ctx.pass_reason = 'cookie'
             pcall(px_client.send_to_perimeterx, "page_requested", details)
