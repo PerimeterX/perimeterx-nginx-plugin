@@ -67,20 +67,22 @@ function M.load(config_file)
         -- Set the pxscore var for logging
         px_logger.enrich_log('pxscore',data.score)
 
-        if data.uuid then
-            ngx.ctx.uuid = data.uuid
-            px_logger.enrich_log('pxuuid',data.uuid)
-        end
-
-        if data.action then
-            ngx.ctx.px_action = data.action
-            if data.action == 'j' and data.action_data and data.action_data.body then
-                ngx.ctx.px_action_data = data.action_data.body
-            end
-        end
-
+        ngx.ctx.uuid = data.uuid or nil
         ngx.ctx.block_score = data.score
+        ngx.ctx.px_action = data.action
+
+        if data.action == 'j' and data.action_data and data.action_data.body then
+            ngx.ctx.px_action_data = data.action_data.body
+            ngx.ctx.block_reason = "challenge"
+        elseif data.action == 'r' then
+            ngx.ctx.block_reason = 'exceeded_rate_limit'
+        end
+
         if data.score >= px_config.blocking_score then
+            if data.action == "c" or data.action == "b" then
+                ngx.ctx.block_reason = 's2s_high_score'
+            end
+
             px_logger.debug("Block reason - non human score: " .. data.score)
             return false
         end
