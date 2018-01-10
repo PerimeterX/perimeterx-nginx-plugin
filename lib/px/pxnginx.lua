@@ -157,7 +157,8 @@ function M.application(file_name)
 
         -- score crossed threshold
         if result == false then
-            return px_block.block('cookie_high_score')
+            ngx.ctx.block_reason = 'cookie_high_score'
+            return px_block.block(ngx.ctx.block_reason)
         else
             ngx.ctx.pass_reason = 'cookie'
             pcall(px_client.send_to_perimeterx, "page_requested", details)
