@@ -30,6 +30,11 @@ _M.captcha_provider = "reCaptcha"
 _M.additional_activity_handler = nil
 _M.enabled_routes = {}
 
+-- ## API protection mode ##
+_M.api_protection_mode = false
+_M.api_protection_block_url = nil
+_M.api_protection_default_redirect_url = nil
+
 -- ## Blocking Page Parameters ##
 _M.custom_logo = nil
 _M.css_ref = nil

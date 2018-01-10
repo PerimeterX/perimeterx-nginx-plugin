@@ -81,12 +81,16 @@ function M.load(config_file)
             ngx.ctx.px_action = data.action
             if data.action == 'j' and data.action_data and data.action_data.body then
                 ngx.ctx.px_action_data = data.action_data.body
+                ngx.ctx.block_reason = "challenge"
+            elseif data.action == 'r' then
+                ngx.ctx.block_reason = 'exceeded_rate_limit'
             end
         end
 
         ngx.ctx.block_score = data.score
         if data.score >= px_config.blocking_score then
             px_logger.debug("Block reason - non human score: " .. data.score)
+            ngx.ctx.block_reason = 's2s_high_score'
             return false
         end
         return true
