@@ -58,4 +58,14 @@ function  _M.filter_headers(sensitive_headers, isRiskRequest)
     return request_headers
 end
 
+function _M.clear_first_party_sensitive_headers(sensitive_headers)
+    if not sensitive_headers then
+        return
+    end
+
+    for i, header in ipairs(sensitive_headers) do
+        ngx.req.clear_header(header)
+    end
+end
+
 return _M
