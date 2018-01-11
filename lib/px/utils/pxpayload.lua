@@ -39,7 +39,7 @@ end
 
 function PXPayload:get_payload()
     ngx.ctx.px_cookie_origin = "cookie"
-    local px_header = ngx.req.get_headers()['X-PX-AUTHORIZATION'] or nil
+    local px_header = self.px_headers.get_header('X-PX-AUTHORIZATION')
 
     if (px_header) then
         self.px_logger.debug("Mobile SDK token detected")

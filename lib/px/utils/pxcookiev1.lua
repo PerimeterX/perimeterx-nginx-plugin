@@ -38,7 +38,7 @@ function PXCookieV1:validate(data)
         self.px_logger.debug('cookie verification succeed with no IP in signature')
         return true
     end
-    self.px_logger.debug('Cookie HMAC validation failed, value without ip: '.. digest_noip ..' with ip: '.. digest_ip ..', user-agent: ' .. ngx.req.get_headers()["User-Agent"]);
+    self.px_logger.debug('Cookie HMAC validation failed, value without ip: '.. digest_noip ..' with ip: '.. digest_ip ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
     return false
 end
 
@@ -87,6 +87,8 @@ function PXCookieV1:process()
     end
 
     -- cookie expired
+    ngx.ctx.cookie_timestamp = fields.t
+
     if fields.t and fields.t > 0 and fields.t / 1000 < os.time() then
         self.px_logger.debug('Cookie TTL is expired, value: '.. data ..', age: ' .. fields.t / 1000 - os.time())
         error({ message = "cookie_expired" })
@@ -95,16 +97,15 @@ function PXCookieV1:process()
     -- Set the score header for upstream applications
     self.px_headers.set_score_header(fields.s.b)
     -- Set the score variable for logging 
-    self.px_logger.set_score_variable(fields.s.b)
-    
+
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b then
-        self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s.b)
         ngx.ctx.px_action = 'c'
         ngx.ctx.block_score = fields.s.b
     end
 
     if fields.s.b >= self.blocking_score then
+        self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s.b)
         return false
     end
 

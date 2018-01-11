@@ -33,6 +33,7 @@ Table of Contents
   *   [Additional Activity Handler](#add-activity-handler)
   *   [Whitelisting](#whitelisting)
   *   [Remote Configurations](#remote-configurations)
+  *   [First Party](#first-party)
 -   [Appendix](#appendix)
   *   [NGINX Plus](#nginxplus)
   *   [NGINX Dynamic Modules](#dynamicmodules)
@@ -530,21 +531,39 @@ end
 ```
 
 #### <a name="log-enrichment"></a> Log Enrichment
-Access logs can be enriched with the PerimeterX bot score by creating the NGINX variable named `pxscore`
-
+Access logs can be enriched with the PerimeterX bot information by creating an NGINX variable with the proper name
 To configure this variable use the NGINX map directive in the HTTP section of your NGINX configuration file. This should be added before an additional configuration files are included.
+
+The following variables are enabled
+
+**Request UUID**: `pxuuid`
+**Request VID**: `pxvid`
+**Risk Round Trimp**: `pxrtt`
+**Risk Score**: `pxscore`
+**Pass Reason**: `pxpass`
+**Block Reason**: `pxblock`
+**Cookie Validity**: `pxcookiets`
+**Risk Call Reason**: `pxcall`
 
 ```
 ....
 http {
-    map score $pxscore {
-        default 'nil';
-    }
+    map score $pxscore  { default 'none'; }
+    map pass $pxpass  { default 'none'; }
+    map uuid $pxuuid  { default 'none'; }
+    map rtt $pxrtt { default '0'; }
+    map block $pxblock { default 'none'; }
+    map vid $pxvid { default 'none'; }
+    map cookiets $pxcookiets { default 'none'; }
+    map px_call $pxcall { default 'none'; }
     
     log_format enriched '$remote_addr - $remote_user [$time_local] '
                     '"$request" $status $body_bytes_sent '
-                    '"$http_referer" "$http_user_agent" perimeterx_score "$pxscore';
-
+                    '"$http_referer" "$http_user_agent" '
+                    '| perimeterx uuid[$pxuuid] vid[$pxvid] '
+                    'score[$pxscore] rtt[$pxrtt] block[$pxblock] '
+                    'pass[$pxpass] cookie_ts[$pxcookiets] risk_call[$pxcall]';
+                    
 	 access_log /var/log/nginx/access_log enriched;
 
 }
@@ -591,7 +610,21 @@ _M.load_interval = 5
 ...
 ```
 
+<a name="first-party"></a> First Party Mode
+-----------------------------------------------
+Enables the module to receive/send data from/to the sensor, acting as a "reverse-proxy" for 
+client requests and sensor activities.
 
+This change may also require additional changes on the sensor snippet. Refer to the portal for more information.
+ 
+Default: `true`
+ 
+File: `pxconfig.lua`
+```lua
+...
+_M.first_party_enabled = true
+...
+```
 
 <a name="appendix"></a> Appendix
 -----------------------------------------------

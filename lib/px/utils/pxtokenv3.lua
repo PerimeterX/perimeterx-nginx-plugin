@@ -18,7 +18,7 @@ function TokenV3:validate(data)
         return true
     end
 
-    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. ngx.req.get_headers()["User-Agent"]);
+    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
     self.px_logger.debug('Failed to verify cookie v3 content ' .. data);
     return false
 end
@@ -67,24 +67,22 @@ function TokenV3:process()
     end
 
     -- cookie expired
-    if fields.t and fields.t > 0 and fields.t / 1000 < os.time() then
+    ngx.ctx.cookie_timestamp = fields.t
+    if fields.t > 0 and fields.t / 1000 < os.time() then
         self.px_logger.debug('Cookie TTL is expired, value: '.. data ..', age: ' .. fields.t / 1000 - os.time())
         error({ message = "cookie_expired" })
     end
 
     -- Set the score header for upstream applications
     self.px_headers.set_score_header(fields.s)
-    -- Set the score variable for logging
-    self.px_logger.set_score_variable(fields.s)
-    
+
     -- Check bot score and block if it is >= to the configured block score
-    if fields.s then
-        self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s)
-        ngx.ctx.block_score = fields.s
-        ngx.ctx.block_action = fields.a
-    end
+      if fields.s then
+          ngx.ctx.block_score = fields.s
+      end
 
     if fields.s >= self.blocking_score then
+        self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s)
         return false
     end
 
