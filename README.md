@@ -616,6 +616,7 @@ Enables the module to receive/send data from/to the sensor, acting as a "reverse
 client requests and sensor activities.
 
 This will require to open new routes and enable the module on the following routes `/<PX_APP_ID without PX prefix>/xhr/*` and `/<PX_APP_ID without PX prefix>/init.js`
+If the module is enabled on `location /` you can consider these routes as open.
 
 Additionally, First Party may also require additional changes on the sensor snippet. Refer to the portal for more information.
 
