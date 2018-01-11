@@ -212,7 +212,7 @@ function M.load(config_file)
             return
         end
 
-        local px_request_uri = "/echo/" .. px_config.px_appId .. "/main.min.js"
+        local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
         px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
         _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
