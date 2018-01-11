@@ -1,7 +1,5 @@
 ---------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.4
--- Release date: 07.11.2016
 ----------------------------------------------
 local M = {}
 
@@ -20,6 +18,7 @@ function M.load(config_file)
     local px_template = require("px.block.pxtemplate").load(config_file)
     local px_client = require("px.utils.pxclient").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_headers = require("px.utils.pxheaders").load(config_file)
     local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
@@ -56,10 +55,12 @@ function M.load(config_file)
         details.module_version = px_constants.MODULE_VERSION
         if reason then
             details.block_reason = reason
+            px_logger.enrich_log("pxblock", reason)
         end
 
         if ngx.ctx.uuid then
             uuid = ngx.ctx.uuid
+            px_logger.enrich_log("pxuuid", ngx.ctx.uuid)
             details.block_uuid = uuid
         end
 
@@ -70,7 +71,11 @@ function M.load(config_file)
 
         if ngx.ctx.vid then
             vid = ngx.ctx.vid
+            px_logger.enrich_log("pxvid", ngx.ctx.vid)
         end
+
+        px_logger.enrich_log('pxaction', ngx.ctx.px_action)
+
         px_client.send_to_perimeterx('block', details);
 
         if not px_config.block_enabled then
@@ -165,7 +170,7 @@ function M.load(config_file)
             return
         end
 
-        -- not custom block url
+        -- not custom block url, either api protection or default
         ngx.status = ngx_HTTP_FORBIDDEN;
         if px_config.api_protection_mode then
             -- api protection mode

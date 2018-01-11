@@ -1,9 +1,6 @@
 ---------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.4
--- Release date: 07.11.2016
 ----------------------------------------------
-
 
 local M = {}
 
@@ -26,7 +23,7 @@ function M.load(config_file)
         end
 
         if px_config.px_debug == true then
-            ngx_log(ngx_ERR, "[PerimeterX - DEBUG] [ " .. px_config.px_appId .." ] - " .. message)
+             ngx_log(ngx_ERR, "[PerimeterX - DEBUG] [ " .. px_config.px_appId .." ] - " .. message)
         end
     end
 
@@ -38,10 +35,10 @@ function M.load(config_file)
         ngx_log(ngx_ERR, "[PerimeterX - ERROR] [ " .. px_config.px_appId .." ] - " .. message)
     end
 
-    function _M.set_score_variable(score)
-		if ngx.var.pxscore then
-			ngx.var.pxscore = score
-		end
+    function _M.enrich_log(key, value)
+        if ngx.var[key] then
+           ngx.var[key] = value
+        end
     end
 
     return _M

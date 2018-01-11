@@ -1,7 +1,5 @@
 ---------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.4
--- Release date: 07.11.2016
 ----------------------------------------------
 local M = {}
 
@@ -17,28 +15,24 @@ function M.load(config_file)
     local px_common_utils = require("px.utils.pxcommonutils")
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
-    local ngx_req_get_headers = ngx.req.get_headers
     local ngx_req_http_version = ngx.req.http_version
     -- new_request_object --
     -- takes no arguments
     -- returns table
     function _M.new_request_object(call_reason)
         local risk = {}
+        px_logger.enrich_log('pxcall', call_reason)
         risk.cid = ''
         risk.request = {}
         risk.request.ip = px_headers.get_ip()
         risk.request.uri = ngx.var.request_uri
-        risk.request.headers = {}
-        local h = ngx_req_get_headers()
-        for k, v in pairs(h) do
-            -- filter sensitive headers
-            if px_common_utils.array_index_of(px_config.sensitive_headers, k) == -1 then
-                risk.request.headers[#risk.request.headers + 1] = { ['name'] = k, ['value'] = v }
-            end
-        end
+        risk.request.headers = px_common_utils.filter_headers(px_config.sensitive_headers, true)
+        risk.request.firstParty = px_config.first_party_enaled or false
+        
+        px_logger.debug(cjson.encode(risk.request.headers))
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
-
+        
         if ngx.ctx.vid then
             risk.vid = ngx.ctx.vid
         end
@@ -71,7 +65,7 @@ function M.load(config_file)
 
         px_headers.set_score_header(data.score)
         -- Set the pxscore var for logging
-        px_logger.set_score_variable(data.score)
+        px_logger.enrich_log('pxscore',data.score)
 
         ngx.ctx.uuid = data.uuid or nil
         ngx.ctx.block_score = data.score
@@ -99,7 +93,7 @@ function M.load(config_file)
     -- takes three values, data , path, and auth_token
     -- returns response body as a table
     function _M.call_s2s(data, path, auth_token)
-        local px_server = 'sapi-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+        local px_server = px_config.base_url
         local px_port = px_config.px_port
         local ssl_enabled = px_config.ssl_enabled
 

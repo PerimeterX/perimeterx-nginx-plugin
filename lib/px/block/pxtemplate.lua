@@ -1,7 +1,5 @@
 ---------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
--- Version 1.1.4
--- Release date: 07.11.2016
 ----------------------------------------------
 local M = {}
 
@@ -11,12 +9,20 @@ function M.load(config_file)
 
     local px_config = require(config_file)
     local lustache = require "lustache"
+    local px_constants = require "px.utils.pxconstants"
+
     local px_logger = require("px.utils.pxlogger").load(config_file)
 
     local function get_props(px_config, uuid, vid)
         local logo_css_style = 'visible'
         if (px_config.custom_logo == nil) then
             logo_css_style = 'hidden'
+        end
+
+        local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
+        if px_config.first_party_enabled then
+            local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+            js_client_src = string.format('/%s%s',reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
         end
 
         local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
@@ -30,7 +36,8 @@ function M.load(config_file)
             cssRef = px_config.css_ref,
             jsRef = px_config.js_ref,
             logoVisibility = logo_css_style,
-            hostUrl = collectorUrl
+            hostUrl = collectorUrl,
+            jsClientSrc = js_client_src
         }
     end
 

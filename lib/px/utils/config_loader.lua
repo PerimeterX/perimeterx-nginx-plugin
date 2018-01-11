@@ -8,7 +8,7 @@ function _M.get_configuration(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
     local px_commom_utils = require("px.utils.pxcommonutils")
     local cjson = require "cjson"
-    local px_server = config.configuration_server
+    local px_conf_server = config.configuration_server
     local px_port = config.configuration_server_port
     local path = px_constants.REMOTE_CONFIGURATIONS_PATH
     local checksum = config.checksum
@@ -20,7 +20,7 @@ function _M.get_configuration(config_file)
     end
 
     local httpc = http.new()
-    local ok, err = httpc:connect(px_server, px_port)
+    local ok, err = httpc:connect(px_conf_server, px_port)
     if not ok then
         px_logger.error("HTTPC connection error: " .. err)
     end

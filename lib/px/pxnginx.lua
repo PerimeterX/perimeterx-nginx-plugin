@@ -53,6 +53,9 @@ function M.application(file_name)
     local cjson = require "cjson"
     local pcall = pcall
 
+    local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+    local lower_request_url = string.lower(ngx.var.request_uri)
+
     local function perform_s2s(result, details)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
@@ -83,11 +86,23 @@ function M.application(file_name)
                 px_logger.debug('Risk API timed out - rtt: ' .. ngx.ctx.risk_rtt)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
-            px_logger.debug('Risk API failed with error error: ' .. response)
+            px_logger.debug('Risk API failed with error: ' .. response)
             px_client.send_to_perimeterx("page_requested", details)
 
             return true
         end
+    end
+
+    -- Match for client
+    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_VENDOR_PATH)) then
+        px_client.reverse_px_client()
+        return true
+    end
+
+    -- Match for XHRs
+    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH)) then
+        px_client.reverse_px_xhr()
+        return true
     end
 
     if not px_config.px_enabled then
@@ -118,7 +133,6 @@ function M.application(file_name)
     -- Clean any protected headers from the request.
     -- Prevents header spoofing to upstream application
     px_headers.clear_protected_headers()
-
 
     -- run filter and whitelisting logic
     if (px_filters.process()) then
@@ -155,6 +169,8 @@ function M.application(file_name)
         details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
         details["px_cookie_version"] = ngx.ctx.px_cookie_version;
 
+        px_logger.enrich_log('pxscore', ngx.ctx.block_score)
+        px_logger.enrich_log('pxcookiets', ngx.ctx.cookie_timestamp)
         -- score crossed threshold
         if result == false then
             ngx.ctx.block_reason = 'cookie_high_score'

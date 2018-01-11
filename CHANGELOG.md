@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.0] - 2018-01-11
+- Added support for first party
+- Added support for rate limiting
+- Supporting more variable for log enrichment
+- Fixed sensitive headers filtering on captcha and activities
+- Code optimizations 
+
 ## [3.0.0] - 2017-12-03
 - Added support for remote configurations
 - Enhanced module logs
