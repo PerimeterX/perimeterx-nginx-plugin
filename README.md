@@ -33,6 +33,7 @@ Table of Contents
   *   [Additional Activity Handler](#add-activity-handler)
   *   [Whitelisting](#whitelisting)
   *   [Remote Configurations](#remote-configurations)
+  *   [First Party](#first-party)
 -   [Appendix](#appendix)
   *   [NGINX Plus](#nginxplus)
   *   [NGINX Dynamic Modules](#dynamicmodules)
@@ -609,7 +610,21 @@ _M.load_interval = 5
 ...
 ```
 
+<a name="first-party"></a> First Party Mode
+-----------------------------------------------
+Enables the module to receive/send data from/to the sensor, acting as a "reverse-proxy" for 
+client requests and sensor activities.
 
+This change may also require additional changes on the sensor snippet. Refer to the portal for more information.
+ 
+Default: `true`
+ 
+File: `pxconfig.lua`
+```lua
+...
+_M.first_party_enabled = true
+...
+```
 
 <a name="appendix"></a> Appendix
 -----------------------------------------------
