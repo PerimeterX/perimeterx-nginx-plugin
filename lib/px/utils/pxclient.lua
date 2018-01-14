@@ -172,7 +172,6 @@ function M.load(config_file)
 
         -- change the host so BE knows where to serve the request
         ngx_req_set_header('host', server)
-        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
 
         local port = ngx.var.scheme == 'http' and '80' or '443'
         if port_overide ~= nil then
@@ -215,6 +214,7 @@ function M.load(config_file)
         local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
         px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
         _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
     end
 
@@ -246,9 +246,10 @@ function M.load(config_file)
             vid = ngx.var.cookie_vid
         end
 
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
 
         if vid ~= '' then
-            px_logger.debug("Attaching VID cookie")
+            px_logger.debug("Attaching VID cookie" .. vid)
             ngx_req_set_header('cookie', 'vid=' .. vid)
         end
 
