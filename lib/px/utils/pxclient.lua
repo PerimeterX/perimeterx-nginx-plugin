@@ -169,6 +169,7 @@ function M.load(config_file)
     function _M.forward_to_perimeterx(server, port_overide)
         -- Attach real ip from the enforcer
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
+        ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
 
         -- change the host so BE knows where to serve the request
         ngx_req_set_header('host', server)
@@ -236,7 +237,6 @@ function M.load(config_file)
 
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
-        ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
 
         local vid = ''
 
