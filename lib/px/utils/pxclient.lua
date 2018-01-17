@@ -220,7 +220,7 @@ function M.load(config_file)
     end
 
     function _M.reverse_px_xhr()
-        if not px_config.first_party_enabled or px_config.reverse_xhr_disabled then
+        if not px_config.first_party_enabled or not px_config.reverse_xhr_enabled then
             if string.match(ngx.var.uri, 'gif') then
                 ngx.header["Content-Type"] = 'image/gif';
                 ngx.say(ngx.decode_base64(px_constants.EMPTY_GIF_B64))
