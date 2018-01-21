@@ -17,6 +17,9 @@ function M.application(file_name)
 	local ngx_timer_at = ngx.timer.at
 
 	function send_initial_enforcer_telemetry()
+		if config == nil or config.px_appId == 'PX_APP_ID' then
+			return
+		end
 		local details = {}
 		details.px_config = px_commom_utils.filter_config(config);
 		details.update_reason = 'initial_config'
@@ -24,6 +27,9 @@ function M.application(file_name)
 	end
 
 	function init_remote_config()
+		if config == nil or config.px_appId == 'PX_APP_ID' then
+			return
+		end
 		if config.dynamic_configurations then
 			require("px.utils.config_loader").load(config_file)
 		end
