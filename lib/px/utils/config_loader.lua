@@ -68,6 +68,8 @@ function _M.get_configuration(config_file)
         config.block_enabled = body.moduleMode ~= "monitoring"
         config.client_timeout = body.connectTimeout
         config.s2s_timeout = body.riskTimeout
+        config.first_party_enabled = body.firstPartyEnabled
+        config.reverse_xhr_enabled = body.firstPartyXhrEnabled
         config.report_active_config = true
 
         -- report enforcer telemetry

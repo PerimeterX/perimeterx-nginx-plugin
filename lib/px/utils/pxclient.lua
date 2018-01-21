@@ -169,10 +169,10 @@ function M.load(config_file)
     function _M.forward_to_perimeterx(server, port_overide)
         -- Attach real ip from the enforcer
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
+        ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
 
         -- change the host so BE knows where to serve the request
         ngx_req_set_header('host', server)
-        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
 
         local port = ngx.var.scheme == 'http' and '80' or '443'
         if port_overide ~= nil then
@@ -215,11 +215,12 @@ function M.load(config_file)
         local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
         px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
         _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
     end
 
     function _M.reverse_px_xhr()
-        if not px_config.first_party_enabled or px_config.reverse_xhr_disabled then
+        if not px_config.first_party_enabled or not px_config.reverse_xhr_enabled then
             if string.match(ngx.var.uri, 'gif') then
                 ngx.header["Content-Type"] = 'image/gif';
                 ngx.say(ngx.decode_base64(px_constants.EMPTY_GIF_B64))
@@ -236,7 +237,6 @@ function M.load(config_file)
 
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
-        ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
 
         local vid = ''
 
@@ -246,9 +246,10 @@ function M.load(config_file)
             vid = ngx.var.cookie_vid
         end
 
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
 
         if vid ~= '' then
-            px_logger.debug("Attaching VID cookie")
+            px_logger.debug("Attaching VID cookie" .. vid)
             ngx_req_set_header('cookie', 'vid=' .. vid)
         end
 
