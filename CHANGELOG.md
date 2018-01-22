@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.2.0] - 2018-01-21
 - Added support for first party remote configuration
-- Fixed kong support for remote config and telemetry
+- Disabled kong support for remote config and telemetry
 - Fixed sensitive header cleaning on first party mode
 
 ## [3.1.0] - 2018-01-11
