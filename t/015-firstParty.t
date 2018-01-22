@@ -29,6 +29,7 @@ __DATA__
             pxconfig.enable_server_calls = false
             pxconfig.send_page_requested_activity = false
             pxconfig.px_debug = true
+            pxconfig.first_party_enabled = true
             pxconfig.px_appId = "PXvRfnOj4y"
             return true
         }
@@ -69,6 +70,7 @@ GET /vRfnOj4y/init.js
             pxconfig.send_page_requested_activity = false
             pxconfig.px_debug = true
             pxconfig.px_appId = "pxvrfnoj4y"
+             pxconfig.first_party_enabled = true
             pxconfig.collector_host = string.format('collector-%s.perimeterx.net', pxconfig.px_appId)
             return true
         }
