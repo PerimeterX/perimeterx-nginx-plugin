@@ -37,7 +37,8 @@ function M.load(config_file)
             jsRef = px_config.js_ref,
             logoVisibility = logo_css_style,
             hostUrl = collectorUrl,
-            jsClientSrc = js_client_src
+            jsClientSrc = js_client_src,
+            firstPartyEnabled = px_config.first_party_enabled
         }
     end
 
