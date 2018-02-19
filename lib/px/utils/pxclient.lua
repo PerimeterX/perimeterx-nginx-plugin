@@ -240,8 +240,8 @@ function M.load(config_file)
 
         local vid = ''
 
-        if ngx.var.cookie__pxvid then
-            vid = ngx.var.cookie__pxvid
+        if ngx.var.cookie_pxvid then
+            vid = ngx.var.cookie_pxvid
         elseif ngx.var.cookie_vid then
             vid = ngx.var.cookie_vid
         end
