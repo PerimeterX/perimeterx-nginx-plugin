@@ -250,7 +250,7 @@ function M.load(config_file)
 
         if vid ~= '' then
             px_logger.debug("Attaching VID cookie" .. vid)
-            ngx_req_set_header('cookie', 'vid=' .. vid)
+            ngx_req_set_header('cookie', 'pxvid=' .. vid)
         end
 
         _M.forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide)
