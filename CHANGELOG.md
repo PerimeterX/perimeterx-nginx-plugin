@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.0] - 2018-02-19
+- Update first party templates with fallback support
+- Use relative URL for redirect in API protection mode
+- Renamed vid cookie
+
 ## [3.2.1] - 2018-01-21
 - Replaced default values for first party mode to false
 
