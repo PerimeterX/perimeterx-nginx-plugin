@@ -118,7 +118,7 @@ function M.load(config_file)
         end
 
         if ngx.ctx.vid then
-            details['vid'] = ngx.ctx.vid
+            pxdata['vid'] = ngx.ctx.vid
             px_logger.enrich_log('pxvid', ngx.ctx.vid)
         end
 

@@ -178,6 +178,7 @@ function M.load(config_file)
             if redirect_url == nil or redirect_url == '' then
                 redirect_url = px_config.api_protection_default_redirect_url
             end
+            redirect_url = string.gsub(redirect_url, "https?://[^/]+", "")
             redirect_url = ngx_endcode_64(redirect_url)
             local url = px_config.api_protection_block_url .. '?url=' .. redirect_url .. '&uuid=' .. uuid .. '&vid=' .. vid
             local result = {
