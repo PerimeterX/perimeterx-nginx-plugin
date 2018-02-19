@@ -244,8 +244,6 @@ function M.load(config_file)
             vid = ngx.var.cookie__pxvid
         elseif ngx.var.cookie_pxvid then
             vid = ngx.var.cookie_pxvid
-        elseif ngx.var.cookie_vid then
-            vid = ngx.var.cookie_vid
         end
 
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
