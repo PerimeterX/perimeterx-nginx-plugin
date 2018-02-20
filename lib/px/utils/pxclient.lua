@@ -118,7 +118,7 @@ function M.load(config_file)
         end
 
         if ngx.ctx.vid then
-            details['vid'] = ngx.ctx.vid
+            pxdata['vid'] = ngx.ctx.vid
             px_logger.enrich_log('pxvid', ngx.ctx.vid)
         end
 
@@ -242,15 +242,15 @@ function M.load(config_file)
 
         if ngx.var.cookie__pxvid then
             vid = ngx.var.cookie__pxvid
-        elseif ngx.var.cookie_vid then
-            vid = ngx.var.cookie_vid
+        elseif ngx.var.cookie_pxvid then
+            vid = ngx.var.cookie_pxvid
         end
 
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
 
         if vid ~= '' then
             px_logger.debug("Attaching VID cookie" .. vid)
-            ngx_req_set_header('cookie', 'vid=' .. vid)
+            ngx_req_set_header('cookie', 'pxvid=' .. vid)
         end
 
         _M.forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide)

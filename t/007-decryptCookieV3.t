@@ -11,7 +11,7 @@ sub bake_cookie {
     my $password        = "perimeterx";
     my $salt            = '12345678123456781234567812345678';
     my $iteration_count = 1000;
-    my $hash_name       = undef;                              #default is SHA256
+    my $hash_name       = "SHA256";                              #default is SHA256
     my $len             = 48;
 
     my $km = pbkdf2( $password, $salt, $iteration_count, $hash_name, $len );
