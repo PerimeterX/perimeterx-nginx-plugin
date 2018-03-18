@@ -13,8 +13,7 @@ function M.load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require("px.utils.pxcommonutils")
-    local resty_sha1 = require "resty.sha1"
-    local str = require "resty.string"
+    local sha1 = require "resty.nettle.sha1"
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_http_version = ngx.req.http_version
@@ -57,11 +56,11 @@ function M.load(config_file)
         end
 
         if ssl_ciphers then
-            local ssl_ciphers_sha1 = resty_sha1:new()
+            local ssl_ciphers_sha1 = sha1.new()
             if ssl_ciphers_sha1 then
                 ssl_ciphers_sha1:update(ssl_ciphers)
-                local digest = sha1:final()
-                risk.additional.ssl_ciphers = str.to_hex(digest)
+                local digest = ssl_ciphers_sha1.digest();
+                risk.additional.ssl_ciphers = px_common_utils.hex_to_str(digest)
             end
         end
 

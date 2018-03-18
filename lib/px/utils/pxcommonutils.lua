@@ -1,4 +1,6 @@
 local socket = require("socket")
+local gsub = string.gsub
+local format = string.format
 local _M = {}
 
 function _M.get_time_in_milliseconds()
@@ -66,6 +68,12 @@ function _M.clear_first_party_sensitive_headers(sensitive_headers)
     for i, header in ipairs(sensitive_headers) do
         ngx.req.clear_header(header)
     end
+end
+
+local function hex(str,spacer)
+    return (gsub(str,"(.)", function (c)
+        return format("%02X%s", byte(c), spacer or "")
+    end))
 end
 
 return _M
