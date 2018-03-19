@@ -46,7 +46,7 @@ function M.load(config_file)
 
         local ssl_ciphers = ngx.var.ssl_ciphers
         if ssl_ciphers ~= nil and ssl_ciphers ~= '' then
-            local ssl_ciphers_sha = px_common_utils.hex(sha1(ssl_ciphers))
+            local ssl_ciphers_sha = ngx.encode_base64(sha1(ssl_ciphers))
             risk.additional.tls_ciphers_sha = ssl_ciphers_sha
             ngx.ctx.ssl_ciphers_sha = ssl_ciphers_sha
         end

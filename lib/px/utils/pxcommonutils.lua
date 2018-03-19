@@ -71,10 +71,4 @@ function _M.clear_first_party_sensitive_headers(sensitive_headers)
     end
 end
 
-function _M.hex(str,spacer)
-    return (gsub(str,"(.)", function (c)
-        return format("%02X%s", byte(c), spacer or "")
-    end))
-end
-
 return _M
