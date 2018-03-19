@@ -1,7 +1,4 @@
 local socket = require("socket")
-local gsub = string.gsub
-local byte = string.byte
-local format = string.format
 local _M = {}
 
 function _M.get_time_in_milliseconds()
