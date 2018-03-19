@@ -1,5 +1,6 @@
 local socket = require("socket")
 local gsub = string.gsub
+local byte = string.byte
 local format = string.format
 local _M = {}
 
@@ -70,7 +71,7 @@ function _M.clear_first_party_sensitive_headers(sensitive_headers)
     end
 end
 
-local function hex(str,spacer)
+function _M.hex(str,spacer)
     return (gsub(str,"(.)", function (c)
         return format("%02X%s", byte(c), spacer or "")
     end))

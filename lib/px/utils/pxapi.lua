@@ -43,26 +43,25 @@ function M.load(config_file)
             risk.uuid = ngx.ctx.uuid
         end
 
-        local ssl_cipher = ngx.var.ssl_cipher
-        local ssl_protocol = ngx.var.ssl_protocol
-        local ssl_ciphers = ngx.var.ssl_ciphers
 
-        if ssl_cipher then
-            risk.additional.ssl_cipher = ssl_cipher
+        local ssl_ciphers = ngx.var.ssl_ciphers
+        if ssl_ciphers ~= nil and ssl_ciphers ~= '' then
+            local ssl_ciphers_sha = px_common_utils.hex(sha1(ssl_ciphers))
+            risk.additional.tls_ciphers_sha = ssl_ciphers_sha
+            ngx.ctx.ssl_ciphers_sha = ssl_ciphers_sha
         end
 
+        local ssl_protocol = ngx.var.ssl_protocol
         if ssl_protocol then
             risk.additional.ssl_protocol = ssl_protocol
         end
 
-        if ssl_ciphers then
-            local ssl_ciphers_sha1 = sha1.new()
-            if ssl_ciphers_sha1 then
-                ssl_ciphers_sha1:update(ssl_ciphers)
-                local digest = ssl_ciphers_sha1.digest();
-                risk.additional.ssl_ciphers = px_common_utils.hex_to_str(digest)
-            end
+        local ssl_cipher = ngx.var.ssl_cipher
+        if ssl_cipher then
+            risk.additional.ssl_cipher = ssl_cipher
         end
+
+
 
         if call_reason == 'cookie_decryption_failed' then
             px_logger.debug("Attaching px_orig_cookie to request")
