@@ -11,7 +11,7 @@ function _M.array_index_of(array, item)
     end
 
     for i, value in ipairs(array) do
-        if value == item then
+        if string.lower(value) == string.lower(item) then
             return i
         end
     end
