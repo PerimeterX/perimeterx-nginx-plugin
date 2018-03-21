@@ -94,7 +94,7 @@ function M.load(config_file)
             px_logger.debug("Enforcing action: " .. mobile_template .. " page is served")
 
             local html = px_template.get_template(mobile_template .. ".mobile", details.block_uuid, vid)
-            local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+            local collectorUrl = 'https://527f104d.ngrok.io'--'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
             local result = {
                 action = parse_action(ngx.ctx.px_action),
                 uuid = details.block_uuid,

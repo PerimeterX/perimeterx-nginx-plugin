@@ -34,7 +34,6 @@ function M.application(file_name)
     local px_client = require("px.utils.pxclient").load(config_file)
     local PXPayload = require('px.utils.pxpayload')
     local px_payload = PXPayload:new{}
-    local px_captcha = require("px.utils.pxcaptcha").load(config_file)
     local px_block = require("px.block.pxblock").load(config_file)
     local px_api = require("px.utils.pxapi").load(config_file)
     local px_logger = require("px.utils.pxlogger").load(config_file)
@@ -141,22 +140,7 @@ function M.application(file_name)
     end
 
     px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent)
-    -- process _pxCaptcha cookie if present
-    local _pxCaptcha = ngx.var.cookie__pxCaptcha
     local details = {};
-
-    if _pxCaptcha then
-        local success, result = pcall(px_captcha.process, _pxCaptcha)
-
-        -- validating captcha value and if reset was successful then pass the request
-        if success and result == 0 then
-            ngx.header["Content-Type"] = nil
-            ngx.header["Set-Cookie"] = "_pxCaptcha=; Expires=Thu, 01 Jan 1970 00:00:00 GMT;"
-            pcall(px_client.send_to_perimeterx, "page_requested", details)
-            return true
-        end
-    end
-
     px_payload:load(config_file)
     px_cookie = px_payload:get_payload()
     px_cookie:load(config_file)

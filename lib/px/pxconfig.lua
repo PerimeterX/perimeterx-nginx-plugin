@@ -1,5 +1,7 @@
 ----------------------------------------------
 -- PerimeterX(www.perimeterx.com) Nginx plugin
+-- Version 1.5.0
+-- Release date: 05.04.2016
 ----------------------------------------------
 
 local _M = {}
@@ -8,23 +10,21 @@ _M.px_enabled = true
 
 -- ##  Configuration Block ##
 
--- ## Required Parameters ##
-_M.px_appId = 'PX_APP_ID'
-_M.cookie_secret = 'COOKIE_KEY'
-_M.auth_token = 'PX_AUTH_TOKEN'
+_M.px_appId = 'PXvRfnOj4y'
+_M.cookie_secret = '6CS5OfTXmAZIJmpERTpLqHycYCbBK3Jk31dm0fjrrooblU8vKPe8Yqd0Q31QBezc'
+_M.auth_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTUxNjA5MjE1NSwic3ViIjoiUFh2UmZuT2o0eSIsImp0aSI6IjcwMWVkOGZkLTY0OGYtNDhjMy05ZGYyLWMyMjQ4ZTFiNDQ3NiJ9.GCTz7v2sfY3BsirFMH69c_bwYMTuZoLd8lOw-LpIYgk'
 
 -- ## Blocking Parameters ##
-_M.blocking_score = 100
-_M.block_enabled = false
-_M.captcha_enabled = true
+_M.blocking_score = 60
+_M.block_enabled = true
 
 -- ## Additional Configuration Parameters ##
 _M.sensitive_headers = {'cookie', 'cookies'}
-_M.ip_headers = {}
+_M.ip_headers = {'x-forwarded-for'}
 _M.score_header_name = 'X-PX-SCORE'
 _M.sensitive_routes_prefix = {}
 _M.sensitive_routes_suffix = {}
-_M.captcha_provider = "reCaptcha"
+_M.captcha_provider = "funCaptcha"
 _M.additional_activity_handler = nil
 _M.enabled_routes = {}
 _M.first_party_enabled = true
@@ -52,8 +52,8 @@ _M.redirect_on_custom_url = false
 
 
 -- ## Debug Parameters ##
-_M.px_debug = false
-_M.s2s_timeout = 1000
+_M.px_debug = true
+_M.s2s_timeout = 2000
 _M.client_timeout = 2000
 _M.cookie_encrypted = true
 _M.px_maxbuflen = 10
@@ -61,8 +61,8 @@ _M.px_port = 443
 _M.ssl_enabled = true
 _M.enable_server_calls = true
 _M.send_page_requested_activity = true
-_M.base_url = string.format('sapi-%s.perimeterx.net', _M.px_appId)
-_M.collector_host = string.format('collector-%s.perimeterx.net', _M.px_appId)
+_M.base_url = '527f104d.ngrok.io'--string.format('sapi-%s.perimeterx.net', _M.px_appId)
+_M.collector_host = '527f104d.ngrok.io'--string.format('collector-%s.perimeterx.net', _M.px_appId)
 _M.client_host = "client.perimeterx.net"
 _M.collector_port_overide = nil
 _M.client_port_overide = nil
