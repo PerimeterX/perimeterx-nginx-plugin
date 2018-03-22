@@ -13,9 +13,11 @@ function M.load(config_file)
     local px_headers = require("px.utils.pxheaders").load(config_file)
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require("px.utils.pxcommonutils")
+    local sha1 = require "resty.nettle.sha1"
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_http_version = ngx.req.http_version
+
     -- new_request_object --
     -- takes no arguments
     -- returns table
@@ -40,6 +42,25 @@ function M.load(config_file)
         if ngx.ctx.uuid then
             risk.uuid = ngx.ctx.uuid
         end
+
+
+        local ssl_ciphers = ngx.var.ssl_ciphers
+        if ssl_ciphers ~= nil and ssl_ciphers ~= '' then
+            local ssl_ciphers_sha = ngx.encode_base64(sha1(ssl_ciphers))
+            risk.additional.tls_ciphers_sha = ssl_ciphers_sha
+        end
+
+        local ssl_protocol = ngx.var.ssl_protocol
+        if ssl_protocol then
+            risk.additional.ssl_protocol = ssl_protocol
+        end
+
+        local ssl_cipher = ngx.var.ssl_cipher
+        if ssl_cipher then
+            risk.additional.ssl_cipher = ssl_cipher
+        end
+
+
 
         if call_reason == 'cookie_decryption_failed' then
             px_logger.debug("Attaching px_orig_cookie to request")
