@@ -91,7 +91,6 @@ function M.application(file_name)
             return true
         end
     end
-
     -- Match for client
     if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_VENDOR_PATH)) then
         px_client.reverse_px_client()

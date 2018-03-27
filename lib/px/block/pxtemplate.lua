@@ -20,12 +20,12 @@ function M.load(config_file)
         end
 
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
+        local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
         if px_config.first_party_enabled then
             local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
             js_client_src = string.format('/%s%s',reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
+            collectorUrl = string.format('/%s%s',reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
         end
-
-        local collectorUrl = 'https://527f104d.ngrok.io'--'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
 
         return {
             refId = uuid,
