@@ -201,7 +201,8 @@ _M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
 
 #### Configuring Required Parameters
 
-Configuration options are set in the file `/usr/local/lib/lua/px/pxconfig.lua`.
+Configuration options are set in the file:
+`/usr/local/lib/lua/px/pxconfig.lua`.
 
 #### Required parameters:
 
@@ -223,16 +224,15 @@ _M.blocking_score = 60
 _M.block_enabled = false
 ```
 
-The PerimeterX plugin is enabled in monitor only mode by default.
+By default, the PerimeterX plugin is enabled in Monitor Only mode.
 
 Setting the  block_enabled flag to *true* will activate the module to enforce the blocking score. The PerimeterX module will block users crossing the block score threshold that you define. If a user crosses the minimum block score then the user will receive the block page.
 
 
 
-#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
+#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the Block Page
 
-By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
-
+Enabling CAPTCHA support includes a CAPTCHA challenge on the block page. This allows real users the ability to identify themselves as a human. Solving the CAPTCHA question clears the user's score they are allowed to continue.
 **Default: true**
 
 ```
@@ -242,7 +242,7 @@ _M.captcha_enabled = false
 
 #### <a name="captcha-provider"></a>Select CAPTCHA Provider
 
-The CAPTCHA part of the block page can use one of the following:
+The CAPTCHA provider for the block page is one of the following:
 * [reCAPTCHA](https://www.google.com/recaptcha)
 * [FunCaptcha](https://www.funcaptcha.com/)
 
@@ -253,7 +253,7 @@ _M.captcha_provider = "funCaptcha"
 
 #### <a name="enabled-routes"></a> Enabled Routes
 
-The enabled routes variable allows you to implicitly define a set of routes which the plugin will be active on. Supplying an empty list will set all application routes as active.
+The enabled routes variable allows you to implicitly define a set of routes on which the plugin will be active. An empty list sets all application routes as active.
 
 **Default: Empty list (all routes)**
 
@@ -263,7 +263,7 @@ _M.enabled_routes = {'/blockhere'}
 
 #### <a name="sensitive-routes"></a> Sensitive Routes
 
-Lists of route prefixes and suffixes. The PerimeterX module will always match the request URI with these lists, and if a match is found will create a server-to-server call, even if the cookie is valid and its score is low.
+A list of route prefixes and suffixes. The PerimeterX module always matches the request URI with the prefixes and suffixes lists. When a match is found, the PerimeterX module creates a server-to-server call, even when the cookie is valid and its score is low.
 
 **Default: Empty list**
 
@@ -272,7 +272,7 @@ _M.sensitive_routes_prefix = {'/login', '/user/profile'}
 _M.sensitive_routes_suffix = {'/download'}
 ```
 
-#### <a name="sensitive-headers"></a> Filter sensitive headers
+#### <a name="sensitive-headers"></a> Filter Sensitive Headers
 A list of sensitive headers can be configured to prevent specific headers from being sent to PerimeterX servers (lower case header names). Filtering cookie headers for privacy is set by default, and can be overridden on the `pxConfig` variable.
 
 **Default: cookie, cookies**
@@ -282,7 +282,7 @@ _M.sensitive_headers = {'cookie', 'cookies', 'secret-header'}
 ```
 
 #### <a name="api-timeout"></a>API Timeout Milliseconds
-> Note: Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, or is expired or invalid.
+> Note: Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, is expired, or is  invalid.
 
 API Timeout in milliseconds (float) to wait for the PerimeterX server API response.
 
@@ -294,7 +294,7 @@ _M.s2s_timeout = 250
 
 #### <a name="send-page-activities"></a> Send Page Activities
 
-A boolean flag to determine whether or not to send activities and metrics to PerimeterX, on each page request. Disabling this feature will prevent PerimeterX from receiving data populating the PerimeterX portal, containing valuable information such as the amount of requests blocked and other API usage statistics.
+A boolean flag determining whether or not to send activities and metrics to PerimeterX, for each page request. Disabling this feature prevents PerimeterX from receiving data populating the PerimeterX portal. This data contains valuable information such as the amount of requests blocked and other API usage statistics.
 
 **Default:** true
 
@@ -306,17 +306,17 @@ _M.send_page_requested_activity = false
 
 Enables debug logging mode.
 
-**Default:** false
+**Default:** false (disabled)
 ```
 _M.px_debug = true
 ```
-Once Enabled, debug messages coming out from PerimeterX should be in the following template
+When Enabled, PerimeterX debug messages should be in the following template:
 
 `[PerimeterX - DEBUG] [APP_ID] - MESSAGE` - for debug messages
 
 `[PerimeterX - ERROR] [APP_ID] - MESSAGE` - for error messages
 
-Exmple for a valid request flow
+Valid request flow example:
 ```
 2017/12/04 12:04:18 [error] 7#0: *9 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - Cookie V3 found - Evaluating, client: 172.17.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8888"
 2017/12/04 12:04:18 [error] 7#0: *9 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - cookie is encyrpted, client: 172.17.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8888"
@@ -331,11 +331,11 @@ Exmple for a valid request flow
 
 #### <a name="customblockpage"></a> Custom Block Page
 
-Customizing block page can be done by 2 methods:
+Block pages can be customized with one of the following methods:
 ##### Modifying default block pages
-PerimeterX default block page can be modified by injecting custom css, javascript and logo to page
+The PerimeterX default block page can be modified by injecting custom css, javascript and logo to the block page.
 
-**default values:** nil
+**Default:** nil
 
 Example:
 
@@ -344,10 +344,10 @@ _M.custom_logo = "http://www.example.com/logo.png"
 _M.css_ref = "http://www.example.com/style.css"
 _M.js_ref = "http://www.example.com/script.js"
 ```
-##### Redirect to a custom block page url
+##### Redirect to a Custom Block Page URL
 Users can customize the blocking page to meet their branding and message requirements by specifying the URL to a blocking page HTML file. The page can also implement reCaptcha. See <docs location> for more examples of a customized reCaptcha page.
 
-**default:** nil
+**Default:** nil
 
 ```
 _M.custom_block_url = nil
@@ -366,31 +366,28 @@ _M.custom_block_url = '/block.html'
 #### <a name="redirect_on_custom_url"></a> Redirect on Custom URL
 The `_M.redirect_on_custom_url` flag provides 2 options for redirecting users to a block page.
 
-**default:** false
+**Default:** false
 
 ```lua
 _M.redirect_on_custom_url = false
 ```
 
-By default, when a user crosses the blocking threshold and blocking is enabled, the user will be redirected to the block page defined by the `_M.custom_block_url` variable, responding with a 307 (Temporary Redirect) HTTP Response Code.
+By default, when a user exceeds the blocking threshold and blocking is enabled, the user is redirected to the block page defined by the `_M.custom_block_url` variable, The defined block page displays a 307 (Temporary Redirect) HTTP Response Code.
 
-
-Setting the flag to flase will *consume* the page and serve it under the current URL, responding with a 403 (Unauthorized) HTTP Response Code.
-
->_Setting the flag to **false** does not require the block page to include any of the coming examples, as they are injected into the blocking page via the PerimeterX Nginx Enforcer._
-
-Setting the flag to **true** (enabling redirects) will result with the following URL upon blocking:
+When the flag is set to false, a 403 (Unauthorized) HTTP Response Code is displayed on the blocked page URL.
+Setting the flag to true (enabling redirects) results in the following URL upon blocking:
 
 ```
 http://www.example.com/block.html?url=L3NvbWVwYWdlP2ZvbyUzRGJhcg==&uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
 ```
->Note: the **url** variable is comprised of URL Encoded query parameters (of the originating request) and then both the original path and variables are Base64 Encoded (to avoid collisions with block page query params). 
+Setting the flag to false does not require the block page to include any of the examples below, as they are injected into the blocking page via the PerimeterX Nginx Enforcer.
 
+> Note: The URL variable is comprised of URL Encoded query parameters (of the original request) and then both the original path and variables are Base64 Encoded (to avoid collisions with block page query params).
  
 
-###### Custom blockpage requirements:
+###### Custom Blockpage Requirements:
 
-When captcha is enabled, and `_M.redirect_on_custom_url` is set to **true**, the block page **must** include the following:
+When CAPTCHA is enabled, and `_M.redirect_on_custom_url` is set to **true**, the block page **must** include the following:
 
 * The `<head>` section **must** include:
 
@@ -432,9 +429,9 @@ function getQueryString(name, url) {
 <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div>
 ```
 
-* And the [PerimeterX Javascript snippet](https://console.perimeterx.com/#/app/applicationsmgmt) (availabe on the PerimeterX Portal via this link) must be pasted in.
+* The [PerimeterX Javascript snippet](https://console.perimeterx.com/#/app/applicationsmgmt) (available on the PerimeterX Portal via this link) must be pasted in.
 
-#### Configuration example:
+#### Configuration Example:
  
 ```lua
 _M.custom_block_url = '/block.html'
@@ -442,7 +439,7 @@ _M.redirect_on_custom_url = true
 ```
 
 
-#### Block page implementation full example: 
+#### Block Page Implementation Full Example: 
 
 ```html
 <html>
@@ -489,9 +486,9 @@ _M.redirect_on_custom_url = true
 #### <a name="multipleapps"></a> Multiple App Support
 The PerimeterX Enforcer allows for multiple configurations for different apps.
 
-If your PerimeterX account contains several Applications (as defined via the portal), follow these steps to create different configurations for each Application.
+If your PerimeterX account contains several Applications (as defined in the portal), you can create different configurations for each Application.
 
->Note: The application initialises a timed worker. The worker must be initialised using any one of the applications in your account. Be sure to pass the correct configuration file name to the `require ("px.utils.pxtimer").application("AppName"|empty)` block in the server initialization.
+>Note: The application initializes a timed worker. The worker must be initialized with one of the applications in your account. The the correct configuration file name must be passed to the `require ("px.utils.pxtimer").application("AppName"|empty)` block in the server initialization.
 
 - First, open the `nginx.conf` file, and find the following line : `require("px.pxnginx").application()` inside your location block.
 - Pass the desired application name into the `application()` function, as such : `require("px.pxnginx").application("mySpecialApp")`
