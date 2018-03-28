@@ -52,35 +52,31 @@ Table of Contents
 - [lustache](https://github.com/Olivine-Labs/lustache)
 - [GNU Nettle >= v3.2](https://www.lysator.liu.se/~nisse/nettle/)
 
-To install package dependecies on Ubuntu run:
+To install package dependencies on Ubuntu run:
 
 `sudo apt-get update && sudo apt-get install lua-cjson libnettle6 nettle-dev luarocks luajit libluajit-5.1-dev ca-certificates`
 
-All Lua dependecies are automatically fulfilled with Luarocks.
+All Lua dependencies are automatically fulfilled with Luarocks.
 
 <a name="installation"></a> Installation
 ----------------------------------------
-
-Installation can be done using [luarocks](https://luarocks.org/).
-
+Installation is performed in one of the following ways:
+- Automatically, using [luarocks](https://luarocks.org/).
 ```sh
 $ luarocks install perimeterx-nginx-plugin
 ```
+- Manually, by downloading the repository sources and running `sudo make install`.
 
-Manual installation can accomplished by downoading the sources for this repository and running `sudo make install`.  
-
-<a name="awsinstall"></a> Additional steps for installing on Amazon Linux
+<a name="awsinstall"></a> Additional Steps for Installing on Amazon Linux
 ----------------------------------------  
-### For Nginx+: 
-Install the lua modules provided by the Nginx team via yum as shown below as well as the CA certificates bundle which will be required when you configure Nginx.
+### For NGINX+: 
+1. Install the Lua modules provided by the NGINX team (via yum) and the CA certificates bundle required when configuring NGINX.
 
 ```
 yum -y install nginx-plus-module-lua ca-certificates.noarch
 ```
 
-Download and compile nettle. 
-> Side note: Use the version neccessary for your environment. 
-
+2. Download and compile nettle, using the version appropriate for your environment.
 ```
 yum -y install m4 # prerequisite for nettle
 cd /tmp/
@@ -92,10 +88,7 @@ make clean && make install
 cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so . 
 ```
 
-Make sure to change the path shown below in the "Lua CA Certificates" section as Amazon Linux stores the CA required in a different location than shown.
-
-If running Amazon Linux this is the trusted certificate path please use:  
-
+3. Change the certificate path provided in the Lua CA Certificates section to the Amazon Linux trusted certificate:
 ```
 lua_ssl_trusted_certificate "/etc/pki/tls/certs/ca-bundle.crt";
 ```
@@ -105,17 +98,17 @@ lua_ssl_trusted_certificate "/etc/pki/tls/certs/ca-bundle.crt";
 
 
 ### Resolver
-Add the directive `resolver A.B.C.D;` in the HTTP section of your configuration. This is required so NGINX can resolve the PerimeterX API DNS name. `A.B.C.D` is the IP address of your DNS resolver.
+Add the directive `resolver A.B.C.D;` (where A.B.C.D is the IP address of your DNS resolver) in the HTTP section of your configuration. This is required for NGINX to resolve the PerimeterX API DNS name.
 
 ### Lua Package Path
-Update your Lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
+Update the your Lua package path location in the HTTP section of your configuration to reflect where you have installed the modules.
 
 ```
 lua_package_path "/usr/local/lib/lua/?.lua;;";
 ```
 
 ### Lua CA Certificates
-To support TLS to PerimeterX servers, you must point Lua to the trusted certificate location (actual location may differ between Linux distributions).
+To support TLS to PerimeterX servers, Lua must be pointed to the trusted certificate location (the actual certificate location may differ between Linux distributions).
 
 ```
 lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
@@ -125,13 +118,14 @@ lua_ssl_verify_depth 3;
 In CentOS/RHEL systems, the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`.
 
 ### Lua Timer Initialization
-Add the init by lua script. This is used by PerimeterX to hold and send metrics on regular intervals.
+Add the init with a Lua script. The init is is used by PerimeterX to hold and send metrics at regular intervals.
 
 ```
 init_worker_by_lua_block {
     require ("px.utils.pxtimer").application()
 }
 ```
+Note: The NGINX Configuration Requirements must be completed before proceeding to the next stage of installation.
 
 ### <a name="basic-usage"></a> Basic Usage Example
 
@@ -185,30 +179,23 @@ http {
 }
 ```
 
-#### <a name="real-ip"></a> Extracting the real IP address from a request
+#### <a name="real-ip"></a> Extracting the Real IP Address from a Request
 
-> Note: It is important that the real connection IP is properly extracted when your NGINX server sits behind a load balancer or CDN. The PerimeterX module requires the user's real IP address.
-
-For the PerimeterX NGINX module to see the real user's IP address, you need to have one (or both) of the following:
-* The `set_real_ip_from` and `real_ip_header` NGINX directives in your nginx.conf. This will make sure the connecting IP is properly derived from a trusted source.
-
-    Example:
-    
-    ```
-      set_real_ip_from 172.0.0.0/8;
-      set_real_ip_from 107.178.0.0/16; 
-      real_ip_header X-Forwarded-For;
-    ```
-* Set `ip_headers`, a list of headers to extract the real IP from, ordered by priority.
-    
-    **Default with no predefined header: `ngx.var.remote_addr`**
-    
-    Example:
-    
-    ```lua
-      _M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
-    ```
-    
+The PerimeterX module requires the user's real IP address.The real connection IP must be properly extracted when your NGINX server sits behind a load balancer or CDN.
+For the PerimeterX NGINX module to see the real user's IP address, you must have at least one of the following:
+- The set_real_ip_from and real_ip_header NGINX directives in your nginx.conf. This will ensure the connecting IP is properly derived from a trusted source.
+Example:
+```
+set_real_ip_from 172.0.0.0/8;
+set_real_ip_from 107.178.0.0/16; 
+real_ip_header X-Forwarded-For;
+```
+- Set ip_headers, a list of headers from which to extract the real IP (ordered by priority).    
+**Default with no predefined header: `ngx.var.remote_addr`**
+Example:
+```lua
+_M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
+```
 
 ### <a name="configuration"></a> Configuration Options
 
