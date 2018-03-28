@@ -490,18 +490,20 @@ If your PerimeterX account contains several Applications (as defined in the port
 
 >Note: The application initializes a timed worker. The worker must be initialized with one of the applications in your account. The the correct configuration file name must be passed to the `require ("px.utils.pxtimer").application("AppName"|empty)` block in the server initialization.
 
-- First, open the `nginx.conf` file, and find the following line : `require("px.pxnginx").application()` inside your location block.
-- Pass the desired application name into the `application()` function, as such : `require("px.pxnginx").application("mySpecialApp")`
-- Then, find your `pxconfig.lua` file, and make a copy of it. name that copy using the following pattern : `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) - The <AppName> placeholder must be replaced by the exact name provided to the application function in the previous section.
-- Change the configuration inside the newly created file.
-- Make sure to save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
-- Thats it, in every `location` block of your app - make sure to place the code mentioned on stage 2 with the correct AppName.
+- Open the `nginx.conf` file, and find the following line : `require("px.pxnginx").application()` inside your location block.
+- Pass the desired application name into the `application()` function.
+  For example: `require("px.pxnginx").application("mySpecialApp")`
+- Locate the `pxconfig.lua` file, and create a copy of it. 
+  The copy name should follow the pattern: `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) - The <AppName> The placeholder must be replaced by the exact name provided to the application function in step 1.
+- Change the configuration iin created file.
+- Save the file in the same location (e.g. `/usr/local/lib/lua/px/<yourFile>`)
+- For every location block of your app, replace the code mentioned in step 2 with the correct AppName.
 
 
 #### <a name="add-activity-handler"></a> Additional Activity Handler
-Adding an additional activity handler is done by setting '_M.additional_activity_handler' with a user defined function on the 'pxconfig.lua' file. The 'additional_activity_handler' function will be executed before sending the data to the PerimeterX portal.
+An additional activity handler is added by setting '_M.additional_activity_handler' with a user defined function in the 'pxconfig.lua' file.
 
-Default: Only send activity to PerimeterX as controlled by 'pxconfig.lua'.
+Default: Activity is sent to PerimeterX as controlled by 'pxconfig.lua'.
 
 ```lua
 _M.additional_activity_handler = function(event_type, ctx, details)
@@ -515,8 +517,7 @@ end
 ```
 
 #### <a name="log-enrichment"></a> Log Enrichment
-Access logs can be enriched with the PerimeterX bot information by creating an NGINX variable with the proper name
-To configure this variable use the NGINX map directive in the HTTP section of your NGINX configuration file. This should be added before an additional configuration files are included.
+Access logs can be enriched with the PerimeterX bot information by creating an NGINX variable with the proper name. To configure this variable use the NGINX map directive in the HTTP section of your NGINX configuration file. This should be added before  additional configuration files are added.
 
 The following variables are enabled
 
@@ -572,17 +573,16 @@ whitelist = {
 }
 ```
 
-- **uri_full** : for value `{'/api_server_full'}` - will filter requests to `/api_server_full?data=1` but not to `/api_server?data=1`
-- **uri_prefixes** : for value `{'/api_server'}` - will filter requests to `/api_server_full?data=1` but not to `/full_api_server?data=1` 
-- **uri_suffixes** : for value `{'.css'}` - will filter requests to `/style.css` but not to `/style.js`
-- **ip_addresses** : for value `{'192.168.99.1'}` - will filter requests coming from any of the listed ips.
-- **ua_full** : for value `{'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}` - will filter all requests matching this exact UA. 
-- **ua_sub** : for value `{'GoogleCloudMonitoring'}` - will filter requests containing the provided string in their UA.
+- **uri_full** : for value `{'/api_server_full'}` - Filters requests to `/api_server_full?data=1` but not to `/api_server?data=1`
+- **uri_prefixes** : for value `{'/api_server'}` - Filters requests to `/api_server_full?data=1` but not to `/full_api_server?data=1` 
+- **uri_suffixes** : for value `{'.css'}` - Filters requests to `/style.css` but not to `/style.js`
+- **ip_addresses** : for value `{'192.168.99.1'}` - Filters requests coming from any of the listed ips.
+- **ua_full** : for value `{'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}` - Filters all requests matching this exact UA. 
+- **ua_sub** : for value `{'GoogleCloudMonitoring'}` - Filters requests containing the provided string in their UA.
 
 <a name="remote-configurations"></a> Remote Configurations
 -----------------------------------------------
-Remote configuration allows the module to periodically pull configurations from PerimeterX services.
-Once enabled, the configuration can be changed dynamically via PerimeterX portal
+Remote configuration allows the module to periodically pull configurations from PerimeterX services. When enabled, the configuration can be changed dynamically via PerimeterX portal
 
 Default: false
 
@@ -596,13 +596,15 @@ _M.load_interval = 5
 
 <a name="first-party"></a> First Party Mode
 -----------------------------------------------
-Enables the module to receive/send data from/to the sensor, acting as a "reverse-proxy" for 
-client requests and sensor activities.
+Enables the module to send/receive data to/from the sensor, acting as a "reverse-proxy" for client requests and sensor activities.
 
-This will require to open new routes and enable the module on the following routes `/<PX_APP_ID without PX prefix>/xhr/*` and `/<PX_APP_ID without PX prefix>/init.js`
-If the module is enabled on `location /` you can consider these routes as open.
+First Party Mode is required to open new routes and to enable the module on the following routes:
+- `/<PX_APP_ID without PX prefix>/xhr/*`
+- `/<PX_APP_ID without PX prefix>/init.js`
 
-Additionally, First Party may also require additional changes on the sensor snippet. Refer to the portal for more information.
+If the module is enabled on location / the routes are considered open.
+
+First Party Mode may also require additional changes on the sensor snippet. For more information, refer to the portal.
 
 Default: `true` 
  
@@ -641,14 +643,16 @@ Create a branch on your fork, preferably using a descriptive branch name.
 ### <a name="tests"></a>Test
 > Tests for this project are written using the [`Test::Nginx`](https://github.com/openresty/test-nginx) testing framework.
 
-**Dont forget to test**. This project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
-Before you create any pull request, make sure your project has passed all tests. If any new features require it, write your own.
+**Dont forget to test**. 
 
-To run the tests, first build the docker container. Then, run the tests using the following command : `make docker-test`.
+This project relies heavily on tests to ensure that each user has the same experience, and no new features break the code. Before you create any pull request, make sure your project has passed all tests. If any new features require it, write your own test.
+
+To run the tests<br/>
+1. Build the docker container.
+2. Run the tests using the following command: make docker-test.
 
 ### Pull Request
-After you have completed the process, create a pull request. Please provide a complete and thorough description explaining the changes. Remember, this code has to be read by our maintainers, so keep it simple, smart and accurate.
+Once you have completed the process, create a pull request. Provide a complete and thorough description explaining the changes. Remember, the code has to be read by our maintainers, so keep it simple, smart and accurate.
 
 ### Thanks
-After all, you are helping us by contributing to this project, and we want to thank you for it.
-We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
+After all, you are helping us by contributing to this project, and we want to thank you for it. We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
