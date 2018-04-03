@@ -42,12 +42,12 @@ function M.load(config_file)
         }
     end
 
-    local function get_script(script_name)
+    local function get_script(script_name, px_config)
         local timeout = px_config.client_timeout
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(5000)
-        local ok, err = httpc:connect('sample-go.pxchk.net', 8081)
+        local ok, err = httpc:connect(px_config.captcha_script_host, px_config.captcha_script_port)
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
         end
@@ -67,10 +67,6 @@ function M.load(config_file)
             px_logger.debug("Non 200 response code: " .. res.status)
         else
             px_logger.debug("get script response status: " .. res.status)
-        end
-        local ok, err = httpc:set_keepalive()
-        if not ok then
-            px_logger.error("Failed to set keepalive: " .. err)
         end
         local body = ''
         if res == nil then
@@ -114,7 +110,7 @@ function M.load(config_file)
 
         local props = get_props(px_config, uuid, vid)
         local templateStr = get_content(template)
-        props['blockScript'] = get_script(template)
+        props['blockScript'] = get_script(template, px_config)
         return lustache:render(templateStr, props)
     end
 

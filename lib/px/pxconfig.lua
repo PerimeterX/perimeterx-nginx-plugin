@@ -64,6 +64,8 @@ _M.send_page_requested_activity = true
 _M.base_url = string.format('sapi-%s.perimeterx.net', _M.px_appId)
 _M.collector_host = string.format('collector-%s.perimeterx.net', _M.px_appId)
 _M.client_host = "client.perimeterx.net"
+_M.captcha_script_host = "sample-go.pxchk.net"
+_M.captcha_script_port = 8081
 _M.collector_port_overide = nil
 _M.client_port_overide = nil
 -- ## END - Configuration block ##
