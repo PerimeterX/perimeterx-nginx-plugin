@@ -61,6 +61,7 @@ function M.load(config_file)
                 ["Content-Type"] = "application/javscript",
             }
         })
+        httpc:set_keepalive()
         if not res then
             px_logger.error("Failed to make HTTP GET: " .. err)
         elseif res.status ~= 200 then
