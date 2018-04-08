@@ -95,7 +95,11 @@ function M.load(config_file)
 
     local function get_content(template)
         local __dirname = get_path()
-        local template_path = string.format("%sblock_template.mustache",__dirname)
+        local path = 'block_template'
+        if tempalate == 'ratelimit' then
+            path = 'ratelimit'
+        end
+        local template_path = string.format("%stemplates/%s.mustache", __dirname, path)
 
         px_logger.debug("fetching template from: " .. template_path)
         local file = io.open(template_path, "r")
@@ -111,7 +115,9 @@ function M.load(config_file)
 
         local props = get_props(px_config, uuid, vid)
         local templateStr = get_content(template)
-        props['blockScript'] = get_script(template, px_config)
+        if template ~= 'ratelimit' then
+            props['blockScript'] = get_script(template, px_config)
+        end
         return lustache:render(templateStr, props)
     end
 
