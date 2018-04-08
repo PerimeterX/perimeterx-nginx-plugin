@@ -46,15 +46,15 @@ function M.load(config_file)
         local timeout = px_config.client_timeout
         -- create new HTTP connection
         local httpc = http.new()
-        httpc:set_timeout(5000)
+        httpc:set_timeout(px_config.client_timeout)
         local ok, err = httpc:connect(px_config.captcha_script_host, px_config.captcha_script_port)
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
         end
-        -- local session, err = httpc:ssl_handshake()
-        -- if not session then
-        --     px_logger.debug("HTTPC SSL handshare error: " .. err)
-        -- end
+        local session, err = httpc:ssl_handshake()
+        if not session then
+            px_logger.debug("HTTPC SSL handshare error: " .. err)
+        end
         local res, err = httpc:request({
             path = '/' .. script_name .. '.js',
             headers = {
