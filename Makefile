@@ -22,7 +22,9 @@ install:
 
 	$(INSTALL) lib/px/pxnginx.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/pxnginx.lua
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/block
-	$(INSTALL) lib/px/block/* $(DESTDIR)/$(LUA_LIB_DIR)/px/block
+	$(INSTALL) lib/px/block/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/block
+    $(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/block/templates
+    $(INSTALL) lib/px/block/templates/* $(DESTDIR)/$(LUA_LIB_DIR)/px/block/templates
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 	$(INSTALL) lib/px/utils/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 
