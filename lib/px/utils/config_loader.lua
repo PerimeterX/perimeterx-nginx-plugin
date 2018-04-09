@@ -74,7 +74,7 @@ function _M.get_configuration(config_file)
 
         -- report enforcer telemetry
         local details = {}
-        details.px_config = px_commom_utils.filter_config(config);
+        details.px_config = px_commom_utils.filter_config(config)
         details.update_reason = 'remote_config'
         px_client.send_enforcer_telmetry(details)
    end

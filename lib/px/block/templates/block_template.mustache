@@ -89,7 +89,6 @@
     {{#cssRef}}
         <link rel="stylesheet" type="text/css" href="{{cssRef}}"/>
     {{/cssRef}}
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -106,11 +105,8 @@
     </div>
     <div class="content-wrapper">
         <div class="content">
-            <p>
-                Please click "I am not a robot" to continue
-            </p>
-            <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b"
-                 data-callback="handleCaptcha" data-theme="dark">
+           
+            <div id="px-captcha">
             </div>
             <p>
                 Access to this page has been denied because we believe you are using automation tools to browse the
@@ -148,47 +144,15 @@
 </section>
 <!-- Px -->
 <script>
-    (
-            function () {
-                window._pxAppId = '{{appId}}';
-                var p = document.getElementsByTagName("script")[0], s = document.createElement("script");
-
-                s.async = 1;
-                s.src = '{{{jsClientSrc}}}';
-                p.parentNode.insertBefore(s, p);
-                {{#firstPartyEnabled}}
-                    s.onerror = function() {
-                      s = document.createElement('script');
-                      s.src = '//client.perimeterx.net/{{appId}}/main.min.js';
-                      p.parentNode.insertBefore(s,p);
-                    };
-                {{/firstPartyEnabled}}
-            }()
-    );
+    window._pxAppId = '{{appId}}';
+    window._pxJsClientSrc = '{{{jsClientSrc}}}';
+    window._pxFirstPartyEnabled = {{firstPartyEnabled}};
+    window._pxVid = '{{vid}}';
+    window._pxUuid = '{{uuid}}';
+    window._pxHostUrl = '{{{hostUrl}}}';
 </script>
-<!-- Captcha -->
-<script>
-    window.px_vid = '{{vid}}';
-    function handleCaptcha(response) {
-        var vid = '{{vid}}';
-        var uuid = '{{uuid}}';
-        var name = "_pxCaptcha";
+<script> {{{blockScript}}}</script>
 
-        var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-
-        var cookieParts = [
-            name,
-            "=",
-            btoa(JSON.stringify({r: response, v: vid, u: uuid})),
-            "; expires=",
-            expiryUtc,
-            "; path=/"
-        ];
-
-        document.cookie = cookieParts.join("");
-        location.reload();
-    }
-</script>
 <!-- Custom Script -->
 {{#jsRef}}
     <script src="{{jsRef}}"></script>
