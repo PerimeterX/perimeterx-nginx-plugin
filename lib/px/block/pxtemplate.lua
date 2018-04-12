@@ -23,8 +23,8 @@ function M.load(config_file)
         local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
         if px_config.first_party_enabled then
             local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
-            js_client_src = string.format('/%s%s',reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
-            collectorUrl = string.format('/%s%s',reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
+            js_client_src = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
+            collectorUrl = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
         end
 
         return {
@@ -40,53 +40,6 @@ function M.load(config_file)
             jsClientSrc = js_client_src,
             firstPartyEnabled = px_config.first_party_enabled
         }
-    end
-
-    local function get_script(script_name, px_config)
-        local timeout = px_config.client_timeout
-        -- create new HTTP connection
-        local httpc = http.new()
-        httpc:set_timeout(px_config.client_timeout)
-        local ok, err = httpc:connect(px_config.captcha_script_host, px_config.captcha_script_port)
-        if not ok then
-            px_logger.error("HTTPC connection error: " .. err)
-        end
-        local session, err = httpc:ssl_handshake()
-        if not session then
-            px_logger.debug("HTTPC SSL handshare error: " .. err)
-        end
-        local res, err = httpc:request({
-            path = '/' .. script_name .. '.js',
-            headers = {
-                ["Content-Type"] = "application/javscript",
-            }
-        })
-        httpc:set_keepalive()
-        if not res then
-            px_logger.error("Failed to make HTTP GET: " .. err)
-        elseif res.status ~= 200 then
-            px_logger.debug("Non 200 response code: " .. res.status)
-        else
-            px_logger.debug("get script response status: " .. res.status)
-        end
-        local body = ''
-        if res == nil then
-            return body
-        end 
-        local reader = res.body_reader
-
-        repeat
-            local chunk, err = reader(8192)
-            if err then
-                ngx.log(ngx.ERR, err)
-                break
-            end
-
-            if chunk then
-                body = body .. chunk
-            end
-        until not chunk
-        return body
     end
 
     local function get_path()
@@ -109,6 +62,15 @@ function M.load(config_file)
         local content = file:read("*all")
         file:close()
         return content
+    end
+
+    local function get_script(template, px_config)
+        local url_prefix = 'https://' .. px_config.captcha_script_host
+        if px_config.first_party_enabled then
+            local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+            url_prefix = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_CAPTCHA_PATH)
+        end
+        return url_prefix .. '/' .. template .. '.js'
     end
 
     function _M.get_template(template, uuid, vid)
