@@ -10,10 +10,9 @@ function M.load(config_file)
     local px_config = require(config_file)
     local lustache = require "lustache"
     local px_constants = require "px.utils.pxconstants"
-    local http = require "resty.http"
     local px_logger = require("px.utils.pxlogger").load(config_file)
 
-    local function get_props(px_config, uuid, vid)
+    local function get_props(px_config, uuid, vid, template)
         local logo_css_style = 'visible'
         if (px_config.custom_logo == nil) then
             logo_css_style = 'hidden'
@@ -21,10 +20,16 @@ function M.load(config_file)
 
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
         local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+        local captcha_url_prefix = 'https://' .. px_config.captcha_script_host
         if px_config.first_party_enabled then
             local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
             js_client_src = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
             collectorUrl = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
+            captcha_url_prefix = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_CAPTCHA_PATH)
+        end
+        local captcha_src = ''
+        if template ~= 'ratelimit' then
+            captcha_src = captcha_url_prefix .. '/' .. template .. '.js'
         end
 
         return {
@@ -38,7 +43,8 @@ function M.load(config_file)
             logoVisibility = logo_css_style,
             hostUrl = collectorUrl,
             jsClientSrc = js_client_src,
-            firstPartyEnabled = px_config.first_party_enabled
+            firstPartyEnabled = px_config.first_party_enabled,
+            blockScript = captcha_src
         }
     end
 
@@ -75,11 +81,8 @@ function M.load(config_file)
 
     function _M.get_template(template, uuid, vid)
 
-        local props = get_props(px_config, uuid, vid)
+        local props = get_props(px_config, uuid, vid, template)
         local templateStr = get_content(template)
-        if template ~= 'ratelimit' then
-            props['blockScript'] = get_script(template, px_config)
-        end
         return lustache:render(templateStr, props)
     end
 
