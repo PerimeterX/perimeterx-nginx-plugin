@@ -70,15 +70,6 @@ function M.load(config_file)
         return content
     end
 
-    local function get_script(template, px_config)
-        local url_prefix = 'https://' .. px_config.captcha_script_host
-        if px_config.first_party_enabled then
-            local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
-            url_prefix = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_CAPTCHA_PATH)
-        end
-        return url_prefix .. '/' .. template .. '.js'
-    end
-
     function _M.get_template(template, uuid, vid)
 
         local props = get_props(px_config, uuid, vid, template)
