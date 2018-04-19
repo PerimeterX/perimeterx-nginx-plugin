@@ -103,9 +103,7 @@ sudo make install
 
 #### 1. Install the Lua modules provided by the NGINX team (via yum) and the CA certificates bundle required when configuring NGINX.
 
-```
-yum -y install nginx-plus-module-lua ca-certificates.noarch
-```
+   [Lua Nginx Plus Module](#installation_nginxplus_px)
 
 #### 2. Download and compile nettle, using the version appropriate for your environment.
 ```
