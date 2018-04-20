@@ -18,7 +18,7 @@ function M.application(file_name)
 
 	function send_initial_enforcer_telemetry()
 		if config == nil or not config.px_enabled then
-			px_logger.debug("module is disabled, shutting down enforcer telemetry")
+			px_logger.debug("module is disabled, skipping enforcer telemetry")
 			return
 		end
 
@@ -34,7 +34,7 @@ function M.application(file_name)
 
 	function init_remote_config()
 		if config == nil or not config.px_enabled then
-			px_logger.debug("module is disabled, shutting down remote config")
+			px_logger.debug("module is disabled, skipping remote config")
 			return
 		end
 
@@ -49,7 +49,7 @@ function M.application(file_name)
 
  	function submit_on_timer()
 		if config == nil or not config.px_enabled then
-			px_logger.debug("module is disabled, shutting down submit timer")
+			px_logger.debug("module is disabled, skipping submit timer")
 			return
 		end
 
