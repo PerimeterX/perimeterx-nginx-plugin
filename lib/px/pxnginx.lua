@@ -103,6 +103,12 @@ function M.application(file_name)
         return true
     end
 
+    -- Match for captcha script
+    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH)) then
+        px_client.reverse_px_captcha()
+        return true
+    end
+
     if not px_config.px_enabled then
         px_logger.debug("Request will not be verified, module is disabled")
         return true

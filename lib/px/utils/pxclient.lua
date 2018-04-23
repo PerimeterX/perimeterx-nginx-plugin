@@ -219,6 +219,22 @@ function M.load(config_file)
         _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
     end
 
+    function _M.reverse_px_captcha()
+        if not px_config.first_party_enabled then
+            ngx.header["Content-Type"] = 'application/javascript';
+            ngx.say('')
+            ngx.exit(ngx.OK)
+            return
+        end
+        local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+        local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
+        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to px captcha at " .. px_config.captcha_script_host .. px_request_uri)
+        ngx_req_set_uri(px_request_uri)
+
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
+        _M.forward_to_perimeterx(px_config.captcha_script_host)
+    end
+
     function _M.reverse_px_xhr()
         if not px_config.first_party_enabled or not px_config.reverse_xhr_enabled then
             if string.match(ngx.var.uri, 'gif') then
