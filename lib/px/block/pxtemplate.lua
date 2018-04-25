@@ -22,7 +22,7 @@ function M.load(config_file)
         local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
         local captcha_url_prefix = 'https://' .. px_config.captcha_script_host
         -- in case we are in first party mode (not relevant for mobile), change the base paths to use first party
-        if px_config.first_party_enabled and not string.match(template, "mobile")then
+        if px_config.first_party_enabled and ngx.ctx.px_cookie_origin ~= 'header' then
             local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
             js_client_src = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
             collectorUrl = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
