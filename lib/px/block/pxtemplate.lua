@@ -21,7 +21,8 @@ function M.load(config_file)
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
         local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
         local captcha_url_prefix = 'https://' .. px_config.captcha_script_host
-        if px_config.first_party_enabled then
+        -- in case we are in first party mode (not relevant for mobile), change the base paths to use first party
+        if px_config.first_party_enabled and not string.match(template, "mobile")then
             local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
             js_client_src = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
             collectorUrl = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
@@ -55,7 +56,7 @@ function M.load(config_file)
     local function get_content(template)
         local __dirname = get_path()
         local path = 'block_template'
-        if tempalate == 'ratelimit' then
+        if template == 'ratelimit' then
             path = 'ratelimit'
         end
         local template_path = string.format("%stemplates/%s.mustache", __dirname, path)
