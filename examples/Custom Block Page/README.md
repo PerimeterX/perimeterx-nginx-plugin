@@ -15,19 +15,7 @@ In order to use the example:
 </script>
 <script src="https://captcha.px-cdn.perimeterx.net/recaptcha.js"></script>
 ```
-* In the HTML structure, the `<body>` section must include the following line where the Captcha element is to be located:
-
-```
-<div id="px-captcha"></div>
-```
 
 2. Set the `_M.custom_block_url` to the location you have just defined (e.g. /block.html)
-4. Set the `_M.captcha_provider` parameter to `reCaptcha`
 5. Set the `_M.redirect_on_custom_url` flag to **false**.
 6. Change the `<APP_ID>` placeholder on the block.html page to the Application ID provided on the PerimeterX Portal.
-
-
-You are now Blocking requests providing a CAPTCHA to the user for cleanup.
-
-###Redirecting to a Custom Block Page
-Instead of rendering the block page under the current URL, you can have the Enforcer redirect the blocked request to a different URL by setting `_M.redirect_on_custom_url` to **true**.
