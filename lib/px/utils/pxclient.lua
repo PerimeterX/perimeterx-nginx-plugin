@@ -202,6 +202,8 @@ function M.load(config_file)
 
         httpc:proxy_response(httpc:proxy_request())
         httpc:set_keepalive()
+		-- exit after proxy response with the proxy request status code. 
+		ngx.exit(ngx.status)
     end
 
     function _M.reverse_px_client()
