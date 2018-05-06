@@ -55,6 +55,10 @@ function M.application(file_name)
     local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
     local lower_request_url = string.lower(ngx.var.request_uri)
 
+    local function is_first_party_proxy_request(reverse_prefix, lower_request_url)
+        return (px_client.reverse_px_client(reverse_prefix, lower_request_url) or px_client.reverse_px_xhr(reverse_prefix, lower_request_url) or px_client.reverse_px_captcha(reverse_prefix, lower_request_url))
+    end
+
     local function perform_s2s(result, details)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
@@ -91,21 +95,9 @@ function M.application(file_name)
             return true
         end
     end
-    -- Match for client
-    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_VENDOR_PATH)) then
-        px_client.reverse_px_client()
-        return true
-    end
 
-    -- Match for XHRs
-    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH)) then
-        px_client.reverse_px_xhr()
-        return true
-    end
-
-    -- Match for captcha script
-    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH)) then
-        px_client.reverse_px_captcha()
+    -- Match for client/XHRs/captcha
+    if is_first_party_proxy_request(reverse_prefix, lower_request_url) then
         return true
     end
 
