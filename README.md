@@ -335,6 +335,7 @@ The following configurations are set in:
   The following routes must be enabled for First Party Mode for the PerimeterX Lua module:
     - `/<PX_APP_ID without PX prefix>/xhr/*`
     - `/<PX_APP_ID without PX prefix>/init.js`
+    - `/<PX_APP_ID without PX prefix>/captcha/*`
 
   - If the PerimeterX Lua module is enabled on `location /`, the routes are already open and no action is necessary.
 
