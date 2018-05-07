@@ -166,7 +166,13 @@ function M.load(config_file)
         _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
     end
 
-    function _M.forward_to_perimeterx(server, port_overide)
+    -- Internal funcaiton that forward the requests to PerimeterX backends
+    -- @server - server address to send the request to
+    -- @port_overide - if provided, will overide the server default port number
+    -- @allow_failure - will allow http status >= 400
+    --
+    -- @return - boolean value, success or failure
+    local function forward_to_perimeterx(server, port_overide, allow_failure)
         -- Attach real ip from the enforcer
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
         ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
@@ -202,7 +208,9 @@ function M.load(config_file)
 
         local res, err = httpc:proxy_request()
 
-        if err or res.status >= 400 then
+        -- return false only if we dont allow failer and we got error or
+        -- status >= 400
+        if not allow_failure and (err or res.status >= 400) then
             return false
         end
 
@@ -215,7 +223,7 @@ function M.load(config_file)
 
     -- inteneral function, handles first party response that failed/bad status
     -- return true for handled request
-    function default_response(content_type, content)
+    local function default_response(content_type, content)
         px_logger.debug('Rendering default reponse on route ' .. ngx.var.uri .. 'content type: ' .. content_type .. 'body' .. content)
         ngx.header["Content-Type"] = content_type
         ngx.print(content)
@@ -240,11 +248,8 @@ function M.load(config_file)
         px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
-        local status = _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
 
-        if not status then
-            return default_response(default_content_type, default_content)
-        end
+        forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true)
 
         return true;
     end
@@ -268,11 +273,7 @@ function M.load(config_file)
         ngx_req_set_uri(px_request_uri)
 
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
-        local status = _M.forward_to_perimeterx(px_config.captcha_script_host)
-
-        if not status then
-            return default_response(default_content_type, default_content)
-        end
+        forward_to_perimeterx(px_config.captcha_script_host, nil, true)
 
         return true
     end
@@ -315,7 +316,7 @@ function M.load(config_file)
             ngx_req_set_header('cookie', 'pxvid=' .. vid)
         end
 
-        local status = _M.forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide)
+        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, true )
 
         if not status  then
             return default_response(default_content_type, default_content)
