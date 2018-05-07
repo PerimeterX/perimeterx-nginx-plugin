@@ -88,24 +88,5 @@
             <span>If you think this blocking was done by mistake, contact the site administrator.</span>
         </div>
     </body>
-    <script type="text/javascript">
-        (function(){
-            window._pxAppId ='<APP_ID>';
-            // Custom parameters
-            // window._pxParam1 = "<param1>";
-            var p = document.getElementsByTagName('script')[0],
-                s = document.createElement('script');
-            s.async = 1;
-            s.src = 'https://client.perimeterx.net/<APP_ID>/main.min.js';
-            p.parentNode.insertBefore(s,p);
-        }());
-    </script>
-    <div style="position:fixed; top:0; left:0;" width="1" height="1">
-        <img src="https://collector-<APP_ID>.perimeterx.net/api/v1/collector/pxPixel.gif?appId=<APP_ID>">
-    </div>
-    <noscript>
-        <div style="position:fixed; top:0; left:0;" width="1" height="1">
-            <img src="https://collector-<APP_ID>.perimeterx.net/api/v1/collector/noScript.gif?appId=<APP_ID>">
-        </div>
-    </noscript>
+    <script src="https://captcha.px-cdn.perimeterx.net/block.js"></script>
 </html>

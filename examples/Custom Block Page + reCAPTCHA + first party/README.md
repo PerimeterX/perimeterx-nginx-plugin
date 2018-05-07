@@ -5,15 +5,17 @@ reCAPTCHA Example
 In order to use the example:
 
 1. Create a block.html file in your application (or copy the one in this folder).   
- The `<body>` section **must** include (replacing <APP_ID> with your  PX App ID):
+ The `<body>` section **must** include (replacing <APP_ID> with your PX App ID, and <APP_ID_WITH_NO_PX_PREFIX> with your PX App ID without 'PX' in its beginning):
+
 
 ```html
 <script>
     window._pxAppId = '<APP_ID>';
-    window._pxJsClientSrc = 'https://client.perimeterx.net/<APP_ID>/main.min.js';
-    window._pxHostUrl = 'https://collector-<APP_ID>.perimeterx.net';
+    window._pxJsClientSrc = '<APP_ID_WITH_NO_PX_PREFIX>/init.js';
+    window._pxHostUrl = '<APP_ID_WITH_NO_PX_PREFIX>/xhr';
+    window._pxFirstPartyEnabled = true;
 </script>
-<script src="https://captcha.px-cdn.perimeterx.net/recaptcha.js"></script>
+<script src="/<APP_ID_WITH_NO_PX_PREFIX>/captcha/recaptcha.js"></script>
 ```
 * In the HTML structure, the `<body>` section must include the following line where the Captcha element is to be located:
 

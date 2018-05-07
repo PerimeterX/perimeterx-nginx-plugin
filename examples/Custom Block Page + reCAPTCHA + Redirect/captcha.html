@@ -54,8 +54,15 @@
                 font-size: 16px;
             }
         </style>
+        
     </head>
     <body>
+        <script>
+            window._pxAppId = '<APP_ID>';
+            window._pxJsClientSrc = 'https://client.perimeterx.net/<APP_ID>/main.min.js';
+            window._pxHostUrl = 'https://collector-<APP_ID>.perimeterx.net';
+        </script>
+        <script src="https://captcha.px-cdn.perimeterx.net/recaptcha.js"></script>
         <div>
             <img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"></img>
         </div>
@@ -74,18 +81,25 @@
                 This may have happened because:
             </div>
             <div>
-                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly on your machine.
+                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly.
             </div>
             <div>
                 <i class="fa fa-dot-circle-o" aria-hidden="true"></i> Your browsing behaviour is not likely to be that of a regular user.
             </div>
             <br>
-            <span id="read-more">Read more about our Bot Defender solution:</span>
+            <span id="read-more">To read more about PerimeterX Bot Defender solution:</span>
             <a href="https://www.perimeterx.com/bot-defender">
                 https://www.perimeterx.com/bot-defender
             </a>
             <br>
-            <span>If you think this blocking was done by mistake, contact your site's administrator.</span>
+                <span>If you think the blocking was done by mistake, contact the site administrator.</span>
+            <br>
+            <br>
+            <div>
+                <div id="px-captcha"></div>
+                <span style="font-size: 14px; color:#E5001D ">Solve the funCAPTCHA above to prove you are not a bot!</span>
+            </div>
+            <br>
         </div>
     </body>
 </html>
