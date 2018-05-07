@@ -216,7 +216,7 @@ function M.load(config_file)
     -- inteneral function, handles first party response that failed/bad status
     -- return true for handled request
     function default_response(content_type, content)
-        px_logger.error('Rendering default reponse on route ' .. ngx.var.uri .. 'content type: ' .. content_type .. 'body' .. content)
+        px_logger.debug('Rendering default reponse on route ' .. ngx.var.uri .. 'content type: ' .. content_type .. 'body' .. content)
         ngx.header["Content-Type"] = content_type
         ngx.print(content)
         ngx.exit(ngx.OK)
