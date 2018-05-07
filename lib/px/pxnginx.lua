@@ -49,14 +49,22 @@ function M.application(file_name)
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
     local string_len = string.len
-    local cjson = require "cjson"
     local pcall = pcall
 
     local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
     local lower_request_url = string.lower(ngx.var.request_uri)
 
-    local function is_first_party_proxy_request(reverse_prefix, lower_request_url)
-        return (px_client.reverse_px_client(reverse_prefix, lower_request_url) or px_client.reverse_px_xhr(reverse_prefix, lower_request_url) or px_client.reverse_px_captcha(reverse_prefix, lower_request_url))
+    -- Internal wrapper function, will check if uri match first party route and forward the request if uri was matched
+    local function is_first_party_request(reverse_prefix, lower_request_url)
+        local first_party_flag = false
+        if px_client.reverse_px_client(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        elseif px_client.reverse_px_xhr(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        elseif px_client.reverse_px_captcha(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        end
+        return first_party_flag
     end
 
     local function perform_s2s(result, details)
@@ -97,7 +105,7 @@ function M.application(file_name)
     end
 
     -- Match for client/XHRs/captcha
-    if is_first_party_proxy_request(reverse_prefix, lower_request_url) then
+    if is_first_party_request(reverse_prefix, lower_request_url) then
         return true
     end
 
