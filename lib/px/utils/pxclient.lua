@@ -316,7 +316,7 @@ function M.load(config_file)
             ngx_req_set_header('cookie', 'pxvid=' .. vid)
         end
 
-        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, true )
+        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, false)
 
         if not status  then
             return default_response(default_content_type, default_content)
