@@ -22,7 +22,7 @@ function M.load(config_file)
     local px_common_utils = require "px.utils.pxcommonutils"
     local pcall = pcall
 
-
+    -- Server
     local auth_token = px_config.auth_token
     local ssl_enabled = px_config.ssl_enabled
     local px_server = px_config.base_url
@@ -166,7 +166,13 @@ function M.load(config_file)
         _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
     end
 
-    function _M.forward_to_perimeterx(server, port_overide)
+    -- Internal funcaiton that forward the requests to PerimeterX backends
+    -- @server - server address to send the request to
+    -- @port_overide - if provided, will overide the server default port number
+    -- @allow_failure - will allow http status >= 400
+    --
+    -- @return - boolean value, success or failure
+    local function forward_to_perimeterx(server, port_overide, allow_failure)
         -- Attach real ip from the enforcer
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
         ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
@@ -188,7 +194,7 @@ function M.load(config_file)
 
         if not ok then
             ngx.log(ngx.ERR, err)
-            return
+            return false
         end
 
         if port == '443' and ssl_enabled then
@@ -200,55 +206,96 @@ function M.load(config_file)
             end
         end
 
-        httpc:proxy_response(httpc:proxy_request())
+        local res, err = httpc:proxy_request()
+
+        -- return false only if we dont allow failer and we got error or
+        -- status >= 400
+        if not allow_failure and (err or res.status >= 400) then
+            return false
+        end
+
+        httpc:proxy_response(res)
         httpc:set_keepalive()
+
+        ngx.exit(ngx.status)
+        return true
     end
 
-    function _M.reverse_px_client()
+    -- inteneral function, handles first party response that failed/bad status
+    -- return true for handled request
+    local function default_response(content_type, content)
+        px_logger.debug('Rendering default reponse on route ' .. ngx.var.uri .. 'content type: ' .. content_type .. 'body' .. content)
+        ngx.header["Content-Type"] = content_type
+        ngx.print(content)
+        ngx.exit(ngx.OK)
+        return true
+    end
+
+    function _M.reverse_px_client(reverse_prefix, lower_request_url)
+        if not string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_VENDOR_PATH)) then
+            return false
+        end
+
+        -- Prepare default response
+        local default_content_type = 'application/javascript'
+        local default_content = ''
+
         if not px_config.first_party_enabled then
-            ngx.header["Content-Type"] = 'application/javascript';
-            ngx.say('')
-            ngx.exit(ngx.OK)
-            return
+            return default_response(default_content_type, default_content)
         end
 
         local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
         px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
-        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
-        _M.forward_to_perimeterx(px_config.client_host, px_config.client_port_overide)
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
+
+        forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true)
+
+        return true;
     end
 
-    function _M.reverse_px_captcha()
-        if not px_config.first_party_enabled then
-            ngx.header["Content-Type"] = 'application/javascript';
-            ngx.say('')
-            ngx.exit(ngx.OK)
-            return
+    function _M.reverse_px_captcha(reverse_prefix, lower_request_url)
+        if not string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH)) then
+            return false
         end
+
+        -- Prepare default response
+        local default_content_type = 'application/javascript'
+        local default_content = ''
+
+        if not px_config.first_party_enabled then
+            return default_response(default_content_type, default_content)
+        end
+
         local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
         local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to px captcha at " .. px_config.captcha_script_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
 
-        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
-        _M.forward_to_perimeterx(px_config.captcha_script_host)
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
+        forward_to_perimeterx(px_config.captcha_script_host, nil, true)
+
+        return true
     end
 
-    function _M.reverse_px_xhr()
-        if not px_config.first_party_enabled or not px_config.reverse_xhr_enabled then
-            if string.match(ngx.var.uri, 'gif') then
-                ngx.header["Content-Type"] = 'image/gif';
-                ngx.say(ngx.decode_base64(px_constants.EMPTY_GIF_B64))
-            else
-                ngx.header["Content-Type"] = 'application/json';
-                ngx.say('{}')
-            end
-            ngx.exit(ngx.OK)
-            return
+    function _M.reverse_px_xhr(reverse_prefix, lower_request_url)
+        if not string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH)) then
+            return false
         end
 
-        local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+        -- prepare defualt response
+        local default_content_type =  'application/json'
+        local default_content = '{}'
+
+        if string.match(ngx.var.uri, 'gif') then
+            default_content_type = 'image/gif'
+            default_content = ngx.decode_base64(px_constants.EMPTY_GIF_B64)
+        end
+
+        if not px_config.first_party_enabled or not px_config.reverse_xhr_enabled then
+            return default_response(default_content_type, default_content)
+        end
+
         local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
 
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
@@ -262,14 +309,20 @@ function M.load(config_file)
             vid = ngx.var.cookie_pxvid
         end
 
-        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers);
+        px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
 
         if vid ~= '' then
             px_logger.debug("Attaching VID cookie" .. vid)
             ngx_req_set_header('cookie', 'pxvid=' .. vid)
         end
 
-        _M.forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide)
+        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, false)
+
+        if not status  then
+            return default_response(default_content_type, default_content)
+        end
+
+        return true
     end
 
     return _M
