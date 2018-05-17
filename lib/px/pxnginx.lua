@@ -26,18 +26,20 @@ local M = {}
 M.configLoaded = false
 function M.application(file_name)
     local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
+    local config_builder = require("px.utils.config_builder");
 
-    local px_config = require(config_file)
+    local px_config_file = require(config_file)
+    local px_config = config_builder.load(px_config_file)
     local _M = {}
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
-    local px_filters = require("px.utils.pxfilters").load(config_file)
-    local px_client = require("px.utils.pxclient").load(config_file)
+    local px_filters = require("px.utils.pxfilters").load(px_config)
+    local px_client = require("px.utils.pxclient").load(px_config)
     local PXPayload = require('px.utils.pxpayload')
     local px_payload = PXPayload:new{}
-    local px_block = require("px.block.pxblock").load(config_file)
-    local px_api = require("px.utils.pxapi").load(config_file)
-    local px_logger = require("px.utils.pxlogger").load(config_file)
-    local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_block = require("px.block.pxblock").load(px_config)
+    local px_api = require("px.utils.pxapi").load(px_config)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
+    local px_headers = require("px.utils.pxheaders").load(px_config)
     local px_constants = require("px.utils.pxconstants")
     local px_common_utils = require("px.utils.pxcommonutils")
 

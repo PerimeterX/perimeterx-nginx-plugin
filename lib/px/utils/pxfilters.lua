@@ -4,12 +4,11 @@
 
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
 
-    local px_config = require (config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
-    local px_headers = require ("px.utils.pxheaders").load(config_file)
+    local px_logger = require ("px.utils.pxlogger").load(px_config)
+    local px_headers = require ("px.utils.pxheaders").load(px_config)
     local string_sub = string.sub
     local string_find = string.find
     local string_len = string.len

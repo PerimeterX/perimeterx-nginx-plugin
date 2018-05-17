@@ -3,7 +3,7 @@
 ----------------------------------------------
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
     local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
     local ngx_HTTP_TOO_MANY_REQUESTS = ngx.HTTP_TOO_MANY_REQUESTS
@@ -13,12 +13,11 @@ function M.load(config_file)
     local ngx_say = ngx.say
     local ngx_encode_args = ngx.encode_args
     local ngx_endcode_64 = ngx.encode_base64
-    local px_config = require(config_file)
 
-    local px_template = require("px.block.pxtemplate").load(config_file)
-    local px_client = require("px.utils.pxclient").load(config_file)
-    local px_logger = require("px.utils.pxlogger").load(config_file)
-    local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_template = require("px.block.pxtemplate").load(px_config)
+    local px_client = require("px.utils.pxclient").load(px_config)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
+    local px_headers = require("px.utils.pxheaders").load(px_config)
     local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit

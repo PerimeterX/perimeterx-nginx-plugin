@@ -3,7 +3,9 @@ local PX_DEFUALT_CONSTANT_CONFIGURATION = {}
 local PX_DEFAULT_CONFIGURATIONS  = {}
 local PX_REQUIRED_FIELDS= {"px_appId", "cookie_secret", "auth_token"}
 
-function _M.Load(userConfiguration)
+function _M.load(userConfiguration)
+    local ngx_log = ngx.log
+    local ngx_ERR = ngx.ERR
     local pxConfig = {}
 
     function initConfigurations()
@@ -51,29 +53,27 @@ function _M.Load(userConfiguration)
         PX_DEFAULT_CONFIGURATIONS["captcha_script_host"] = { "captcha.px-cdn.net", "string"}
         PX_DEFAULT_CONFIGURATIONS["collector_port_overide"] = { nil, "number"}
         PX_DEFAULT_CONFIGURATIONS["client_port_overide"] = { 443, "number"}
-        PX_DEFAULT_CONFIGURATIONS["whitelist"] = { {
-            uri_full = { _M.custom_block_url },
-            uri_prefixes = {},
-            uri_suffixes = { '.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar' },
-            ip_addresses = {},
-            ua_full = {},
-            ua_sub = {}
-        }, "table"}
+        PX_DEFAULT_CONFIGURATIONS["whitelist_uri_full"] = { {}, "table"}
+        PX_DEFAULT_CONFIGURATIONS["whitelist_uri_prefixes"] = { {}, "table"}
+        PX_DEFAULT_CONFIGURATIONS["whitelist_uri_suffixes"] = { {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'}, "table"}
+        PX_DEFAULT_CONFIGURATIONS["whitelist_ip_addresses"] = { {}, "table"}
+        PX_DEFAULT_CONFIGURATIONS["whitelist_ua_full"] = { {}, "table"}
+        PX_DEFAULT_CONFIGURATIONS["whitelist_ua_sub"] = { {}, "table"}
     end
 
     initConfigurations()
 
     -- Create default configuration
     for k, v in pairs(PX_DEFAULT_CONFIGURATIONS) do
-      pxConfig[k] = PX_DEFAULT_CONFIGURATIONS[k]
+      pxConfig[k] = v[1]
     end
 
     -- Override with user defined configuration
     for k, v in pairs(userConfiguration) do
-        if PX_DEFAULT_CONFIGURATIONS[k] and type(_M[k]) ~= PX_DEFAULT_CONFIGURATIONS[k][2] then
-            print(k .. " was assigned the wrong value, expected " .. PX_DEFAULT_CONFIGURATIONS[k][2])
+        if PX_DEFAULT_CONFIGURATIONS[k] and type(v) ~= PX_DEFAULT_CONFIGURATIONS[k][2] then
+            ngx_log(ngx_ERR, "[PerimeterX - ERROR] - " .. k .. " was assigned the wrong value, expected " .. PX_DEFAULT_CONFIGURATIONS[k][2])
         else
-            pxConfig[k] = PX_DEFAULT_CONFIGURATIONS[k][1]
+            pxConfig[k] = v
         end
     end
 
@@ -85,9 +85,14 @@ function _M.Load(userConfiguration)
     -- Check for missing required fields
     for k, v in pairs(PX_REQUIRED_FIELDS) do
         if (pxConfig[v] == nil) then
-            print("Missing required field: " .. v .. ", PX module will not be loaded.")
+            ngx_log(ngx_ERR, "[PerimeterX - ERROR] - Missing required field: " .. v .. ". PX module will not be loaded.")
             pxConfig["px_enabled"] = false
         end
+    end
+
+    if pxConfig["px_enabled"] == true then
+        pxConfig["base_url"] = string.format('sapi-%s.perimeterx.net', pxConfig["px_appId"])
+        pxConfig["collector_host"] = string.format('sapi-%s.perimeterx.net', pxConfig["px_appId"])
     end
 
     return pxConfig
