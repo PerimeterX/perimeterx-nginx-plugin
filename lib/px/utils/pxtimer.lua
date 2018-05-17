@@ -6,10 +6,13 @@ local M = {}
 
 function M.application(file_name)
 	local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
+    local config_builder = require("px.utils.config_builder");
 
-	local config = require (config_file)
-	local pxclient = require ("px.utils.pxclient").load(config_file)
-	local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_config_file = require(config_file)
+    local px_config = config_builder.load(px_config_file)
+
+	local pxclient = require ("px.utils.pxclient").load(px_config)
+	local px_logger = require ("px.utils.pxlogger").load(px_config)
 	local px_constants = require("px.utils.pxconstants")
 	local buffer = require "px.utils.pxbuffer"
 	local px_commom_utils = require('px.utils.pxcommonutils')
@@ -27,7 +30,7 @@ function M.application(file_name)
 		end
 
 		local details = {}
-		details.px_config = px_commom_utils.filter_config(config);
+		details.px_config = px_commom_utils.filter_config(px_config);
 		details.update_reason = 'initial_config'
 		pxclient.send_enforcer_telmetry(details);
 	end
@@ -43,7 +46,7 @@ function M.application(file_name)
 		end
 
 		if config.dynamic_configurations then
-			require("px.utils.config_loader").load(config_file)
+			require("px.utils.config_loader").load(px_config)
 		end
 	end
 

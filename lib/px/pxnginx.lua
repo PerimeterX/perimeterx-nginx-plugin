@@ -148,9 +148,9 @@ function M.application(file_name)
 
     px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent)
     local details = {};
-    px_payload:load(config_file)
+    px_payload:load(px_config)
     px_cookie = px_payload:get_payload()
-    px_cookie:load(config_file)
+    px_cookie:load(px_config)
 
     local success, result = pcall(px_cookie.process, px_cookie)
     -- cookie verification passed - checking result.

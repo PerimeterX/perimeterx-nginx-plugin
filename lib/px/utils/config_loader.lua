@@ -1,11 +1,11 @@
 local _M = {}
 
-function _M.get_configuration(config_file)
+function _M.get_configuration(px_config)
     local http = require "resty.http"
     local px_constants = require "px.utils.pxconstants"
-    local config = require(config_file)
-    local px_client = require("px.utils.pxclient").load(config_file)
-    local px_logger = require("px.utils.pxlogger").load(config_file)
+    
+    local px_client = require("px.utils.pxclient").load(px_config)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
     local px_commom_utils = require("px.utils.pxcommonutils")
     local cjson = require "cjson"
     local px_conf_server = config.configuration_server
@@ -74,27 +74,26 @@ function _M.get_configuration(config_file)
 
         -- report enforcer telemetry
         local details = {}
-        details.px_config = px_commom_utils.filter_config(config)
+        details.px_config = px_commom_utils.filter_config(px_config)
         details.update_reason = 'remote_config'
         px_client.send_enforcer_telmetry(details)
    end
 end
 
-function _M.load(config_file)
-    local config = require(config_file)
+function _M.load(px_config)
     local ngx_timer_at = ngx.timer.at
-    local px_logger = require("px.utils.pxlogger").load(config_file)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
     -- set interval
     local function load_on_timer()
-        local ok, err = ngx_timer_at(config.load_interval, load_on_timer)
+        local ok, err = ngx_timer_at(px_config.load_interval, load_on_timer)
         if not ok then
             px_logger.error("Failed to schedule submit timer: " .. err)
-            if not config.config.checksum then
+            if not px_config.config.checksum then
                 px_logger.error("Disabling PX module since timer failed")
-                config.px_enabled = false
+                px_config.px_enabled = false
             end
         else
-            _M.get_configuration(config_file)
+            _M.get_configuration(px_config)
         end
         return
     end
