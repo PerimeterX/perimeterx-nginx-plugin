@@ -8,10 +8,10 @@ function _M.get_configuration(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
     local px_commom_utils = require("px.utils.pxcommonutils")
     local cjson = require "cjson"
-    local px_conf_server = config.configuration_server
-    local px_port = config.configuration_server_port
+    local px_conf_server = px_config.configuration_server
+    local px_port = px_config.configuration_server_port
     local path = px_constants.REMOTE_CONFIGURATIONS_PATH
-    local checksum = config.checksum
+    local checksum = px_config.checksum
     local query
     if checksum ~= nil then
         query = '?checksum=' .. checksum
@@ -24,7 +24,7 @@ function _M.get_configuration(px_config)
     if not ok then
         px_logger.error("HTTPC connection error: " .. err)
     end
-    if config.ssl_enabled == true then
+    if px_config.ssl_enabled == true then
         local session, err = httpc:ssl_handshake()
         if not session then
             px_logger.error("HTTPC SSL handshare error: " .. err)
@@ -35,7 +35,7 @@ function _M.get_configuration(px_config)
         method = "GET",
         headers = {
             ["Content-Type"] = "application/json",
-            ["Authorization"] = "Bearer " .. config.auth_token
+            ["Authorization"] = "Bearer " .. px_config.auth_token
         },
         query = query
     })
@@ -44,7 +44,7 @@ function _M.get_configuration(px_config)
         px_logger.error("Failed to get configurations: " .. (err ~= nil and err or ''))
         if (checksum == nil) then --no configs yet and can't get configs - disable module
             px_logger.error("Disabling PX module since no configuration is available")
-            config.px_enabled = false
+            px_config.px_enabled = false
         end
         return
     end
@@ -57,20 +57,20 @@ function _M.get_configuration(px_config)
         local body = res:read_body()
         px_logger.debug("Applying new configuration: " .. body)
         body = cjson.decode(body)
-        config.checksum = body.checksum
-        config.px_enabled = body.moduleEnabled
-        config.cookie_secret = body.cookieKey
-        config.px_appId = body.appId
-        config.blocking_score = body.blockingScore
-        config.sensitive_headers = body.sensitiveHeaders
-        config.ip_headers = body.ipHeaders
-        config.px_debug = body.debugMode
-        config.block_enabled = body.moduleMode ~= "monitoring"
-        config.client_timeout = body.connectTimeout
-        config.s2s_timeout = body.riskTimeout
-        config.first_party_enabled = body.firstPartyEnabled
-        config.reverse_xhr_enabled = body.firstPartyXhrEnabled
-        config.report_active_config = true
+        px_config.checksum = body.checksum
+        px_config.px_enabled = body.moduleEnabled
+        px_config.cookie_secret = body.cookieKey
+        px_config.px_appId = body.appId
+        px_config.blocking_score = body.blockingScore
+        px_config.sensitive_headers = body.sensitiveHeaders
+        px_config.ip_headers = body.ipHeaders
+        px_config.px_debug = body.debugMode
+        px_config.block_enabled = body.moduleMode ~= "monitoring"
+        px_config.client_timeout = body.connectTimeout
+        px_config.s2s_timeout = body.riskTimeout
+        px_config.first_party_enabled = body.firstPartyEnabled
+        px_config.reverse_xhr_enabled = body.firstPartyXhrEnabled
+        px_config.report_active_config = true
 
         -- report enforcer telemetry
         local details = {}
