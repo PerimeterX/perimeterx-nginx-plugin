@@ -24,12 +24,10 @@
 
 local M = {}
 M.configLoaded = false
-function M.application(file_name)
-    local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
+function M.application(px_configuration_table)
     local config_builder = require("px.utils.config_builder");
 
-    local px_config_file = require(config_file)
-    local px_config = config_builder.load(px_config_file)
+    local px_config = config_builder.load(px_configuration_table)
     local _M = {}
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
     local px_filters = require("px.utils.pxfilters").load(px_config)

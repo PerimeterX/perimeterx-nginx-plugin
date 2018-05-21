@@ -4,12 +4,10 @@
 
 local M = {}
 
-function M.application(file_name)
-	local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
+function M.application(px_configutraion_table)
     local config_builder = require("px.utils.config_builder");
 
-    local px_config_file = require(config_file)
-    local px_config = config_builder.load(px_config_file)
+    local px_config = config_builder.load(px_configutraion_table)
 
 	local pxclient = require ("px.utils.pxclient").load(px_config)
 	local px_logger = require ("px.utils.pxlogger").load(px_config)
@@ -36,7 +34,7 @@ function M.application(file_name)
 	end
 
 	function init_remote_config()
-		if px_config == nil or not px_config.px_enabled then
+		if px_config == nil or not c.px_enabled then
 			px_logger.debug("module is disabled, skipping remote config")
 			return
 		end
