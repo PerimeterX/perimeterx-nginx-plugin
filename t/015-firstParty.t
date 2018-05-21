@@ -35,7 +35,7 @@ __DATA__
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
     }
@@ -76,7 +76,7 @@ GET /vRfnOj4y/init.js
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
     }

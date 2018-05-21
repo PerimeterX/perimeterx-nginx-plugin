@@ -89,7 +89,7 @@ __DATA__
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -142,7 +142,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -197,7 +197,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -252,7 +252,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
         
         content_by_lua_block {
@@ -311,7 +311,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -371,7 +371,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
