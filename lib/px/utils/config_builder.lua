@@ -92,7 +92,7 @@ function _M.load(userConfiguration)
 
     if pxConfig["px_enabled"] == true then
         pxConfig["base_url"] = string.format('sapi-%s.perimeterx.net', pxConfig["px_appId"])
-        pxConfig["collector_host"] = string.format('sapi-%s.perimeterx.net', pxConfig["px_appId"])
+        pxConfig["collector_host"] = string.format('collector-%s.perimeterx.net', pxConfig["px_appId"])
     end
 
     return pxConfig
