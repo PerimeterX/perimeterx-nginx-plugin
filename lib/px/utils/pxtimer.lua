@@ -20,12 +20,12 @@ function M.application(file_name)
 	local ngx_timer_at = ngx.timer.at
 
 	function send_initial_enforcer_telemetry()
-		if config == nil or not config.px_enabled then
+		if px_config == nil or not px_config.px_enabled then
 			px_logger.debug("module is disabled, skipping enforcer telemetry")
 			return
 		end
 
-		if config.px_appId == 'PX_APP_ID' then
+		if px_config.px_appId == 'PX_APP_ID' then
 			return
 		end
 
@@ -36,22 +36,22 @@ function M.application(file_name)
 	end
 
 	function init_remote_config()
-		if config == nil or not config.px_enabled then
+		if px_config == nil or not px_config.px_enabled then
 			px_logger.debug("module is disabled, skipping remote config")
 			return
 		end
 
-		if config.px_appId == 'PX_APP_ID' then
+		if px_config.px_appId == 'PX_APP_ID' then
 			return
 		end
 
-		if config.dynamic_configurations then
+		if px_config.dynamic_configurations then
 			require("px.utils.config_loader").load(px_config)
 		end
 	end
 
  	function submit_on_timer()
-		if config == nil or not config.px_enabled then
+		if px_config == nil or not px_config.px_enabled then
 			px_logger.debug("module is disabled, skipping submit timer")
 			return
 		end
