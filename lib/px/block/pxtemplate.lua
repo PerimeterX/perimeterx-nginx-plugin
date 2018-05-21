@@ -34,6 +34,7 @@ function M.load(px_config)
             cssRef = px_config.css_ref,
             jsRef = px_config.js_ref,
             logoVisibility = logo_css_style,
+            captchaType = px_config.captcha_provider,
             hostUrl = collectorUrl,
             jsClientSrc = js_client_src,
             firstPartyEnabled = px_config.first_party_enabled
