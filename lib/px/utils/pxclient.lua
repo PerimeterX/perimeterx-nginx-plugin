@@ -179,7 +179,7 @@ function M.load(px_config)
         -- change the host so BE knows where to serve the request
         ngx_req_set_header('host', server)
 
-        local port = ngx.var.scheme == 'http' and '80' or '443'
+        local port = ngx.var.scheme == 'http' and 80 or 443
         if port_overide ~= nil then
             px_logger.debug('Overrding port ' .. port ..  ' => ' .. port_overide)
             port =  port_overide
@@ -196,12 +196,10 @@ function M.load(px_config)
             return false
         end
 
-        if port == '443' and ssl_enabled then
-            if ssl_enabled == true then
-                local session, err = httpc:ssl_handshake()
-                if not session then
-                    px_logger.error("HTTPC SSL handshare error: " .. err)
-                end
+        if port == 443 and ssl_enabled then
+            local session, err = httpc:ssl_handshake()
+            if not session then
+                px_logger.error("HTTPC SSL handshare error: " .. err)
             end
         end
 
