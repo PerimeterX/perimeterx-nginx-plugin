@@ -34,7 +34,7 @@ function M.application(px_configutraion_table)
 	end
 
 	function init_remote_config()
-		if px_config == nil or not c.px_enabled then
+		if px_config == nil or not px_config.px_enabled then
 			px_logger.debug("module is disabled, skipping remote config")
 			return
 		end
