@@ -34,7 +34,7 @@ function M.application(px_configuration_table)
     local px_client = require("px.utils.pxclient").load(px_config)
     local PXPayload = require('px.utils.pxpayload')
     local px_payload = PXPayload:new{}
-    local px_captcha = require("px.utils.pxcaptcha").load(config_file)
+    local px_captcha = require("px.utils.pxcaptcha").load(px_config)
     local px_block = require("px.block.pxblock").load(px_config)
     local px_api = require("px.utils.pxapi").load(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
