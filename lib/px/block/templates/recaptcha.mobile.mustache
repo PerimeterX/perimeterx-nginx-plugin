@@ -180,7 +180,8 @@
                     appId: appId,
                     uuid: uuid,
                     vid: vid,
-                    pxCaptcha: response,
+                    captchaType: 'reCaptcha',
+                    pxCaptcha: atob(JSON.stringify({r: response, v: vid, u: uuid})),
                     hostname: window.location.hostname,
                     request: {
                         url: window.location.href

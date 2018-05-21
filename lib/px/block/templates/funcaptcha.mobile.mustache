@@ -187,7 +187,8 @@
                     appId: appId,
                     uuid: uuid,
                     vid: vid,
-                    pxCaptcha: response,
+                    captchaType: 'funCaptcha',
+                    pxCaptcha: btoa(JSON.stringify({r: document.getElementById("FunCaptcha-Token").value, u: uuid, v: vid})),
                     hostname: window.location.hostname,
                     request: {
                         url: window.location.href
