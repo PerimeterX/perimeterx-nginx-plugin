@@ -6,7 +6,7 @@ local PX_REQUIRED_FIELDS= {"px_appId", "cookie_secret", "auth_token"}
 function _M.load(userConfiguration)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
-    local pxConfig = {}
+    local px_config = {}
 
     function initConfigurations()
         PX_DEFUALT_CONSTANT_CONFIGURATION["MODULE_VERSION"] = "NGINX Module v3.3.0"
@@ -65,7 +65,7 @@ function _M.load(userConfiguration)
 
     -- Create default configuration
     for k, v in pairs(PX_DEFAULT_CONFIGURATIONS) do
-      pxConfig[k] = v[1]
+      px_config[k] = v[1]
     end
 
     -- Override with user defined configuration
@@ -73,29 +73,29 @@ function _M.load(userConfiguration)
         if PX_DEFAULT_CONFIGURATIONS[k] and type(v) ~= PX_DEFAULT_CONFIGURATIONS[k][2] then
             ngx_log(ngx_ERR, "[PerimeterX - ERROR] - " .. k .. " was assigned the wrong value, expected " .. PX_DEFAULT_CONFIGURATIONS[k][2])
         else
-            pxConfig[k] = v
+            px_config[k] = v
         end
     end
 
     -- Add the constants
     for k, v in pairs(PX_DEFUALT_CONSTANT_CONFIGURATION) do
-      pxConfig[k] = PX_DEFUALT_CONSTANT_CONFIGURATION[k]
+      px_config[k] = PX_DEFUALT_CONSTANT_CONFIGURATION[k]
     end
 
     -- Check for missing required fields
     for k, v in pairs(PX_REQUIRED_FIELDS) do
-        if (pxConfig[v] == nil) then
+        if (px_config[v] == nil) then
             ngx_log(ngx_ERR, "[PerimeterX - ERROR] - Missing required field: " .. v .. ". PX module will not be loaded.")
-            pxConfig["px_enabled"] = false
+            px_config["px_enabled"] = false
         end
     end
 
-    if pxConfig["px_enabled"] == true then
-        pxConfig["base_url"] = string.format('sapi-%s.perimeterx.net', pxConfig["px_appId"])
-        pxConfig["collector_host"] = string.format('collector-%s.perimeterx.net', pxConfig["px_appId"])
+    if px_config["px_enabled"] == true then
+        px_config["base_url"] = string.format('sapi-%s.perimeterx.net', px_config["px_appId"])
+        px_config["collector_host"] = string.format('collector-%s.perimeterx.net', px_config["px_appId"])
     end
 
-    return pxConfig
+    return px_config
 end
 
 return _M
