@@ -24,8 +24,10 @@ function M.load(px_config)
     local string_gsub = string.gsub
 
     local function inject_captcha_script(vid, uuid)
-        return '<script type="text/javascript">window._pxVid = "' .. vid .. '";' ..
-                'window._pxUuid = "' .. uuid .. '";</script>'
+        return '<script src = "https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
+                '";  function handleCaptcha(response){ var vid="' .. vid .. '"; var uuid="' .. uuid .. '"; var name="_pxCaptcha "; ' ..
+                'var expiryUtc=new Date(Date.now()+1000*10).toUTCString(); var cookieParts = [name,"=",btoa(JSON.stringify({r: response, ' ..
+                'v: vid, u: uuid})),"; expires=",expiryUtc,"; path=/"]; document.cookie=cookieParts.join(""); location.reload();  }</script>'
     end
 
     local function parse_action(action)
