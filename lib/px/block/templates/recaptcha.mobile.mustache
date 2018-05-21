@@ -180,7 +180,8 @@
             appId: appId,
             uuid: uuid,
             vid: vid,
-            pxCaptcha: response,
+            captchaType: '{{captchaType}}',
+            pxCaptcha: btoa(JSON.stringify({"u": uuid, "v": vid, "r": response})),
             hostname: window.location.hostname,
             request: {
                 url: window.location.href
