@@ -25,7 +25,7 @@ Initial test to verify basic settings.
     location = /t {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-            pxconfig = require "px.pxconfig"
+            pxconfig = require"px.pxconfig"
             pxconfig.cookie_secret = "perimeterx"
             pxconfig.enable_server_calls = false
             pxconfig.send_page_requested_activity = false
@@ -34,7 +34,7 @@ Initial test to verify basic settings.
         }
 
     	access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
 

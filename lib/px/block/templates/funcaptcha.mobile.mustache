@@ -12,12 +12,10 @@
             font-family: 'Open Sans', sans-serif;
             color: #000;
         }
-
         a {
             color: #c5c5c5;
             text-decoration: none;
         }
-
         .container {
             align-items: center;
             display: flex;
@@ -26,51 +24,41 @@
             flex-direction: column;
             height: 100%;
         }
-
         .container > div {
             width: 100%;
             display: flex;
             justify-content: center;
         }
-
         .container > div > div {
             display: flex;
             width: 80%;
         }
-
         .customer-logo-wrapper {
             padding-top: 2rem;
             flex-grow: 0;
             background-color: #fff;
             visibility: {{logoVisibility}};
         }
-
         .customer-logo {
             border-bottom: 1px solid #000;
         }
-
         .customer-logo > img {
             padding-bottom: 1rem;
             max-height: 50px;
             max-width: 100%;
         }
-
         .page-title-wrapper {
             flex-grow: 2;
         }
-
         .page-title {
             flex-direction: column-reverse;
         }
-
         .content-wrapper {
             flex-grow: 5;
         }
-
         .content {
             flex-direction: column;
         }
-
         .page-footer-wrapper {
             align-items: center;
             flex-grow: 0.2;
@@ -78,7 +66,6 @@
             color: #c5c5c5;
             font-size: 70%;
         }
-
         @media (min-width: 768px) {
             html, body {
                 height: 100%;
@@ -146,26 +133,53 @@
 </section>
 <!-- Captcha -->
 <script>
-
+    function captchaSolved(res) {
+        window.location.href = '/px/captcha_callback?status=' + res.status;
+    }
     function loadFunCaptcha() {
+        var appId = '{{appId}}';
         var vid = '{{vid}}';
         var uuid = '{{uuid}}';
-
+        var collectorUrl = '{{{hostUrl}}}';
         new FunCaptcha({
             public_key: "19E4B3B8-6CBE-35CC-4205-FC79ECDDA765",
             target_html: "CAPTCHA",
             callback: function () {
-                var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-                var pxCaptcha = "_pxCaptcha=" + btoa(JSON.stringify({r: document.getElementById("FunCaptcha-Token").value, u: uuid, v: vid}));
-                var cookieParts = [
-                    pxCaptcha,
-                    "; expires=",
-                    expiryUtc,
-                    "; path=/"
-                ];
-
-                document.cookie = cookieParts.join("");
-                location.reload();
+                var req = new XMLHttpRequest();
+                req.open('POST', collectorUrl + '/api/v1/collector/captcha');
+                req.setRequestHeader('Content-Type', 'application/json');
+                req.addEventListener('error', function () {
+                    captchaSolved({
+                        status: 1
+                    });
+                });
+                req.addEventListener('cancel', function () {
+                    captchaSolved({
+                        status: 2
+                    });
+                });
+                req.addEventListener('load', function () {
+                    if (req.status == 200) {
+                        try {
+                            var responseJSON = JSON.parse(req.responseText);
+                            return captchaSolved(responseJSON);
+                        } catch (ex) { }
+                    }
+                    captchaSolved({
+                        status: 3
+                    });
+                });
+                req.send(JSON.stringify({
+                    appId: appId,
+                    uuid: uuid,
+                    vid: vid,
+                    captchaType: '{{captchaType}}',
+                    pxCaptcha: btoa(JSON.stringify({"u": uuid, "v": vid, "r": document.getElementById("FunCaptcha-Token").value})),
+                    hostname: window.location.hostname,
+                    request: {
+                        url: window.location.href
+                    }
+                }));
             }
         });
     }

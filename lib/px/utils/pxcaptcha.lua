@@ -4,13 +4,12 @@
 
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
 
-    local px_config = require(config_file)
-    local px_api = require("px.utils.pxapi").load(config_file)
-    local px_logger = require("px.utils.pxlogger").load(config_file)
-    local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_api = require("px.utils.pxapi").load(px_config)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
+    local px_headers = require("px.utils.pxheaders").load(px_config)
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require "px.utils.pxcommonutils"
 

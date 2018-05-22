@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0] - 2018-05-22
+- Added TLS prot/ciphers sha1
+- Added handling timers when module disabled
+- Added default config values
+- Fixed case insensitive sensitive headers check
+- Fixed mobile using first party path
+- Enhanced error handling of first party routes
+
 ## [3.3.0] - 2018-02-19
 - Update first party templates with fallback support
 - Use relative URL for redirect in API protection mode

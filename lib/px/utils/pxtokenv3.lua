@@ -18,8 +18,8 @@ function TokenV3:validate(data)
         return true
     end
 
-    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
-    self.px_logger.debug('Failed to verify cookie v3 content ' .. data);
+    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_header("User-Agent"))
+    self.px_logger.debug('Failed to verify cookie v3 content ' .. data)
     return false
 end
 
@@ -38,7 +38,7 @@ function TokenV3:process()
         orig_cookie = result['cookie']
         self.px_logger.debug("decryption passed")
     else
-        hash, orig_cookie = self:split_decoded_cookie(cookie);
+        hash, orig_cookie = self:split_decoded_cookie(cookie)
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then
             self.px_logger.debug("Could not decode b64 cookie - " .. result)
@@ -89,7 +89,7 @@ function TokenV3:process()
     -- Validate the cookie integrity
     local success, result = pcall(self.validate, self, orig_cookie)
     if not success or result == false then
-        px_logger.debug("Could not validate cookie v3 signature - " .. orig_cookie)
+        self.px_logger.debug("Could not validate cookie v3 signature - " .. orig_cookie)
         error({ message = "cookie_validation_failed" })
     end
 
