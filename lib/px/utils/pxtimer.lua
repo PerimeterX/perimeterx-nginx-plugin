@@ -5,9 +5,9 @@
 local M = {}
 
 function M.application(px_configutraion_table)
-    local config_builder = require("px.utils.config_builder");
+	local config_builder = require("px.utils.config_builder");
 
-    local px_config = config_builder.load(px_configutraion_table)
+	local px_config = config_builder.load(px_configutraion_table)
 
 	local pxclient = require ("px.utils.pxclient").load(px_config)
 	local px_logger = require ("px.utils.pxlogger").load(px_config)
@@ -48,21 +48,21 @@ function M.application(px_configutraion_table)
 		end
 	end
 
- 	function submit_on_timer()
+	function submit_on_timer()
 		if px_config == nil or not px_config.px_enabled then
 			px_logger.debug("module is disabled, skipping submit timer")
 			return
 		end
 
-	    local ok, err = ngx_timer_at(1, submit_on_timer)
-	    if not ok then
-	        px_logger.debug("Failed to schedule submit timer: " .. err)
-	    end
-	    local buflen = buffer.getBufferLength()
-	    if buflen > 0 then
-	        pcall(pxclient.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH)
-	    end
-	    return
+		local ok, err = ngx_timer_at(1, submit_on_timer)
+		if not ok then
+			px_logger.debug("Failed to schedule submit timer: " .. err)
+		end
+		local buflen = buffer.getBufferLength()
+		if buflen > 0 then
+			pcall(pxclient.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH)
+		end
+		return
 	end
 	-- Init async activities
 	submit_on_timer()
