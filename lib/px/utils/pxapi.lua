@@ -3,14 +3,13 @@
 ----------------------------------------------
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
 
     local http = require "resty.http"
     local cjson = require "cjson"
-    local px_config = require(config_file)
-    local px_logger = require("px.utils.pxlogger").load(config_file)
-    local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
+    local px_headers = require("px.utils.pxheaders").load(px_config)
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require("px.utils.pxcommonutils")
     local sha1 = require "resty.nettle.sha1"

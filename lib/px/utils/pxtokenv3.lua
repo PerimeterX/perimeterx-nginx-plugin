@@ -18,8 +18,8 @@ function TokenV3:validate(data)
         return true
     end
 
-    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
-    self.px_logger.debug('Failed to verify cookie v3 content ' .. data);
+    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_header("User-Agent"))
+    self.px_logger.debug('Failed to verify cookie v3 content ' .. data)
     return false
 end
 

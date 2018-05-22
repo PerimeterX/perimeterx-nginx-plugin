@@ -91,7 +91,7 @@ Process a valid cookie
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
     }
 
@@ -103,7 +103,7 @@ X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
 --- response_body_like
-.*Access to this page has been denied because we believe.*
+.*Please click "I am not a robot" to continue*
 --- error_code: 403
 
 --- error_log
@@ -138,7 +138,7 @@ Process a valid cookie
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
     }
 
@@ -190,7 +190,7 @@ Test the redirect flow
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
     }
 

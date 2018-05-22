@@ -1,3 +1,4 @@
+use strict;
 use Test::Nginx::Socket::Lua 'no_plan';
 
 log_level('debug');
@@ -6,7 +7,7 @@ run_tests();
 __DATA__
 
 
-=== TEST 1: Sanity Check
+=== TEST 1: Captcha Check
 Initial test to verify basic settings.
 
 --- http_config
@@ -25,18 +26,17 @@ Initial test to verify basic settings.
     location = /t {
         resolver 8.8.8.8;
         set_by_lua_block $config {
-            pxconfig = require"px.pxconfig"
+            pxconfig = require "px.pxconfig"
             pxconfig.cookie_secret = "perimeterx"
-            pxconfig.enable_server_calls = false
-            pxconfig.send_page_requested_activity = false
             pxconfig.px_debug = true
+            pxconfig.block_enabled = true
+            pxconfig.captcha_enabled = true
             return true
         }
 
-    	access_by_lua_block { 
+    	access_by_lua_block {
             require("px.pxnginx").application(require "px.pxconfig")
         }
-
 
         content_by_lua_block {
             ngx.say(ngx.var.remote_addr)
@@ -48,8 +48,10 @@ GET /t
 
 --- more_headers
 X-Forwarded-For: 1.2.3.4
-
---- response_body
-1.2.3.4
+Cookie: _pxCaptcha={"r":"cpathcavalue","u":"628a96c0-ebb0-11e6-b1b9-8bb13181c15e","v":"628a96c1-ebb0-11e6-b1b9-8bb13181c15e"}
 
 --- error_code: 200
+
+--- error_log
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Captcha cookie found, evaluating
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Captcha evaulation completed

@@ -86,7 +86,7 @@ __DATA__
 			return true
 		}
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 	    try_files $uri $uri/ /internal;
 		}
@@ -94,7 +94,7 @@ __DATA__
     location = /internal {
         resolver 8.8.8.8;
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
         content_by_lua_block {
              ngx.say(ngx.var.remote_addr)
@@ -143,7 +143,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 			return true
 		}
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
         content_by_lua_block {
             ngx.say(ngx.req.get_headers()['X-PX-SCORE'])
@@ -189,7 +189,7 @@ X-PX-SCORE: 0
      		return true
 		}
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 	    try_files $uri $uri/ /internal;
 		}
@@ -197,7 +197,7 @@ X-PX-SCORE: 0
     location = /internal {
         resolver 8.8.8.8;
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
         content_by_lua_block {
             ngx.say(ngx.req.get_headers()['X-PX-SCORE'])

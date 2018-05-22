@@ -84,12 +84,12 @@ __DATA__
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            pxconfig.whitelist.ip_addresses = {'1.2.3.4'}
+            pxconfig.whitelist_ip_addresses = {'1.2.3.4'}
             return true
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -136,13 +136,13 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            pxconfig.whitelist.ip_addresses = {}
-            pxconfig.whitelist.uri_full = {'/t/full/uri'}
+            pxconfig.whitelist_ip_addresses = {}
+            pxconfig.whitelist_uri_full = {'/t/full/uri'}
             return true
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -190,14 +190,14 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            pxconfig.whitelist.ip_addresses = {}
-            pxconfig.whitelist.uri_full = {}
-            pxconfig.whitelist.uri_prefixes = {'/t/prefix'}
+            pxconfig.whitelist_ip_addresses = {}
+            pxconfig.whitelist_uri_full = {}
+            pxconfig.whitelist_uri_prefixes = {'/t/prefix'}
             return true
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -245,14 +245,14 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            pxconfig.whitelist.ip_addresses = {}
-            pxconfig.whitelist.uri_full = {}
-            pxconfig.whitelist.uri_prefixes = {}
+            pxconfig.whitelist_ip_addresses = {}
+            pxconfig.whitelist_uri_full = {}
+            pxconfig.whitelist_uri_prefixes = {}
             return true
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
         
         content_by_lua_block {
@@ -303,15 +303,15 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            pxconfig.whitelist.ip_addressesß = {}
-            pxconfig.whitelist.uri_full = {}
-            pxconfig.whitelist.uri_prefixes = {}
-            pxconfig.whitelist.ua_full = {'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36'}
+            pxconfig.whitelist_ip_addresses = {}
+            pxconfig.whitelist_uri_full = {}
+            pxconfig.whitelist_uri_prefixes = {}
+            pxconfig.whitelist_ua_full = {'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36'}
             return true
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
@@ -362,16 +362,16 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            pxconfig.whitelist.ip_addresses = {}
-            pxconfig.whitelist.uri_full = {}
-            pxconfig.whitelist.uri_prefixes = {}
-            pxconfig.whitelist.ua_full = {}
-            pxconfig.whitelist.ua_sub = {'Mozilla/5.0'}
+            pxconfig.whitelist_ip_addresses = {}
+            pxconfig.whitelist_uri_full = {}
+            pxconfig.whitelist_uri_prefixes = {}
+            pxconfig.whitelist_ua_full = {}
+            pxconfig.whitelist_ua_sub = {'Mozilla/5.0'}
             return true
         }
 
         access_by_lua_block { 
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
