@@ -66,7 +66,7 @@ function _M.load(px_config)
 
     -- Add default configuration
     for k, v in pairs(PX_DEFAULT_CONFIGURATIONS) do
-      if not px_config[k] then
+      if px_config[k] == nil then
           px_config[k] = PX_DEFAULT_CONFIGURATIONS[k][1]
       end
     end
