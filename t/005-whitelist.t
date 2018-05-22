@@ -303,7 +303,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
     	    pxconfig.block_enabled = true
             pxconfig.enable_server_calls  = false
             pxconfig.send_page_requested_activity = false
-            pxconfig.whitelist_ip_addressesß = {}
+            pxconfig.whitelist_ip_addresses = {}
             pxconfig.whitelist_uri_full = {}
             pxconfig.whitelist_uri_prefixes = {}
             pxconfig.whitelist_ua_full = {'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36'}
