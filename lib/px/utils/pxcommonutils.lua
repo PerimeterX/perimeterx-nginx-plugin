@@ -23,7 +23,9 @@ function clone (t) -- deep-copy a table
     local meta = getmetatable(t)
     local target = {}
     for k, v in pairs(t) do
-        if type(v) == "table" then
+        if type(v) == "function" then
+            target[k] = string.dump(v)
+        elseif type(v) == "table" then
             target[k] = clone(v)
         else
             target[k] = v
