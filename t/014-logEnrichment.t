@@ -92,7 +92,7 @@ Set the NGX $pxscore variable
         }
 
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 
         content_by_lua_block {
@@ -148,7 +148,7 @@ Set the NGX $pxuuid variable
         }
 
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 
         content_by_lua_block {
@@ -204,7 +204,7 @@ Set the NGX $pxuuid variable
         }
 
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 
         content_by_lua_block {
@@ -260,7 +260,7 @@ Set the NGX $pxuuid variable
         }
 
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 
         content_by_lua_block {
@@ -316,7 +316,7 @@ Set the NGX pxblock variable
         }
 
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 
         content_by_lua_block {
@@ -372,7 +372,7 @@ Set the NGX pxblock variable
         }
 
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 
         content_by_lua_block {

@@ -90,7 +90,7 @@ Process a valid V1 cookie
         }
 
     	access_by_lua_block {
-	    require("px.pxnginx").application()
+	    require("px.pxnginx").application(require "px.pxconfig")
 	}
 
         content_by_lua_block {

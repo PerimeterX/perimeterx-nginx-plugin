@@ -3,7 +3,7 @@
 ----------------------------------------------
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
     local ngx_HTTP_FORBIDDEN = ngx.HTTP_FORBIDDEN
     local ngx_HTTP_TOO_MANY_REQUESTS = ngx.HTTP_TOO_MANY_REQUESTS
@@ -13,20 +13,21 @@ function M.load(config_file)
     local ngx_say = ngx.say
     local ngx_encode_args = ngx.encode_args
     local ngx_endcode_64 = ngx.encode_base64
-    local px_config = require(config_file)
 
-    local px_template = require("px.block.pxtemplate").load(config_file)
-    local px_client = require("px.utils.pxclient").load(config_file)
-    local px_logger = require("px.utils.pxlogger").load(config_file)
-    local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_template = require("px.block.pxtemplate").load(px_config)
+    local px_client = require("px.utils.pxclient").load(px_config)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
+    local px_headers = require("px.utils.pxheaders").load(px_config)
     local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
     local string_gsub = string.gsub
 
     local function inject_captcha_script(vid, uuid)
-        return '<script type="text/javascript">window._pxVid = "' .. vid .. '";' ..
-                'window._pxUuid = "' .. uuid .. '";</script>'
+        return '<script src = "https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
+                '";  function handleCaptcha(response){ var vid="' .. vid .. '"; var uuid="' .. uuid .. '"; var name="_pxCaptcha "; ' ..
+                'var expiryUtc=new Date(Date.now()+1000*10).toUTCString(); var cookieParts = [name,"=",btoa(JSON.stringify({r: response, ' ..
+                'v: vid, u: uuid})),"; expires=",expiryUtc,"; path=/"]; document.cookie=cookieParts.join(""); location.reload();  }</script>'
     end
 
     local function parse_action(action)

@@ -4,12 +4,11 @@
 
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
 
     -- localized config
-    local px_config = require (config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
+    local px_logger = require ("px.utils.pxlogger").load(px_config)
     local cookie_secret = px_config.cookie_secret
     local string_gsub = string.gsub
     local string_format = string.format

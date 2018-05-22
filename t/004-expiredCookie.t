@@ -88,7 +88,7 @@ __DATA__
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
         content_by_lua_block {
