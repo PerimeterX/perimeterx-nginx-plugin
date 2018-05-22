@@ -79,7 +79,7 @@ Process a valid V3 token
         }
 
         access_by_lua_block {
-        require("px.pxnginx").application()
+        require("px.pxnginx").application(require "px.pxconfig")
     }
 
         content_by_lua_block {

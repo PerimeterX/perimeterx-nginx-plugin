@@ -24,21 +24,21 @@
 
 local M = {}
 M.configLoaded = false
-function M.application(file_name)
-    local config_file = ((file_name == nil or file_name == '') and "px.pxconfig" or "px.pxconfig-" .. file_name)
+function M.application(px_configuration_table)
+    local config_builder = require("px.utils.config_builder");
 
-    local px_config = require(config_file)
+    local px_config = config_builder.load(px_configuration_table)
     local _M = {}
     -- Support for multiple apps - each app file should be named "pxconfig-<appname>.lua"
-    local px_filters = require("px.utils.pxfilters").load(config_file)
-    local px_client = require("px.utils.pxclient").load(config_file)
+    local px_filters = require("px.utils.pxfilters").load(px_config)
+    local px_client = require("px.utils.pxclient").load(px_config)
     local PXPayload = require('px.utils.pxpayload')
     local px_payload = PXPayload:new{}
-    local px_captcha = require("px.utils.pxcaptcha").load(config_file)
-    local px_block = require("px.block.pxblock").load(config_file)
-    local px_api = require("px.utils.pxapi").load(config_file)
-    local px_logger = require("px.utils.pxlogger").load(config_file)
-    local px_headers = require("px.utils.pxheaders").load(config_file)
+    local px_captcha = require("px.utils.pxcaptcha").load(px_config)
+    local px_block = require("px.block.pxblock").load(px_config)
+    local px_api = require("px.utils.pxapi").load(px_config)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
+    local px_headers = require("px.utils.pxheaders").load(px_config)
     local px_constants = require("px.utils.pxconstants")
     local px_common_utils = require("px.utils.pxcommonutils")
 
@@ -50,11 +50,23 @@ function M.application(file_name)
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
     local string_len = string.len
-    local cjson = require "cjson"
     local pcall = pcall
 
     local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
     local lower_request_url = string.lower(ngx.var.request_uri)
+
+    -- Internal wrapper function, will check if uri match first party route and forward the request if uri was matched
+    local function is_first_party_request(reverse_prefix, lower_request_url)
+        local first_party_flag = false
+        if px_client.reverse_px_client(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        elseif px_client.reverse_px_xhr(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        elseif px_client.reverse_px_captcha(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        end
+        return first_party_flag
+    end
 
     local function perform_s2s(result, details)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
@@ -93,15 +105,9 @@ function M.application(file_name)
         end
     end
 
-    -- Match for client
-    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_VENDOR_PATH)) then
-        px_client.reverse_px_client()
-        return true
-    end
 
-    -- Match for XHRs
-    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH)) then
-        px_client.reverse_px_xhr()
+    -- Match for client/XHRs/captcha
+    if is_first_party_request(reverse_prefix, lower_request_url) then
         return true
     end
 
@@ -157,9 +163,9 @@ function M.application(file_name)
         end
     end
 
-    px_payload:load(config_file)
+    px_payload:load(px_config)
     px_cookie = px_payload:get_payload()
-    px_cookie:load(config_file)
+    px_cookie:load(px_config)
 
     local success, result = pcall(px_cookie.process, px_cookie)
     -- cookie verification passed - checking result.

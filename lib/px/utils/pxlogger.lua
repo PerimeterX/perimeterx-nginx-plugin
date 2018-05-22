@@ -4,11 +4,10 @@
 
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
-    local px_config = require (config_file)
 
     function validate_msg(message)
         if type(message) ~= 'string' and type(message) ~= 'number'  then

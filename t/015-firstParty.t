@@ -35,7 +35,7 @@ __DATA__
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
     }
@@ -69,14 +69,14 @@ GET /vRfnOj4y/init.js
             pxconfig.enable_server_calls = false
             pxconfig.send_page_requested_activity = false
             pxconfig.px_debug = true
-            pxconfig.px_appId = "pxvrfnoj4y"
-             pxconfig.first_party_enabled = true
+            pxconfig.px_appId = "PXvRfnOj4y"
+            pxconfig.first_party_enabled = true
             pxconfig.collector_host = string.format('collector-%s.perimeterx.net', pxconfig.px_appId)
             return true
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
 
     }
@@ -89,4 +89,4 @@ Content-Length: 187
 payload=W3sidCI6IlBYMiIsImQiOnsiUFg2MyI6Ik1hY0ludGVsIiwiUFg5NiI6Imh0dHA6Ly9zYW1wbGUtbmdpbngucHhjaGsubmV0LyJ9fV0=&appId=PXvRfnOj4y&tag=v2.60&uuid=c18ef200-e96c-11e7-8135-099eab567657&ft=14"
 
 --- error_log
-[PerimeterX - DEBUG] [ pxvrfnoj4y ] - Forwarding request from /vrfnoj4y/xhr/api/v1/collector to xhr at collector-pxvrfnoj4y.perimeterx.net/api/v1/collector
+[PerimeterX - DEBUG] [ PXvRfnOj4y ] - Forwarding request from /vrfnoj4y/xhr/api/v1/collector to xhr at collector-PXvRfnOj4y.perimeterx.net/vrfnoj4y/xhr/api/v1/collector

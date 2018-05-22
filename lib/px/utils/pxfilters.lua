@@ -4,12 +4,11 @@
 
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
     local _M = {}
 
-    local px_config = require (config_file)
-    local px_logger = require ("px.utils.pxlogger").load(config_file)
-    local px_headers = require ("px.utils.pxheaders").load(config_file)
+    local px_logger = require ("px.utils.pxlogger").load(px_config)
+    local px_headers = require ("px.utils.pxheaders").load(px_config)
     local string_sub = string.sub
     local string_find = string.find
     local string_len = string.len
@@ -25,36 +24,35 @@ function M.load(config_file)
     -- _M.Whitelist['uri_full'] = {'/', '/api_server_full' }
     -- Note: px_config.custom_block_url should not be removed from here if using custom_block_url configuration
     -- _M.Whitelist['uri_full'] = { px_config.custom_block_url }
-    _M.Whitelist['uri_full'] = px_config.whitelist and px_config.whitelist.uri_full or { px_config.custom_block_url }
-
+    _M.Whitelist['uri_full'] = px_config.whitelist_uri_full and px_config.whitelist_uri_full or { }
     -- URI Prefixes filter
     -- will filter requests where the uri starts with any of the list below.
     -- example:
     -- filter: example.com/api_server_full?data=data
     -- will not filter: example.com/full_api_server?data=data
     -- _M.Whitelist['uri_prefixes'] = {'/api_server'}
-    _M.Whitelist['uri_prefixes'] = px_config.whitelist and px_config.whitelist.uri_prefixes or {}
+    _M.Whitelist['uri_prefixes'] = px_config.whitelist_uri_prefixes and px_config.whitelist_uri_prefixes or {}
 
     -- URI Suffixes filter
     -- will filter requests where the uri starts with any of the list below.
     -- example:
     -- filter: example.com/mystyle.css?data=data
     -- _M.Whitelist['uri_suffixes'] = {'.css'}
-    _M.Whitelist['uri_suffixes'] = px_config.whitelist and px_config.whitelist.uri_suffixes or {}
+    _M.Whitelist['uri_suffixes'] = px_config.whitelist_uri_suffixes and px_config.whitelist_uri_suffixes or {}
 
     -- IP Addresses filter
     -- will filter requests coming from the ip in the list below
     -- _M.Whitelist['ip_addresses'] = {'192.168.99.1'}
-    _M.Whitelist['ip_addresses'] = px_config.whitelist and px_config.whitelist.ip_addresses or {}
+    _M.Whitelist['ip_addresses'] = px_config.whitelist_ip_addresses and px_config.whitelist_ip_addresses or {}
 
     -- Full useragent
     -- will filter requests coming with a full user agent
     --_M.Whitelist['ua_full'] = {'Mozilla/5.0 (compatible; pingbot/2.0;  http://www.pingdom.com/)'}
-    _M.Whitelist['ua_full'] = px_config.whitelist and px_config.whitelist.ua_full or {}
+    _M.Whitelist['ua_full'] = px_config.whitelist_ua_full and px_config.whitelist_ua_full or {}
 
     -- filter by user agent substring
     --_M.Whitelist['ua_sub'] = {'Inspectlet', 'GoogleCloudMonitoring'}
-    _M.Whitelist['ua_sub'] = px_config.whitelist and px_config.whitelist.ua_sub or {}
+    _M.Whitelist['ua_sub'] = px_config.whitelist_ua_sub and px_config.whitelist_ua_sub or {}
 
     -- Escape Lua magic chars in a string
     local function escape_magic_chars(pattern)
@@ -106,6 +104,11 @@ function M.load(config_file)
 
         -- By URI
         local uri = ngx.var.uri
+        if uri == px_config.custom_block_url then
+            px_logger.debug("Whitelisted: custom_block_url.")
+            return true
+        end
+
         local wlfuri = _M.Whitelist['uri_full']
         for i = 1, #wlfuri do
             if uri == wlfuri[i] then

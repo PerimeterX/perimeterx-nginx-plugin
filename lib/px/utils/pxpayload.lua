@@ -17,11 +17,11 @@ function PXPayload:handleHeader(header)
     end
 end
 
-function PXPayload:load(config_file)
+function PXPayload:load(px_config)
     -- localized config
-    self.px_config = require (config_file)
-    self.px_logger = require ("px.utils.pxlogger").load(config_file)
-    self.px_headers = require ("px.utils.pxheaders").load(config_file)
+    self.px_config = px_config
+    self.px_logger = require ("px.utils.pxlogger").load(px_config)
+    self.px_headers = require ("px.utils.pxheaders").load(px_config)
     self.cookie_encrypted = self.px_config.cookie_encrypted
     self.blocking_score = self.px_config.blocking_score
     self.cookie_secret = self.px_config.cookie_secret

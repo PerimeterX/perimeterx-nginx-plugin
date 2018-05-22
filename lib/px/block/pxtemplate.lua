@@ -3,17 +3,15 @@
 ----------------------------------------------
 local M = {}
 
-function M.load(config_file)
+function M.load(px_config)
 
     local _M = {}
 
-    local px_config = require(config_file)
     local lustache = require "lustache"
     local px_constants = require "px.utils.pxconstants"
+    local px_logger = require("px.utils.pxlogger").load(px_config)
 
-    local px_logger = require("px.utils.pxlogger").load(config_file)
-
-    local function get_props(px_config, uuid, vid)
+    local function get_props(px_config, uuid, vid, template)
         local logo_css_style = 'visible'
         if (px_config.custom_logo == nil) then
             logo_css_style = 'hidden'
@@ -36,6 +34,7 @@ function M.load(config_file)
             cssRef = px_config.css_ref,
             jsRef = px_config.js_ref,
             logoVisibility = logo_css_style,
+            captchaType = px_config.captcha_provider,
             hostUrl = collectorUrl,
             jsClientSrc = js_client_src,
             firstPartyEnabled = px_config.first_party_enabled

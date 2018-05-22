@@ -91,7 +91,7 @@ Process a valid cookie
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
     }
 
@@ -138,7 +138,7 @@ Process a valid cookie
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
     }
 
@@ -190,7 +190,7 @@ Test the redirect flow
         }
 
     	access_by_lua_block {
-            require("px.pxnginx").application()
+            require("px.pxnginx").application(require "px.pxconfig")
         }
     }
 
