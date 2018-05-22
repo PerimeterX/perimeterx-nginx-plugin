@@ -3,8 +3,6 @@ local PX_DEFUALT_CONSTANT_CONFIGURATION = {}
 local PX_DEFAULT_CONFIGURATIONS  = {}
 local PX_REQUIRED_FIELDS= {"px_appId", "cookie_secret", "auth_token"}
 
-PX_DEFUALT_CONSTANT_CONFIGURATION["MODULE_VERSION"] = "NGINX Module v3.3.0"
-
 PX_DEFAULT_CONFIGURATIONS["px_enabled"] = { true, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_appId"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["cookie_secret"] = { nil, "string"}
@@ -72,11 +70,6 @@ function _M.load(px_config)
       if not px_config[k] then
           px_config[k] = PX_DEFAULT_CONFIGURATIONS[k][1]
       end
-    end
-
-    -- Add the constants
-    for k, v in pairs(PX_DEFUALT_CONSTANT_CONFIGURATION) do
-      px_config[k] = PX_DEFUALT_CONSTANT_CONFIGURATION[k]
     end
 
     -- Check for missing required fields
