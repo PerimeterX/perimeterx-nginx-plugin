@@ -188,7 +188,8 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
 
   ```
   init_worker_by_lua_block {
-      require ("px.utils.pxtimer").application()
+      local pxconfig = require("px.pxconfig")
+      require ("px.utils.pxtimer").application(pxconfig)
   }
   ```
 
@@ -198,7 +199,8 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
     ```
   #----- PerimeterX protect location -----#
   access_by_lua_block {
-    require("px.pxnginx").application()
+      local pxconfig = require("px.pxconfig")
+      require ("px.utils.pxtimer").application(pxconfig)
   }
   #----- PerimeterX Module End  -----#
   ```
@@ -452,7 +454,7 @@ To deploy the PerimeterX First Party JS Snippet:
  **Default:** `reCaptcha`
   
  ```lua
-  _M.captcha_provider = "reCaptcha"
+  _M.captcha_provider = "funCaptcha"
  ```
 
 - ### <a name="enabled-routes"></a> Enabled Routes
