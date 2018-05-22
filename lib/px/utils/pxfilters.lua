@@ -24,8 +24,7 @@ function M.load(px_config)
     -- _M.Whitelist['uri_full'] = {'/', '/api_server_full' }
     -- Note: px_config.custom_block_url should not be removed from here if using custom_block_url configuration
     -- _M.Whitelist['uri_full'] = { px_config.custom_block_url }
-    _M.Whitelist['uri_full'] = px_config.whitelist_uri_full and px_config.whitelist_uri_full or { px_config.custom_block_url }
-
+    _M.Whitelist['uri_full'] = px_config.whitelist_uri_full and px_config.whitelist_uri_full or { }
     -- URI Prefixes filter
     -- will filter requests where the uri starts with any of the list below.
     -- example:
@@ -105,6 +104,11 @@ function M.load(px_config)
 
         -- By URI
         local uri = ngx.var.uri
+        if uri == px_config.custom_block_url then
+            px_logger.debug("Whitelisted: custom_block_url.")
+            return true
+        end
+
         local wlfuri = _M.Whitelist['uri_full']
         for i = 1, #wlfuri do
             if uri == wlfuri[i] then
