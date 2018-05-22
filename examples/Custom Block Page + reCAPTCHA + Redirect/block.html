@@ -54,35 +54,6 @@
                 font-size: 16px;
             }
         </style>
-        <script>
-        function handleCaptcha(response) {
-            debugger;
-            var vid = getQueryString("vid");
-            var uuid = getQueryString("uuid");
-            var name = '_pxCaptcha';
-            var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-            var cookieParts = [name, '=', btoa(JSON.stringify({r: response, v: vid, u: uuid})), '; expires=', expiryUtc, '; path=/'];
-            document.cookie = cookieParts.join('');
-            // after getting resopnse we want to reaload the original page requested
-            var originalURL = getQueryString("url");
-            var originalHost = window.location.host;
-            window.location.href = window.location.protocol + "//" +  originalHost + originalURL;
-        }
-
-        function getQueryString(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            results[2] = decodeURIComponent(results[2].replace(/\+/g, " "));
-            if(name == "url") {
-                results[2] = atob(results[2]);
-            }
-            return results[2];
-        }
-        </script>
     </head>
     <body>
         <div>
