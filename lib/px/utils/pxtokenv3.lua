@@ -89,7 +89,7 @@ function TokenV3:process()
     -- Validate the cookie integrity
     local success, result = pcall(self.validate, self, orig_cookie)
     if not success or result == false then
-        px_logger.debug("Could not validate cookie v3 signature - " .. orig_cookie)
+        self.px_logger.debug("Could not validate cookie v3 signature - " .. orig_cookie)
         error({ message = "cookie_validation_failed" })
     end
 
