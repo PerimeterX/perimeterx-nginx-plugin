@@ -1,5 +1,4 @@
 local _M = {}
-local PX_DEFUALT_CONSTANT_CONFIGURATION = {}
 local PX_DEFAULT_CONFIGURATIONS  = {}
 local PX_REQUIRED_FIELDS= {"px_appId", "cookie_secret", "auth_token"}
 
