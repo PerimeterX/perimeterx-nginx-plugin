@@ -138,6 +138,11 @@ function M.load(px_config)
             px_logger.debug("Sent page requested acitvity")
             details['pass_reason'] = ngx.ctx.pass_reason
             px_logger.enrich_log('pxpass', details.pass_reason)
+
+            -- execute data enrichmen handler if exists
+            if px_config.data_enrichment_handler ~= nil then
+                px_config.data_enrichment_handler(px_config)
+            end
         end
 
         pxdata['details'] = details;

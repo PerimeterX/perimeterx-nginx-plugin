@@ -12,7 +12,7 @@ end
 function PXCookieV3:validate(data)
     local request_data = data .. ngx.var.http_user_agent
     local digest = self.hmac("sha256", self.cookie_secret, request_data)
-    digest = self:to_hex(digest)
+    digest = self.px_common_utils.to_hex(digest)
 
     -- policy with ip
     if digest == string.upper(ngx.ctx.px_cookie_hmac) then
@@ -40,7 +40,8 @@ function PXCookieV3:process()
         data = result['plaintext']
         orig_cookie = result['cookie']
     else
-        hash, orig_cookie = self:split_decoded_cookie(cookie);
+        local splitted_cookie = self.px_common_utils.split_string(cookie, "[^:]+")
+        local orig_cookie = splitted_cookie[2]
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then
             self.px_logger.debug("Could not decode b64 cookie - " .. result)
