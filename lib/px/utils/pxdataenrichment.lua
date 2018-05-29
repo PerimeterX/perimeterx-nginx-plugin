@@ -37,7 +37,7 @@ function M.load(px_config)
             end
             px_logger.debug("pxde decoded: " .. decoded_pxde)
 
-            local success, pxde_json = pcall(cjson.encode, decoded_pxde)
+            local success, pxde_json = pcall(cjson.decode, decoded_pxde)
             if not success then
                 px_logger.debug("error while encoding pxde to json")
                 ngx.ctx.pxde = decoded_pxde

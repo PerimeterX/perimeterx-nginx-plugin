@@ -16,7 +16,6 @@ PX_DEFAULT_CONFIGURATIONS["sensitive_routes_prefix"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["sensitive_routes_suffix"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["captcha_provider"] = { "reCaptcha", "string"}
 PX_DEFAULT_CONFIGURATIONS["additional_activity_handler"] = { nil, "function" }
-PX_DEFAULT_CONFIGURATIONS["data_enrichment_handler"] = { nil, "function"}
 PX_DEFAULT_CONFIGURATIONS["enabled_routes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["first_party_enabled"] = { true, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["reverse_xhr_enabled"] = { true, "boolean"}
