@@ -11,7 +11,7 @@ end
 
 function TokenV3:validate(data)
     local digest = self.hmac("sha256", self.cookie_secret, data)
-    digest = self:to_hex(digest)
+    digest = self.px_common_utils.to_hex(digest)
 
     -- policy with ip
     if digest == string.upper(ngx.ctx.px_cookie_hmac) then
@@ -26,7 +26,6 @@ end
 function TokenV3:process()
     local cookie = ngx.ctx.px_orig_cookie
 
-
     if self.cookie_encrypted == true then
         self.px_logger.debug("cookie is encyrpted")
         local success, result = pcall(self.pre_decrypt, self, cookie, self.cookie_secret)
@@ -38,7 +37,8 @@ function TokenV3:process()
         orig_cookie = result['cookie']
         self.px_logger.debug("decryption passed")
     else
-        hash, orig_cookie = self:split_decoded_cookie(cookie)
+        local splitted_cookie = self.px_common_utils.split_string(cookie, "[^:]+")
+        local orig_cookie = splitted_cookie[2]
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then
             self.px_logger.debug("Could not decode b64 cookie - " .. result)

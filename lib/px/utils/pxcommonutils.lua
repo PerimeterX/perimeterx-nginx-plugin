@@ -70,4 +70,29 @@ function _M.clear_first_party_sensitive_headers(sensitive_headers)
     end
 end
 
+-- Splits a string into array
+-- @s - string to split
+-- @delimeter - delimeiter to use
+--
+-- @return - splitted string as array
+function _M.split_string(s, delimeter)
+    local a = {}
+    local b = 1
+    for i in string.gmatch(s, delimeter) do
+        a[b] = i
+        b = b + 1
+    end
+    return a
+end
+
+-- Formats string bytes into hex string
+-- @str - string of hmac
+--
+-- @return - a hex formated representation of the string bytes
+function _M.to_hex(str)
+    return (string.gsub(str, "(.)", function(c)
+        return string.format("%02X%s", string.byte(c), "")
+    end))
+end
+
 return _M

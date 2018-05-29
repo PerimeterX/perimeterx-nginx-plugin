@@ -9,6 +9,7 @@ function M.load(px_config)
 
     -- localized config
     local px_logger = require ("px.utils.pxlogger").load(px_config)
+    local px_common_utils = require("px.utils.pxcommonutils")
     local cookie_secret = px_config.cookie_secret
     local string_gsub = string.gsub
     local string_format = string.format
@@ -20,21 +21,12 @@ function M.load(px_config)
     local ngx_req_set_header = ngx.req.set_header
     local ngx_req_get_headers = ngx.req.get_headers
 
-    -- to_hex --
-    -- takes one argument - a string
-    -- returns one value - a hex formated representation of the string bytes
-    local function to_hex(str)
-        return (string_gsub(str, "(.)", function(c)
-            return string_format("%02X%s", string_byte(c), "")
-        end))
-    end
-
     local function header_token()
         local remote_addr = _M.get_ip()
         local user_agent = ngx.var.http_user_agent or ""
         local data = remote_addr .. user_agent
         local digest = hmac("sha256", cookie_secret, data)
-        return to_hex(digest)
+        return px_common_utils.to_hex(digest)
     end
 
     function _M.validate_internal_request()

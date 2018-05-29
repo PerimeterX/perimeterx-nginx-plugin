@@ -22,6 +22,7 @@ function PXPayload:load(px_config)
     self.px_config = px_config
     self.px_logger = require ("px.utils.pxlogger").load(px_config)
     self.px_headers = require ("px.utils.pxheaders").load(px_config)
+    self.px_common_utils = require("px.utils.pxcommonutils")
     self.cookie_encrypted = self.px_config.cookie_encrypted
     self.blocking_score = self.px_config.blocking_score
     self.cookie_secret = self.px_config.cookie_secret
@@ -87,25 +88,6 @@ function PXPayload:split_cookie(cookie)
         return a[2],a[3],a[4]
     end
     return a[1], a[2], a[3]
-end
-
-function PXPayload:split_decoded_cookie(cookie)
-    local a = {}
-    local b = 1
-    for i in string.gmatch(cookie, "[^:]+") do
-        a[b] = i
-        b = b + 1
-    end
-    return a[1], a[2]
-end
-
--- to_hex --
--- takes one argument - a string
--- returns one value - a hex formated representation of the string bytes
-function PXPayload:to_hex(str)
-    return (string.gsub(str, "(.)", function(c)
-        return string.format("%02X%s", string.byte(c), "")
-    end))
 end
 
 -- from_hex --
@@ -177,7 +159,7 @@ function PXPayload:decrypt(cookie, key)
     -- Decrypt
     local keydata = self.pbkdf2.hmac_sha256(key, iterations, salt, 48)
 
-    keydata = self:to_hex(keydata)
+    keydata = self.px_common_utils.to_hex(keydata)
 
     local secret_key = self:from_hex(string.sub(keydata, 1, 64))
     local iv = self:from_hex(string.sub(keydata, 65, 96))
