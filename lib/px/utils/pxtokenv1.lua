@@ -55,7 +55,7 @@ function TokenV1:process()
         end
         data = result["plaintext"]
     else
-        local success, result = pcall(ngx.decode_local, cookie)
+        local success, result = pcall(ngx.decode_base64, cookie)
         if not success then
             self.px_logger.debug("Could not decode b64 cookie - " .. result)
             error({ message = "cookie_decryption_failed" })
