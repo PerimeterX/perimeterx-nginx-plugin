@@ -155,7 +155,10 @@ function M.application(px_configuration_table)
     -- hadle pxde cookie
     local pxde = ngx.var.cookie__pxde
     if pxde then
-        px_data_enrichment.process(pxde)
+        local success, result = pcall(px_data_enrichment.process, pxde)
+        if not success then
+           px_logger.debug("Failed to process pxde")
+        end
     end
 
     if _pxCaptcha then
