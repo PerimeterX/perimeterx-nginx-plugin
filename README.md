@@ -41,6 +41,7 @@
 * [Additional Activity Handler](#add-activity-handler)
 * [Log Enrichment](#log-enrichment)
 * [Blocking Score](#blocking-score)
+* [Data-Enrichment](#data-enrichment)
 
 -   [Appendix](#appendix)
   *   [NGINX Plus](#nginxplus)
@@ -625,15 +626,33 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
   ```
 
 - ### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
-
-  This value should not be changed from the default of 100 unless advised by PerimeterX.
+The PerimeterX NGINX plugin stores the data enrichment payload on the request context. The data enrichment payload can also be processed with `additional_activity_handler`.
   
-  **Default blocking value:** 100
+Only requests that are *not* being block will reach the backend server, so specific logic must be applied to the processing function.
 
-  ```
-  _M.blocking_score = 100
-  ```
-
+Below is an example that includes the pre-condition checks to process the data enrichment payload and enrich the request headers.  
+ 
+```lua
+    ... 
+    _M.additional_activity_handler = function(event_type, ctx, details)
+        -- verify that the request is passed to the backend
+        if event_type == 'page_requested' then
+          -- pxde - contains a parsed json of the data enrichment object
+          -- pxde_verified - makes sure that this payload is trusted and signed by PerimeterX
+          local pxde = ngx.ctx.pxde
+          local pxde_verified = ngx.ctx.pxde_verified
+          if pxde and pxde_verified then
+              -- apply the data enrichment logic here
+              -- the example below will set the f_type on the request header
+              local f_type = ngx.ctx.pxde.f_type
+              ngx.req.set_header("x-px-de-f-type", f_type)
+          end
+        end
+    end
+    ...
+```
+For more information and the available fields in the JSON, refer to the PerimeterX Portal documentation.
+  
 <a name="appendix"></a> Appendix
 -----------------------------------------------
 

@@ -21,7 +21,7 @@ function PXCookieV1:validate(data)
 
     local request_data_ip = request_data .. self.px_headers.get_ip() .. ngx.var.http_user_agent
     local digest_ip = self.hmac("sha256", self.cookie_secret, request_data_ip)
-    digest_ip = self:to_hex(digest_ip)
+    digest_ip = self.px_common_utils.to_hex(digest_ip)
 
      -- policy with ip
     if digest_ip == string.upper(data.h) then
@@ -31,7 +31,7 @@ function PXCookieV1:validate(data)
 
     local request_data_noip = request_data .. ngx.var.http_user_agent
     local digest_noip = self.hmac("sha256", self.cookie_secret, request_data_noip)
-    digest_noip = self:to_hex(digest_noip)
+    digest_noip = self.px_common_utils.to_hex(digest_noip)
 
     -- policy with no ip
     if digest_noip == string.upper(data.h) then

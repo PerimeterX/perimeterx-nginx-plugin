@@ -39,6 +39,7 @@ function M.application(px_configuration_table)
     local px_api = require("px.utils.pxapi").load(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
     local px_headers = require("px.utils.pxheaders").load(px_config)
+    local px_data_enrichment = require("px.utils.pxdataenrichment").load(px_config)
     local px_constants = require("px.utils.pxconstants")
     local px_common_utils = require("px.utils.pxcommonutils")
 
@@ -150,6 +151,15 @@ function M.application(px_configuration_table)
     -- process _pxCaptcha cookie if present
     local _pxCaptcha = ngx.var.cookie__pxCaptcha
     local details = {};
+
+    -- hadle pxde cookie
+    local pxde = ngx.var.cookie__pxde
+    if pxde then
+        local success, result = pcall(px_data_enrichment.process, pxde)
+        if not success then
+           px_logger.debug("Failed to process pxde")
+        end
+    end
 
     if _pxCaptcha then
         local success, result = pcall(px_captcha.process, _pxCaptcha)

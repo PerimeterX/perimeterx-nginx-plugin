@@ -86,10 +86,14 @@ function M.load(px_config)
         px_headers.set_score_header(data.score)
         -- Set the pxscore var for logging
         px_logger.enrich_log('pxscore',data.score)
-
         ngx.ctx.uuid = data.uuid or nil
         ngx.ctx.block_score = data.score
         ngx.ctx.px_action = data.action
+
+        if data.data_enrichment then
+            ngx.ctx.pxde_verified = true
+            ngx.ctx.pxde = data.data_enrichment
+        end
 
         if data.action == 'j' and data.action_data and data.action_data.body then
             ngx.ctx.px_action_data = data.action_data.body
