@@ -8,7 +8,7 @@
 
 # [Getting Started](#getting_started)
 * [Introduction](#introduction)
-* [Upgrading](#upgrading)
+* [Upgrading](#upgrading) 
    *[From 3.x to 4.x](#3x4x)
 * [Install PerimeterX NGINX Lua Plugin](#installation_px)
    * [Required NGINX Configuration](#nginx_configuration)
