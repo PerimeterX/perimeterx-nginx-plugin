@@ -14,7 +14,6 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## Blocking Parameters ##
 -- _M.blocking_score = 100
 -- _M.block_enabled = false
--- _M.captcha_enabled = true
 
 -- ## Additional Configuration Parameters ##
 -- _M.sensitive_headers = {'cookie', 'cookies'}
