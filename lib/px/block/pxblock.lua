@@ -24,10 +24,8 @@ function M.load(px_config)
     local string_gsub = string.gsub
 
     local function inject_captcha_script(vid, uuid)
-        return '<script src = "https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
-                '";  function handleCaptcha(response){ var vid="' .. vid .. '"; var uuid="' .. uuid .. '"; var name="_pxCaptcha "; ' ..
-                'var expiryUtc=new Date(Date.now()+1000*10).toUTCString(); var cookieParts = [name,"=",btoa(JSON.stringify({r: response, ' ..
-                'v: vid, u: uuid})),"; expires=",expiryUtc,"; path=/"]; document.cookie=cookieParts.join(""); location.reload();  }</script>'
+        return '<script type="text/javascript">window._pxVid = "' .. vid .. '";' ..
+                'window._pxUuid = "' .. uuid .. '";</script>'
     end
 
     local function parse_action(action)
@@ -92,7 +90,7 @@ function M.load(px_config)
             end
             px_logger.debug("Enforcing action: " .. mobile_template .. " page is served")
 
-            local html = px_template.get_template(mobile_template .. ".mobile", details.block_uuid, vid)
+            local html = px_template.get_template(ngx.ctx.px_action, details.block_uuid, vid)
             local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
             local result = {
                 action = parse_action(ngx.ctx.px_action),
