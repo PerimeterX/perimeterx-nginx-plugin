@@ -50,11 +50,21 @@ function M.application(file_name)
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
     local string_len = string.len
-    local cjson = require "cjson"
     local pcall = pcall
 
     local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
     local lower_request_url = string.lower(ngx.var.request_uri)
+
+    -- Internal wrapper function, will check if uri match first party route and forward the request if uri was matched
+    local function is_first_party_request(reverse_prefix, lower_request_url)
+        local first_party_flag = false
+        if px_client.reverse_px_client(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        elseif px_client.reverse_px_xhr(reverse_prefix, lower_request_url) then
+            first_party_flag = true
+        end
+        return first_party_flag
+    end
 
     local function perform_s2s(result, details)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
@@ -93,15 +103,9 @@ function M.application(file_name)
         end
     end
 
-    -- Match for client
-    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_VENDOR_PATH)) then
-        px_client.reverse_px_client()
-        return true
-    end
-
-    -- Match for XHRs
-    if string.find(lower_request_url, string.lower("/" .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH)) then
-        px_client.reverse_px_xhr()
+    -- Match for client/XHRs
+    px_logger.debug("xxxxxxxxxxxx")
+    if is_first_party_request(reverse_prefix, lower_request_url) then
         return true
     end
 
