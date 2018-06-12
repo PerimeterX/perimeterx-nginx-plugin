@@ -20,6 +20,7 @@ function M.load(config_file)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require "px.utils.pxcommonutils"
+    local ngx_req_get_method = ngx.req.get_method
     local pcall = pcall
 
 
@@ -109,6 +110,7 @@ function M.load(config_file)
         pxdata['timestamp'] = tostring(ngx_time())
         pxdata['socket_ip'] = px_headers.get_ip()
 
+        details['http_method'] = ngx_req_get_method()
         details['module_version'] = px_constants.MODULE_VERSION
         details['risk_rtt'] = 0
         details['cookie_origin'] = ngx.ctx.px_cookie_origin
