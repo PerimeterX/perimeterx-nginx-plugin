@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.1] - 2018-06-13
+- Enhanced error handling of first party routes
+- Added http_method to activities
+
 ## [3.3.0] - 2018-02-19
 - Update first party templates with fallback support
 - Use relative URL for redirect in API protection mode
