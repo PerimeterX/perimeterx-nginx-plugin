@@ -104,7 +104,6 @@ function M.application(file_name)
     end
 
     -- Match for client/XHRs
-    px_logger.debug("xxxxxxxxxxxx")
     if is_first_party_request(reverse_prefix, lower_request_url) then
         return true
     end
