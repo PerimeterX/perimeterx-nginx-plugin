@@ -84,16 +84,13 @@ function M.load(px_config)
         -- mobile flow
         if ngx.ctx.px_cookie_origin == "header" then
             -- render captcha by default
-            local mobile_template = string.lower(px_config.captcha_provider)
-            if ngx.ctx.px_action == 'b' then
-                mobile_template = 'block';
-            end
-            px_logger.debug("Enforcing action: " .. mobile_template .. " page is served")
+            local block_action = parse_action(ngx.ctx.px_action)
+            px_logger.debug("Enforcing action: " .. block_action .. " page is served")
 
             local html = px_template.get_template(ngx.ctx.px_action, details.block_uuid, vid)
             local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
             local result = {
-                action = parse_action(ngx.ctx.px_action),
+                action = block_action,
                 uuid = details.block_uuid,
                 vid = vid,
                 appId = px_config.px_appId,
@@ -189,12 +186,9 @@ function M.load(px_config)
         end
 
         -- case: default px pages
-        local template = string.lower(px_config.captcha_provider)
-        if ngx.ctx.px_action == 'b' then
-            template = 'block'
-        end
-        px_logger.debug("Enforcing action: " .. px_config.captcha_provider .. " page is served")
-        local html = px_template.get_template(template, uuid, vid)
+        
+        px_logger.debug("Enforcing action: " .. parse_action(ngx.ctx.px_action) .. " page is served")
+        local html = px_template.get_template(ngx.ctx.px_action, uuid, vid)
         ngx_say(html);
         ngx_exit(ngx.OK);
         return

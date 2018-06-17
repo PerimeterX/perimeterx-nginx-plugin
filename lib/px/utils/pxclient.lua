@@ -322,7 +322,7 @@ function M.load(px_config)
         local xff_header = ngx.req.get_headers()['X-Forwarded-For']
         if xff_header then
             xff_header = xff_header .. ', ' .. ngx.var.remote_addr
-        else 
+        else
             xff_header = ngx.var.remote_addr
         end
         ngx_req_set_header('X-Forwarded-For', xff_header)

@@ -19,7 +19,7 @@ function M.load(px_config)
 
         local is_mobile = ngx.ctx.px_cookie_origin == 'header'
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
-        local collectorUrl = px_config.collector_host
+        local collectorUrl = '//' .. px_config.collector_host
         local captcha_url_prefix = 'https://' .. px_config.captcha_script_host
         -- in case we are in first party mode (not relevant for mobile), change the base paths to use first party
         if px_config.first_party_enabled and not is_mobile then
@@ -42,7 +42,6 @@ function M.load(px_config)
             cssRef = px_config.css_ref,
             jsRef = px_config.js_ref,
             logoVisibility = logo_css_style,
-            captchaType = px_config.captcha_provider,
             hostUrl = collectorUrl,
             jsClientSrc = js_client_src,
             firstPartyEnabled = px_config.first_party_enabled,
@@ -73,7 +72,6 @@ function M.load(px_config)
     end
 
     function _M.get_template(action, uuid, vid)
-
         local props = get_props(px_config, uuid, vid, action)
         local templateStr = get_content(action)
 
