@@ -4,12 +4,12 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v4.0.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/4.0-0)
+> Latest stable version: [v4.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/4.1-0)
 
 # [Getting Started](#getting_started)
 * [Introduction](#introduction)
-* [Upgrading](#upgrading)
-   *[From 3.x to 4.x](#3x4x)
+* [Upgrading](#upgrading) 
+   * [From 3.x to 4.x](#3x4x)
 * [Install PerimeterX NGINX Lua Plugin](#installation_px)
    * [Required NGINX Configuration](#nginx_configuration)
    * [Resolver](#nginx_resolver)
@@ -30,7 +30,6 @@
 * [Whitelisting](#whitelisting)
 * [Filter Sensitive Headers](#sensitive-headers)
 * [Remote Configurations](#remote-configurations)
-* [Select Captcha Provider](#captcha-provider)
 * [Enabled Routes](#enabled-routes)
 * [Sensitive Routes](#sensitive-routes)
 * [API Timeout](#api-timeout)
@@ -56,6 +55,22 @@ a request is allowed to continue being processed. When the PerimeterX Enforcer d
  
 ## <a name="upgradingVersions"></a> Upgrading
 See the full [changelog](CHANGELOG.md) for all versions.
+
+To upgrade the PerimeterX Enforcer: 
+
+1. Copy the configuration file [(pxconfig.lua)](lib/px/pxconfig.lua) from the latest source version to your application.
+2. Modify the new configuration file, making sure that it reflects your current/old configuration.
+3. Copy the new file to `/usr/local/lib/lua/px/pxconfig.lua`. (default location). If you wish to change the directory, you must save the file to where the module was previously installed. 
+
+### Custom Block Pages
+
+As of version 4.0, Captcha logic is being handled through the JavaScript snippet and not through the Enforcer.
+
+Users that have Custom Block Pages must include the new script tag and a new div in the .html block page. For implementation instructions refer to the appropriate links below:
+
+* [Captcha Page](examples/Custom Block Page + CAPTCHA/README.md)
+* [Custom Block Page](examples/Custom Block Page/README.md)
+
 
 #### <a name="3x4x"></a> From 1.x/2.x/3.x to 4.x
 Upgrading from any lower version to 4.x will require modificatoins to `nginx.conf`  
@@ -279,7 +294,6 @@ The following configurations are set in:
   -- ## Blocking Parameters ##
   _M.blocking_score = 100
   _M.block_enabled = false
-  _M.captcha_enabled = true
   ```
 
   Setting the **_ M.block_enabled** flag to _true_ activates the module to enforce blocking.
@@ -444,20 +458,6 @@ To deploy the PerimeterX First Party JS Snippet:
     ...
   ```
 
-- ### <a name="captcha-provider"></a>Select CAPTCHA Provider
-
-  The CAPTCHA provider for the block page. </br>
- Possible Options:
-  
-  * [reCAPTCHA](https://www.google.com/recaptcha)
-  * [FunCaptcha](https://www.funcaptcha.com/)
-
- **Default:** `reCaptcha`
-  
- ```lua
-  _M.captcha_provider = "funCaptcha"
- ```
-
 - ### <a name="enabled-routes"></a> Enabled Routes
 
  Allows you to implicitly define a set of routes on which the plugin will be active. An empty list sets all application routes as active.
@@ -548,8 +548,7 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
 
  Users that have Custom Block Pages must include the new script tag and a new div in the .html block page. For implementation instructions refer to the appropriate links below:
 
- * [reCaptcha](examples/Custom Block Page + reCAPTCHA + Redirect/README.md)
- * [funCaptcha](examples/Custom Block Page + funCAPTCHA + Redirect/README.md)
+ * [Captcha Page](examples/Custom Block Page + CAPTCHA/README.md)
  * [Custom Block Page](examples/Custom Block Page/README.md)
 
 - ### <a name="multipleapps"></a> Multiple App Support
