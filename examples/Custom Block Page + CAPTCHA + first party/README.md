@@ -1,6 +1,6 @@
-reCAPTCHA Example 
+CAPTCHA Example
 -----------------
-> This folder contains an example of a reCAPTCHA implementation. The original PerimeterX reCAPTCHA page has been customized, with a different color background, some icons and some colored texts.
+> This folder contains an example of a CAPTCHA implementation. The original PerimeterX CAPTCHA page has been customized, with a different color background, some icons and some colored texts.
 
 In order to use the example:
 

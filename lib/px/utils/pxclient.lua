@@ -171,7 +171,7 @@ function M.load(px_config)
         _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
     end
 
-    -- Internal funcaiton that forward the requests to PerimeterX backends
+    -- Internal function that forward the requests to PerimeterX backends
     -- @server - server address to send the request to
     -- @port_overide - if provided, will overide the server default port number
     -- @allow_failure - will allow http status >= 400
