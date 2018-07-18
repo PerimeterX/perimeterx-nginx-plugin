@@ -9,6 +9,7 @@ function M.load(px_config)
 
     local px_logger = require ("px.utils.pxlogger").load(px_config)
     local px_headers = require ("px.utils.pxheaders").load(px_config)
+    local px_ip = require ("px.utils.pxip").load(px_config, px_logger)
     local string_sub = string.sub
     local string_find = string.find
     local string_len = string.len
@@ -67,6 +68,7 @@ function M.load(px_config)
     function _M.process()
         -- by user agent - pattern match
         local ua = ngx.var.http_user_agent
+        local whitelist_objects = px_ip.prepare_cidrs(_M.Whitelist['ip_addresses'])
 
         if ua then
             --  By user agent - strict match
@@ -94,10 +96,9 @@ function M.load(px_config)
 
         -- By IP address
         local ip_address = px_headers.get_ip()
-        local wlips = _M.Whitelist['ip_addresses']
-        for i = 1, #wlips do
-            if ip_address == wlips[i] then
-                px_logger.debug("Whitelisted: IP address  " .. wlips[i])
+        if (whitelist_objects ~= {}) then
+            if (px_ip.is_ip_whitelisted(whitelist_objects, ip_address)) then
+                px_logger.debug("Whitelisted: IP address " .. ip_address)
                 return true
             end
         end
