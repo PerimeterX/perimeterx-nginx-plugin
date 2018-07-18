@@ -110,7 +110,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: IP address  1.2.3.4
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: IP address 1.2.3.4
 
 === TEST 2: Whitelist - URI Full 
 
