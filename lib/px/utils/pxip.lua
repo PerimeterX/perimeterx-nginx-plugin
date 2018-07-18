@@ -7,23 +7,23 @@ local M = {}
 local function generate_mask_tables()
     local bin_masks = {}
     local inverted_bin_masks = {}
-    for i=0,32 do
+    for i=0, 32 do
         table.insert(bin_masks, bit.lshift((2^i)-1, 32-i))
     end
-    for i=0,32 do
-        table.insert(inverted_bin_masks, bit.bxor(bin_masks[i+1], bin_masks[33])) -- we are adding 1 to i as tables starts with 1 but we need to calculate from 0
+    for i=1, 33 do
+        table.insert(inverted_bin_masks, bit.bxor(bin_masks[i], bin_masks[33]))
     end
     return {bin_masks, inverted_bin_masks}
 end
 
 function M.load(px_config)
+    -- local variables
+    local bit = require("bit")
+
     local px_logger = require("px.utils.pxlogger").load(px_config)
     local px_common_utils = require("px.utils.pxcommonutils")
     local masks = generate_mask_tables()
     local _M = {}
-
-    -- local variables
-    local bit = require("bit")
 
     local function unsign(num)
         if num < 0 then
@@ -96,27 +96,26 @@ function M.load(px_config)
     end
 
 
-    function _M.prepare_cidrs(wlips)
+    function _M.prepare_cidrs(whitelisted_ips)
         local result = {}
-        for _,v in pairs(wlips) do
+        for _, v in pairs(whitelisted_ips) do
 
-            local splitted_mask = px_common_utils.split_string(v,'[^/]+')
+            local splitted_mask = px_common_utils.split_string(v, '[^/]+')
             if (splitted_mask ~= nil) then
                 local cidr_object = parse_cidr(splitted_mask)
-                table.insert(result,cidr_object)
+                table.insert(result, cidr_object)
             end
         end
         return result
     end
 
-    function _M.is_ip_whitelisted(wlips, ip)
+    function _M.is_ip_whitelisted(whitelisted_ips, ip)
         if type(ip) ~= "string" then
             px_logger.debug("IP must be of type string")
             return nil
         end
         local ip_sum = ip_to_decimal(ip)
-        px_logger.debug("num: " .. #wlips)
-        for _,cidr in ipairs(wlips) do
+        for _, cidr in ipairs(whitelisted_ips) do
             if ip_sum >= cidr[1] and ip_sum <= cidr[2] then
                 return true
             end
