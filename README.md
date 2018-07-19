@@ -416,7 +416,7 @@ To deploy the PerimeterX First Party JS Snippet:
   There are several of filters that can be configured:
 
   ```javascript
-  	   whitelist_uri_full = { _M.custom_block_url },
+       whitelist_uri_full = { _M.custom_block_url },
 	   whitelist_uri_prefixes = {},
 	   whitelist_uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
 	   whitelist_ip_addresses = {},
