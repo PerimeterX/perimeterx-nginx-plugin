@@ -26,7 +26,6 @@
 
 # [Advanced Configuration](#advanced_configuration)
 * [Debug Mode](#debug-mode)
-* [Extracting Real IP Address](#real-ip)
 * [Whitelisting](#whitelisting)
 * [Filter Sensitive Headers](#sensitive-headers)
 * [Remote Configurations](#remote-configurations)
@@ -383,21 +382,6 @@ To deploy the PerimeterX First Party JS Snippet:
   2017/12/04 12:04:18 [error] 7#0: *9 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - Request is internal. PerimeterX processing skipped., client: 172.17.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8888"
   2017/12/04 12:04:19 [error] 7#0: *63 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - POST response status: 200, context: ngx.timer
   2017/12/04 12:04:19 [error] 7#0: *63 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - Reused conn times: 3, context: ngx.timer
-  ```
-
-- ### <a name="real-ip"></a> Extracting the Real IP Address from a Request
-
-  The PerimeterX module requires the user's real IP address. The real connection IP must be properly extracted when your NGINX server sits behind a load balancer or CDN.
-  For the PerimeterX NGINX module to see the real user's IP address, you must set the following:
-
-  - ip_headers, a list of headers from which to extract the real IP (ordered by priority).
-  
-  **Default with no predefined header:** `ngx.var.remote_addr`
-  
-  Example:
-  
-  ```lua
-  _M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
   ```
 
 - ### <a name="whitelisting"></a> Whitelisting
