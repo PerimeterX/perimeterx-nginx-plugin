@@ -110,9 +110,61 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_code: 200
 
 --- error_log
-[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: IP address  1.2.3.4
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: IP address 1.2.3.4
 
-=== TEST 2: Whitelist - URI Full 
+=== TEST 2: Whitelist - IP range
+
+--- http_config
+    lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
+    lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
+    lua_ssl_verify_depth 3;
+    lua_socket_pool_size 500;
+    resolver 8.8.8.8;
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
+    set_real_ip_from   0.0.0.0/0;
+    real_ip_header     X-Forwarded-For;
+
+--- config
+    location = /t {
+        resolver 8.8.8.8;
+        set_by_lua_block $config {
+            pxconfig = require "px.pxconfig"
+            pxconfig.cookie_secret = "perimeterx"
+            pxconfig.px_debug = true
+            pxconfig.block_enabled = true
+            pxconfig.enable_server_calls  = false
+            pxconfig.send_page_requested_activity = false
+            pxconfig.whitelist_ip_addresses = {'1.2.3.0/24'}
+            return true
+        }
+
+        access_by_lua_block { 
+            require("px.pxnginx").application(require "px.pxconfig")
+        }
+
+        content_by_lua_block {
+             ngx.say(ngx.var.remote_addr)
+        }
+    }
+
+--- request
+GET /t
+
+--- req_headers
+X-Forwarded-For: 1.2.3.4
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
+
+--- response_body
+1.2.3.4
+
+--- error_code: 200
+
+--- error_log
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: IP address 1.2.3.4
+
+=== TEST 3: Whitelist - URI Full 
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -166,7 +218,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_log
 [PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: uri_full. /t/full/uri
 
-=== TEST 3: Whitelist - URI Prefix
+=== TEST 4: Whitelist - URI Prefix
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -221,7 +273,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_log
 [PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: uri_prefixes. /t/prefix
 
-=== TEST 4: Whitelist - Suffix
+=== TEST 5: Whitelist - Suffix
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -279,7 +331,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_log
 [PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: uri_suffix. .css,
 
-=== TEST 5: Whitelist - Full UA 
+=== TEST 6: Whitelist - Full UA 
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
@@ -338,7 +390,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (
 --- error_log
 [PerimeterX - DEBUG] [ PX_APP_ID ] - Whitelisted: UA strict match Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 
-=== TEST 6: Whitelist - UA Partial 
+=== TEST 7: Whitelist - UA Partial 
 
 --- http_config
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";

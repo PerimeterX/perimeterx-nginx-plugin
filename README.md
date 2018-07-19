@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v4.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/4.1-0)
+> Latest stable version: [v5.0.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.0-0)
 
 # [Getting Started](#getting_started)
 * [Introduction](#introduction)
@@ -26,11 +26,9 @@
 
 # [Advanced Configuration](#advanced_configuration)
 * [Debug Mode](#debug-mode)
-* [Extracting Real IP Address](#real-ip)
 * [Whitelisting](#whitelisting)
 * [Filter Sensitive Headers](#sensitive-headers)
 * [Remote Configurations](#remote-configurations)
-* [Select Captcha Provider](#captcha-provider)
 * [Enabled Routes](#enabled-routes)
 * [Sensitive Routes](#sensitive-routes)
 * [API Timeout](#api-timeout)
@@ -56,6 +54,22 @@ a request is allowed to continue being processed. When the PerimeterX Enforcer d
  
 ## <a name="upgradingVersions"></a> Upgrading
 See the full [changelog](CHANGELOG.md) for all versions.
+
+To upgrade the PerimeterX Enforcer: 
+
+1. Copy the configuration file [(pxconfig.lua)](lib/px/pxconfig.lua) from the latest source version to your application.
+2. Modify the new configuration file, making sure that it reflects your current/old configuration.
+3. Copy the new file to `/usr/local/lib/lua/px/pxconfig.lua`. (default location). If you wish to change the directory, you must save the file to where the module was previously installed. 
+
+### Custom Block Pages
+
+As of version 4.0, Captcha logic is being handled through the JavaScript snippet and not through the Enforcer.
+
+Users that have Custom Block Pages must include the new script tag and a new div in the .html block page. For implementation instructions refer to the appropriate links below:
+
+* [Captcha Page](examples/Custom Block Page + CAPTCHA/README.md)
+* [Custom Block Page](examples/Custom Block Page/README.md)
+
 
 #### <a name="3x4x"></a> From 1.x/2.x/3.x to 4.x
 Upgrading from any lower version to 4.x will require modificatoins to `nginx.conf`  
@@ -279,7 +293,6 @@ The following configurations are set in:
   -- ## Blocking Parameters ##
   _M.blocking_score = 100
   _M.block_enabled = false
-  _M.captcha_enabled = true
   ```
 
   Setting the **_ M.block_enabled** flag to _true_ activates the module to enforce blocking.
@@ -371,38 +384,13 @@ To deploy the PerimeterX First Party JS Snippet:
   2017/12/04 12:04:19 [error] 7#0: *63 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - Reused conn times: 3, context: ngx.timer
   ```
 
-- ### <a name="real-ip"></a> Extracting the Real IP Address from a Request
-
-  The PerimeterX module requires the user's real IP address. The real connection IP must be properly extracted when your NGINX server sits behind a load balancer or CDN.
-  For the PerimeterX NGINX module to see the real user's IP address, you must have at least one of the following:
-  
-  - The **set_ real _ip _from** and **real_ ip _header** NGINX directives in your nginx.conf. This will ensure the connecting IP is properly derived from a trusted source.
-  
-  Example:
-  
-  ```
-  set_real_ip_from 172.0.0.0/8;
-  set_real_ip_from 107.178.0.0/16;
-  real_ip_header X-Forwarded-For;
-  ```
-  - Set ip_headers, a list of headers from which to extract the real IP (ordered by priority).    
-  
-  
-  **Default with no predefined header:** `ngx.var.remote_addr`
-  
-  Example:
-  
-  ```lua
-  _M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
-  ```
-
 - ### <a name="whitelisting"></a> Whitelisting
   Whitelisting (bypassing enforcement) is configured in the `pxconfig.lua` file
 
   There are several of filters that can be configured:
 
   ```javascript
-  	   whitelist_uri_full = { _M.custom_block_url },
+       whitelist_uri_full = { _M.custom_block_url },
 	   whitelist_uri_prefixes = {},
 	   whitelist_uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
 	   whitelist_ip_addresses = {},
@@ -416,7 +404,7 @@ To deploy the PerimeterX First Party JS Snippet:
   | **whitelist_uri_full** | `{'/api_server_full'}` | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1` |
   | **whitelist_uri_prefixes** | `{'/api_server'}` | `/api_server_full?data=1` </br> but not to </br>  `/full_api_server?data=1` |
   | **whitelist_uri_suffixes** | `{'.css'}` | `/style.css` </br> but not to </br>  `/style.js` |
-  | **whitelist_ip_addresses** | `{'192.168.99.1'}` | Filters requests coming from any of the listed IPs. |
+  | **whitelist_ip_addresses** | `{'192.168.99.1', '192.168.98.0/24'}` | Filters requests coming from any of the listed full IP adresses or IP ranges. |
   | **whitelist_ua_full** | `{'Mozilla/5.0 (compatible; pingbot/2.0; http://www.pingdom.com/)'}` | Filters all requests matching this exact UA. |
   | **whitelist_ua_sub** | `{'GoogleCloudMonitoring'}` | Filters requests containing the provided string in their UA.
 
@@ -443,20 +431,6 @@ To deploy the PerimeterX First Party JS Snippet:
     _M.load_interval = 5
     ...
   ```
-
-- ### <a name="captcha-provider"></a>Select CAPTCHA Provider
-
-  The CAPTCHA provider for the block page. </br>
- Possible Options:
-  
-  * [reCAPTCHA](https://www.google.com/recaptcha)
-  * [FunCaptcha](https://www.funcaptcha.com/)
-
- **Default:** `reCaptcha`
-  
- ```lua
-  _M.captcha_provider = "funCaptcha"
- ```
 
 - ### <a name="enabled-routes"></a> Enabled Routes
 
@@ -548,8 +522,7 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
 
  Users that have Custom Block Pages must include the new script tag and a new div in the .html block page. For implementation instructions refer to the appropriate links below:
 
- * [reCaptcha](examples/Custom Block Page + reCAPTCHA + Redirect/README.md)
- * [funCaptcha](examples/Custom Block Page + funCAPTCHA + Redirect/README.md)
+ * [Captcha Page](examples/Custom Block Page + CAPTCHA/README.md)
  * [Custom Block Page](examples/Custom Block Page/README.md)
 
 - ### <a name="multipleapps"></a> Multiple App Support
@@ -626,6 +599,16 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
   ```
 
 - ### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
+This value should not be changed from the default of 100 unless advised by PerimeterX.
+
+**Default blocking value:** 100
+
+```lua
+  _M.blocking_score = 100  
+```
+
+- ### <a name="data-enrichment"></a> Data-Enrichment
+
 The PerimeterX NGINX plugin stores the data enrichment payload on the request context. The data enrichment payload can also be processed with `additional_activity_handler`.
   
 Only requests that are *not* being block will reach the backend server, so specific logic must be applied to the processing function.
@@ -652,7 +635,9 @@ Below is an example that includes the pre-condition checks to process the data e
     ...
 ```
 For more information and the available fields in the JSON, refer to the PerimeterX Portal documentation.
-  
+
+User can use the additional activity handler to retrieve information for the request using the data-enrichment object. first, validate the data enrichment object is verified, then you can access it's properties.
+
 <a name="appendix"></a> Appendix
 -----------------------------------------------
 
