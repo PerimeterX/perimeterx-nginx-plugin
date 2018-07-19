@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v4.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/4.1-0)
+> Latest stable version: [v5.0.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.0-0)
 
 # [Getting Started](#getting_started)
 * [Introduction](#introduction)
@@ -388,19 +388,9 @@ To deploy the PerimeterX First Party JS Snippet:
 - ### <a name="real-ip"></a> Extracting the Real IP Address from a Request
 
   The PerimeterX module requires the user's real IP address. The real connection IP must be properly extracted when your NGINX server sits behind a load balancer or CDN.
-  For the PerimeterX NGINX module to see the real user's IP address, you must have at least one of the following:
-  
-  - The **set_ real _ip _from** and **real_ ip _header** NGINX directives in your nginx.conf. This will ensure the connecting IP is properly derived from a trusted source.
-  
-  Example:
-  
-  ```
-  set_real_ip_from 172.0.0.0/8;
-  set_real_ip_from 107.178.0.0/16;
-  real_ip_header X-Forwarded-For;
-  ```
-  - Set ip_headers, a list of headers from which to extract the real IP (ordered by priority).    
-  
+  For the PerimeterX NGINX module to see the real user's IP address, you must set the following:
+
+  - ip_headers, a list of headers from which to extract the real IP (ordered by priority).
   
   **Default with no predefined header:** `ngx.var.remote_addr`
   
