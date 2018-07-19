@@ -625,6 +625,16 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
   ```
 
 - ### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
+This value should not be changed from the default of 100 unless advised by PerimeterX.
+
+**Default blocking value:** 100
+
+```lua
+  _M.blocking_score = 100  
+```
+
+- ### <a name="data-enrichment"></a> Data-Enrichment
+
 The PerimeterX NGINX plugin stores the data enrichment payload on the request context. The data enrichment payload can also be processed with `additional_activity_handler`.
   
 Only requests that are *not* being block will reach the backend server, so specific logic must be applied to the processing function.
@@ -651,7 +661,9 @@ Below is an example that includes the pre-condition checks to process the data e
     ...
 ```
 For more information and the available fields in the JSON, refer to the PerimeterX Portal documentation.
-  
+
+User can use the additional activity handler to retrieve information for the request using the data-enrichment object. first, validate the data enrichment object is verified, then you can access it's properties.
+
 <a name="appendix"></a> Appendix
 -----------------------------------------------
 
