@@ -142,7 +142,7 @@ sudo make clean && sudo make build && sudo make install
 cd ~
 ```
 
-###### 3. Download and install Netttle 3.3 from source 
+###### 4. Download and install Netttle 3.3 from source 
 ```sh
 wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
 tar -xzf nettle-3.3.tar.gz
@@ -151,13 +151,13 @@ cd nettle-3.3
 sudo make clean && sudo make install
 cd ~
 ```
-###### 4. Install remaining dependencies
+###### 5. Install remaining dependencies
 ```sh
 sudo apt-get -y install lua-sec
 sudo luarocks install lua-resty-nettle
 ```
 
-###### 5. Install the PerimeterX NGINX Plugin
+###### 6. Install the PerimeterX NGINX Plugin
 ```sh
 sudo no_proxy=1 luarocks install perimeterx-nginx-plugin
 ```
