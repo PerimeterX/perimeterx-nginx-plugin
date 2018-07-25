@@ -10,6 +10,7 @@
 * [Introduction](#introduction)
 * [Upgrading](#upgrading) 
    * [From 3.x to 4.x](#3x4x)
+* [Installation](#installation)
 * [Install PerimeterX NGINX Lua Plugin](#installation_px)
    * [Required NGINX Configuration](#nginx_configuration)
    * [Resolver](#nginx_resolver)
@@ -84,88 +85,302 @@ Please follow the steps below to apply changes that are required
 ```
 
 For a full example refer to the following [link](#nginx_config_example)
-## Installation
+# <a name="installation"></a>Installation
 
-##### Supported Operating Systems
+### Supported Operating Systems
 * Debian
-* CentOS/RHEL
-* Ubuntu
+* [Ubuntu 14.04](#ubuntu1404) or [Ubuntu 16.04+](#ubuntu1604) 
+* RHEL
+* [CentOS 7](#centos7)
 * Amazon Linux (AMI)
 
-##### Supported NGINX Versions:
-
-* [NGINX 1.7 to 1.13.11](#installation_px)
-  * [Lua NGINX Module V0.9.11 to V0.10.11](#installation_px)
+### Supported NGINX Versions:
+Recomended that you use the newest version of NGINX from the <a href="http://nginx.org/en/linux_packages.html" onclick="window.open(this.href); return false;"> Official NGINX</a> repo. 
+ 
+* [NGINX 1.7 or later](#installation_px)
+  * [Lua NGINX Module V0.9.11 or later](#installation_px)
 * [NGINX Plus](#installation_nginxplus_px)
   * [Lua NGINX Plus Module](#installation_nginxplus_px)
-* <a href="https://openresty.org/en/" onclick="window.open(this.href); return false;">OpenResty</a>
+* <a href="https://openresty.org/en/" onclick="window.open(this.href); return false;">OpenResty</a><br />
 
-## <a name="installation_px"></a> Installing the PerimeterX NGINX Lua Plugin
+NOTE: Using the default NGINX provide by default in various Operating Systems does not support the LUA NGINX Module.
+##
+### <a name="ubuntu1404"></a>Ubuntu 14.04
+The following steps must be done in order. If NOT, you will need to uninstall and start over at Step 1. 
 
-#### 1. Install the appropriate dependencies for your Operating System: 
-
- In Ubuntu run:
-
- ```sh
- sudo apt-get update && sudo apt-get install lua-cjson libnettle6 nettle-dev luarocks luajit libluajit-5.1-dev ca-certificates
- ```
-
- In CentOS run:
-
- ```sh
- sudo yum -y groupinstall "Development Tools" && sudo yum -y install gcc gcc-c++ cmake kernel-devel zlib-devel cpio expat-devel gettext-devel libxslt libxslt-devel gd gd-devel perl-ExtUtils-Embed openssl openssl-devel lua-devel luarocks perl-Template-Toolkit perl-CPAN
- ```
-
-#### 2. Install the PerimeterX NGINX Plugin:
-
-Install the plugin using [luarocks](https://luarocks.org/).
-
+###### 1. Add the offical NGINX repository to get the latest version of NGINX
 ```sh
-luarocks install perimeterx-nginx-plugin
+sudo add-apt-repository ppa:nginx/stable
 ```
 
-*OR*
-
-Manually install the plugin by downloading the repository and running    
-`sudo make install`.
-
+###### 2. Install the dependencies for Ubuntu 14.04: 
 ```sh
-git clone https://github.com/PerimeterX/perimeterx-nginx-plugin.git
-cd /perimeterx-nginx-plugin
-sudo make install
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get -y install software-properties-common
+sudo apt-get -y install build-essential
+sudo apt-get -y install ca-certificates
+sudo apt-get -y install make
+sudo apt-get -y install wget
+sudo apt-get -y install nginx
+sudo apt-get -y install m4
+sudo apt-get -y install libnginx-mod-http-lua
+sudo apt-get -y install lua-cjson
+sudo apt-get -y install luarocks
 ```
 
-## <a name="installation_nginxplus_px"></a>Installing the  PerimeterX NGINX+ Lua Plugin
-
-#### 1. Install the Lua modules provided by the NGINX team (via yum) and the CA certificates bundle required when configuring NGINX:
-
-   [Lua NGINX Plus Module](#installation_nginxplus_px)
-
-#### 2. Download and compile nettle using the version appropriate for your environment:
-
-```
-yum -y install m4 # prerequisite for nettle
-cd /tmp/
+###### 3. Download and install Netttle 3.3 from source 
+```sh
 wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
 tar -xzf nettle-3.3.tar.gz
 cd nettle-3.3
 ./configure
-make clean && make install
-cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so.
+sudo make clean && sudo make install
+cd ~
 ```
 
-#### 3. Change the certificate path provided in the Lua CA Certificates section to the Amazon Linux trusted certificate:
+###### 4. Install the PerimeterX NGINX Plugin
+```sh
+sudo luarocks install perimeterx-nginx-plugin
 ```
-lua_ssl_trusted_certificate "/etc/pki/tls/certs/ca-bundle.crt";
+
+###### 5. Install remaining dependencies
+```sh
+sudo apt-get -y install lua-sec
+sudo luarocks install lua-resty-nettle
 ```
+##
+### <a name="ubuntu1604"></a>Ubuntu 16.04 or greater
+
+###### 1. Add the offical NGINX repository to get the latest version of NGINX
+```sh 
+sudo add-apt-repository ppa:nginx/stable
+```
+
+###### 2. Install the dependencies for Ubuntu 16.04 or Greater
+```sh
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get -y install software-properties-common
+sudo apt-get -y install build-essential
+sudo apt-get -y install ca-certificates
+sudo apt-get -y install nginx
+sudo apt-get -y install libnginx-mod-http-lua 
+sudo apt-get -y install lua-cjson 
+sudo apt-get -y install libnettle6 
+sudo apt-get -y install nettle-dev 
+sudo apt-get -y install luarocks 
+sudo apt-get -y install luajit 
+sudo apt-get -y install libluajit-5.1-dev
+```
+
+###### 3. Install the PerimeterX NGINX Plugin
+```sh
+luarocks install perimeterx-nginx-plugin
+```
+
+##
+### <a name="centos7"></a>CentOS 7
+NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This means that you need to compile the Module from source. 
+
+###### 1. Update and Install dependecies
+```sh 
+sudo yum -y update
+sudo yum install -y epel-release
+sudo yum update -y
+sudo yum groupinstall -y  "Development Tools"
+sudo yum install -y luarocks wget rpmdevtools git luajit luajit-devel openssl-devel zlib-devel pcre-devel gcc gcc-c++ make perl-ExtUtils-Embed lua-json lua-devel  ca-certificates 
+sudo yum remove -y nettle
+```
+
+###### 2. Make a tmp directory to work in 
+```sh
+sudo mkdir /tmp/nginx
+cd /tmp/nginx
+```
+
+###### 3. Download all required source files
+```sh
+wget http://nginx.org/download/nginx-1.13.11.tar.gz
+wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
+wget -O nginx_devel_kit.tar.gz https://github.com/simpl/ngx_devel_kit/archive/v0.3.0.tar.gz
+wget -O nginx_lua_module.tar.gz https://github.com/openresty/lua-nginx-module/archive/v0.10.10.tar.gz
+wget https://ftp.gnu.org/gnu/nettle/nettle-3.4.tar.gz
+```
+
+###### 4. Unpackage all source files
+```sh
+tar -xzf nettle-3.4.tar.gz
+tar -xvf LuaJIT-2.0.4.tar.gz
+tar -xvf nginx-1.13.11.tar.gz
+tar -xvf nginx_devel_kit.tar.gz
+tar -xvf nginx_lua_module.tar.gz
+```
+
+###### 5. Install Nettle from source
+```sh
+cd /tmp/nginx/nettle-3.4
+sudo ./configure --prefix=/usr --disable-static 
+sudo make
+sudo make check
+sudo make check
+sudo make install
+sudo chmod -v 755 /usr/lib/lib{hogweed,nettle}.so
+sudo install -v -m755 -d /usr/share/doc/nettle-3.4
+sudo install -v -m644 nettle.html /usr/share/doc/nettle-3.4
+```
+###### 6. Install LuaJIT
+```
+cd /tmp/nginx/LuaJIT-2.0.4
+sudo make install
+```
+
+###### 7. Build and Install NGINX w/ required Modules 
+```sh
+cd /tmp/nginx/nginx-1.13.11
+LUAJIT_LIB=/usr/local/lib LUAJIT_INC=/usr/local/include/luajit-2.0 \
+./configure \
+--user=nginx                          \
+--group=nginx                         \
+--prefix=/etc/nginx                   \
+--sbin-path=/usr/sbin/nginx           \
+--conf-path=/etc/nginx/nginx.conf     \
+--pid-path=/var/run/nginx.pid         \
+--lock-path=/var/run/nginx.lock       \
+--error-log-path=/var/log/nginx/error.log \
+--http-log-path=/var/log/nginx/access.log \
+--with-http_gzip_static_module        \
+--with-http_stub_status_module        \
+--with-debug                          \
+--with-http_ssl_module                \
+--with-pcre                           \
+--with-http_perl_module               \
+--with-file-aio                       \
+--with-http_realip_module             \
+--add-module=/tmp/nginx/ngx_devel_kit-0.3.0 \
+--add-module=/tmp/nginx/lua-nginx-module-0.10.10
+sudo make install
+sudo nginx -t
+```
+
+###### 8. Install PerimeterX Nginx Plugin & Dependencies 
+```sh
+sudo luarocks install luasec
+sudo luarocks install lustache
+sudo luarocks install lua-resty-nettle
+sudo luarocks install luasocket
+sudo luarocks install lua-resty-http
+sudo luarocks install lua-cjson
+sudo luarocks install perimeterx-nginx-plugin
+```
+
+###### 9. (Optional) If you are testing in a new environment you may need to configure the following:
+* Add the user "nginx"
+   ```sh 
+   sudo useradd --system --home /var/cache/nginx --shell /sbin/nologin --comment "nginx user" --user-group nginx
+   ```
+
+* Create a systemd service for NGINX
+  ```sh
+  sudo vi /usr/lib/systemd/system/nginx.service
+  ```
+
+* Paste the following in the file you just created: 
+  ```text
+  [Unit]
+  Description=nginx - high performance web server
+  Documentation=https://nginx.org/en/docs/
+  After=network-online.target remote-fs.target nss-lookup.target
+  Wants=network-online.target
+  
+  [Service]
+  Type=forking
+  PIDFile=/var/run/nginx.pid
+  ExecStartPre=/usr/sbin/nginx -t -c /etc/nginx/nginx.conf
+  ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
+  ExecReload=/bin/kill -s HUP $MAINPID
+  ExecStop=/bin/kill -s TERM $MAINPID
+  
+  [Install]
+  WantedBy=multi-user.target
+  ```
+* Enable and Start the NGINX Service
+  ```sh
+  sudo systemctl is-enabled nginx.service
+  sudo systemctl start nginx.service 
+  sudo systemctl enable nginx.service
+  ```
+  
+
+##
+### <a name="installation_nginxplus_px"></a>Installing the PerimeterX NGINX Plugin for NGINX+
+If you are already using NGINX+ the following steps cover how to install the NGINX+ Lua Module & the PermimeterX NGINX Plugin. 
+
+###### 1. Install the <a href="https://docs.nginx.com/nginx/admin-guide/dynamic-modules/lua/" onclick="window.open(this.href); return false;">Lua modules provided by NGINX</a>
+
+* For Amazon Linux, CentOS, and RHEL:
+  ```sh
+  yum install nginx-plus-module-lua
+  ```
+
+* For Ubuntu:
+  ```sh
+  apt-get install nginx-plus-module-lua
+  ```
+
+###### 2. Remove Pre-installed Nettle
+  ```sh
+  sudo yum -y remove nettle
+  ```
+
+###### 3. Install Nettle from Source
+Download and compile nettle using the version appropriate for your environment:
+
+For Amazon Linux, CentOS, and RHEL:
+  ```sh
+  yum -y install m4 # prerequisite for nettle
+  cd /tmp/
+  wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
+  tar -xzf nettle-3.3.tar.gz
+  cd nettle-3.3
+  ./configure
+  make clean && make install
+  cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so.
+  ```
+
+###### 4. Install Luarocks and Dependencies 
+  ```sh
+  sudo yum install luarocks
+  sudo luarocks install lua-cjson
+  sudo luarocks install lustache
+  sudo luarocks install lua-resty-nettle
+  sudo luarocks install luasocket
+  sudo luarocks install lua-resty-http
+
+  sudo ln -s /usr/lib64/lua /usr/lib/lua
+  ```
+
+###### 5. Install PerimeterX NGINX Plugin
+  ```sh
+  sudo luarocks install perimeterx-nginx-plugin
+  ```
+
+###### 6. Optional - Modify Selinux (Consult with your intern System Adminstrator)
+On CentOS 7 and other linux operating systems you may find that you need to modify or disable Selinux. If you get the following error:
+
+`nginx: lua atpanic: Lua VM crashed, reason: runtime code generation failed, restricted kernel?`
+
+You will need to make one or the other two changes:
+* To disable SELinux: `RUN setenforcer 0`
+* To enable execmem for httpd_t: `RUN setsebool httpd_execmem 1 -P` 
+
 
 ## <a name="nginx_configuration"></a>Required NGINX Configuration ([Example Below](#nginx_config_example))
 The following NGINX Configurations are required to support the PerimeterX NGINX Lua Plugin:
 
 * ###### <a name="nginx_resolver"></a>Resolver
-
- The Resolver directive must be configured in the HTTP section of your NGINX configuration. Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), or to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
- This is required for NGINX to resolve the PerimeterX API.
+   The Resolver directive must be configured in the HTTP section of your NGINX configuration. Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), or to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
+  This is required for NGINX to resolve the PerimeterX API.
 
 * ###### <a name="nginx_lua_package_path"></a>Lua Package Path
   Ensure your Lua package path location in the HTTP section of your configuration reflects where the PerimeterX modules are installed.
