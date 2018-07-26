@@ -95,29 +95,35 @@ For a full example refer to the following [link](#nginx_config_example)
 * Amazon Linux (AMI)
 
 ### Supported NGINX Versions:
-Recomended that you use the newest version of NGINX from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo. 
+Recomended that you use the newest version of NGINX from the <a href="http://nginx.org/en/linux_packages.html" onclick="window.open(this.href); return false;"> Official NGINX</a> repo. 
  
 * [NGINX 1.7 or later](#installation_px)
   * [Lua NGINX Module V0.9.11 or later](#installation_px)
 * [NGINX Plus](#installation_nginxplus_px)
   * [Lua NGINX Plus Module](#installation_nginxplus_px)
-* [OpenResty](https://openresty.org/en/)
+* <a href="https://openresty.org/en/" onclick="window.open(this.href); return false;">OpenResty</a><br />
 
 NOTE: Using the default NGINX provide by default in various Operating Systems does not support the LUA NGINX Module.
-
+##
 ### <a name="ubuntu1404"></a>Ubuntu 14.04
 The following steps must be done in order. If NOT, you will need to uninstall and start over at Step 1. 
 
-###### 1. Add the offical NGINX repository to get the latest version of NGINX
-```sh
-sudo add-apt-repository ppa:nginx/stable
-```
-
-###### 2. Install the dependencies for Ubuntu 14.04: 
+###### 1. Upgrade and update your existing dependencies for Ubuntu 16.04 or higher
 ```sh
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get -y install software-properties-common
+```
+
+###### 2. Add the offical NGINX repository to get the latest version of NGINX
+```sh 
+sudo add-apt-repository ppa:nginx/stable
+```
+  If an `add-apt-repository: command not found` error is returned, run:
+ 
+  `sudo apt-get -y install software-properties-common`
+
+###### 3. Install the dependencies for Ubuntu 14.04: 
+```sh
 sudo apt-get -y install build-essential
 sudo apt-get -y install ca-certificates
 sudo apt-get -y install make
@@ -125,21 +131,8 @@ sudo apt-get -y install wget
 sudo apt-get -y install nginx
 sudo apt-get -y install m4
 sudo apt-get -y install libnginx-mod-http-lua
-sudo apt-get -y install lua5.1
-sudo apt-get -y install liblua5.1
-sudo apt-get -y install libluajit-5.1-dev
 sudo apt-get -y install lua-cjson
-sudo apt-get -y install luajit 
-```
-
-##### 3. download and install LuaRocks from source
-```sh
-wget http://luarocks.github.io/luarocks/releases/luarocks-2.4.4.tar.gz
-tar -xzf luarocks-2.4.4.tar.gz
-cd luarocks-2.4.4
-./configure
-sudo make clean && sudo make build && sudo make install
-cd ~
+sudo apt-get -y install luarocks
 ```
 
 ###### 4. Download and install Netttle 3.3 from source 
@@ -151,7 +144,8 @@ cd nettle-3.3
 sudo make clean && sudo make install
 cd ~
 ```
-###### 5. Install remaining dependencies
+
+###### 5. Install the remaining dependencies
 ```sh
 sudo apt-get -y install lua-sec
 sudo luarocks install lua-resty-nettle
@@ -159,21 +153,28 @@ sudo luarocks install lua-resty-nettle
 
 ###### 6. Install the PerimeterX NGINX Plugin
 ```sh
-sudo no_proxy=1 luarocks install perimeterx-nginx-plugin
+sudo luarocks install perimeterx-nginx-plugin
 ```
 
-### <a name="ubuntu1604"></a>Ubuntu 16.04 or greater
+##
+### <a name="ubuntu1604"></a>Ubuntu 16.04 and Higher
 
-###### 1. Add the offical NGINX repository to get the latest version of NGINX
-```sh 
-sudo add-apt-repository ppa:nginx/stable
-```
-
-###### 2. Install the dependencies for Ubuntu 16.04 or Greater
+###### 1. Upgrade and update your existing dependencies for Ubuntu 16.04 or higher
 ```sh
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get -y install software-properties-common
+```
+
+###### 2. Add the offical NGINX repository to get the latest version of NGINX
+```sh 
+sudo add-apt-repository ppa:nginx/stable
+```
+  If an `add-apt-repository: command not found` error is returned, run:
+ 
+  `sudo apt-get -y install software-properties-common`
+
+###### 3. Install the dependencies for Ubuntu 16.04 or higher
+```sh
 sudo apt-get -y install build-essential
 sudo apt-get -y install ca-certificates
 sudo apt-get -y install nginx
@@ -186,7 +187,7 @@ sudo apt-get -y install luajit
 sudo apt-get -y install libluajit-5.1-dev
 ```
 
-###### 3. Install the PerimeterX NGINX Plugin
+###### 4. Install the PerimeterX NGINX Plugin
 ```sh
 luarocks install perimeterx-nginx-plugin
 ```
@@ -629,12 +630,12 @@ To deploy the PerimeterX First Party JS Snippet:
   There are several of filters that can be configured:
 
   ```javascript
-       whitelist_uri_full = { _M.custom_block_url },
-     whitelist_uri_prefixes = {},
-     whitelist_uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
-     whitelist_ip_addresses = {},
-     whitelist_ua_full = {},
-     whitelist_ua_sub = {}
+  	   whitelist_uri_full = { _M.custom_block_url },
+	   whitelist_uri_prefixes = {},
+	   whitelist_uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
+	   whitelist_ip_addresses = {},
+	   whitelist_ua_full = {},
+	   whitelist_ua_sub = {}
   
   ```
   
@@ -803,12 +804,12 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
 
   ```lua
   _M.additional_activity_handler = function(event_type, ctx, details)
-   local cjson = require "cjson"
-   if (event_type == 'block') then
-     logger.warning("PerimeterX " + event_type + " blocked with score: " + ctx.score + "details " + cjson.encode(details))
-   else
-     logger.info("PerimeterX " + event_type + " details " +  cjson.encode(details))
-   end
+	 local cjson = require "cjson"
+	 if (event_type == 'block') then
+		 logger.warning("PerimeterX " + event_type + " blocked with score: " + ctx.score + "details " + cjson.encode(details))
+	 else
+		 logger.info("PerimeterX " + event_type + " details " +  cjson.encode(details))
+	 end
   end
   ```
 
@@ -846,7 +847,7 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
                       'score[$pxscore] rtt[$pxrtt] block[$pxblock] '
                       'pass[$pxpass] cookie_ts[$pxcookiets] risk_call[$pxcall]';
 
-      access_log /var/log/nginx/access_log enriched;
+	    access_log /var/log/nginx/access_log enriched;
 
     }
     ...
