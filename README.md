@@ -59,14 +59,14 @@ a request is allowed to continue being processed. When the PerimeterX Enforcer d
 See the full [changelog](CHANGELOG.md) for all versions.
 
 #### <a name="3x4x"></a> From 1.x/2.x/3.x to 4.x
-Upgrading from any lower version to 4.x will require modificatoins to `nginx.conf`  
-Please follow the steps below to apply changes that are required
+Upgrading from any previous version to version 4.x requires modifications to `nginx.conf`  
+Follow the steps below to apply changes that are required:
 
-1. PerimeterX module will have default configuration that will be added to `pxconfig.lua`
-   PerimeterX `pxtimer` and `pxnginx` require a table containing your specific configurations.  
-   Once these configurations will be passed to the plugin, PerimeterX plugin will handle put default values
+1. The PerimeterX module has a default configuration that is added to `pxconfig.lua`
+   The PerimeterX `pxtimer` and `pxnginx` require a table containing your specific configurations.  
+   Once these configurations are passed to the plugin, the PerimeterX plugin will handle put default values
    to the `pxconfig`.  
-   This change will require the user to import the configuration in the `init_worker_by_lua_block` and `access_by_lua_block`
+   This change requires the user to import the configuration in the `init_worker_by_lua_block` and `access_by_lua_block`
    context
    
 2. Modify `init_worker_by_lua_block`
@@ -95,7 +95,7 @@ For a full example refer to the following [link](#nginx_config_example)
 * Amazon Linux (AMI)
 
 ### Supported NGINX Versions:
-Recomended that you use the newest version of NGINX from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo. 
+It is recomended that you use the latest version of NGINX available from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo. 
  
 * [NGINX 1.7 or later](#installation_px)
   * [Lua NGINX Module V0.9.11 or later](#installation_px)
@@ -106,7 +106,7 @@ Recomended that you use the newest version of NGINX from the [Official NGINX](ht
 NOTE: Using the default NGINX provide by default in various Operating Systems does not support the LUA NGINX Module.
 
 ### <a name="ubuntu1404"></a>Ubuntu 14.04
-The following steps must be done in order. If NOT, you will need to uninstall and start over at Step 1. 
+The following steps must be done in order. If not, you will need to uninstall and re-start the installation process from scratch. 
 
 ###### 1. Add the offical NGINX repository to get the latest version of NGINX
 ```sh
@@ -192,10 +192,10 @@ luarocks install perimeterx-nginx-plugin
 ```
 
 ##
-### <a name="centos7"></a>CentOS 7
-NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This means that you need to compile the Module from source. 
+### <a name="centos7"></a>CentOS 7/RHEL
+NGINX does not provide an http lua module for CentOS/RHEL via an RPM. You must compile the module from source. 
 
-###### 1. Update and Install dependecies
+###### 1. Update and install dependecies
 ```sh 
 sudo yum -y update
 sudo yum install -y epel-release
@@ -205,13 +205,13 @@ sudo yum install -y luarocks wget rpmdevtools git luajit luajit-devel openssl-de
 sudo yum remove -y nettle
 ```
 
-###### 2. Make a tmp directory to work in 
+###### 2. Create a tmp directory 
 ```sh
 sudo mkdir /tmp/nginx
 cd /tmp/nginx
 ```
 
-###### 3. Download all required source files
+###### 3. Download the required source files
 ```sh
 wget http://nginx.org/download/nginx-1.13.11.tar.gz
 wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
@@ -235,7 +235,6 @@ cd /tmp/nginx/nettle-3.4
 sudo ./configure --prefix=/usr --disable-static 
 sudo make
 sudo make check
-sudo make check
 sudo make install
 sudo chmod -v 755 /usr/lib/lib{hogweed,nettle}.so
 sudo install -v -m755 -d /usr/share/doc/nettle-3.4
@@ -247,7 +246,7 @@ cd /tmp/nginx/LuaJIT-2.0.4
 sudo make install
 ```
 
-###### 7. Build and Install NGINX w/ required Modules 
+###### 7. Build and install NGINX with the required modules 
 ```sh
 cd /tmp/nginx/nginx-1.13.11
 LUAJIT_LIB=/usr/local/lib LUAJIT_INC=/usr/local/include/luajit-2.0 \
@@ -275,7 +274,7 @@ sudo make install
 sudo nginx -t
 ```
 
-###### 8. Install PerimeterX Nginx Plugin & Dependencies 
+###### 8. Install the PerimeterX NGINX plugin and dependencies 
 ```sh
 sudo luarocks install luasec
 sudo luarocks install lustache
@@ -286,7 +285,7 @@ sudo luarocks install lua-cjson
 sudo luarocks install perimeterx-nginx-plugin
 ```
 
-###### 9. (Optional) If you are testing in a new environment you may need to configure the following:
+###### 9. If you are testing in a new environment you may need to configure the following:
 * Add the user "nginx"
    ```sh 
    sudo useradd --system --home /var/cache/nginx --shell /sbin/nologin --comment "nginx user" --user-group nginx
@@ -297,7 +296,7 @@ sudo luarocks install perimeterx-nginx-plugin
   sudo vi /usr/lib/systemd/system/nginx.service
   ```
 
-* Paste the following in the file you just created: 
+* Paste the following into the file you just created: 
   ```text
   [Unit]
   Description=nginx - high performance web server
@@ -316,14 +315,14 @@ sudo luarocks install perimeterx-nginx-plugin
   [Install]
   WantedBy=multi-user.target
   ```
-* Enable and Start the NGINX Service
+
+* Enable and start the NGINX service
   ```sh
   sudo systemctl is-enabled nginx.service
   sudo systemctl start nginx.service 
   sudo systemctl enable nginx.service
   ```
   
-
 ##
 ### <a name="installation_nginxplus_px"></a>Installing the PerimeterX NGINX Plugin for NGINX+
 If you are already using NGINX+ the following steps cover how to install the NGINX+ Lua Module & the PermimeterX NGINX Plugin. 
@@ -340,12 +339,12 @@ If you are already using NGINX+ the following steps cover how to install the NGI
   apt-get install nginx-plus-module-lua
   ```
 
-###### 2. Remove Pre-installed Nettle
+###### 2. Remove pre-installed Nettle
   ```sh
   sudo yum -y remove nettle
   ```
 
-###### 3. Install Nettle from Source
+###### 3. Install Nettle from source
 Download and compile nettle using the version appropriate for your environment:
 
 For Amazon Linux, CentOS, and RHEL:
@@ -360,7 +359,7 @@ For Amazon Linux, CentOS, and RHEL:
   cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so.
   ```
 
-###### 4. Install Luarocks and Dependencies 
+###### 4. Install luarocks and dependencies 
   ```sh
   sudo yum install luarocks
   sudo luarocks install lua-cjson
@@ -372,17 +371,17 @@ For Amazon Linux, CentOS, and RHEL:
   sudo ln -s /usr/lib64/lua /usr/lib/lua
   ```
 
-###### 5. Install PerimeterX NGINX Plugin
+###### 5. Install the PerimeterX NGINX plugin
   ```sh
   sudo luarocks install perimeterx-nginx-plugin
   ```
 
-###### 6. Optional - Modify Selinux (Consult with your intern System Adminstrator)
-On CentOS 7 and other linux operating systems you may find that you need to modify or disable Selinux. If you get the following error:
+###### 6. Optionally, modify Selinux (consult with your internal System Adminstrator)
+On CentOS 7 and other Linux operating systems you may need to modify or disable Selinux. If you get the following error:
 
 `nginx: lua atpanic: Lua VM crashed, reason: runtime code generation failed, restricted kernel?`
 
-You will need to make one or the other two changes:
+You will need to make one of the following changes:
 * To disable SELinux: `RUN setenforcer 0`
 * To enable execmem for httpd_t: `RUN setsebool httpd_execmem 1 -P` 
 
@@ -391,11 +390,11 @@ You will need to make one or the other two changes:
 The following NGINX Configurations are required to support the PerimeterX NGINX Lua Plugin:
 
 * ###### <a name="nginx_resolver"></a>Resolver
-   The Resolver directive must be configured in the HTTP section of your NGINX configuration. Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), or to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
-  This is required for NGINX to resolve the PerimeterX API.
+   The Resolver directive must be configured in the HTTP section of your NGINX configuration to allow NGINX to resolve the PerimeterX API. 
+   Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver (such as Google `resolver 8.8.8.8;`), or to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
 
 * ###### <a name="nginx_lua_package_path"></a>Lua Package Path
-  Ensure your Lua package path location in the HTTP section of your configuration reflects where the PerimeterX modules are installed.
+  Ensure that your Lua package path location in the HTTP section of your configuration reflects where the PerimeterX modules are installed.
 
     ```
     lua_package_path "/usr/local/lib/lua/?.lua;;";
