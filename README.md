@@ -195,7 +195,7 @@ luarocks install perimeterx-nginx-plugin
 ### <a name="centos7"></a>CentOS 7
 NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This means that you need to compile the Module from source. 
 
-###### 1. Update and Install dependecies
+###### 1. Update and Install dependencies
 ```sh 
 sudo yum -y update
 sudo yum install -y epel-release
