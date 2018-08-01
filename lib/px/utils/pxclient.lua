@@ -96,11 +96,6 @@ function M.load(px_config)
             return
         end
 
-        if px_config.additional_activity_handler ~= nil then
-            px_logger.debug("additional_activity_handler was triggered");
-            px_config.additional_activity_handler(event_type, ngx.ctx, details)
-        end
-
         local pxdata = {};
         pxdata['type'] = event_type;
         pxdata['headers'] = px_common_utils.filter_headers(px_config.sensitive_headers, false)
@@ -152,6 +147,11 @@ function M.load(px_config)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
             pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
+        end
+
+        if px_config.additional_activity_handler ~= nil then
+            px_logger.debug("additional_activity_handler was triggered");
+            px_config.additional_activity_handler(event_type, ngx.ctx, details)
         end
     end
 
