@@ -12,7 +12,6 @@ function M.load(px_config)
     -- Processing pxde and validating its hmac
     -- @pxde - string extracted from _pxde
     function _M.process(pxde)
-        px_logger.debug('pxde ' ..  pxde)
         local splitted_cookie = px_common_utils.split_string(pxde, "[^:]+")
 
         if table.getn(splitted_cookie) > 1 then

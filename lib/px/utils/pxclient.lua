@@ -96,11 +96,6 @@ function M.load(px_config)
             return
         end
 
-        if px_config.additional_activity_handler ~= nil then
-            px_logger.debug("additional_activity_handler was triggered");
-            px_config.additional_activity_handler(event_type, ngx.ctx, details)
-        end
-
         local pxdata = {};
         pxdata['type'] = event_type;
         pxdata['headers'] = px_common_utils.filter_headers(px_config.sensitive_headers, false)
@@ -142,12 +137,21 @@ function M.load(px_config)
             px_logger.enrich_log('pxpass', details.pass_reason)
         end
 
+        if event_type == 'block' then
+            details['simulated_block'] = not px_config.block_enabled
+        end
+
         pxdata['details'] = details;
 
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
             pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
+        end
+
+        if px_config.additional_activity_handler ~= nil then
+            px_logger.debug("additional_activity_handler was triggered");
+            px_config.additional_activity_handler(event_type, ngx.ctx, details)
         end
     end
 
@@ -167,7 +171,7 @@ function M.load(px_config)
         _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
     end
 
-    -- Internal funcaiton that forward the requests to PerimeterX backends
+    -- Internal function that forward the requests to PerimeterX backends
     -- @server - server address to send the request to
     -- @port_overide - if provided, will overide the server default port number
     -- @allow_failure - will allow http status >= 400
@@ -315,6 +319,13 @@ function M.load(px_config)
             ngx_req_set_header('cookie', 'pxvid=' .. vid)
         end
 
+        local xff_header = ngx.req.get_headers()['X-Forwarded-For']
+        if xff_header then
+            xff_header = xff_header .. ', ' .. ngx.var.remote_addr
+        else
+            xff_header = ngx.var.remote_addr
+        end
+        ngx_req_set_header('X-Forwarded-For', xff_header)
         local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, false)
 
         if not status  then

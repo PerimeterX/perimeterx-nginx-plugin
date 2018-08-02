@@ -31,11 +31,12 @@ function M.load(px_config)
 
     function _M.validate_internal_request()
         local px_internal = _M.get_header('px_internal')
-        if px_internal and px_internal == header_token() then
+        local req_header_token = header_token()
+        if px_internal and px_internal == req_header_token then
             px_logger.debug('Request is internal. PerimeterX processing skipped.')
             return true
         end
-        ngx.req.set_header('px_internal', header_token())
+        ngx.req.set_header('px_internal', req_header_token)
     end
 
     function _M.clear_protected_headers()
