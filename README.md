@@ -772,24 +772,7 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
  * [reCaptcha](examples/Custom Block Page + reCAPTCHA + Redirect/README.md)
  * [Custom Block Page](examples/Custom Block Page/README.md)
 
-### <a name="multipleapps"></a> Multiple App Support
-
-  The PerimeterX Enforcer allows multiple configurations for different applications.
-
-  If your PerimeterX account contains several applications (as defined in the Portal), you can create different configurations for each application.
-
-  > NOTE: The application initializes a timed Enforcer. The Enforcer must be initialized with one of the applications in your account. The the correct configuration file name must be passed to the `require ("px.utils.pxtimer").application("AppName"|empty)` block in the server initialization.
-
-  1. Open the `nginx.conf` file, and locate the `require("px.pxnginx").application()` line inside your location block.
-  2. Pass the desired application name into the `application()` function.</br>
-    For example: `require("px.pxnginx").application("mySpecialApp")`
-  3. Locate the `pxconfig.lua` file, and create a copy of it. </br> The copy name should follow the pattern: </br> `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) </br> The < AppName > placeholder must be replaced by the exact name provided to the application function in step 1.
-  4. Change the configuration in file created in step 3.
-  5. Save the file in the location where pxnginx.lua file is located.   
-   (Default location: `/usr/local/lib/lua/px/<yourFile>`)
-  6. For every location block of your app, replace the code mentioned in step 2 with the correct < AppName >.
-
-- ### <a name="add-activity-handler"></a> Additional Activity Handler
+### <a name="add-activity-handler"></a> Additional Activity Handler
   An additional activity handler is added by setting `_M.additional_activity_handler` with a user defined function in the 'pxconfig.lua' file.
 
  **Default:** Activity is sent to PerimeterX as controlled by 'pxconfig.lua'.
@@ -806,6 +789,50 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
    end
   end
   ```
+
+### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
+
+This value should not be changed from the default of 100 unless advised by PerimeterX.
+
+**Default blocking value:** 100
+
+Example:
+
+```lua
+  _M.blocking_score = 100  
+```
+
+## <a name="enrichment"></a> Enrichment
+
+### <a name="data-enrichment"></a> Data Enrichment
+
+The PerimeterX NGINX plugin stores the data enrichment payload on the request context. The data enrichment payload can also be processed with `additional_activity_handler`.
+  
+Only requests that are *not* being block will reach the backend server, so specific logic must be applied to the processing function.
+
+The following example includes the pre-condition checks required to process the data enrichment payload and enrich the request headers.  
+ 
+```lua
+    ... 
+    _M.additional_activity_handler = function(event_type, ctx, details)
+        -- verify that the request is passed to the backend
+        if event_type == 'page_requested' then
+          -- pxde - contains a parsed json of the data enrichment object
+          -- pxde_verified - makes sure that this payload is trusted and signed by PerimeterX
+          local pxde = ngx.ctx.pxde
+          local pxde_verified = ngx.ctx.pxde_verified
+          if pxde and pxde_verified then
+              -- apply the data enrichment logic here
+              -- the example below will set the f_type on the request header
+              local f_type = ngx.ctx.pxde.f_type
+              ngx.req.set_header("x-px-de-f-type", f_type)
+          end
+        end
+    end
+    ...
+```
+For more information and the available fields in the JSON, refer to the PerimeterX Portal documentation.
+
 
 ### <a name="log-enrichment"></a> Log Enrichment
  Access logs can be enriched with the PerimeterX bot information by creating an NGINX variable with the proper name. To configure this variable use the NGINX map directive in the HTTP section of your NGINX configuration file. This should be added before  additional configuration files are added.
@@ -846,42 +873,13 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
     }
     ...
   ```
-
-### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
-The PerimeterX NGINX plugin stores the data enrichment payload on the request context. The data enrichment payload can also be processed with `additional_activity_handler`.
-  
-Only requests that are *not* being block will reach the backend server, so specific logic must be applied to the processing function.
-
-The following example includes the pre-condition checks required to process the data enrichment payload and enrich the request headers.  
- 
-```lua
-    ... 
-    _M.additional_activity_handler = function(event_type, ctx, details)
-        -- verify that the request is passed to the backend
-        if event_type == 'page_requested' then
-          -- pxde - contains a parsed json of the data enrichment object
-          -- pxde_verified - makes sure that this payload is trusted and signed by PerimeterX
-          local pxde = ngx.ctx.pxde
-          local pxde_verified = ngx.ctx.pxde_verified
-          if pxde and pxde_verified then
-              -- apply the data enrichment logic here
-              -- the example below will set the f_type on the request header
-              local f_type = ngx.ctx.pxde.f_type
-              ngx.req.set_header("x-px-de-f-type", f_type)
-          end
-        end
-    end
-    ...
-```
-For more information and the available fields in the JSON, refer to the PerimeterX Portal documentation.
-  
 <a name="appendix"></a> Appendix
 -----------------------------------------------
 
-* ### <a name="nginxplus"></a> NGINX Plus
+### <a name="nginxplus"></a> NGINX Plus
   The PerimeterX NGINX module is compatible with NGINX Plus. Users or administrators should install the NGINX Plus Lua dynamic module (LuaJIT).
 
-* ### <a name="dynamicmodules"></a> NGINX Dynamic Modules
+### <a name="dynamicmodules"></a> NGINX Dynamic Modules
 
   If you are using NGINX with [dynamic module support](https://www.nginx.com/products/modules/) you can load the Lua module with the following lines at the beginning of your NGINX configuration file.
 
@@ -889,6 +887,23 @@ For more information and the available fields in the JSON, refer to the Perimete
   load_module modules/ndk_http_module.so;
   load_module modules/ngx_http_lua_module.so;
   ```
+
+### <a name="multipleapps"></a> Multiple App Support
+
+  The PerimeterX Enforcer allows multiple configurations for different applications.
+
+  If your PerimeterX account contains several applications (as defined in the Portal), you can create different configurations for each application.
+
+  > NOTE: The application initializes a timed Enforcer. The Enforcer must be initialized with one of the applications in your account. The the correct configuration file name must be passed to the `require ("px.utils.pxtimer").application("AppName"|empty)` block in the server initialization.
+
+  1. Open the `nginx.conf` file, and locate the `require("px.pxnginx").application()` line inside your location block.
+  2. Pass the desired application name into the `application()` function.</br>
+    For example: `require("px.pxnginx").application("mySpecialApp")`
+  3. Locate the `pxconfig.lua` file, and create a copy of it. </br> The copy name should follow the pattern: </br> `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) </br> The < AppName > placeholder must be replaced by the exact name provided to the application function in step 1.
+  4. Change the configuration in file created in step 3.
+  5. Save the file in the location where pxnginx.lua file is located.   
+   (Default location: `/usr/local/lib/lua/px/<yourFile>`)
+  6. For every location block of your app, replace the code mentioned in step 2 with the correct < AppName >.
 
 <a name="contributing"></a> Contributing
 ----------------------------------------
