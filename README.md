@@ -21,7 +21,6 @@
 * [PerimeterX NGINX Lua Plugin Configuration](#perimterx_plugin_configuration)
    * [Required parameters](#perimterx_required_parameters)
    * [Monitor / Block Mode](#monitoring_mode)
-   * [First Party Mode](#first-party)
 * [PerimeterX First Party JS Snippet](#perimterx_first_party_js_snippet)
 
 # [Advanced Configuration](#advanced_configuration)
