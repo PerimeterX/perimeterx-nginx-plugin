@@ -374,7 +374,7 @@ For Amazon Linux, CentOS, and RHEL:
   sudo luarocks install perimeterx-nginx-plugin
   ```
 
-###### 6. Optional - Modify Selinux (Consult with your internl System Adminstlrator)
+###### 6. Modify Selinux (Consult with your internal System Administrator)
 On CentOS 7 and other Linux operating systems you may need to modify or disable Selinux. If you get the following error:
 
 `nginx: lua atpanic: Lua VM crashed, reason: runtime code generation failed, restricted kernel?`
