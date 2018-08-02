@@ -30,7 +30,7 @@
 * [Required Configuration](#perimterx_required_parameters)
 * [First-Party Configuration](#first_party_config)
   * [First-Party Mode](#first-party)
-  * [PerimeterX First Party-JS Snippet](#perimterx_first_party_js_snippet)
+  * [PerimeterX First-Party JS Snippet](#perimterx_first_party_js_snippet)
 * [Optional Configuration](#advanced_configuration)
   * [Monitor / Block Mode](#monitoring_mode)
   * [Debug Mode](#debug-mode)
