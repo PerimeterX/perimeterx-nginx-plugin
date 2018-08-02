@@ -28,11 +28,11 @@
 
 ## [Configuration](#configuration)
 * [Required Configuration](#perimterx_required_parameters)
-  * [Monitor / Block Mode](#monitoring_mode)
-* [First Party Configuration](#first_party_config)
-  * [First Party Mode](#first-party)
-  * [PerimeterX First Party JS Snippet](#perimterx_first_party_js_snippet)
+* [First-Party Configuration](#first_party_config)
+  * [First-Party Mode](#first-party)
+  * [PerimeterX First Party-JS Snippet](#perimterx_first_party_js_snippet)
 * [Optional Configuration](#advanced_configuration)
+  * [Monitor / Block Mode](#monitoring_mode)
   * [Debug Mode](#debug-mode)
   * [Extracting Real IP Address](#real-ip)
   * [Whitelisting](#whitelisting)
@@ -45,15 +45,17 @@
   * [Customize Default Block Page](#customblockpage)
   * [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
   * [Redirect on Custom URL](#redirect_on_custom_url)
-  * [Multiple App Support](#multipleapps)
   * [Additional Activity Handler](#add-activity-handler)
-  * [Log Enrichment](#log-enrichment)
   * [Blocking Score](#blocking-score)
-  * [Data-Enrichment](#data-enrichment)
+
+## [Enrichment](#enrichment)
+ * [Data-Enrichment](#data-enrichment)
+ * [Log Enrichment](#log-enrichment)
   
 ## [Appendix](#appendix)  
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
+ * [Multiple App Support](#multipleapps)
  * [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
@@ -390,7 +392,9 @@ You will need to make one of the following changes:
 * To disable SELinux: `RUN setenforcer 0`
 * To enable execmem for httpd_t: `RUN setsebool httpd_execmem 1 -P` 
 
-## <a name="nginx_configuration"></a>Required NGINX Configuration
+## <a name="configuration"></a>Configuration
+
+### <a name="nginx_configuration"></a>Required NGINX Configuration
 The following NGINX Configurations are required to support the PerimeterX NGINX Lua Plugin:
 
 * #### <a name="nginx_resolver"></a>Resolver
@@ -486,9 +490,9 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
 
 > NOTE: The NGINX Configuration Requirements must be completed before proceeding to the next stage of installation.
 
-## <a name="configuration"></a>Configuration
+### <a name="configuration"></a>PerimeterX Plugin Configuration
 
-### <a name="perimterx_required_parameters"></a>Required Configuration:
+#### <a name="perimterx_required_parameters"></a>Required Configuration:
 The following configurations are set in:
 
 **`/usr/local/lib/lua/px/pxconfig.lua`**
@@ -506,20 +510,13 @@ The following configurations are set in:
 
   The Policy from where the **Risk Cookie / Cookie Key** is taken must correspond with the Application from where the **Application ID / AppId** and PerimeterX **Token / Auth Token**
 
-### <a name="monitoring_mode"></a>Monitor / Block Mode Configuration
 
-  By default, the PerimeterX plugin is set to Monitor Only mode (`_M.block_enabled = false`).
+#### <a name="first_party_config"></a> First-Party Configuration
 
-  Adding the **_ M.block_enabled** flag and setting it to _true_ in the `pxconfig.lua` file activates the module to enforce blocking.
+##### <a name="first-party"></a> First-Party Mode
+  First-Party Mode enables the module to send/receive data to/from the sensor, acting as a reverse-proxy for client requests and sensor activities.
 
-  The PerimeterX Module blocks requests that exceed the block score threshold. If a request receives a risk score that is equal to or greater than the block score, a block page is displayed.
-
-### <a name="first_party_config"></a> First Party Configuration
-
-##### <a name="first-party"></a> First Party Mode
-  First Party Mode enables the module to send/receive data to/from the sensor, acting as a reverse-proxy for client requests and sensor activities.
-
-  First Party Mode may require additional changes on the [JS Sensor Snippet](#perimterx_first_party_js_snippet). For more information, refer to the PerimeterX Portal.
+  First-Party Mode may require additional changes on the [JS Sensor Snippet](#perimterx_first_party_js_snippet). For more information, refer to the PerimeterX Portal.
 
   ```lua
   -- ## Additional Configuration Parameters ##
@@ -527,7 +524,7 @@ The following configurations are set in:
   _M.first_party_enabled = true
   ```
 
-  The following routes must be enabled for First Party Mode for the PerimeterX Lua module:
+  The following routes must be enabled for First-Party Mode for the PerimeterX Lua module:
     - `/<PX_APP_ID without PX prefix>/xhr/*`
     - `/<PX_APP_ID without PX prefix>/init.js`
 
@@ -555,9 +552,9 @@ The following configurations are set in:
 
 > NOTE: The PerimeterX NGINX Lua Plugin Configuration Requirements must be completed before proceeding to the next stage of installation.
 
-#### <a name="perimterx_first_party_js_snippet"></a> First-Party JS Snippet
+##### <a name="perimterx_first_party_js_snippet"></a> First-Party JS Snippet
 
-Ensure the [PerimeterX NGINX Lua Plugin](#perimterx_plugin_configuration) is configured before deploying the PerimeterX First Party JS Snippet across your site. (Detailed instructions for deploying the PerimeterX First Party JS Snippet can be found <a href="https://console.perimeterx.com/docs/applications.html?highlight=first%20party#first-party-sensor" onclick="window.open(this.href); return false;">here</a>.)
+Ensure the [PerimeterX NGINX Lua Plugin](#perimterx_plugin_configuration) is configured before deploying the PerimeterX First-Party JS Snippet across your site. (Detailed instructions for deploying the PerimeterX First-Party JS Snippet can be found <a href="https://console.perimeterx.com/docs/applications.html?highlight=first%20party#first-party-sensor" onclick="window.open(this.href); return false;">here</a>.)
 
 To deploy the PerimeterX First-Party JS Snippet:
 
@@ -572,6 +569,14 @@ To deploy the PerimeterX First-Party JS Snippet:
 
 ## <a name="advanced_configuration"></a> Optional Configuration
 
+### <a name="monitoring_mode"></a>Monitor / Block Mode Configuration
+
+  By default, the PerimeterX plugin is set to Monitor Only mode (`_M.block_enabled = false`).
+
+  Adding the **_ M.block_enabled** flag and setting it to _true_ in the `pxconfig.lua` file activates the module to enforce blocking.
+
+  The PerimeterX Module blocks requests that exceed the block score threshold. If a request receives a risk score that is equal to or greater than the block score, a block page is displayed.
+  
 ### <a name="debug-mode"></a> Debug Mode
 
  Enables debug logging mode.
