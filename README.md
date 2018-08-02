@@ -424,7 +424,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
   ```
 
 * ###### <a name="nginx_perimeterx_enforcement"></a>Apply PerimeterX Enforcement
-  Add the following line to your location block:
+  Add the following line to your `location` block:
 
     ```
   #----- PerimeterX protect location -----#
@@ -436,7 +436,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
   ```
 
 * ###### <a name="nginx_config_example"></a>Example of nginx.conf
-  The following **nginx.conf** example contains the required directives with enforcement applied to the location block.
+  The following **nginx.conf** example contains the required directives with enforcement applied to the `location` block.
   
   ###### nginx.conf:
   ```lua
@@ -480,12 +480,12 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
 
 > NOTE: The NGINX Configuration Requirements must be completed before proceeding to the next stage of installation.
 
-## <a name="perimterx_plugin_configuration"></a>Required PerimeterX NGINX Plugin Configuration
+## <a name="configuration"></a>Configuration
+
+### <a name="perimterx_required_parameters"></a>Required Configuration:
 The following configurations are set in:
 
 **`/usr/local/lib/lua/px/pxconfig.lua`**
-
-###### <a name="perimterx_required_parameters"></a>Required Parameters:
 
  ```lua
   -- ## Required Parameters ##
@@ -500,22 +500,17 @@ The following configurations are set in:
 
   The Policy from where the **Risk Cookie / Cookie Key** is taken must correspond with the Application from where the **Application ID / AppId** and PerimeterX **Token / Auth Token**
 
-###### <a name="monitoring_mode"></a>Monitor / Block Mode
+### <a name="monitoring_mode"></a>Monitor / Block Mode Configuration
 
-  By default, the PerimeterX plugin is set to Monitor Only mode (`_M.block_enabled = false`):
+  By default, the PerimeterX plugin is set to Monitor Only mode (`_M.block_enabled = false`).
 
-  ```lua
-  -- ## Blocking Parameters ##
-  _M.blocking_score = 100
-  _M.block_enabled = false
-  _M.captcha_enabled = true
-  ```
-
-  Setting the **_ M.block_enabled** flag to _true_ activates the module to enforce blocking.
+  Adding the **_ M.block_enabled** flag and setting it to _true_ in the `pxconfig.lua` file activates the module to enforce blocking.
 
   The PerimeterX Module blocks requests that exceed the block score threshold. If a request receives a risk score that is equal to or greater than the block score, a block page is displayed.
 
-###### <a name="first-party"></a> First Party Mode
+### <a name="first_party_config"></a> First Party Configuration
+
+##### <a name="first-party"></a> First Party Mode
   First Party Mode enables the module to send/receive data to/from the sensor, acting as a reverse-proxy for client requests and sensor activities.
 
   First Party Mode may require additional changes on the [JS Sensor Snippet](#perimterx_first_party_js_snippet). For more information, refer to the PerimeterX Portal.
@@ -554,11 +549,11 @@ The following configurations are set in:
 
 > NOTE: The PerimeterX NGINX Lua Plugin Configuration Requirements must be completed before proceeding to the next stage of installation.
 
-### <a name="perimterx_first_party_js_snippet"></a>PerimeterX First Party JS Snippet
+#### <a name="perimterx_first_party_js_snippet"></a> First-Party JS Snippet
 
 Ensure the [PerimeterX NGINX Lua Plugin](#perimterx_plugin_configuration) is configured before deploying the PerimeterX First Party JS Snippet across your site. (Detailed instructions for deploying the PerimeterX First Party JS Snippet can be found <a href="https://console.perimeterx.com/docs/applications.html?highlight=first%20party#first-party-sensor" onclick="window.open(this.href); return false;">here</a>.)
 
-To deploy the PerimeterX First Party JS Snippet:
+To deploy the PerimeterX First-Party JS Snippet:
 
 ##### 1. Generate the First-Party Snippet
   * Go to <a href="https://console.perimeterx.com/#/app/applicationsmgmt" onclick="window.open(this.href); return false;">**Applications**</a> >> **Snippet**. 
@@ -569,7 +564,7 @@ To deploy the PerimeterX First Party JS Snippet:
 ##### 2. Deploy the First-Party Snippet
   * Copy the JS Snippet and deploy using a tag manager, or by embedding it globally into your web template for which websites you want PerimeterX to run.
 
-# <a name="advanced_configuration"></a> Advanced Configuration Options
+## <a name="advanced_configuration"></a> Optional Configuration
 
 ### <a name="debug-mode"></a> Debug Mode
 
@@ -597,31 +592,7 @@ To deploy the PerimeterX First Party JS Snippet:
   2017/12/04 12:04:19 [error] 7#0: *63 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - POST response status: 200, context: ngx.timer
   2017/12/04 12:04:19 [error] 7#0: *63 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - Reused conn times: 3, context: ngx.timer
   ```
-
-### <a name="real-ip"></a> Extracting the Real IP Address from a Request
-
-  The PerimeterX module requires the user's real IP address. The real connection IP must be properly extracted when your NGINX server sits behind a load balancer or CDN.     
-  For the PerimeterX NGINX module to see the real user's IP address, you must have at least one of the following:
   
-  - The **set_ real _ip _from** and **real_ ip _header** NGINX directives in your nginx.conf. This will ensure the connecting IP is properly derived from a trusted source.
-  
-  Example:
-  
-  ```
-  set_real_ip_from 172.0.0.0/8;
-  set_real_ip_from 107.178.0.0/16;
-  real_ip_header X-Forwarded-For;
-  ```
-  - Set ip_headers, a list of headers from which to extract the real IP (ordered by priority).     
-  
- **Default with no predefined header:** `ngx.var.remote_addr`
-  
- Example:
-  
-  ```lua
-  _M.ip_headers = {'X-TRUE-IP', 'X-Forwarded-For'}
-  ```
-
 ### <a name="whitelisting"></a> Whitelisting
   Whitelisting (bypassing enforcement) is configured in the `pxconfig.lua` file
 
