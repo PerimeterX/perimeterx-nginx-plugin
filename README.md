@@ -101,7 +101,8 @@ Recomended that you use the newest version of NGINX from the [Official NGINX](ht
 * [OpenResty](https://openresty.org/en/)
 
  > NOTE: Using the default NGINX provide by default in various Operating Systems does not support the LUA NGINX Module.
-###<a name="ubuntu"></a> Installing with Ubuntu
+
+### <a name="ubuntu"></a> Installing with Ubuntu
 
 #### <a name="ubuntu1404"></a>Ubuntu 14.04
 
