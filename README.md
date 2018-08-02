@@ -783,7 +783,7 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
   _M.additional_activity_handler = function(event_type, ctx, details)
    local cjson = require "cjson"
    if (event_type == 'block') then
-     logger.warning("PerimeterX " + event_type + " blocked with score: " + ctx.score + "details " + cjson.encode(details))
+     logger.warning("PerimeterX " + event_type + " blocked with score: " + ctx.blocking_score + "details " + cjson.encode(details))
    else
      logger.info("PerimeterX " + event_type + " details " +  cjson.encode(details))
    end
