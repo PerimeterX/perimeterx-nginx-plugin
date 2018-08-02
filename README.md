@@ -299,7 +299,8 @@ The following configurations are set in:
 
   The PerimeterX module blocks requests exceeding the block score threshold. If a request receives a risk score that is equal to or greater than the block score, a block page is displayed.
 
-###### <a name="first-party"></a> First Party Mode
+###### <a name="
+-party"></a> First Party Mode
   First Party Mode enables the module to send/receive data to/from the sensor, acting as a "reverse-proxy" for client requests and sensor activities.
 
   First Party Mode may require additional changes on the [JS Sensor Snippet](#perimterx_first_party_js_snippet). For more information, refer to the PerimeterX Portal.
@@ -344,7 +345,7 @@ Ensure the [PerimeterX NGINX Lua Plugin](#perimterx_plugin_configuration) is con
 
 
 To deploy the PerimeterX First Party JS Snippet:   
-(Detailed instructions for deploying the PerimeterX First Party JS Snippet can be found <a href="https://console.perimeterx.com/docs/applications.html?highlight=first%20party#first-party-sensor" onclick="window.open(this.href); return false;">here</a>.)
+(Detailed instructions for deploying the PerimeterX First Party JS Snippet can be found <a href="https://console.perimeterx.com/docs/user_guide.html#first-party-snippet" onclick="window.open(this.href); return false;">here</a>.)
 
 ##### Generate First-Party Snippet
   * Go to <a href="https://console.perimeterx.com/#/app/applicationsmgmt" onclick="window.open(this.href); return false;">**Applications**</a> >> **Snippet**. 
