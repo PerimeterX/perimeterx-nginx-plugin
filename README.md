@@ -6,43 +6,47 @@
 
 > Latest stable version: [v4.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/4.1-0)
 
-# [Getting Started](#getting_started)
+
 * [Introduction](#introduction)
-* [Upgrading](#upgrading) 
-   * [From 3.x to 4.x](#3x4x)
+* [Upgrading](#upgradingVersions) 
+   * [From any Version Lower than 4.x](#3x4x)
 * [Installation](#installation)
-* [Install PerimeterX NGINX Lua Plugin](#installation_px)
-   * [Required NGINX Configuration](#nginx_configuration)
+   *[Supported Operating Systems](#supported_os)
+   *[Supported NGINX Versions](#supported_versions)
+   *[Installing with Ubuntu](#ubuntu)
+   *[Installing with CentOS7](centos7)
+   *[Installing the PerimeterX NGINX Plugin for NGINX+](#nstallation_nginxplus_px)  
+* [Required NGINX Configuration](#nginx_configuration)
    * [Resolver](#nginx_resolver)
    * [Lua Package Path](#nginx_lua_package_path)
    * [Lua CA Certificates](#nginx_lua_ca_certificates)
    * [Lua Timer Initialization](#nginx_lua_timer_initialization)
    * [PerimeterX enforcement](#nginx_perimeterx_enforcement)
-   * [Example NGINX.conf](#nginx_config_example)
-* [PerimeterX NGINX Lua Plugin Configuration](#perimterx_plugin_configuration)
-   * [Required parameters](#perimterx_required_parameters)
+   * [NGINX.conf Example](#nginx_config_example)
+* [Configuration](#configuration)
+   * [Required Configuration](#perimterx_required_parameters)
    * [Monitor / Block Mode](#monitoring_mode)
-   * [First Party Mode](#first-party)
-* [PerimeterX First Party JS Snippet](#perimterx_first_party_js_snippet)
-
-# [Advanced Configuration](#advanced_configuration)
-* [Debug Mode](#debug-mode)
-* [Extracting Real IP Address](#real-ip)
-* [Whitelisting](#whitelisting)
-* [Filter Sensitive Headers](#sensitive-headers)
-* [Remote Configurations](#remote-configurations)
-* [Select Captcha Provider](#captcha-provider)
-* [Enabled Routes](#enabled-routes)
-* [Sensitive Routes](#sensitive-routes)
-* [API Timeout](#api-timeout)
-* [Customize Default Block Page](#customblockpage)
-* [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
-* [Redirect on Custom URL](#redirect_on_custom_url)
-* [Multiple App Support](#multipleapps)
-* [Additional Activity Handler](#add-activity-handler)
-* [Log Enrichment](#log-enrichment)
-* [Blocking Score](#blocking-score)
-* [Data-Enrichment](#data-enrichment)
+   * [First Party Configuration](#first_party_config)
+     * [First Party Mode](#first-party)
+     * [PerimeterX First Party JS Snippet](#perimterx_first_party_js_snippet)
+   *[Optional Configuration](#advanced_configuration)
+     * [Debug Mode](#debug-mode)
+     * [Extracting Real IP Address](#real-ip)
+     * [Whitelisting](#whitelisting)
+     * [Filter Sensitive Headers](#sensitive-headers)
+     * [Remote Configurations](#remote-configurations)
+     * [Select Captcha Provider](#captcha-provider)
+     * [Enabled Routes](#enabled-routes)
+     * [Sensitive Routes](#sensitive-routes)
+     * [API Timeout](#api-timeout)
+     * [Customize Default Block Page](#customblockpage)
+     * [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
+     * [Redirect on Custom URL](#redirect_on_custom_url)
+     * [Multiple App Support](#multipleapps)
+     * [Additional Activity Handler](#add-activity-handler)
+     * [Log Enrichment](#log-enrichment)
+     * [Blocking Score](#blocking-score)
+     * [Data-Enrichment](#data-enrichment)
 
 -   [Appendix](#appendix)
   *   [NGINX Plus](#nginxplus)
@@ -77,16 +81,16 @@ As of version 4.x the config builder was added. The config builder adds default 
             }
 ```
 
-# <a name="installation"></a>Installation
+## <a name="installation"></a>Installation
 
-### Supported Operating Systems
+#### <a name="supported_os"></a> Supported Operating Systems
 * Debian
 * [Ubuntu 14.04](#ubuntu1404) or [Ubuntu 16.04+](#ubuntu1604) 
 * RHEL
 * [CentOS 7](#centos7)
 * Amazon Linux (AMI)
 
-### Supported NGINX Versions:
+#### <a name="supported_versions"></a>Supported NGINX Versions:
 Recomended that you use the newest version of NGINX from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo. 
  
 * [NGINX 1.7 or later](#installation_px)
@@ -96,8 +100,9 @@ Recomended that you use the newest version of NGINX from the [Official NGINX](ht
 * [OpenResty](https://openresty.org/en/)
 
  > NOTE: Using the default NGINX provide by default in various Operating Systems does not support the LUA NGINX Module.
+###<a name="ubuntu"></a> Installing with Ubuntu
 
-### <a name="ubuntu1404"></a>Ubuntu 14.04
+#### <a name="ubuntu1404"></a>Ubuntu 14.04
 
 ###### 1. Upgrade and update your existing dependencies for Ubuntu 16.04 or higher
 ```sh
@@ -192,7 +197,7 @@ luarocks install perimeterx-nginx-plugin
 ```
 
 ##
-### <a name="centos7"></a>CentOS 7
+### <a name="centos7"></a>Installing with CentOS 7
 NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This means that you need to compile the Module from source. 
 
 ###### 1. Update and Install dependecies
@@ -386,7 +391,7 @@ You will need to make one of the following changes:
 ## <a name="nginx_configuration"></a>Required NGINX Configuration
 The following NGINX Configurations are required to support the PerimeterX NGINX Lua Plugin:
 
-* ###### <a name="nginx_resolver"></a>Resolver
+* #### <a name="nginx_resolver"></a>Resolver
    The Resolver directive must be configured in the HTTP section of your NGINX configuration. 
     * Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), 
    
@@ -396,14 +401,14 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
   
   This is required for NGINX to resolve the PerimeterX API.
 
-* ###### <a name="nginx_lua_package_path"></a>Lua Package Path
+* #### <a name="nginx_lua_package_path"></a>Lua Package Path
   Ensure your Lua package path location in the HTTP section of your configuration reflects the location of the  installed PerimeterX  modules.
 
     ```
     lua_package_path "/usr/local/lib/lua/?.lua;;";
     ```
 
-* ###### <a name="nginx_lua_ca_certificates"></a>Lua CA Certificates
+* #### <a name="nginx_lua_ca_certificates"></a>Lua CA Certificates
   For TLS support to PerimeterX servers, configure Lua to point to the trusted certificate location.
 
     ```
@@ -413,7 +418,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
 
     > NOTE: The certificate location may differ between Linux distributions. In CentOS/RHEL systems, the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`.
 
-* ###### <a name="nginx_lua_timer_initialization"></a>Lua Timer Initialization
+* #### <a name="nginx_lua_timer_initialization"></a>Lua Timer Initialization
   Add the init with a Lua script. The init is used by PerimeterX to hold and send metrics at regular intervals.
 
   ```
@@ -423,7 +428,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
   }
   ```
 
-* ###### <a name="nginx_perimeterx_enforcement"></a>Apply PerimeterX Enforcement
+* #### <a name="nginx_perimeterx_enforcement"></a>Apply PerimeterX Enforcement
   Add the following line to your `location` block:
 
     ```
@@ -435,10 +440,9 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
   #----- PerimeterX Module End  -----#
   ```
 
-* ###### <a name="nginx_config_example"></a>Example of nginx.conf
+* #### <a name="nginx_config_example"></a> nginx.conf Example
   The following **nginx.conf** example contains the required directives with enforcement applied to the `location` block.
   
-  ###### nginx.conf:
   ```lua
   worker_processes  1;
   error_log /var/log/nginx/error.log;
