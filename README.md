@@ -7,12 +7,12 @@
 > Latest stable version: [v4.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/4.1-0)
 
 
-##[Introduction](#introduction)
+## [Introduction](#introduction)
 
-##[Upgrading](#upgradingVersions) 
+## [Upgrading](#upgradingVersions) 
 * [From any Version Lower than 4.x](#3x4x)
 
-##[Installation](#installation)
+## [Installation](#installation)
 * [Supported Operating Systems](#supported_os)
 * [Supported NGINX Versions](#supported_versions)
 * [Installing with Ubuntu](#ubuntu)
@@ -26,7 +26,7 @@
  * [PerimeterX enforcement](#nginx_perimeterx_enforcement)
  * [NGINX.conf Example](#nginx_config_example)
 
-##[Configuration](#configuration)
+## [Configuration](#configuration)
 * [Required Configuration](#perimterx_required_parameters)
  * [Monitor / Block Mode](#monitoring_mode)
 * [First Party Configuration](#first_party_config)
@@ -51,12 +51,10 @@
   * [Blocking Score](#blocking-score)
   * [Data-Enrichment](#data-enrichment)
   
-##[Appendix](#appendix)  
+## [Appendix](#appendix)  
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
  * [Contributing](#contributing)
-
-# <a name="getting_started"></a> Getting Started
 
 ## <a name="introduction"></a> Introduction
 The PerimeterX Nginx Lua Plugin is a Lua module that enforces whether or not
