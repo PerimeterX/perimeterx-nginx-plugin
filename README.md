@@ -49,7 +49,7 @@
   * [Blocking Score](#blocking-score)
 
 ## [Enrichment](#enrichment)
- * [Data-Enrichment](#data-enrichment)
+ * [Data Enrichment](#data-enrichment)
  * [Log Enrichment](#log-enrichment)
   
 ## [Appendix](#appendix)  
