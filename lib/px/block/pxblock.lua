@@ -24,10 +24,8 @@ function M.load(px_config)
     local string_gsub = string.gsub
 
     local function inject_captcha_script(vid, uuid)
-        return '<script src = "https://www.google.com/recaptcha/api.js"></script><script type="text/javascript">window.px_vid = "' .. vid ..
-                '";  function handleCaptcha(response){ var vid="' .. vid .. '"; var uuid="' .. uuid .. '"; var name="_pxCaptcha "; ' ..
-                'var expiryUtc=new Date(Date.now()+1000*10).toUTCString(); var cookieParts = [name,"=",btoa(JSON.stringify({r: response, ' ..
-                'v: vid, u: uuid})),"; expires=",expiryUtc,"; path=/"]; document.cookie=cookieParts.join(""); location.reload();  }</script>'
+        return '<script type="text/javascript">window._pxVid = "' .. vid .. '";' ..
+                'window._pxUuid = "' .. uuid .. '";</script>'
     end
 
     local function parse_action(action)
@@ -86,16 +84,13 @@ function M.load(px_config)
         -- mobile flow
         if ngx.ctx.px_cookie_origin == "header" then
             -- render captcha by default
-            local mobile_template = string.lower(px_config.captcha_provider)
-            if ngx.ctx.px_action == 'b' then
-                mobile_template = 'block';
-            end
-            px_logger.debug("Enforcing action: " .. mobile_template .. " page is served")
+            local block_action = parse_action(ngx.ctx.px_action)
+            px_logger.debug("Enforcing action: " .. block_action .. " page is served")
 
-            local html = px_template.get_template(mobile_template .. ".mobile", details.block_uuid, vid)
+            local html = px_template.get_template(ngx.ctx.px_action, details.block_uuid, vid)
             local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
             local result = {
-                action = parse_action(ngx.ctx.px_action),
+                action = block_action,
                 uuid = details.block_uuid,
                 vid = vid,
                 appId = px_config.px_appId,
@@ -191,12 +186,9 @@ function M.load(px_config)
         end
 
         -- case: default px pages
-        local template = string.lower(px_config.captcha_provider)
-        if ngx.ctx.px_action == 'b' then
-            template = 'block'
-        end
-        px_logger.debug("Enforcing action: " .. px_config.captcha_provider .. " page is served")
-        local html = px_template.get_template(template, uuid, vid)
+        
+        px_logger.debug("Enforcing action: " .. parse_action(ngx.ctx.px_action) .. " page is served")
+        local html = px_template.get_template(ngx.ctx.px_action, uuid, vid)
         ngx_say(html);
         ngx_exit(ngx.OK);
         return
