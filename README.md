@@ -58,25 +58,18 @@ a request is allowed to continue being processed. When the PerimeterX Enforcer d
 ## <a name="upgradingVersions"></a> Upgrading
 See the full [changelog](CHANGELOG.md) for all versions.
 
-#### <a name="3x4x"></a> From 1.x/2.x/3.x to 4.x
-Upgrading from any lower version to 4.x will require modificatoins to `nginx.conf`  
-Please follow the steps below to apply changes that are required
+#### <a name="3x4x"></a> From any Version Lower than 4.x
 
-1. PerimeterX module will have default configuration that will be added to `pxconfig.lua`
-   PerimeterX `pxtimer` and `pxnginx` require a table containing your specific configurations.  
-   Once these configurations will be passed to the plugin, PerimeterX plugin will handle put default values
-   to the `pxconfig`.  
-   This change will require the user to import the configuration in the `init_worker_by_lua_block` and `access_by_lua_block`
-   context
+As of version 4.x the config builder was added. The config builder adds default values to properties that are not impicitly specified. This change requires the user to import the configuration in the `init_worker_by_lua_block` and `access_by_lua_block` blocks inside `nginx.conf`:
    
-2. Modify `init_worker_by_lua_block`
+1. Modify `init_worker_by_lua_block`
 ```lua
     init_worker_by_lua_block {
         local pxconfig = require("px.pxconfig")
         require ("px.utils.pxtimer").application(pxconfig)
     }
 ```
-3. Modify `access_by_lua_block`
+2. Modify `access_by_lua_block`
 ```lua
             access_by_lua_block {
                 local pxconfig = require("px.pxconfig")
@@ -84,7 +77,6 @@ Please follow the steps below to apply changes that are required
             }
 ```
 
-For a full example refer to the following [link](#nginx_config_example)
 # <a name="installation"></a>Installation
 
 ### Supported Operating Systems
@@ -106,7 +98,6 @@ Recomended that you use the newest version of NGINX from the [Official NGINX](ht
  > NOTE: Using the default NGINX provide by default in various Operating Systems does not support the LUA NGINX Module.
 
 ### <a name="ubuntu1404"></a>Ubuntu 14.04
-The following steps must be done in order. If NOT, you will need to uninstall and start over at Step 1. 
 
 ###### 1. Upgrade and update your existing dependencies for Ubuntu 16.04 or higher
 ```sh
@@ -132,10 +123,18 @@ sudo apt-get -y install nginx
 sudo apt-get -y install m4
 sudo apt-get -y install libnginx-mod-http-lua
 sudo apt-get -y install lua-cjson
-sudo apt-get -y install luarocks
+```
+###### 4. Download and install LuaRocks from source
+```sh
+wget http://luarocks.github.io/luarocks/releases/luarocks-2.4.4.tar.gz
+tar -xzf luarocks-2.4.4.tar.gz
+cd luarocks-2.4.4
+./configure
+sudo make clean && sudo make build && sudo make install
+cd ~
 ```
 
-###### 4. Download and install Netttle 3.3 from source 
+###### 5. Download and install Netttle 3.3 from source 
 ```sh
 wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
 tar -xzf nettle-3.3.tar.gz
@@ -145,15 +144,15 @@ sudo make clean && sudo make install
 cd ~
 ```
 
-###### 5. Install the remaining dependencies
+###### 6. Install the remaining dependencies
 ```sh
 sudo apt-get -y install lua-sec
 sudo luarocks install lua-resty-nettle
 ```
 
-###### 6. Install the PerimeterX NGINX Plugin
+###### 7. Install the PerimeterX NGINX Plugin
 ```sh
-sudo luarocks install perimeterx-nginx-plugin
+sudo no_proxy=1 luarocks install perimeterx-nginx-plugin
 ```
 
 ##
