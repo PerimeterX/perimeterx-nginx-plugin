@@ -38,7 +38,6 @@
   * [Whitelisting](#whitelisting)
   * [Filter Sensitive Headers](#sensitive-headers)
   * [Remote Configurations](#remote-configurations)
-  * [Select Captcha Provider](#captcha-provider)
   * [Enabled Routes](#enabled-routes)
   * [Sensitive Routes](#sensitive-routes)
   * [API Timeout](#api-timeout)
@@ -654,21 +653,6 @@ To deploy the PerimeterX First-Party JS Snippet:
     _M.load_interval = 5
     ...
   ```
-
-### <a name="captcha-provider"></a>Select CAPTCHA Provider
-
-  The CAPTCHA provider for the block page. </br>
- Possible Options:
-  
-  * [reCAPTCHA](https://www.google.com/recaptcha)
-
- **Default:** `reCaptcha`
- 
- Example:
- 
- ```lua
-  _M.captcha_provider = "reCaptcha"
- ```
 
 ### <a name="enabled-routes"></a> Enabled Routes
 
