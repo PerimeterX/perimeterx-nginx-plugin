@@ -176,8 +176,7 @@ lua_ssl_trusted_certificate "/etc/pki/tls/certs/ca-bundle.crt";
 The following NGINX Configurations are required to support the PerimeterX NGINX Lua Plugin:
 
 * ###### <a name="nginx_resolver"></a>Resolver
-
- The Resolver directive must be configured in the HTTP section of your NGINX configuration. Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), or to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
+  The Resolver directive must be configured in the HTTP section of your NGINX configuration. Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), or to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
  This is required for NGINX to resolve the PerimeterX API.
 
 * ###### <a name="nginx_lua_package_path"></a>Lua Package Path
