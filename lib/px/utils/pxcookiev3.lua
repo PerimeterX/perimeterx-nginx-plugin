@@ -23,7 +23,7 @@ function PXCookieV3:validate(data)
 end
 
 function PXCookieV3:process()
-    cookie = ngx.ctx.px_orig_cookie
+    cookie = self.px_common_utils.decode_uri_component(ngx.ctx.px_orig_cookie)
     if not cookie then
         error({ message = "no_cookie" })
     end

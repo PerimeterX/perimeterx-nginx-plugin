@@ -35,6 +35,10 @@ function clone (t) -- deep-copy a table
     return target
 end
 
+function hex_to_char(str)
+    return string.char(tonumber(str, 16))
+end
+
 function  _M.filter_config(px_config)
     local config_copy = clone(px_config)
     -- remove
@@ -93,6 +97,11 @@ function _M.to_hex(str)
     return (string.gsub(str, "(.)", function(c)
         return string.format("%02X%s", string.byte(c), "")
     end))
+end
+
+-- Matches instaces of url encoded text (%<XX>) and decode it back to its original char
+function _M.decode_uri_component(str)
+    return (str:gsub("%%(%x%x)", hex_to_char))
 end
 
 return _M
