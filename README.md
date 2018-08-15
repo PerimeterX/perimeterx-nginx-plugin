@@ -197,7 +197,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
     >**NOTE:** Certificate location may differ between Linux distributions. In CentOS/RHEL systems, the CA bundle location may be located at `/etc/pki/tls/certs/ca-bundle.crt`.
 
 * ###### <a name="nginx_lua_timer_initialization"></a>Lua Timer Initialization
-  Add the init with a Lua script. The init is is used by PerimeterX to hold and send metrics at regular intervals.
+  Add the init with a Lua script. The init is used by PerimeterX to hold and send metrics at regular intervals.
 
   ```
   init_worker_by_lua_block {
