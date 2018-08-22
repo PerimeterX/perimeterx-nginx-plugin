@@ -214,7 +214,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
   #----- PerimeterX protect location -----#
   access_by_lua_block {
       local pxconfig = require("px.pxconfig")
-      require ("px.utils.pxtimer").application(pxconfig)
+      require ("px.pxnginx").application(pxconfig)
   }
   #----- PerimeterX Module End  -----#
   ```
