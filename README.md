@@ -77,10 +77,10 @@ As of version 4.x the config builder was added. The config builder adds default 
 ```
 2. Modify `access_by_lua_block`
 ```lua
-            access_by_lua_block {
-                local pxconfig = require("px.pxconfig")
-                require("px.pxnginx").application(pxconfig)
-            }
+    access_by_lua_block {
+        local pxconfig = require("px.pxconfig")
+        require("px.pxnginx").application(pxconfig)
+    }
 ```
 
 ## <a name="installation"></a>Installation
@@ -440,7 +440,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
   #----- PerimeterX protect location -----#
   access_by_lua_block {
       local pxconfig = require("px.pxconfig")
-      require ("px.utils.pxtimer").application(pxconfig)
+      require ("px.pxnginx").application(pxconfig)
   }
   #----- PerimeterX Module End  -----#
   ```
