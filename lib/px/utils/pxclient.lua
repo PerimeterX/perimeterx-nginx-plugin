@@ -131,14 +131,6 @@ function M.load(px_config)
             details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
         end
 
-
-        if px_config.block_enabled then
-            details["risk_mode"]  = "active_blocking"
-        else
-            details["risk_mode"]  = "monitor"
-        end
-        
-
         if event_type == 'page_requested' then
             px_logger.debug("Sent page requested acitvity")
             details['pass_reason'] = ngx.ctx.pass_reason
