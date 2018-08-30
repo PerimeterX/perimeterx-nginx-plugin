@@ -137,6 +137,7 @@ function M.load(px_config)
         else
             details["risk_mode"]  = "monitor"
         end
+        
 
         if event_type == 'page_requested' then
             px_logger.debug("Sent page requested acitvity")
