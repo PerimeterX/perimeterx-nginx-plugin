@@ -74,6 +74,12 @@ function M.load(px_config)
         risk.additional.module_version = px_constants.MODULE_VERSION
         risk.additional.cookie_origin = ngx.ctx.px_cookie_origin
 
+        if px_config.block_enabled then
+            risk.additional.risk_mode  = "active_blocking"
+        else
+            risk.additional.risk_mode  = "monitor"
+        end
+
         return risk
     end
 
