@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v5.0.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.0-0)
+> Latest stable version: [v5.0.1](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.0-1)
 
 
 ## [Introduction](#introduction)
@@ -402,7 +402,7 @@ You will need to make one of the following changes:
 The following NGINX Configurations are required to support the PerimeterX NGINX Lua Plugin:
 
 * #### <a name="nginx_resolver"></a>Resolver
-   The Resolver directive must be configured in the HTTP section of your NGINX configuration. 
+  The Resolver directive must be configured in the HTTP section of your NGINX configuration. 
     * Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), 
    
    _or_ 
