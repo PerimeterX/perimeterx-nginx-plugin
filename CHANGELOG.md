@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.0.1] - 2018-09-02
+### Added
+- Refreshed documentation
+- Support for url encoded cookies
+
 ## [5.0.0] - 2018-07-19
 ### Added
 - Captcha v2 support
