@@ -179,8 +179,9 @@ sudo add-apt-repository ppa:nginx/stable
  
   `sudo apt-get -y install software-properties-common`
   
-###### 3. Upgrade your existing dependencies for Ubuntu 16.04 or higher
+###### 3. Update and upgrade your existing dependencies for Ubuntu 16.04 or higher
 ```sh
+sudo apt-get update
 sudo apt-get upgrade
 ```
 
