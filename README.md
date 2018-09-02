@@ -166,7 +166,12 @@ sudo no_proxy=1 luarocks install perimeterx-nginx-plugin
 ##
 ### <a name="ubuntu1604"></a>Ubuntu 16.04 and Higher
 
-###### 1. Add the offical NGINX repository to get the latest version of NGINX
+###### 1. Update your existing dependencies for Ubuntu 16.04 or higher
+```sh
+sudo apt-get update
+```
+
+###### 2. Add the offical NGINX repository to get the latest version of NGINX
 ```sh 
 sudo add-apt-repository ppa:nginx/stable
 ```
@@ -174,13 +179,12 @@ sudo add-apt-repository ppa:nginx/stable
  
   `sudo apt-get -y install software-properties-common`
   
-###### 2. Upgrade and update your existing dependencies for Ubuntu 16.04 or higher
+###### 3. Upgrade your existing dependencies for Ubuntu 16.04 or higher
 ```sh
-sudo apt-get update
 sudo apt-get upgrade
 ```
 
-###### 3. Install the dependencies for Ubuntu 16.04 or higher
+###### 4. Install the dependencies for Ubuntu 16.04 or higher
 ```sh
 sudo apt-get -y install build-essential
 sudo apt-get -y install ca-certificates
@@ -194,7 +198,7 @@ sudo apt-get -y install luajit
 sudo apt-get -y install libluajit-5.1-dev
 ```
 
-###### 4. Install the PerimeterX NGINX Plugin
+###### 5. Install the PerimeterX NGINX Plugin
 ```sh
 luarocks install perimeterx-nginx-plugin
 ```
