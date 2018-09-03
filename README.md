@@ -52,6 +52,7 @@
  * [Log Enrichment](#log-enrichment)
   
 ## [Appendix](#appendix)  
+ * [HTTP v2 Support](#http2)
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
  * [Multiple App Support](#multipleapps)
@@ -864,6 +865,50 @@ For more information and the available fields in the JSON, refer to the Perimete
   ```
 <a name="appendix"></a> Appendix
 -----------------------------------------------
+
+### <a name="http2"></a> HTTP v2 Support
+  The PerimeterX NGINX module supports HTTP v2 for both Third-Party and First-Party implementations. To verify that your NGINX is running with HTTP v2 support, run:
+  
+  ```
+  nginx -V
+  ```
+  For NGINX modules that support HTTP v2, the flag `--with-http_v2_module` will be listed. For example:
+  ```
+  # nginx -V
+nginx version: nginx/1.13.3
+built by gcc 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.10)
+built with OpenSSL 1.0.2g  1 Mar 2016
+TLS SNI support enabled
+configure arguments: --prefix=/nginx --with-ld-opt=-Wl,-rpath,/usr/local/lib --add-module=/ngx_devel_kit-0.3.0 --add-module=/lua-nginx-module-0.10.10 --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-ipv6 --with-http_v2_module
+```
+
+If you are running in Third-Party mode, you do not need to take any additional actions for the PerimeterX NGINX module to support HTTP v2.
+
+If you are running in First-Party mode, add the following location to your `nginx.conf` file:
+
+```
+location /<app id without PX prefix>/xhr/ {
+    proxy_buffering on;
+    proxy_buffer_size 128k;
+    proxy_buffers 4 256k;
+    proxy_busy_buffers_size 256k;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Host $server_name;
+    proxy_set_header X-PX-Enforcer-True-IP $remote_addr;
+    proxy_set_header X-PX-First-Party 1;
+    set $pxcookie "";
+    if ($cookie__pxvid != "") { 
+        set $pxcookie pxvid=$cookie__pxvid;
+    }
+    if ($cookie_pxvid != "") {
+        set $pxcookie pxvid=$cookie_pxvid;
+    }
+    proxy_set_header cookie $pxcookie;
+    proxy_pass https://collector-<app_id>.perimeterx.net/;
+}
+```
+> Note: Make sure you replace the \<app id without PX prefix\> and \<app_id\> with your PerimeterX appId value.
+
 
 ### <a name="nginxplus"></a> NGINX Plus
   The PerimeterX NGINX module is compatible with NGINX Plus. Users or administrators should install the NGINX Plus Lua dynamic module (LuaJIT).
