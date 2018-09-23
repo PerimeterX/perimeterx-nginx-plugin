@@ -555,6 +555,8 @@ The following configurations are set in:
   }
   ```
 
+> NOTE: If your NGINX version supports HTTP v2, refer to the [HTTP v2 section of the Appendix](#http2).
+
 > NOTE: The PerimeterX NGINX Lua Plugin Configuration Requirements must be completed before proceeding to the next stage of installation.
 
 ##### <a name="perimterx_first_party_js_snippet"></a> First-Party JS Snippet
