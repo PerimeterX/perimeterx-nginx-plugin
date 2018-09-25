@@ -11,7 +11,7 @@ function M.load(px_config)
     local px_constants = require "px.utils.pxconstants"
     local px_logger = require("px.utils.pxlogger").load(px_config)
 
-    local function get_props(px_config, uuid, vid, action)
+    function _M.get_props(px_config, uuid, vid, action)
         local logo_css_style = 'visible'
         if (px_config.custom_logo == nil) then
             logo_css_style = 'hidden'
@@ -20,7 +20,7 @@ function M.load(px_config)
         local is_mobile = ngx.ctx.px_cookie_origin == 'header'
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
         local collectorUrl = '//' .. px_config.collector_host
-        local captcha_url_prefix = 'https://' .. px_config.captcha_script_host
+        local captcha_url_prefix = '//' .. px_config.captcha_script_host
         local first_party_enabled = false
         -- in case we are in first party mode (not relevant for mobile), change the base paths to use first party
         if px_config.first_party_enabled and not is_mobile then
@@ -74,7 +74,7 @@ function M.load(px_config)
     end
 
     function _M.get_template(action, uuid, vid)
-        local props = get_props(px_config, uuid, vid, action)
+        local props = _M.get_props(px_config, uuid, vid, action)
         local templateStr = get_content(action)
 
         return lustache:render(templateStr, props)
