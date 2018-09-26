@@ -17,13 +17,12 @@ function M.load(px_config)
             logo_css_style = 'hidden'
         end
 
-        local is_mobile = ngx.ctx.px_cookie_origin == 'header'
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
         local collectorUrl = '//' .. px_config.collector_host
         local captcha_url_prefix = '//' .. px_config.captcha_script_host
         local first_party_enabled = false
         -- in case we are in first party mode (not relevant for mobile), change the base paths to use first party
-        if px_config.first_party_enabled and not is_mobile then
+        if px_config.first_party_enabled and not ngx.ctx.px_is_mobile then
             local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
             js_client_src = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
             collectorUrl = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
