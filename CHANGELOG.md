@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.1.0] - 2018-09-26
+### Added
+- Support for Advanced Blocking Response
+
+### Fixed
+- Updated http/2 documentation section
+- firstPartyEnabled property for Captcha
+
 ## [5.0.1] - 2018-09-02
 ### Added
 - Refreshed documentation

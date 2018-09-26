@@ -3,7 +3,7 @@
 ----------------------------------------------
 
 local _M = {
-    MODULE_VERSION = "NGINX Module v5.0.1",
+    MODULE_VERSION = "NGINX Module v5.1.0",
     RISK_PATH = "/api/v3/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
     ACTIVITIES_PATH = "/api/v1/collector/s2s",

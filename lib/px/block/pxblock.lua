@@ -23,6 +23,15 @@ function M.load(px_config)
     local ngx_exit = ngx.exit
     local string_gsub = string.gsub
 
+    local function is_accept_header_json(header)
+        for h in string.gmatch(header, '[^,]+') do
+            if string.lower(h) == "application/json" then
+                return true;
+            end
+        end
+        return false
+    end
+
     local function inject_captcha_script(vid, uuid)
         return '<script type="text/javascript">window._pxVid = "' .. vid .. '";' ..
                 'window._pxUuid = "' .. uuid .. '";</script>'
@@ -102,6 +111,26 @@ function M.load(px_config)
             ngx.say(cjson.encode(result))
             ngx_exit(ngx.OK)
             return
+        end
+
+        -- json response
+        local accept_header = ngx.req.get_headers()["accept"] or ngx.req.get_headers()["content-type"]
+        local isJsonResponse = accept_header and is_accept_header_json(accept_header) and not ngx.ctx.px_is_mobile
+        if isJsonResponse then
+            local props = px_template.get_props(px_config, details.block_uuid, vid, parse_action(ngx.ctx.px_action))
+            local result = {
+                appId = props.appId,
+                jsClientSrc = props.jsClientSrc,
+                firstPartyEnabled = props.firstPartyEnabled,
+                vid = props.firstPartyEnabled,
+                uuid = props.uuid,
+                hostUrl = props.hostUrl,
+                blockScript = props.blockScript
+            }
+            ngx.header["Content-Type"] = 'application/json';
+            ngx.status = ngx_HTTP_FORBIDDEN;
+            ngx.say(cjson.encode(result))
+            ngx_exit(ngx.OK)
         end
 
         -- web scenarios

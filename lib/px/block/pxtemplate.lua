@@ -11,22 +11,23 @@ function M.load(px_config)
     local px_constants = require "px.utils.pxconstants"
     local px_logger = require("px.utils.pxlogger").load(px_config)
 
-    local function get_props(px_config, uuid, vid, action)
+    function _M.get_props(px_config, uuid, vid, action)
         local logo_css_style = 'visible'
         if (px_config.custom_logo == nil) then
             logo_css_style = 'hidden'
         end
 
-        local is_mobile = ngx.ctx.px_cookie_origin == 'header'
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
         local collectorUrl = '//' .. px_config.collector_host
-        local captcha_url_prefix = 'https://' .. px_config.captcha_script_host
+        local captcha_url_prefix = '//' .. px_config.captcha_script_host
+        local first_party_enabled = false
         -- in case we are in first party mode (not relevant for mobile), change the base paths to use first party
-        if px_config.first_party_enabled and not is_mobile then
+        if px_config.first_party_enabled and not ngx.ctx.px_is_mobile then
             local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
             js_client_src = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
             collectorUrl = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
             captcha_url_prefix = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_CAPTCHA_PATH)
+            first_party_enabled = true
         end
         local captcha_src = ''
         if action ~= 'r' then
@@ -44,7 +45,7 @@ function M.load(px_config)
             logoVisibility = logo_css_style,
             hostUrl = collectorUrl,
             jsClientSrc = js_client_src,
-            firstPartyEnabled = px_config.first_party_enabled,
+            firstPartyEnabled = first_party_enabled,
             blockScript = captcha_src
         }
     end
@@ -72,7 +73,7 @@ function M.load(px_config)
     end
 
     function _M.get_template(action, uuid, vid)
-        local props = get_props(px_config, uuid, vid, action)
+        local props = _M.get_props(px_config, uuid, vid, action)
         local templateStr = get_content(action)
 
         return lustache:render(templateStr, props)
