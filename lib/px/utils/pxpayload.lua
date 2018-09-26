@@ -40,6 +40,7 @@ end
 
 function PXPayload:get_payload()
     ngx.ctx.px_cookie_origin = "cookie"
+    ngx.ctx.px_is_mobile = false;
     local px_header = self.px_headers.get_header('X-PX-AUTHORIZATION')
 
     if (px_header) then
@@ -48,6 +49,8 @@ function PXPayload:get_payload()
         ngx.ctx.px_orig_cookie = cookie
         ngx.ctx.px_header = px_header
         ngx.ctx.px_cookie_origin = "header"
+        ngx.ctx.px_is_mobile = true;
+
         if version == "3" then
             ngx.ctx.px_cookie_version = "v3";
             self.px_logger.debug("Token V3 found - Evaluating")
