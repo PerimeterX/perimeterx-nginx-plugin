@@ -1,6 +1,7 @@
 ## <a name="installation_nginxplus_px_rhel"></a>Installing PerimeterX on NGINX+ With RHEL 7.4 And Above
 
-The PerimeterX NGINX enforcer can be installed on NGINX+ up to version R15. There is currently a known bug in R16 which crashes NGINX when calling `init_worker_by_lua_block`, required by the PerimeterX Enforcer.
+The PerimeterX NGINX enforcer can be installed on **NGINX+ up to version R15**. <br/>
+There is currently a known bug in R16 which crashes NGINX when calling `init_worker_by_lua_block`, required by the PerimeterX Enforcer.
 
 ### Installation
 
