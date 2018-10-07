@@ -46,3 +46,19 @@ There is currently a known bug in R16 which crashes NGINX when calling `init_wor
 	```sh
 	sudo luarocks install perimeterx-nginx-plugin
 	```
+
+### Configuration
+
+1. In `nginx.conf` add the following to the top of the file:
+	```lua
+	load_module modules/ndk_http_module.so;
+	load_module modules/ngx_http_lua_module.so;
+	```
+
+2. Add the `lua_package_path` and `lua_package_cpath` inside the `http` scope:
+	```lua
+	lua_package_path "/usr/local/lib/lua/?.lua;;";
+	lua_package_cpath "/usr/lib64/lua/5.1/?.so;;";
+	```
+
+3.
