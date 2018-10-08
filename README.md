@@ -16,7 +16,7 @@
 * [Supported Operating Systems](#supported_os)
 * [Supported NGINX Versions](#supported_versions)
 * [Installing with Ubuntu](#ubuntu)
-* [Installing with CentOS7](centos7)
+* [Installing with CentOS7](#centos7)
 * [Installing the PerimeterX NGINX Plugin for NGINX+](#nstallation_nginxplus_px)  
 * [Required NGINX Configuration](#nginx_configuration)
   * [Resolver](#nginx_resolver)
