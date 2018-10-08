@@ -34,7 +34,6 @@
 * [Optional Configuration](#advanced_configuration)
   * [Monitor / Block Mode](#monitoring_mode)
   * [Debug Mode](#debug-mode)
-  * [Extracting Real IP Address](#real-ip)
   * [Whitelisting](#whitelisting)
   * [Filter Sensitive Headers](#sensitive-headers)
   * [Remote Configurations](#remote-configurations)
