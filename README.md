@@ -340,10 +340,10 @@ sudo luarocks install perimeterx-nginx-plugin
 
 ### <a name="installation_nginxplus_px"></a>Installing the PerimeterX NGINX Plugin for NGINX+
 
-If you are already using NGINX+ the following steps cover how to install the NGINX+ Lua Module & the PermimeterX NGINX Plugin.
+If you are already using NGINX+, the following steps cover installing the NGINX+ Lua Module and the PermimeterX NGINX Plugin.
 
-* [RHEL 7.4 and above](NGINXPLUS_RHEL7.4.md)
-* [Amazon Linux, CentOS and RHEL 7.3 and below](NGINXPLUS.md)
+* [RHEL 7.4 and higher](NGINXPLUS_RHEL7.4.md)
+* [Amazon Linux, CentOS and RHEL 7.3 and lower](NGINXPLUS.md)
 
 ## <a name="configuration"></a>Configuration
 
