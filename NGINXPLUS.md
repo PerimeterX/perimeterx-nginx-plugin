@@ -96,9 +96,9 @@ There is currently a known bug in R16 which crashes NGINX when calling `init_wor
 
   ```lua
   init_worker_by_lua_block {
-  	_NETTLE_LIB_PATH = "/usr/local/lib64"
-    	local pxconfig = require("px.pxconfig")
-    	require ("px.utils.pxtimer").application(pxconfig)
+      _NETTLE_LIB_PATH = "/usr/local/lib64"
+      local pxconfig = require("px.pxconfig")
+      require ("px.utils.pxtimer").application(pxconfig)
   }
   ```
 
