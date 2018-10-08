@@ -1,7 +1,7 @@
 ## <a name="installation_nginxplus_px_rhel"></a>Installing PerimeterX on NGINX+ With RHEL 7.4 And Above
 
-The PerimeterX NGINX enforcer can be installed on **NGINX+ up to version R15**. <br/>
-There is currently a known bug in R16 which crashes NGINX when calling `init_worker_by_lua_block`, required by the PerimeterX Enforcer.
+The PerimeterX NGINX plugin can be installed on **NGINX+ up to version R15**. <br/>
+There is currently a known bug in R16 which crashes NGINX when calling `init_worker_by_lua_block` (required by the PerimeterX plugin). Until this bug is fixed, PerimeterX will not support installations using R16.
 
 ### Installation
 
@@ -80,26 +80,26 @@ There is currently a known bug in R16 which crashes NGINX when calling `init_wor
     ```
 
 5. Add the Lua Timer Initialization
-	Add the init with a Lua script. The init is used by PerimeterX to hold and send metrics at regular intervals.
+Add the init with a Lua script. The init is used by PerimeterX to hold and send metrics at regular intervals.
 
-  ```lua
-  init_worker_by_lua_block {
-    _NETTLE_LIB_PATH = "/usr/local/lib64"
-    local pxconfig = require("px.pxconfig")
-    require ("px.utils.pxtimer").application(pxconfig)
-	}
-  ```
+ ```lua
+    init_worker_by_lua_block {
+    	_NETTLE_LIB_PATH = "/usr/local/lib64"
+    	local pxconfig = require("px.pxconfig")
+    	require ("px.utils.pxtimer").application(pxconfig)
+    }
+```
 
 6. Apply PerimeterX Enforcement
   Add the following line to your `location` block:
 
-    ```
+```
   #----- PerimeterX protect location -----#
   access_by_lua_block {
       local pxconfig = require("px.pxconfig")
       require ("px.pxnginx").application(pxconfig)
   }
   #----- PerimeterX Module End  -----#
-  ```
+```
 
-  7. Continue with the [PerimeterX Plugin Configuration](#https://github.com/PerimeterX/perimeterx-nginx-plugin#perimeterx-plugin-configuration) section.
+  7. Continue with the [PerimeterX Plugin Configuration](https://github.com/PerimeterX/perimeterx-nginx-plugin#perimeterx-plugin-configuration) section.
