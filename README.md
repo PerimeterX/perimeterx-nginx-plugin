@@ -17,7 +17,7 @@
 * [Supported NGINX Versions](#supported_versions)
 * [Installing with Ubuntu](#ubuntu)
 * [Installing with CentOS7](#centos7)
-* [Installing the PerimeterX NGINX Plugin for NGINX+](#nstallation_nginxplus_px)  
+* [Installing the PerimeterX NGINX Plugin for NGINX+](#installation_nginxplus_px)  
 * [Required NGINX Configuration](#nginx_configuration)
   * [Resolver](#nginx_resolver)
   * [Lua Package Path](#nginx_lua_package_path)
