@@ -1,7 +1,7 @@
 ## <a name="installation_nginxplus_px_rhel"></a>Installing PerimeterX on NGINX+ With RHEL 7.4 And Above
 
 The PerimeterX NGINX plugin can be installed on **NGINX+ up to version R15**. <br/>
-There is currently a known bug in R16 which crashes NGINX when calling `init_worker_by_lua_block` (required by the PerimeterX plugin). Until this bug is fixed, do not use R16.
+There is currently a known bug in R16 which crashes NGINX when calling `init_worker_by_lua_block` (required by the PerimeterX plugin). Until this bug is fixed, PerimeterX will not support installations using R16.
 
 ### Installation
 
@@ -72,11 +72,12 @@ There is currently a known bug in R16 which crashes NGINX when calling `init_wor
 3. Add the Resolver directive: 
 
   The Resolver directive must be configured in the HTTP section of your NGINX configuration. <br/>
-    * Set the Resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), 
+  
+  * Set the Resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), 
    
    _or_ 
    
-    * Set the resolver, `resolver A.B.C.D;`, to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
+  * Set the resolver, `resolver A.B.C.D;`, to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
   
   This is required for NGINX to resolve the PerimeterX API.
 
