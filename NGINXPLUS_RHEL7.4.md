@@ -93,6 +93,7 @@ There is currently a known bug in R16 which crashes NGINX when calling `init_wor
 5. Add the Lua Timer Initialization:
 
   Add the init with a Lua script. The init is used by PerimeterX to hold and send metrics at regular intervals.
+  This section also defines the runtime path to the 'nettle' library.
 
   ```lua
   init_worker_by_lua_block {
