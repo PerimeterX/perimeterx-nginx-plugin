@@ -44,6 +44,7 @@
   * [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
   * [Redirect on Custom URL](#redirect_on_custom_url)
   * [Additional Activity Handler](#add-activity-handler)
+  * [Enrich Custom Parameters](#custom-parameters)
   * [Blocking Score](#blocking-score)
 
 ## [Enrichment](#enrichment)
@@ -728,6 +729,20 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
    end
   end
   ```
+
+### <a name="custom-parameters"> Enrich Custom Parameters
+With the `enrich_custom_params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before seting the payload on every request to PerimetrX servers. The parameters should be passed according to the correct order (1-10).
+You must return the `px_cusom_params` object at the end of the function.
+
+ **Default:** nil
+
+Example: 
+```lua
+_M.enrich_custom_parameters = function(px_custom_params)
+  px_custom_params["custom_param1"] = "user_id"
+  return px_custom_params
+end
+```
 
 ### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
