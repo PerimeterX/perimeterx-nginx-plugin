@@ -16,6 +16,12 @@ function M.load(px_config)
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_http_version = ngx.req.http_version
+    local px_custom_params = {}
+
+    -- initialize the px_custom_params table
+    for i = 1, 10 do
+        px_custom_params["custom_param" .. i] = ""
+    end
 
     -- new_request_object --
     -- takes no arguments
@@ -67,6 +73,16 @@ function M.load(px_config)
         elseif call_reason == 'cookie_validation_failed' or call_reason == 'cookie_expired' then
             risk.additional.px_cookie = ngx.ctx.px_cookie
             risk.additional.px_cookie_hmac = ngx.ctx.px_cookie_hmac
+        end
+
+        if px_config.enrich_custom_parameters ~= nil then
+            px_logger.debug("enrich_custom_parameters was triggered");
+            local px_risk_custom_params = px_config.enrich_custom_parameters(px_custom_params)
+            for key, value in pairs(px_risk_custom_params) do
+                if string.match(key,"^custom_param%d+$") and value ~= "" then
+                    risk.additional[key] = value
+                end
+            end
         end
 
         risk.additional.http_version = ngx_req_http_version()
