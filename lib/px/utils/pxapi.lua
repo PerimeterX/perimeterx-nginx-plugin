@@ -19,7 +19,7 @@ function M.load(px_config)
     local px_custom_params = {}
 
     -- initialize the px_custom_params table
-    for i=1,10 do
+    for i = 1, 10 do
         px_custom_params["custom_param" .. i] = ""
     end
 
