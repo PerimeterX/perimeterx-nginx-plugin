@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v5.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.1-0)
+> Latest stable version: [v5.2.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.2-0)
 
 
 ## [Introduction](#introduction)
@@ -16,8 +16,8 @@
 * [Supported Operating Systems](#supported_os)
 * [Supported NGINX Versions](#supported_versions)
 * [Installing with Ubuntu](#ubuntu)
-* [Installing with CentOS7](centos7)
-* [Installing the PerimeterX NGINX Plugin for NGINX+](#nstallation_nginxplus_px)  
+* [Installing with CentOS7](#centos7)
+* [Installing the PerimeterX NGINX Plugin for NGINX+](#installation_nginxplus_px)  
 * [Required NGINX Configuration](#nginx_configuration)
   * [Resolver](#nginx_resolver)
   * [Lua Package Path](#nginx_lua_package_path)
@@ -34,7 +34,6 @@
 * [Optional Configuration](#advanced_configuration)
   * [Monitor / Block Mode](#monitoring_mode)
   * [Debug Mode](#debug-mode)
-  * [Extracting Real IP Address](#real-ip)
   * [Whitelisting](#whitelisting)
   * [Filter Sensitive Headers](#sensitive-headers)
   * [Remote Configurations](#remote-configurations)
@@ -45,6 +44,7 @@
   * [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
   * [Redirect on Custom URL](#redirect_on_custom_url)
   * [Additional Activity Handler](#add-activity-handler)
+  * [Enrich Custom Parameters](#custom-parameters)
   * [Blocking Score](#blocking-score)
 
 ## [Enrichment](#enrichment)
@@ -339,65 +339,11 @@ sudo luarocks install perimeterx-nginx-plugin
   ```
 
 ### <a name="installation_nginxplus_px"></a>Installing the PerimeterX NGINX Plugin for NGINX+
-If you are already using NGINX+ the following steps cover how to install the NGINX+ Lua Module & the PermimeterX NGINX Plugin. 
 
-###### 1. Install the <a href="https://docs.nginx.com/nginx/admin-guide/dynamic-modules/lua/" onclick="window.open(this.href); return false;">Lua modules provided by NGINX</a>
+If you are already using NGINX+, the following steps cover installing the NGINX+ Lua Module and the PermimeterX NGINX Plugin.
 
-* For Amazon Linux, CentOS, and RHEL:
-  ```sh
-  yum install nginx-plus-module-lua
-  ```
-
-* For Ubuntu:
-  ```sh
-  apt-get install nginx-plus-module-lua
-  ```
-
-###### 2. Remove Pre-installed Nettle
-  ```sh
-  sudo yum -y remove nettle
-  ```
-
-###### 3. Install Nettle from Source
-Download and compile nettle using the version appropriate for your environment:
-
-For Amazon Linux, CentOS, and RHEL:
-  ```sh
-  yum -y install m4 # prerequisite for nettle
-  cd /tmp/
-  wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
-  tar -xzf nettle-3.3.tar.gz
-  cd nettle-3.3
-  ./configure
-  make clean && make install
-  cd /usr/lib64 && ln -s /usr/local/lib64/libnettle.so.
-  ```
-
-###### 4. Install Luarocks and Dependencies 
-  ```sh
-  sudo yum install luarocks
-  sudo luarocks install lua-cjson
-  sudo luarocks install lustache
-  sudo luarocks install lua-resty-nettle
-  sudo luarocks install luasocket
-  sudo luarocks install lua-resty-http
-
-  sudo ln -s /usr/lib64/lua /usr/lib/lua
-  ```
-
-###### 5. Install PerimeterX NGINX Plugin
-  ```sh
-  sudo luarocks install perimeterx-nginx-plugin
-  ```
-
-###### 6. Modify Selinux (Consult with your internal System Administrator)
-On CentOS 7 and other Linux operating systems you may need to modify or disable Selinux. If you get the following error:
-
-`nginx: lua atpanic: Lua VM crashed, reason: runtime code generation failed, restricted kernel?`
-
-You will need to make one of the following changes:
-* To disable SELinux: `RUN setenforcer 0`
-* To enable execmem for httpd_t: `RUN setsebool httpd_execmem 1 -P` 
+* [RHEL 7.4 and higher](NGINXPLUS_RHEL7.4.md)
+* [Amazon Linux, CentOS and RHEL 7.3 and lower](NGINXPLUS.md)
 
 ## <a name="configuration"></a>Configuration
 
@@ -783,6 +729,20 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
    end
   end
   ```
+
+### <a name="custom-parameters"> Enrich Custom Parameters
+With the `enrich_custom_params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before seting the payload on every request to PerimetrX servers. The parameters should be passed according to the correct order (1-10).
+You must return the `px_cusom_params` object at the end of the function.
+
+ **Default:** nil
+
+Example: 
+```lua
+_M.enrich_custom_parameters = function(px_custom_params)
+  px_custom_params["custom_param1"] = "user_id"
+  return px_custom_params
+end
+```
 
 ### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
