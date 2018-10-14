@@ -79,7 +79,7 @@ function M.load(px_config)
             px_logger.debug("enrich_custom_parameters was triggered");
             local px_risk_custom_params = px_config.enrich_custom_parameters(px_custom_params)
             for key, value in pairs(px_risk_custom_params) do
-                if string.match(key,"%f[%w]custom_param%d%f[%W]") and value ~= "" then
+                if string.match(key,"^custom_param%d+$") and value ~= "" then
                     risk.additional[key] = value
                 end
             end
