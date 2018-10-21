@@ -555,18 +555,6 @@ The following configurations are set in:
   }
   ```
   
-  #### <a name=“testingMode”></a>Testing Mode Enabled
-  A boolean flag to enable/disable running the Enforcer in testing mode (The results are returned as a JSON).
-  
-  **Default:** false
-  
-  ```js
-      const pxConfig = {
-        ...
-        testingMode: false
-        ...
-      };
-  ```
 
 > NOTE: The PerimeterX NGINX Lua Plugin Configuration Requirements must be completed before proceeding to the next stage of installation.
 
