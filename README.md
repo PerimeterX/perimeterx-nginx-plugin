@@ -554,7 +554,6 @@ The following configurations are set in:
       }
   }
   ```
-  
 
 > NOTE: The PerimeterX NGINX Lua Plugin Configuration Requirements must be completed before proceeding to the next stage of installation.
 
