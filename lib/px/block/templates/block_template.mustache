@@ -151,7 +151,21 @@
     window._pxHostUrl = '{{{hostUrl}}}';
 </script>
 <!-- Captcha -->
-<script src="{{{blockScript}}}"></script>
+<script>
+    var s = document.createElement('script');
+    s.src = '{{blockScript}}';
+    var p = document.getElementsByTagName('head')[0];
+    p.insertBefore(s, null);
+    if ({{firstPartyEnabled}}) {
+        s.onerror = function () {
+            s = document.createElement('script');
+            var suffixIndex = '{{blockScript}}'.indexOf('captcha.js');
+            var temperedBlockScript = '{{blockScript}}'.substring(suffixIndex);
+            s.src = '//captcha.px-cdn.net/{{appId}}/' + temperedBlockScript;
+            p.parentNode.insertBefore(s, p);
+        };
+    }
+</script>
 <!-- Custom Script -->
 {{#jsRef}}
     <script src="{{jsRef}}"></script>
