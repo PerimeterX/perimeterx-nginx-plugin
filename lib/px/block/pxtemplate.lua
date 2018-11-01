@@ -23,7 +23,8 @@ function M.load(px_config)
         local first_party_enabled = false
         -- in case we are in first party mode (not relevant for mobile), change the base paths to use first party
         if px_config.first_party_enabled and not ngx.ctx.px_is_mobile then
-            local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+            local reverse_prefix_appid = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+            local reverse_prefix = px_config.first_party_prefix ~= nil and px_config.first_party_prefix .. '/' .. reverse_prefix_appid or reverse_prefix_appid
             js_client_src = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_VENDOR_PATH)
             collectorUrl = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_XHR_PATH)
             captcha_url_prefix = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_CAPTCHA_PATH)

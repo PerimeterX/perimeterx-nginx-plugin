@@ -52,7 +52,8 @@ function M.application(px_configuration_table)
     local string_len = string.len
     local pcall = pcall
 
-    local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+    local reverse_prefix_appid = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
+    local reverse_prefix = px_config.first_party_prefix ~= nil and px_config.first_party_prefix .. '/' .. reverse_prefix_appid or reverse_prefix_appid
     local lower_request_url = string.lower(ngx.var.request_uri)
 
     -- Internal wrapper function, will check if uri match first party route and forward the request if uri was matched
