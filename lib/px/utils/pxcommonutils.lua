@@ -104,4 +104,24 @@ function _M.decode_uri_component(str)
     return (str:gsub("%%(%x%x)", hex_to_char))
 end
 
+function _M.extract_cookie_names(str)
+    local t
+    if str ~= nil then
+        t = {}
+        local index = 1;
+        for token in string.gmatch(str, ("([^;]+)")) do
+            local key_value = trim(token)
+            for key, value in string.gmatch(key_value, "(%w+)=(%w+)") do
+                t[index] = key
+                index = index + 1
+            end
+        end
+    end
+    return t
+end
+
+function trim(s)
+    return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 return _M
