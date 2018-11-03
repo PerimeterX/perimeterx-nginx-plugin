@@ -46,6 +46,7 @@
   * [Additional Activity Handler](#add-activity-handler)
   * [Enrich Custom Parameters](#custom-parameters)
   * [Blocking Score](#blocking-score)
+  * [First Party Prefix](#first-party-prefix)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -58,6 +59,7 @@
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
  * [Multiple App Support](#multipleapps)
+ * [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md)
  * [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
@@ -754,6 +756,18 @@ Example:
 
 ```lua
   _M.blocking_score = 100  
+```
+
+### <a name="first-party-prefix"></a> First Party Prefix
+
+Allows you to deinfe a custom prefix for the first-party routes. Please refer to the [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md) appendix for the full setup instructions.
+
+**Default:** nil
+
+Example:
+
+```lua
+_M.first_party_prefix = 'resources'
 ```
 
 ## <a name="enrichment"></a> Enrichment
