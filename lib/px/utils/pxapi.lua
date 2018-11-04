@@ -28,6 +28,7 @@ function M.load(px_config)
     -- returns table
     function _M.new_request_object(call_reason)
         local risk = {}
+        local cookieHeader = px_headers.get_header("cookie")
         px_logger.enrich_log('pxcall', call_reason)
         risk.cid = ''
         risk.request = {}
@@ -35,11 +36,10 @@ function M.load(px_config)
         risk.request.uri = ngx.var.request_uri
         risk.request.headers = px_common_utils.filter_headers(px_config.sensitive_headers, true)
         risk.request.firstParty = px_config.first_party_enaled or false
-        
         px_logger.debug(cjson.encode(risk.request.headers))
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
-        
+        risk.additional.request_cookie_names = px_common_utils.extract_cookie_names(cookieHeader, px_config)
         if ngx.ctx.vid then
             risk.vid = ngx.ctx.vid
         end
@@ -47,7 +47,6 @@ function M.load(px_config)
         if ngx.ctx.uuid then
             risk.uuid = ngx.ctx.uuid
         end
-
 
         local ssl_ciphers = ngx.var.ssl_ciphers
         if ssl_ciphers ~= nil and ssl_ciphers ~= '' then
@@ -65,6 +64,10 @@ function M.load(px_config)
             risk.additional.ssl_cipher = ssl_cipher
         end
 
+        local ssl_server_name = ngx.var.ssl_server_name
+        if ssl_server_name then
+            risk.additional.ssl_server_name = ssl_server_name
+        end
 
 
         if call_reason == 'cookie_decryption_failed' then
