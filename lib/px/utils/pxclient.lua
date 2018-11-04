@@ -270,7 +270,6 @@ function M.load(px_config)
             return default_response(default_content_type, default_content)
         end
 
-        local reverse_prefix = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
         local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to px captcha at " .. px_config.captcha_script_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
