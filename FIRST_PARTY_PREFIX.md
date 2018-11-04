@@ -14,9 +14,9 @@ _M.first_party_prefix = 'resources'
 
 3. Go to `Admin` -> `Applications`.
 
-4. Open the `Snippet` section. Activate `First-Party` (if not in First-Party already), and click `Edit`.
+4. Open the `Snippet` section. Activate `First-Party` (if not in First-Party already), and click `Edit` next to the **Copy Snippet** button.
 
-5. in the pop-up that opens there are two routes beginning with `/<appId without PX>`. Copy both routes to a side document to use in the next steps.
+5. In the pop-up that opens there are two routes beginning with `/<appId without PX>`. Copy both routes to a side document to use in the next steps.
 
 6. Click `Advanced Configuration`.
 
