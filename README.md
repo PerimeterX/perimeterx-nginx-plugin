@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v5.2.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.2-0)
+> Latest stable version: [v5.3.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/5.3-0)
 
 
 ## [Introduction](#introduction)
@@ -46,6 +46,7 @@
   * [Additional Activity Handler](#add-activity-handler)
   * [Enrich Custom Parameters](#custom-parameters)
   * [Blocking Score](#blocking-score)
+  * [First-Party Prefix](#first-party-prefix)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -58,6 +59,7 @@
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
  * [Multiple App Support](#multipleapps)
+ * [Setting Up A First Party Prefix](#setting_up_first_party_prefix)
  * [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
@@ -756,6 +758,18 @@ Example:
   _M.blocking_score = 100  
 ```
 
+### <a name="first-party-prefix"></a> First-Party Prefix
+
+Allows you to deinfe a custom prefix for First-Party routes. Refer to [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md)  for complete setup instructions.
+
+**Default:** nil
+
+Example:
+
+```lua
+_M.first_party_prefix = 'resources'
+```
+
 ## <a name="enrichment"></a> Enrichment
 
 ### <a name="data-enrichment"></a> Data Enrichment
@@ -935,6 +949,11 @@ location /<app id without PX prefix>/xhr/ {
   5. Save the file in the location where pxnginx.lua file is located.   
    (Default location: `/usr/local/lib/lua/px/<yourFile>`)
   6. For every location block of your app, replace the code mentioned in step 2 with the correct < AppName >.
+  
+### <a name="setting_up_first_party_prefix"></a> Setting Up A First Party Prefix
+
+Documentation for setting up First-Party Prefixes is found [here](FIRST_PARTY_PREFIX.md).
+
 
 <a name="contributing"></a> Contributing
 ----------------------------------------

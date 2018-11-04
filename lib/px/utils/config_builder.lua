@@ -19,6 +19,7 @@ PX_DEFAULT_CONFIGURATIONS["enrich_custom_parameters"] = { nil, "function" }
 PX_DEFAULT_CONFIGURATIONS["enabled_routes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["first_party_enabled"] = { true, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["reverse_xhr_enabled"] = { true, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["first_party_prefix"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["api_protection_mode"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["api_protection_block_url"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["api_protection_default_redirect_url"] = { nil, "string"}

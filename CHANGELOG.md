@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.3.0] - 2018-11-04
+### Added
+- Support for first party route prefix
+- Sending cookie names on risk_api calls
+- First party fallback for captcha file
+
 ## [5.2.0] - 2018-10-14
 ### Added
 - Enrich Custom Parameters support

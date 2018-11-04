@@ -94,6 +94,9 @@
             <br>
                 <span>If you think the blocking was done by mistake, contact the site administrator.</span>
             <br>
+            <p>
+                Reference ID: <span id="refid"></span>
+            </p>
             <br>
             <div>
                 <div id="px-captcha"></div>
@@ -101,5 +104,18 @@
             </div>
             <br>
         </div>
+        <script>
+            (function setRefId() {
+                var pxUuid = window._pxUuid;
+                if (!pxUuid) {
+                    url = window.location.href;
+                    var regex = new RegExp('[?&]uuid(=([^&#]*)|&|#|$)');
+                    var results = regex.exec(url);
+                    pxUuid = results && results.length > 2 ? results[2] : '';
+                    pxUuid = decodeURIComponent(pxUuid.replace(/\+/g, ' '));
+                }
+                document.getElementById("refid").innerHTML = pxUuid;
+            })();
+        </script>
     </body>
 </html>

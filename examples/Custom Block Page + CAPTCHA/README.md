@@ -28,5 +28,31 @@ In order to use the example:
 
 You are now Blocking requests providing a CAPTCHA to the user for cleanup.
 
-###Redirecting to a Custom Block Page
+### Redirecting to a Custom Block Page
 Instead of rendering the block page under the current URL, you can have the Enforcer redirect the blocked request to a different URL by setting `_M.redirect_on_custom_url` to **true**.
+
+### Adding Reference ID
+To display the block reference ID on the block page, you must fetch the `uuid` parameter either from the window object (no redirect) or from the page’s query parameters (block page with redirect). Once you have the `uuid` value, you can modify the page’s HTML dynamically.
+
+Example:
+
+```html
+<p>
+    Reference ID: <span id="refid"></span>
+</p>
+```
+```html
+<script>
+    (function setRefId() {
+        var pxUuid = window._pxUuid;
+        if (!pxUuid) {
+            url = window.location.href;
+            var regex = new RegExp('[?&]uuid(=([^&#]*)|&|#|$)');
+            var results = regex.exec(url);
+            pxUuid = results && results.length > 2 ? results[2] : '';
+            pxUuid = decodeURIComponent(pxUuid.replace(/\+/g, ' '));
+        }
+        document.getElementById("refid").innerHTML = pxUuid;
+    })();
+</script>
+```

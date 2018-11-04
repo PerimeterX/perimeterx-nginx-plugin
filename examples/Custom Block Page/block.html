@@ -86,7 +86,23 @@
             </a>
             <br>
             <span>If you think this blocking was done by mistake, contact the site administrator.</span>
+            <p>
+                Reference ID: <span id="refid"></span>
+            </p>
         </div>
     </body>
+    <script>
+            (function setRefId() {
+                var pxUuid = window._pxUuid;
+                if (!pxUuid) {
+                    url = window.location.href;
+                    var regex = new RegExp('[?&]uuid(=([^&#]*)|&|#|$)');
+                    var results = regex.exec(url);
+                    pxUuid = results && results.length > 2 ? results[2] : '';
+                    pxUuid = decodeURIComponent(pxUuid.replace(/\+/g, ' '));
+                }
+                document.getElementById("refid").innerHTML = pxUuid;
+            })();
+            </script>
     <script src="https://captcha.px-cdn.perimeterx.net/<APP_ID>/captcha.js?a=b&m=0"></script>
 </html>
