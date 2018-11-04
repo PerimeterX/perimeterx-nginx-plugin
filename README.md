@@ -59,7 +59,7 @@
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
  * [Multiple App Support](#multipleapps)
- * [Setting Up A First Party Prefix](settingUpFirstPartyPrefix)
+ * [Setting Up A First Party Prefix](#settingUpFirstPartyPrefix)
  * [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
