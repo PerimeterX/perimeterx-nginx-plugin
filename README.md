@@ -46,7 +46,7 @@
   * [Additional Activity Handler](#add-activity-handler)
   * [Enrich Custom Parameters](#custom-parameters)
   * [Blocking Score](#blocking-score)
-  * [First Party Prefix](#first-party-prefix)
+  * [First-Party Prefix](#first-party-prefix)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -758,9 +758,9 @@ Example:
   _M.blocking_score = 100  
 ```
 
-### <a name="first-party-prefix"></a> First Party Prefix
+### <a name="first-party-prefix"></a> First-Party Prefix
 
-Allows you to deinfe a custom prefix for the first-party routes. Please refer to the [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md) appendix for the full setup instructions.
+Allows you to deinfe a custom prefix for First-Party routes. Refer to [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md)  for complete setup instructions.
 
 **Default:** nil
 
@@ -949,6 +949,9 @@ location /<app id without PX prefix>/xhr/ {
   5. Save the file in the location where pxnginx.lua file is located.   
    (Default location: `/usr/local/lib/lua/px/<yourFile>`)
   6. For every location block of your app, replace the code mentioned in step 2 with the correct < AppName >.
+  
+### <a name="settingUpFirstPartyPrefix"></a> Setting Up A First Party Prefix
+
 
 <a name="contributing"></a> Contributing
 ----------------------------------------
