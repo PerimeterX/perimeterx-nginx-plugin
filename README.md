@@ -59,7 +59,7 @@
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
  * [Multiple App Support](#multipleapps)
- * [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md)
+ * [Setting Up A First Party Prefix](settingUpFirstPartyPrefix)
  * [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
@@ -951,6 +951,8 @@ location /<app id without PX prefix>/xhr/ {
   6. For every location block of your app, replace the code mentioned in step 2 with the correct < AppName >.
   
 ### <a name="settingUpFirstPartyPrefix"></a> Setting Up A First Party Prefix
+
+Documentation for setting up First-Party Prefixes is found [here](FIRST_PARTY_PREFIX.md).
 
 
 <a name="contributing"></a> Contributing
