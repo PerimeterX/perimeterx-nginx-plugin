@@ -59,7 +59,7 @@
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
  * [Multiple App Support](#multipleapps)
- * [Setting Up A First Party Prefix](#settingUpFirstPartyPrefix)
+ * [Setting Up A First Party Prefix](#setting_up_first_party_prefix)
  * [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
@@ -950,7 +950,7 @@ location /<app id without PX prefix>/xhr/ {
    (Default location: `/usr/local/lib/lua/px/<yourFile>`)
   6. For every location block of your app, replace the code mentioned in step 2 with the correct < AppName >.
   
-### <a name="settingUpFirstPartyPrefix"></a> Setting Up A First Party Prefix
+### <a name="setting_up_first_party_prefix"></a> Setting Up A First Party Prefix
 
 Documentation for setting up First-Party Prefixes is found [here](FIRST_PARTY_PREFIX.md).
 
