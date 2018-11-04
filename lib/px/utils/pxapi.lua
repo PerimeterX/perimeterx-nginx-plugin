@@ -39,7 +39,7 @@ function M.load(px_config)
         px_logger.debug(cjson.encode(risk.request.headers))
         risk.additional = {}
         risk.additional.s2s_call_reason = call_reason
-        risk.additional.request_cookie_names = px_common_utils.extract_cookie_names(cookieHeader, px_config)
+        risk.additional.request_cookie_names = px_common_utils.extract_cookie_names(cookieHeader)
         if ngx.ctx.vid then
             risk.vid = ngx.ctx.vid
         end
