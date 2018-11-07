@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.3.1] - 2018-11-07
+### Fixed
+- Wrong value in Json response's vid property
+
 ## [5.3.0] - 2018-11-04
 ### Added
 - Support for first party route prefix
