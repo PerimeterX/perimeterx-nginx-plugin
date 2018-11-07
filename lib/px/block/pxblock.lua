@@ -122,7 +122,7 @@ function M.load(px_config)
                 appId = props.appId,
                 jsClientSrc = props.jsClientSrc,
                 firstPartyEnabled = props.firstPartyEnabled,
-                vid = props.firstPartyEnabled,
+                vid = props.vid,
                 uuid = props.uuid,
                 hostUrl = props.hostUrl,
                 blockScript = props.blockScript
