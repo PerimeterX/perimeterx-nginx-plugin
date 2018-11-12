@@ -118,6 +118,10 @@ function M.load(px_config)
             px_logger.enrich_log('pxvid', ngx.ctx.vid)
         end
 
+        if ngx.ctx.pxhd then
+            pxdata['pxhd'] = ngx.ctx.pxhd
+        end
+
         if ngx.ctx.uuid then
             details['client_uuid'] = ngx.ctx.uuid
             px_logger.enrich_log('pxuuid',ngx.ctx.uuid)

@@ -91,12 +91,6 @@ function M.application(px_configuration_table)
                 ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires)
             end
 
-            -- handle pxvid cookie
-            if ngx.ctx.vid ~= nil then
-                ngx.header["Content-Type"] = nil
-                ngx.header["Set-Cookie"] = "_pxvid=" .. ngx.ctx.vid .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires)
-            end
-
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
