@@ -104,12 +104,24 @@ function _M.decode_uri_component(str)
     return (str:gsub("%%(%x%x)", hex_to_char))
 end
 
-function _M.extract_cookie_names(str)
-    local t
-    if str ~= nil then
-        t = {}
+function _M.extract_cookie_names(cookies)
+    local t = {}
+    local cookies_data = ""
+    if cookies ~= nil then
+        if type(cookies) == 'table' then
+            for k, v in pairs(cookies) do
+                local trimmed = trim(v)
+                if not ends_with(trimmed, ";") then
+                    trimmed = trimmed .. ";"
+                end
+                cookies_data = cookies_data .. trimmed
+            end
+        else
+            cookies_data = cookies
+        end
+
         local index = 1;
-        for token in string.gmatch(str, ("([^;]+)")) do
+        for token in string.gmatch(cookies_data, ("([^;]+)")) do
             local key_value = trim(token)
             for key, value in string.gmatch(key_value, "(%w+)=(%w+)") do
                 t[index] = key
@@ -122,6 +134,10 @@ end
 
 function trim(s)
     return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+function ends_with(str, ending)
+   return ending == "" or str:sub(-#ending) == ending
 end
 
 return _M
