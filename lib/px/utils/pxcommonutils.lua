@@ -116,16 +116,18 @@ function _M.extract_cookie_names(cookies)
                 end
                 cookies_data = cookies_data .. trimmed
             end
-        else
+        elseif type(cookies) == 'string' then
             cookies_data = cookies
         end
 
-        local index = 1;
-        for token in string.gmatch(cookies_data, ("([^;]+)")) do
-            local key_value = trim(token)
-            for key, value in string.gmatch(key_value, "(%w+)=(%w+)") do
-                t[index] = key
-                index = index + 1
+        if (cookies_data ~= "") then
+            local index = 1;
+            for token in string.gmatch(cookies_data, ("([^;]+)")) do
+                local key_value = trim(token)
+                for key, value in string.gmatch(key_value, "(%w+)=(%w+)") do
+                    t[index] = key
+                    index = index + 1
+                end
             end
         end
     end
