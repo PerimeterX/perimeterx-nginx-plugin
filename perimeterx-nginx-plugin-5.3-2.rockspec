@@ -1,8 +1,8 @@
  package = "perimeterx-nginx-plugin"
- version = "5.3-1"
+ version = "5.3-2"
  source = {
     url = "git://github.com/PerimeterX/perimeterx-nginx-plugin.git",
-    tag = "v5.3.1",
+    tag = "v5.3.2",
  }
  description = {
     summary = "PerimeterX NGINX Lua Middleware.",

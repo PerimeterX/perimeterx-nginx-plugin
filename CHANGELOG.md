@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.3.2] - 2018-11-13
+### Fixed
+- Cookie name extractor ability to handle multiple Cookie headers
+
 ## [5.3.1] - 2018-11-07
 ### Fixed
 - Wrong value in Json response's vid property
