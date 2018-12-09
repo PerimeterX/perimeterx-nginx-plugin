@@ -9,89 +9,95 @@
             Access to This Page Has Been Blocked
         </title>
         <style>
+            #px-captcha {
+                text-align: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            #px-captcha .g-recaptcha {
+                display: inline-block;
+            }
             h2 {
-                color: white;
                 font-size: 32px;
-            }
-
-            p {
-                width: 60%;
-                margin: 0 auto;
-                font-size: 35px;
-            }
-
-            div {
-                font-size: 24px;
+                margin-top: 10px;
             }
 
             body {
-                background-color: black;
+                background-color: #fff;
                 font-family: "Open Sans";
                 margin: 5%;
-                color: white;
                 text-align: center;
             }
 
             img {
-                widht: 180px;
+                width: 250px;
             }
 
-            a {
-                color: #2020B1;
-                text-decoration: blink;
+            div span {
                 font-size: 16px;
             }
-
-            a:hover {
-                color: white;
+            .uuid {
+                font-size: 25px;
             }
-
-            i {
-                color:#E5001D;
+            .uuid span {
+                font-size: 25px;
             }
-
-            span {
-                font-size: 16px;
+            .reasons {
+                margin-top: 20px;
+                margin-bottom: 15px;
+            }
+            .reasons span {
+                color: #C0C0C0;
+                font-size: 13px;
+            }
+            .reasons div:nth-child(1) {
+                margin-bottom:10px;
             }
         </style>
     </head>
     <body>
+        <script>
+            window._pxAppId = '<APP_ID>';
+            window._pxJsClientSrc = 'https://client.perimeterx.net/<APP_ID>/main.min.js';
+            window._pxHostUrl = 'https://collector-<APP_ID>.perimeterx.net';
+        </script>
+        <script src="https://captcha.px-cdn.net/<APP_ID>/captcha.js?a=b&m=0"></script>
         <div>
             <img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"></img>
         </div>
         <h2 id="main-title">
-            Access to This Page Has Been Blocked!
+            Please confirm you are human
         </h2>
         <div>
-            <br>
-            <div style="color:#E5001D">
-                <i class="fa fa-user-secret fa-6" aria-hidden="true" style="font-size: 130px"></i>
-                <br>
-                For some reason, we think you are a bot !
-            </div>
-            <br>
-            <div style="margin-bottom: 20px; color: gold">
-                This may have happened because:
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="180" viewBox="0 0 100 124">
+    <g fill="none" fill-rule="evenodd" opacity=".4">
+        <path stroke="#B8BDC8" stroke-width="3" d="M87.45 54.575C83.43 85.656 65.026 122 50 122c-15.025 0-33.43-36.344-37.45-67.425-.261 3.217-.682 7.139-.682 11.37 0 10.927 2.807 19.785-1.594 19.785s-7.969-8.858-7.969-19.784c0-10.926 3.568-19.784 7.97-19.784.686 0 1.198.216 1.572.623a81.239 81.239 0 0 1-.097-3.92c0-29.048 19.27-41.132 38.466-41.07 19.053.061 38.034 12.022 38.034 41.07 0 1.287-.033 2.594-.097 3.92.374-.407.886-.623 1.573-.623 4.401 0 7.969 8.858 7.969 19.784 0 10.926-3.568 19.784-7.97 19.784-4.4 0-1.593-8.858-1.593-19.784 0-4.232-.421-8.154-.681-11.371z"/>
+        <path fill="#B8BDC8" d="M78.688 42.805c0-12.714-12.844-23.021-28.688-23.021S21.312 30.09 21.312 42.805c0 12.715 57.376 12.715 57.376 0z"/>
+        <path fill="#FFF" d="M65.18 43.18l-11.992-5.492v-1.793l11.992-6.22v3.01l-8.26 3.975 8.26 3.523zM34.063 40.183l8.26-3.523-8.26-3.975v-3.01l11.992 6.22v1.793L34.063 43.18z"/>
+    </g>
+</svg>
+
             </div>
             <div>
-                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly on your machine.
+                <span>If you think the blocking was done by mistake, contact the site administrator.</span>
             </div>
-            <div>
-                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> Your browsing behaviour is not likely to be that of a regular user.
+            <div class="uuid">
+                Block Reference ID: <span id="refid"></span>
             </div>
-            <br>
-            <span id="read-more">Read more about our Bot Defender solution:</span>
-            <a href="https://www.perimeterx.com/bot-defender">
-                https://www.perimeterx.com/bot-defender
-            </a>
-            <br>
-            <span>If you think this blocking was done by mistake, contact the site administrator.</span>
-            <p>
-                Reference ID: <span id="refid"></span>
-            </p>
+            <div class="reasons">
+                <div>
+                    <span>This may have happened because:</span>
+                </div>
+                <div>
+                    <span>The JavaScript in your browser is disabled or not running properly.</span>
+                </div>
+                <div>
+                    <span>Your browsing behaviour is not likely to be that of a regular user.</span>
+                </div>
+            </div>
         </div>
-    </body>
-    <script>
+        <script>
             (function setRefId() {
                 var pxUuid = window._pxUuid;
                 if (!pxUuid) {
@@ -103,6 +109,6 @@
                 }
                 document.getElementById("refid").innerHTML = pxUuid;
             })();
-            </script>
-    <script src="https://captcha.px-cdn.perimeterx.net/<APP_ID>/captcha.js?a=b&m=0"></script>
+        </script>
+    </body>
 </html>
