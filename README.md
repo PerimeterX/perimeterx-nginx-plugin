@@ -799,7 +799,7 @@ The following example includes the pre-condition checks required to process the 
     end
     ...
 ```
-For more information and the available fields in the JSON, refer to the [PerimeterX Portal documentation](https://console-stg.perimeterx.com/docs/user_guide.html#data-classification-enrichment).
+For more information and the available fields in the JSON, refer to the [PerimeterX Portal documentation](https://console.perimeterx.com/docs/user_guide.html#data-classification-enrichment).
 
 
 ### <a name="log-enrichment"></a> Log Enrichment
