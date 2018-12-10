@@ -39,11 +39,11 @@
         }
 
         .uuid {
-            font-size: 25px;
+            font-size: 20px;
         }
 
         .uuid span {
-            font-size: 25px;
+            font-size: 20px;
         }
 
         .reasons {
@@ -54,10 +54,6 @@
         .reasons span {
             color: #C0C0C0;
             font-size: 13px;
-        }
-
-        .reasons div:nth-child(1) {
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -97,21 +93,16 @@
         </div>
         <div id="px-captcha"></div>
         <div>
-            <span>If you think the blocking was done by mistake, contact the site administrator.</span>
+            <span>Oops! It appears something made us think you are a bot. </span><br/>
+            <span>Don't worry. You will be able to get back to your browsing session in just a moment.</span><br/>
+            <span>Please click the box above and you'll be on your way</span>
+        </div>
+        <div class="reasons">
+            <span>You might have received this message if JavaScript or cookies were disabled in your browser settings. </span><br/>
+            <span>Occasionally a plugin or extension may be at fault. If you would like to learn more just reference <a href="https://www.perimeterx.com/whywasiblocked/#">Why Was I Blocked</a> for more details.</span>
         </div>
         <div class="uuid">
             Block Reference ID: <span id="refid"></span>
-        </div>
-        <div class="reasons">
-            <div>
-                <span>This may have happened because:</span>
-            </div>
-            <div>
-                <span>The JavaScript in your browser is disabled or not running properly.</span>
-            </div>
-            <div>
-                <span>Your browsing behaviour is not likely to be that of a regular user.</span>
-            </div>
         </div>
     </div>
     <script>
