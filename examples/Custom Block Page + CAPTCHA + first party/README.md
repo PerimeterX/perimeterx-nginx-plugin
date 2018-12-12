@@ -11,8 +11,8 @@ In order to use the example:
 ```html
 <script>
     window._pxAppId = '<APP_ID>';
-    window._pxJsClientSrc = '<APP_ID_WITH_NO_PX_PREFIX>/init.js';
-    window._pxHostUrl = '<APP_ID_WITH_NO_PX_PREFIX>/xhr';
+    window._pxJsClientSrc = '/<APP_ID_WITH_NO_PX_PREFIX>/init.js';
+    window._pxHostUrl = '/<APP_ID_WITH_NO_PX_PREFIX>/xhr';
     window._pxFirstPartyEnabled = true;
 </script>
 <script src="/<APP_ID_WITH_NO_PX_PREFIX>/captcha/<APP_ID>/captcha.js?a=c&m=0"></script>
