@@ -39,11 +39,13 @@
         }
 
         .uuid {
-            font-size: 25px;
+            font-size: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         .uuid span {
-            font-size: 25px;
+            font-size: 20px;
         }
 
         .reasons {
@@ -54,10 +56,6 @@
         .reasons span {
             color: #C0C0C0;
             font-size: 13px;
-        }
-
-        .reasons div:nth-child(1) {
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -73,9 +71,17 @@
         <img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"></img>
     </div>
     <h2 id="main-title">
-            Please confirm you are human
-        </h2>
+        Please confirm you are human
+    </h2>
     <div>
+        <div id="px-captcha"></div>
+        <div>
+            <span>Oops! It appears something made us think you are a bot. </span><br />
+            <span>Please contact your site admin with the following block reference ID:</span>
+        </div>
+        <div class="uuid">
+            Block Reference ID: <span id="refid"></span>
+        </div>
         <div>
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="96" height="121" viewBox="0 0 96 121">
                 <defs>
@@ -95,22 +101,9 @@
                 </g>
             </svg>
         </div>
-        <div>
-            <span>If you think the blocking was done by mistake, contact the site administrator.</span>
-        </div>
-        <div class="uuid">
-            Block Reference ID: <span id="refid"></span>
-        </div>
         <div class="reasons">
-            <div>
-                <span>This may have happened because:</span>
-            </div>
-            <div>
-                <span>The JavaScript in your browser is disabled or not running properly.</span>
-            </div>
-            <div>
-                <span>Your browsing behaviour is not likely to be that of a regular user.</span>
-            </div>
+            <span>You might have received this message if JavaScript or cookies were disabled in your browser settings. </span><br />
+            <span>Occasionally a plugin or extension may be at fault. If you would like to learn more just reference <a href="https://www.perimeterx.com/whywasiblocked/#">Why Was I Blocked</a> for more details.</span>
         </div>
     </div>
     <script>
