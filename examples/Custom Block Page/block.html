@@ -116,7 +116,10 @@
                 pxUuid = results && results.length > 2 ? results[2] : '';
                 pxUuid = decodeURIComponent(pxUuid.replace(/\+/g, ' '));
             }
-            document.getElementById("refid").innerHTML = pxUuid;
+            var uuidVerifyRegExp = /^\{?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\}?$/i;
+            if (uuidVerifyRegExp) {
+                document.getElementById("refid").innerText = uuidVerifyRegExp;
+            }
         })();
     </script>
 </body>
