@@ -1,14 +1,11 @@
 language: perl
 sudo: required
-
 services:
   - docker
-
 perl:
   - "5.22"
-
 before_install:
   - docker build -t perimeterx/pxnginx .
 install: true
 script:
-  - docker run -it -w /tmp  perimeterx/pxnginx:latest prove -v t
+  - docker run -it -w /tmp perimeterx/pxnginx:latest prove -v t
