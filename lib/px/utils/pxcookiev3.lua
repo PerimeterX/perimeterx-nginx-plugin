@@ -89,7 +89,7 @@ function PXCookieV3:process()
     if fields.s >= self.blocking_score then
         self.px_logger.debug("Visitor score is higher than allowed threshold: " .. fields.s)
         return false
-end
+    end
 
     -- Validate the cookie integrity
     local success, result = pcall(self.validate, self, orig_cookie)

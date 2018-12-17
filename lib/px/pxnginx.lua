@@ -184,6 +184,9 @@ function M.application(px_configuration_table)
             return true
         end
     elseif enable_server_calls == true then
+        if result == nil then
+            result = { message = "cookie_error" }
+        end
         return perform_s2s(result, details)
     else
         ngx.ctx.pass_reason = 'error'
