@@ -456,14 +456,14 @@ The following configurations are set in:
   -- ## Required Parameters ##
   _M.px_appId = 'PX_APP_ID'
   _M.auth_token = 'PX_AUTH_TOKEN'
-  _M.cookie_secret = 'COOKIE_KEY'
+  _M.cookie_secret = 'COOKIE_ENCRYPTION_KEY'
  ```
   
  - The PerimeterX **Application ID / AppId** and PerimeterX **Token / Auth Token** can be found in the Portal, in <a href="https://console.perimeterx.com/#/app/applicationsmgmt" onclick="window.open(this.href); return false;">**Applications**</a>.
 
- - PerimeterX **Risk Cookie / Cookie Key** can be found in the portal, in <a href="https://console.perimeterx.com/#/app/policiesmgmt" onclick="window.open(this.href); return false;">**Policies**</a>.
+ - PerimeterX **Cookie Encryption Key** can be found in the portal, in <a href="https://console.perimeterx.com/#/app/policiesmgmt" onclick="window.open(this.href); return false;">**Policies**</a>.
 
-  The Policy from where the **Risk Cookie / Cookie Key** is taken must correspond with the Application from where the **Application ID / AppId** and PerimeterX **Token / Auth Token**
+  The Policy from where the **Cookie Encryption Key** is taken must correspond with the Application from where the **Application ID / AppId** and PerimeterX **Token / Auth Token**
 
 
 #### <a name="first_party_config"></a> First-Party Configuration
