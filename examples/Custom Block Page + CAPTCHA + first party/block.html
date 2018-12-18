@@ -1,123 +1,129 @@
 <html>
-    <head>
-         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
-              media="screen, print" rel="stylesheet" type="text/css">
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-              integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-        <meta charset="utf-8">
-        <title>
-            Access to This Page Has Been Blocked
-        </title>
-        <style>
-            h2 {
-                color: white;
-                font-size: 32px;
-            }
 
-            p {
-                width: 60%;
-                margin: 0 auto;
-                font-size: 35px;
-            }
+<head>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" media="screen, print" rel="stylesheet" type="text/css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <title>
+        Access to This Page Has Been Blocked
+    </title>
+    <style>
+        #px-captcha {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
 
-            div {
-                font-size: 24px;
-            }
+        #px-captcha .g-recaptcha {
+            display: inline-block;
+        }
 
-            body {
-                background-color: black;
-                font-family: "Open Sans";
-                margin: 5%;
-                color: white;
-                text-align: center;
-            }
+        h2 {
+            font-size: 32px;
+            margin-top: 10px;
+        }
 
-            img {
-                widht: 180px;
-            }
+        body {
+            background-color: #fff;
+            font-family: "Open Sans";
+            margin: 5%;
+            text-align: center;
+        }
 
-            a {
-                color: #2020B1;
-                text-decoration: blink;
-                font-size: 16px;
-            }
+        img {
+            width: 250px;
+        }
 
-            a:hover {
-                color: white;
-            }
+        div span {
+            font-size: 16px;
+        }
 
-            i {
-                color:#E5001D;
-            }
+        .uuid {
+            font-size: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
 
-            span {
-                font-size: 16px;
-            }
-        </style>
-        
-    </head>
-    <body>
-        <script>
-            window._pxAppId = '<APP_ID>';
-            window._pxJsClientSrc = '<APP_ID_WITH_NO_PX_PREFIX>/init.js';
-            window._pxHostUrl = '<APP_ID_WITH_NO_PX_PREFIX>/xhr';
-            window._pxFirstPartyEnabled = true;
-        </script>
-        <script src="/<APP_ID_WITH_NO_PX_PREFIX>/captcha/<APP_ID>/captcha.js?a=c&m=0"></script>
+        .uuid span {
+            font-size: 20px;
+        }
+
+        .reasons {
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .reasons span {
+            color: #C0C0C0;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        window._pxAppId = '<APP_ID>';
+        window._pxJsClientSrc = '/<APP_ID_WITH_NO_PX_PREFIX>/init.js';
+        window._pxHostUrl = '/<APP_ID_WITH_NO_PX_PREFIX>/xhr';
+    </script>
+    <script src="/<APP_ID_WITH_NO_PX_PREFIX>/captcha/<APP_ID>/captcha.js?a=c&m=0"></script>
+    <div>
+        <img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"></img>
+    </div>
+    <h2 id="main-title">
+        Please confirm you are human
+    </h2>
+    <div>
+        <div id="px-captcha"></div>
         <div>
-            <img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"></img>
+            <span>Oops! It appears something made us think you are a bot. </span><br />
+            <span>Don't worry. You will be able to get back to your browsing session in just a moment.</span><br />
+            <span>Please click the box above and you'll be on your way</span>
         </div>
-        <h2 id="main-title">
-            Access to This Page Has Been Blocked!
-        </h2>
+        <div class="uuid">
+            Block Reference ID: <span id="refid"></span>
+        </div>
         <div>
-            <br>
-            <div style="color:#E5001D">
-                <i class="fa fa-user-secret fa-6" aria-hidden="true" style="font-size: 130px"></i>
-                <br>
-                For some reason, we think you are a bot !
-            </div>
-            <br>
-            <div style="margin-bottom: 20px; color: gold">
-                This may have happened because:
-            </div>
-            <div>
-                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> JavaScript is disabled or not running properly.
-            </div>
-            <div>
-                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> Your browsing behaviour is not likely to be that of a regular user.
-            </div>
-            <br>
-            <span id="read-more">To read more about PerimeterX Bot Defender solution:</span>
-            <a href="https://www.perimeterx.com/bot-defender">
-                https://www.perimeterx.com/bot-defender
-            </a>
-            <br>
-                <span>If you think the blocking was done by mistake, contact the site administrator.</span>
-            <br>
-            <br>
-            <p>
-                Reference ID: <span id="refid"></span>
-            </p>
-            <div>
-                <div id="px-captcha"></div>
-                <span style="font-size: 14px; color:#E5001D ">Solve the captcha above to prove you are not a bot!</span>
-            </div>
-            <br>
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="96" height="121" viewBox="0 0 96 121">
+                <defs>
+                    <path id="a" d="M3 10.001h91V109H3z" />
+                    <path id="c" d="M0 109h96V10H0z" />
+                </defs>
+                <g fill="none" fill-rule="evenodd">
+                    <mask id="b" fill="#fff">
+                        <use xlink:href="#a" />
+                    </mask>
+                    <path fill="#DEE2EA" d="M80.473 59.256v-16.84a8.629 8.629 0 0 1 6.763 8.422c0 4.09-2.88 7.564-6.763 8.418zm-26.577 2.72c-.56-2.477-2.767-4.331-5.396-4.331-2.63 0-4.835 1.854-5.396 4.331H18.986v-19.8c0-16.377 13.24-29.7 29.514-29.7s29.514 13.323 29.514 29.7v19.8H53.896zm19.199 9.9H23.905v-7.425h21.52v-1.238c0-1.707 1.38-3.093 3.075-3.093 1.695 0 3.074 1.386 3.074 3.093v1.238h21.52v7.425zm-34.433 7.425h19.676v-4.95H38.662v4.95zm39.283 2.475c-.448 4.069-3.094 7.462-6.705 9.002-.563.24-1.139.413-1.719.556-.13.033-.25.085-.381.112-.72.148-1.454.23-2.194.23H30.054c-.718 0-1.441-.08-2.152-.22-4.683-.933-8.313-4.839-8.847-9.68h58.89zM64.486 99.101h-.002c.303-.728.539-1.49.733-2.267.022-.094.05-.186.071-.28.17-.74.293-1.497.36-2.272.004-.044.017-.086.019-.131h1.279c.57 0 1.131-.05 1.685-.119.13-.017.258-.04.388-.06a13 13 0 0 0 1.432-.301c.046-.015.096-.017.142-.03-.359 3.07-2.96 5.46-6.107 5.46zm-1.325-4.73c-.079.735-.21 1.456-.401 2.154-.057.202-.138.4-.204.6a13.72 13.72 0 0 1-.94 2.216c-2.287 4.264-6.744 7.185-11.886 7.185-5.143 0-9.6-2.92-11.887-7.185a13.72 13.72 0 0 1-.94-2.215c-.066-.2-.147-.399-.203-.601a13.571 13.571 0 0 1-.401-2.154c-.008-.074-.008-.148-.015-.22h26.892c-.008.072-.008.146-.015.22zm-28.188 4.73c-2.986 0-5.482-2.153-6.036-4.997.374.03.746.047 1.117.047h3.738c.003.045.015.087.02.131.067.777.19 1.532.362 2.275.02.091.046.183.069.274.194.778.43 1.54.732 2.27h-.002zM9.763 50.838a8.629 8.629 0 0 1 6.764-8.422v16.84c-3.883-.854-6.763-4.329-6.763-8.418zM94 49.601h-4.425a11.03 11.03 0 0 0-9.215-9.672C79.206 23.235 65.377 10 48.5 10S17.794 23.235 16.64 39.929A11.03 11.03 0 0 0 7.425 49.6H3v2.475h4.425c.55 4.88 4.262 8.82 9.102 9.648v2.727h4.919v9.9h14.757v4.95H16.527v1.237c0 6.245 4.206 11.507 9.912 13.103.373 4.43 4.036 7.935 8.534 7.935h1.306c2.846 4.457 7.806 7.425 13.45 7.425 5.645 0 10.606-2.968 13.452-7.425h1.305c4.747 0 8.609-3.888 8.609-8.663v-.267c4.373-2.257 7.378-6.833 7.378-12.108v-1.237H60.797v-4.95h14.757v-9.9h4.919v-2.727a11.043 11.043 0 0 0 9.102-9.648H94v-2.475z" mask="url(#b)" />
+                    <path fill="#DEE2EA" d="M56 49.284L57.716 51 65 43.716 63.284 42zM31 43.716L38.284 51 40 49.284 32.716 42z" mask="url(#b)" />
+                    <mask id="d" fill="#fff">
+                        <use xlink:href="#c" />
+                    </mask>
+                    <path fill="#DEE2EA" d="M45 102h10v-2H45zM5 50.5a2.5 2.5 0 0 1-5 0 2.5 2.5 0 0 1 5 0M96 50.5a2.5 2.5 0 0 1-5 0 2.5 2.5 0 0 1 5 0" mask="url(#d)" />
+                </g>
+            </svg>
         </div>
+        <div class="reasons">
+            <span>You might have received this message if JavaScript or cookies were disabled in your browser settings. </span><br />
+            <span>Occasionally a plugin or extension may be at fault. If you would like to learn more just reference <a href="https://www.perimeterx.com/whywasiblocked/#">Why Was I Blocked</a> for more details.</span>
+        </div>
+    </div>
+    <script>
+        (function setRefId() {
+            var pxUuid = window._pxUuid;
+            var uuidVerifyRegExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            if (!pxUuid) {
+                url = window.location.href;
+                var regex = new RegExp('[?&]uuid(=([^&#]*)|&|#|$)');
+                var results = regex.exec(url);
+                pxUuid = results && results.length > 2 ? results[2] : '';
+                pxUuid = decodeURIComponent(pxUuid.replace(/\+/g, ' '));
+            }
 
-        <script>
-            (function setRefId() {
-                var pxUuid = window._pxUuid;
-                if (!pxUuid) {
-                    url = window.location.href;
-                    var regex = new RegExp('[?&]uuid(=([^&#]*)|&|#|$)');
-                    var results = regex.exec(url);
-                    pxUuid = results && results.length > 2 ? results[2] : '';
-                    pxUuid = decodeURIComponent(pxUuid.replace(/\+/g, ' '));
-                }
-                document.getElementById("refid").innerHTML = pxUuid;
-            })();
-            </script>
-    </body>
+            if (uuidVerifyRegExp.exec(pxUuid)) {
+                document.getElementById("refid").innerText = pxUuid;
+            }
+        })();
+    </script>
+</body>
+
 </html>
