@@ -1,0 +1,64 @@
+pipeline {
+  agent any
+  stages {
+    stage('Run integration tests') {
+      steps {
+        cleanWs()
+
+        checkout scm
+
+        ansiColor('xterm') {
+          sh '''#!/bin/bash
+            ./test.sh -c /opt/px/secure/bq-gcs/dev/gcp-key.json
+            TEST_EXIT_CODE=$?
+            if [[ -z ${TEST_EXIT_CODE+x} ]] || [[ "$TEST_EXIT_CODE" -ne 0 ]] ; then
+              exit ${TEST_EXIT_CODE}
+            fi
+          '''
+        }
+      }
+    }
+    stage('Docker build') {
+      steps {
+        script {
+          commitShort = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+          def buildTag = "gcr.io/px_docker_repo/pxbifrost:" + commitShort
+
+          dockerBuild = docker.build(buildTag, '-f Dockerfile-jenkins .')
+        }
+      }
+    }
+
+    stage('Publish to gcr.io') {
+      when {
+        anyOf {
+          branch 'master'
+          branch 'dev'
+        }
+      }
+      steps {
+        script {
+          tagPrefix = env.BRANCH_NAME == 'master' ? 'prd' : 'dev'
+          docker.withRegistry('http://gcr.io') {
+            dockerBuild.push()
+            dockerBuild.push(tagPrefix + '-' + commitShort)
+            dockerBuild.push(tagPrefix + '-latest')
+          }
+        }
+      }
+    }
+
+    stage('Run staging deploy') {
+      when {
+          branch 'dev'
+      }
+      steps {
+        script {
+          for (bifrostType in ['act', 'pv', 'new-pv', 'req-stream']) {
+            build job: 'deploy-stg-bifrost', wait: false, parameters: [string(name: 'type', value: bifrostType), string(name: 'BUILD_VERSION', value: commitShort)]
+          }
+        }
+      }
+    }
+  }
+}
