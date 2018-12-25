@@ -10,7 +10,12 @@ function PXCookieV3:new(t)
 end
 
 function PXCookieV3:validate(data)
-    local request_data = data .. ngx.var.http_user_agent
+    local request_data = data
+    if ngx.ctx.px_is_mobile == false then
+        request_data = request_data .. ngx.var.http_user_agent
+    end
+    self.px_logger.debug("ILAI " .. request_data)
+
     local digest = self.hmac("sha256", self.cookie_secret, request_data)
     digest = self.px_common_utils.to_hex(digest)
 
@@ -18,7 +23,7 @@ function PXCookieV3:validate(data)
     if digest == string.upper(ngx.ctx.px_cookie_hmac) then
         return true
     end
-    self.px_logger.debug('Cookie HMAC validation failed, hmac: '.. digest ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
+    self.px_logger.debug('Cookie HMAC validation failed, hmac: ' .. digest .. ', user-agent: ' .. self.px_headers.get_header("User-Agent"));
     return false
 end
 
@@ -32,10 +37,8 @@ function PXCookieV3:process()
         error({ message = no_cookie_message })
     end
 
-
     if self.cookie_encrypted == true then
         self.px_logger.debug("cookie is encyrpted")
-        -- self:decrypt(cookie, self.cookie_secret)
         local success, result = pcall(self.decrypt, self, cookie, self.cookie_secret)
         if not success then
             self.px_logger.debug("Could not decrpyt px cookie v3")
@@ -77,7 +80,7 @@ function PXCookieV3:process()
     ngx.ctx.cookie_timestamp = fields.t
 
     if fields.t and fields.t > 0 and fields.t / 1000 < os.time() then
-        self.px_logger.debug('Cookie TTL is expired, value: '.. data ..', age: ' .. fields.t / 1000 - os.time())
+        self.px_logger.debug('Cookie TTL is expired, value: ' .. data .. ', age: ' .. fields.t / 1000 - os.time())
         error({ message = "cookie_expired" })
     end
 
