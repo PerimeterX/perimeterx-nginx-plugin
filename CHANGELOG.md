@@ -242,7 +242,6 @@
 ### Added
 - HTTP method to risk requests.
 
-
 [1.2.0]: https://github.com/PerimeterX/perimeterx-nginx-plugin/tree/v1.2.0
 [1.1.4]: https://github.com/PerimeterX/perimeterx-nginx-plugin/releases/tag/v1.1.4
 [1.1.2]: https://github.com/PerimeterX/perimeterx-php-sdk/releases/tag/v1.3.15
