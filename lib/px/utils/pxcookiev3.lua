@@ -29,7 +29,7 @@ function PXCookieV3:process()
         if ngx.ctx.pxhd and ngx.ctx.pxvid then
             no_cookie_message = "no_cookie_w_vid"
         end
-        error({ message =  no_cookie_message })
+        error({ message = no_cookie_message })
     end
 
 

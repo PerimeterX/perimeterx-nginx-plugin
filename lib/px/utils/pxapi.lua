@@ -29,7 +29,7 @@ function M.load(px_config)
     function _M.new_request_object(call_reason)
         local risk = {}
         local cookieHeader = px_headers.get_header("cookie")
-        local vid_source = "none";
+        local vid_source = "none"
         px_logger.enrich_log('pxcall', call_reason)
         risk.request = {}
         risk.request.ip = px_headers.get_ip()
@@ -89,7 +89,7 @@ function M.load(px_config)
         end
 
         if px_config.enrich_custom_parameters ~= nil then
-            px_logger.debug("enrich_custom_parameters was triggered");
+            px_logger.debug("enrich_custom_parameters was triggered")
             local px_risk_custom_params = px_config.enrich_custom_parameters(px_custom_params)
             for key, value in pairs(px_risk_custom_params) do
                 if string.match(key,"^custom_param%d+$") and value ~= "" then
