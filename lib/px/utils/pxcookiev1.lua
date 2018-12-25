@@ -45,7 +45,11 @@ end
 function PXCookieV1:process()
     cookie = ngx.ctx.px_orig_cookie
     if not cookie then
-        error({ message = "no_cookie" })
+        local no_cookie_message = "no_cookie"
+        if ngx.ctx.pxhd and ngx.ctx.pxvid then
+            no_cookie_message = "no_cookie_w_vid"
+        end
+        error({ message = no_cookie_message })
     end
 
     -- Decrypt AES-256 or base64 decode cookie

@@ -72,6 +72,7 @@ function M.application(px_configuration_table)
     local function perform_s2s(result, details)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
+        local cookie_expires = 31536000 -- one year
         local request_data = px_api.new_request_object(result.message)
         local start_risk_rtt = px_common_utils.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
@@ -83,6 +84,13 @@ function M.application(px_configuration_table)
         if success then
             result = px_api.process(response)
             px_logger.debug("Risk API response returned successfully, risk score: ".. ngx.ctx.block_score ..", round_trip_time: " .. ngx.ctx.risk_rtt)
+
+            -- handle pxhd cookie
+            if ngx.ctx.pxhd ~= nil then
+                ngx.header["Content-Type"] = nil
+                ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires)
+            end
+
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
@@ -158,6 +166,18 @@ function M.application(px_configuration_table)
         if not success then
            px_logger.debug("Failed to process pxde")
         end
+    end
+
+    -- handle pxhd cookie
+    local pxhd = ngx.var.cookie__pxhd
+    if pxhd then
+        ngx.ctx.pxhd = pxhd
+    end
+
+    -- handle pxvid cookie
+    local pxvid = ngx.var.cookie__pxvid
+    if pxvid then
+        ngx.ctx.pxvid = pxvid
     end
 
     px_payload:load(px_config)

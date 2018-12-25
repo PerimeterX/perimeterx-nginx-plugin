@@ -59,6 +59,7 @@ function M.load(px_config)
         local score = 0
 
         details.module_version = px_constants.MODULE_VERSION
+        details.block_action = ngx.ctx.px_action
         if reason then
             details.block_reason = reason
             px_logger.enrich_log("pxblock", reason)
