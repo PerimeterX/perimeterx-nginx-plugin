@@ -135,6 +135,10 @@ function M.load(px_config)
             details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
         end
 
+        if px_config.enrich_custom_parameters ~= nil then
+            px_common_utils.handle_custom_parameters(px_config, px_logger, details)
+        end
+
         if event_type == 'page_requested' then
             px_logger.debug("Sent page requested acitvity")
             details['pass_reason'] = ngx.ctx.pass_reason

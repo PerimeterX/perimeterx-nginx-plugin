@@ -1,6 +1,23 @@
 local socket = require("socket")
 local _M = {}
 
+function _M.handle_custom_parameters(px_config, px_logger, result_table)
+    local px_custom_params = {}
+
+    -- initialize the px_custom_params table
+    for i = 1, 10 do
+        px_custom_params["custom_param" .. i] = ""
+    end
+
+    px_logger.debug("enrich_custom_parameters was triggered");
+    local px_result_custom_params = px_config.enrich_custom_parameters(px_custom_params)
+    for key, value in pairs(px_result_custom_params) do
+        if string.match(key,"^custom_param%d+$") and value ~= "" then
+            result_table[key] = value
+        end
+    end
+end
+
 function _M.get_time_in_milliseconds()
     return socket.gettime() * 1000
 end

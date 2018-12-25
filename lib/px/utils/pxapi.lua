@@ -96,7 +96,7 @@ function M.load(px_config)
                     risk.additional[key] = value
                 end
             end
-        end
+            px_common_utils.handle_custom_parameters(px_config, px_logger, risk.additional)
 
         risk.additional.http_version = ngx_req_http_version()
         risk.additional.http_method = ngx_req_get_method()
