@@ -1,6 +1,6 @@
 local PXCookie = require('px.utils.pxcookie')
 
-PXCookieV3 = PXCookie:new{}
+PXCookieV3 = PXCookie:new {}
 
 function PXCookieV3:new(t)
     t = t or {}
@@ -14,7 +14,6 @@ function PXCookieV3:validate(data)
     if ngx.ctx.px_is_mobile == false then
         request_data = request_data .. ngx.var.http_user_agent
     end
-    self.px_logger.debug("ILAI " .. request_data)
 
     local digest = self.hmac("sha256", self.cookie_secret, request_data)
     digest = self.px_common_utils.to_hex(digest)
