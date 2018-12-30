@@ -63,7 +63,7 @@ function PXPayload:get_payload()
         ngx.ctx.px_cookie_version = "v3";
         self.px_logger.debug("Cookie V3 found - Evaluating")
         return self.cookie_v3:new {}
-    elseif ngx.var.cookie__px1 then
+    elseif ngx.var.cookie__px then
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px
         ngx.ctx.px_cookie_version = "v1";
         self.px_logger.debug("Cookie V1 found - Evaluating")
