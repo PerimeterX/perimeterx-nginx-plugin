@@ -184,7 +184,7 @@ function M.load(px_config)
             local body = res.body
             if ngx.ctx.px_action == 'c' then
                 -- inject captcha to the page
-                px_logger.debug('Injecting captcah to page')
+                px_logger.debug('Injecting captcha to page')
                 body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
                 body = string_gsub(body, '::BLOCK_REF::', uuid);
             end

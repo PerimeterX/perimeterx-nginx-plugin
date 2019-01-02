@@ -33,7 +33,7 @@ function M.application(px_configuration_table)
     local px_filters = require("px.utils.pxfilters").load(px_config)
     local px_client = require("px.utils.pxclient").load(px_config)
     local PXPayload = require('px.utils.pxpayload')
-    local px_payload = PXPayload:new{}
+    local px_payload = PXPayload:new {}
     local px_block = require("px.block.pxblock").load(px_config)
     local px_api = require("px.utils.pxapi").load(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
@@ -78,12 +78,12 @@ function M.application(px_configuration_table)
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
 
         ngx.ctx.risk_rtt = px_common_utils.get_time_in_milliseconds() - start_risk_rtt
-	    ngx.ctx.is_made_s2s_api_call = true
+        ngx.ctx.is_made_s2s_api_call = true
 
         local result
         if success then
             result = px_api.process(response)
-            px_logger.debug("Risk API response returned successfully, risk score: ".. ngx.ctx.block_score ..", round_trip_time: " .. ngx.ctx.risk_rtt)
+            px_logger.debug("Risk API response returned successfully, risk score: " .. ngx.ctx.block_score .. ", round_trip_time: " .. ngx.ctx.risk_rtt)
 
             -- handle pxhd cookie
             if ngx.ctx.pxhd ~= nil then
@@ -103,7 +103,7 @@ function M.application(px_configuration_table)
         else
             -- server2server call failed, passing traffic
             ngx.ctx.pass_reason = 'error'
-            if string.match(response,'timeout') then
+            if string.match(response, 'timeout') then
                 px_logger.debug('Risk API timed out - rtt: ' .. ngx.ctx.risk_rtt)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
@@ -156,7 +156,7 @@ function M.application(px_configuration_table)
     end
 
     px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent)
-   
+
     local details = {};
 
     -- hadle pxde cookie
@@ -164,7 +164,7 @@ function M.application(px_configuration_table)
     if pxde then
         local success, result = pcall(px_data_enrichment.process, pxde)
         if not success then
-           px_logger.debug("Failed to process pxde")
+            px_logger.debug("Failed to process pxde")
         end
     end
 
@@ -181,10 +181,20 @@ function M.application(px_configuration_table)
     end
 
     px_payload:load(px_config)
-    px_cookie = px_payload:get_payload()
-    px_cookie:load(px_config)
+    local px_cookie = px_payload:get_payload()
+    local success = false
+    local result
+    if px_cookie ~= nil then
+        px_cookie:load(px_config)
+        success, result = pcall(px_cookie.process, px_cookie)
+    else
+        local no_cookie_message = "no_cookie"
+        if ngx.ctx.pxhd and ngx.ctx.pxvid then
+            no_cookie_message = "no_cookie_w_vid"
+        end
+        result = { message = no_cookie_message }
+    end
 
-    local success, result = pcall(px_cookie.process, px_cookie)
     -- cookie verification passed - checking result.
     if success then
         px_logger.debug("Cookie evaluation ended successfully, risk score: " .. ngx.ctx.block_score)

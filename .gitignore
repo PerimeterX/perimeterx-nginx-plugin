@@ -4,3 +4,4 @@ dev
 www
 t/servroot
 .DS_Store
+logs/
