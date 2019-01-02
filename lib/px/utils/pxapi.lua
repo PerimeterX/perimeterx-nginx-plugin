@@ -29,8 +29,8 @@ function M.load(px_config)
     function _M.new_request_object(call_reason)
         local risk = {}
         local cookieHeader = px_headers.get_header("cookie")
+        local vid_source = "none"
         px_logger.enrich_log('pxcall', call_reason)
-        risk.cid = ''
         risk.request = {}
         risk.request.ip = px_headers.get_ip()
         risk.request.uri = ngx.var.request_uri
@@ -42,6 +42,16 @@ function M.load(px_config)
         risk.additional.request_cookie_names = px_common_utils.extract_cookie_names(cookieHeader)
         if ngx.ctx.vid then
             risk.vid = ngx.ctx.vid
+            vid_source = "risk_cookie"
+        elseif ngx.ctx.pxvid then
+            risk.vid = ngx.ctx.pxvid
+            vid_source = "vid_cookie"
+        end
+
+        risk.additional.enforcer_vid_source = vid_source
+
+        if ngx.ctx.pxhd then
+            risk.pxhd = ngx.ctx.pxhd
         end
 
         if ngx.ctx.uuid then
@@ -79,13 +89,7 @@ function M.load(px_config)
         end
 
         if px_config.enrich_custom_parameters ~= nil then
-            px_logger.debug("enrich_custom_parameters was triggered");
-            local px_risk_custom_params = px_config.enrich_custom_parameters(px_custom_params)
-            for key, value in pairs(px_risk_custom_params) do
-                if string.match(key,"^custom_param%d+$") and value ~= "" then
-                    risk.additional[key] = value
-                end
-            end
+            px_common_utils.handle_custom_parameters(px_config, px_logger, risk.additional)
         end
 
         risk.additional.http_version = ngx_req_http_version()
@@ -107,8 +111,9 @@ function M.load(px_config)
     -- returns boolean
     function _M.process(data)
         px_logger.debug("Processing server 2 server response: " .. cjson.encode(data.score))
-
         px_headers.set_score_header(data.score)
+        ngx.ctx.pxhd = data.pxhd ~= nil and data.pxhd or nil
+
         -- Set the pxscore var for logging
         px_logger.enrich_log('pxscore',data.score)
         ngx.ctx.uuid = data.uuid or nil

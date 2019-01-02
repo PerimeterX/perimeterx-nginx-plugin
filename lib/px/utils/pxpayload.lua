@@ -9,27 +9,25 @@ end
 
 function PXPayload:handleHeader(header)
     if string.match(header, ":") then
-        local version = string.sub(header, 1,1);
+        local version = string.sub(header, 1, 1);
         local cookie = string.sub(header, 3);
         return version, cookie
     else
-        return nil,header
+        return nil, header
     end
 end
 
 function PXPayload:load(px_config)
     -- localized config
     self.px_config = px_config
-    self.px_logger = require ("px.utils.pxlogger").load(px_config)
-    self.px_headers = require ("px.utils.pxheaders").load(px_config)
+    self.px_logger = require("px.utils.pxlogger").load(px_config)
+    self.px_headers = require("px.utils.pxheaders").load(px_config)
     self.px_common_utils = require("px.utils.pxcommonutils")
     self.cookie_encrypted = self.px_config.cookie_encrypted
     self.blocking_score = self.px_config.blocking_score
     self.cookie_secret = self.px_config.cookie_secret
     self.cookie_v3 = require "px.utils.pxcookiev3"
     self.cookie_v1 = require "px.utils.pxcookiev1"
-    self.token_v3 = require "px.utils.pxtokenv3"
-    self.token_v1 = require "px.utils.pxtokenv1"
 
     -- localized modules
     self.cjson = require "cjson"
@@ -54,22 +52,22 @@ function PXPayload:get_payload()
         if version == "3" then
             ngx.ctx.px_cookie_version = "v3";
             self.px_logger.debug("Token V3 found - Evaluating")
-            return self.token_v3:new{}
+            return self.cookie_v3:new {}
         else
             ngx.ctx.px_cookie_version = "v1";
             self.px_logger.debug("Token V1 found - Evaluating")
-            return self.token_v1:new{}
+            return self.cookie_v1:new {}
         end
     elseif ngx.var.cookie__px3 then
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px3
         ngx.ctx.px_cookie_version = "v3";
         self.px_logger.debug("Cookie V3 found - Evaluating")
-        return self.cookie_v3:new{}
-    else
+        return self.cookie_v3:new {}
+    elseif ngx.var.cookie__px then
         ngx.ctx.px_orig_cookie = ngx.var.cookie__px
         ngx.ctx.px_cookie_version = "v1";
         self.px_logger.debug("Cookie V1 found - Evaluating")
-        return self.cookie_v1:new{}
+        return self.cookie_v1:new {}
     end
     -- check for cookie, and if found return the right object
     self.px_logger.debug("Cookie is missing")
@@ -88,7 +86,7 @@ function PXPayload:split_cookie(cookie)
 
     if a[4] ~= nil then
         ngx.ctx.px_cookie_hmac = a[1]
-        return a[2],a[3],a[4]
+        return a[2], a[3], a[4]
     end
     return a[1], a[2], a[3]
 end

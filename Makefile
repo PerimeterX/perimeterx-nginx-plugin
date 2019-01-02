@@ -29,7 +29,10 @@ install:
 	$(INSTALL) lib/px/utils/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 
 docker-test: docker
-	docker run -it -w /tmp  perimeterx/pxnginx:latest prove -v t
+	docker run -it -w /tmp -v logs:/var/log/nginx perimeterx/pxnginx:latest prove -v t
+
+docker-sh: docker
+	docker run -it -w /tmp -v logs:/var/log/nginx perimeterx/pxnginx:latest sh
 
 test:
 	prove -v t

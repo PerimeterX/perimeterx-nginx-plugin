@@ -1,6 +1,6 @@
 local PXCookie = require('px.utils.pxcookie')
 
-PXCookieV1 = PXCookie:new{}
+PXCookieV1 = PXCookie:new {}
 
 function PXCookieV1:new(t)
     t = t or {}
@@ -19,11 +19,15 @@ function PXCookieV1:validate(data)
         request_data = request_data .. data.a
     end
 
-    local request_data_ip = request_data .. self.px_headers.get_ip() .. ngx.var.http_user_agent
+    local request_data_ip = request_data .. self.px_headers.get_ip()
+    if ngx.ctx.px_is_mobile == false then
+        request_data_ip = request_data_ip .. ngx.var.http_user_agent
+    end
+
     local digest_ip = self.hmac("sha256", self.cookie_secret, request_data_ip)
     digest_ip = self.px_common_utils.to_hex(digest_ip)
 
-     -- policy with ip
+    -- policy with ip
     if digest_ip == string.upper(data.h) then
         self.px_logger.debug('cookie verification succeed with IP in signature')
         return true
@@ -38,14 +42,18 @@ function PXCookieV1:validate(data)
         self.px_logger.debug('cookie verification succeed with no IP in signature')
         return true
     end
-    self.px_logger.debug('Cookie HMAC validation failed, value without ip: '.. digest_noip ..' with ip: '.. digest_ip ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
+    self.px_logger.debug('Cookie HMAC validation failed, value without ip: ' .. digest_noip .. ' with ip: ' .. digest_ip .. ', user-agent: ' .. self.px_headers.get_header("User-Agent"));
     return false
 end
 
 function PXCookieV1:process()
     cookie = ngx.ctx.px_orig_cookie
     if not cookie then
-        error({ message = "no_cookie" })
+        local no_cookie_message = "no_cookie"
+        if ngx.ctx.pxhd and ngx.ctx.pxvid then
+            no_cookie_message = "no_cookie_w_vid"
+        end
+        error({ message = no_cookie_message })
     end
 
     -- Decrypt AES-256 or base64 decode cookie
@@ -90,7 +98,7 @@ function PXCookieV1:process()
     ngx.ctx.cookie_timestamp = fields.t
 
     if fields.t and fields.t > 0 and fields.t / 1000 < os.time() then
-        self.px_logger.debug('Cookie TTL is expired, value: '.. data ..', age: ' .. fields.t / 1000 - os.time())
+        self.px_logger.debug('Cookie TTL is expired, value: ' .. data .. ', age: ' .. fields.t / 1000 - os.time())
         error({ message = "cookie_expired" })
     end
 
