@@ -32,7 +32,7 @@ function M.load(px_config)
         end
         local captcha_src = ''
         if action ~= 'r' then
-            captcha_src = captcha_url_prefix .. string.format('/' .. px_config.px_appId .. '/captcha.js?a=%s&m=%s&u=%s&v=%s', action, (is_mobile and '1' or '0'), uuid, vid)
+            captcha_src = captcha_url_prefix .. string.format('/' .. px_config.px_appId .. '/captcha.js?a=%s&m=%s&u=%s&v=%s', action, (ngx.ctx.px_is_mobile and '1' or '0'), uuid, vid)
         end
 
         return {
