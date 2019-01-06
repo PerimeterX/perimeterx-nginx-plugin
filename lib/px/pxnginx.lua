@@ -88,7 +88,7 @@ function M.application(px_configuration_table)
             -- handle pxhd cookie
             if ngx.ctx.pxhd ~= nil then
                 ngx.header["Content-Type"] = nil
-                ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires)
+                ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires) .. "; Path=/"
             end
 
             -- case score crossed threshold
