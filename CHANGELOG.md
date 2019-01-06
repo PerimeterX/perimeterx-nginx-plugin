@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.0.2] - 2019-01-06
+### Fixed
+- PXHD cookie path
+
 ## [6.0.1] - 2019-01-04
 ### Fixed
 - Mobile detection for captcha script
