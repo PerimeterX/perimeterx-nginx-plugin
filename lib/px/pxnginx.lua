@@ -189,7 +189,7 @@ function M.application(px_configuration_table)
         success, result = pcall(px_cookie.process, px_cookie)
     else
         local no_cookie_message = "no_cookie"
-        if ngx.ctx.pxhd and ngx.ctx.pxvid then
+        if ngx.ctx.pxhd then
             no_cookie_message = "no_cookie_w_vid"
         end
         result = { message = no_cookie_message }

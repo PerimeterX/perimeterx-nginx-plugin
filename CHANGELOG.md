@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.0.3] - 2019-01-09
+### Fixed
+- s2s call reason of no_cookie_w_vid
+
 ## [6.0.2] - 2019-01-06
 ### Fixed
 - PXHD cookie path
