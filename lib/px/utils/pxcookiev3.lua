@@ -30,7 +30,7 @@ function PXCookieV3:process()
     cookie = self.px_common_utils.decode_uri_component(ngx.ctx.px_orig_cookie)
     if not cookie then
         local no_cookie_message = "no_cookie"
-        if ngx.ctx.pxhd and ngx.ctx.pxvid then
+        if ngx.ctx.pxhd then
             no_cookie_message = "no_cookie_w_vid"
         end
         error({ message = no_cookie_message })
