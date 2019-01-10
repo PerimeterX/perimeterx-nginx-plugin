@@ -146,6 +146,8 @@ function _M.extract_cookie_names(cookies)
                     index = index + 1
                 end
             end
+        else
+            return "[]"
         end
     end
     return t
