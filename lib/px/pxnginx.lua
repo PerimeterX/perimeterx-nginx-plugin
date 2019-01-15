@@ -175,8 +175,13 @@ function M.application(px_configuration_table)
     end
 
     -- handle pxvid cookie
-    local pxvid = ngx.var.cookie__pxvid
-    if pxvid then
+    local pxvid = ""
+    if ngx.var.cookie__pxvid ~= nil and ngx.var.cookie__pxvid ~= "" then
+        pxvid = ngx.var.cookie__pxvid
+    elseif ngx.var.cookie_pxvid ~= nil and ngx.var.cookie_pxvid ~= "" then
+        pxvid = ngx.var.cookie_pxvid
+    end
+    if pxvid ~= "" then
         ngx.ctx.pxvid = pxvid
     end
 
