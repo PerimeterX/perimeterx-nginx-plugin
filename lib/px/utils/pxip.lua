@@ -99,7 +99,6 @@ function M.load(px_config)
     function _M.prepare_cidrs(whitelisted_ips)
         local result = {}
         for _, v in pairs(whitelisted_ips) do
-
             local splitted_mask = px_common_utils.split_string(v, '[^/]+')
             if (splitted_mask ~= nil) then
                 local cidr_object = parse_cidr(splitted_mask)
@@ -115,9 +114,11 @@ function M.load(px_config)
             return nil
         end
         local ip_sum = ip_to_decimal(ip)
-        for _, cidr in ipairs(whitelisted_ips) do
-            if ip_sum >= cidr[1] and ip_sum <= cidr[2] then
-                return true
+        if ip_sum ~= nil then
+            for _, cidr in ipairs(whitelisted_ips) do
+                if ip_sum >= cidr[1] and ip_sum <= cidr[2] then
+                    return true
+                end
             end
         end
         return false
