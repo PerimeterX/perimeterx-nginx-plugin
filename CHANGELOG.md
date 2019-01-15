@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.0.4] - 2019-01-15
+### Fixed
+- pxvid check for both pxvid and _pxvid cookies
+- ignore ipv6 for whitelist ip filtering
+
 ## [6.0.3] - 2019-01-09
 ### Fixed
 - s2s call reason of no_cookie_w_vid
