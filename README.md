@@ -47,6 +47,7 @@
   * [Enrich Custom Parameters](#custom-parameters)
   * [Blocking Score](#blocking-score)
   * [First-Party Prefix](#first-party-prefix)
+  * [Advanced Blocking Response](#json-response-enabled)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -474,7 +475,6 @@ The following configurations are set in:
   First-Party Mode may require additional changes on the [JS Sensor Snippet](#perimterx_first_party_js_snippet). For more information, refer to the PerimeterX Portal.
 
   ```lua
-  -- ## Additional Configuration Parameters ##
   ...
   _M.first_party_enabled = true
   ```
@@ -768,6 +768,18 @@ Example:
 
 ```lua
 _M.first_party_prefix = 'resources'
+```
+
+### <a name="json-response-enabled"></a> Advanced Blocking Response Support
+
+Enables/disables support for [Advanced Blocking Response](#advancedBlockingResponse).
+
+**Default:** true (enabled)
+
+Example:
+
+```lua
+_M.advancled_blocking_response = false
 ```
 
 ## <a name="enrichment"></a> Enrichment
