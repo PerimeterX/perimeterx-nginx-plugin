@@ -345,6 +345,7 @@ GET /t
 --- req_headers
 X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
+Accept: application/json
 
 --- response_body_like
 .* Access to this page has been denied.*
