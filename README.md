@@ -779,7 +779,7 @@ Enables/disables support for [Advanced Blocking Response](#advancedBlockingRespo
 Example:
 
 ```lua
-_M.advancled_blocking_response = false
+_M.advanced_blocking_response = false
 ```
 
 ## <a name="enrichment"></a> Enrichment
