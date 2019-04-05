@@ -48,6 +48,7 @@ PX_DEFAULT_CONFIGURATIONS["client_host"] = { "client.perimeterx.net", "string"}
 PX_DEFAULT_CONFIGURATIONS["captcha_script_host"] = { "captcha.px-cdn.net", "string"}
 PX_DEFAULT_CONFIGURATIONS["collector_port_overide"] = { nil, "number"}
 PX_DEFAULT_CONFIGURATIONS["client_port_overide"] = { nil, "number"}
+PX_DEFAULT_CONFIGURATIONS["proxy_url"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_uri_full"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_uri_prefixes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_uri_suffixes"] = { {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'}, "table"}

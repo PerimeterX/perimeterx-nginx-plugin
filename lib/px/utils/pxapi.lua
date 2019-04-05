@@ -157,7 +157,7 @@ function M.load(px_config)
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
-        local ok, err = httpc:connect(px_server, px_port)
+        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config.proxy_url)
         if not ok then
             px_logger.debug("HTTPC connection error: " .. err)
             error('HTTPC connection error:'  .. err)
@@ -176,7 +176,8 @@ function M.load(px_config)
             body = data,
             headers = {
                 ["Content-Type"] = "application/json",
-                ["Authorization"] = "Bearer " .. auth_token
+                ["Authorization"] = "Bearer " .. auth_token,
+                ["Host"] = px_server
             }
         })
         if err or not res then
