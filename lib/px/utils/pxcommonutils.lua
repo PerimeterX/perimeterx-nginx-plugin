@@ -157,7 +157,7 @@ function _M.call_px_server(httpc, host, port, proxy)
     if proxy ~= nil then
         return httpc:connect_proxy(proxy, "https", host, port, "")
     else
-        return httpc:connect(proxy, host, port)
+        return httpc:connect(host, port)
     end
 end
 
