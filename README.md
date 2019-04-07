@@ -48,6 +48,7 @@
   * [Blocking Score](#blocking-score)
   * [First-Party Prefix](#first-party-prefix)
   * [Advanced Blocking Response](#json-response-enabled)
+  * [Proxy Support](#proxy-url)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -780,6 +781,20 @@ Example:
 
 ```lua
 _M.advanced_blocking_response = false
+```
+
+### <a name="proxy-support"></a> Proxy Support
+
+Sets a proxy server for all the enforcer's outgoing calls.
+
+> Requires `lua-resty-http` version 0.12 and up.
+
+**Default:** nil
+
+Example:
+
+```lua
+_M.proxy_url = 'http://localhost:8008'
 ```
 
 ## <a name="enrichment"></a> Enrichment

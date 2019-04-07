@@ -153,6 +153,14 @@ function _M.extract_cookie_names(cookies)
     return t
 end
 
+function _M.call_px_server(httpc, host, port, proxy)
+    if proxy ~= nil then
+        return httpc:connect_proxy(proxy, "https", host, port, "")
+    else
+        return httpc:connect(host, port)
+    end
+end
+
 function trim(s)
     return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
