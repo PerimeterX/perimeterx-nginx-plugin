@@ -32,7 +32,7 @@ RUN curl -sSL http://luajit.org/download/LuaJIT-${VER_LUAJIT}.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/simpl/ngx_devel_kit/archive/v${VER_NGINX_DEVEL_KIT}.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/openresty/lua-nginx-module/archive/v${VER_LUA_NGINX_MODULE}.tar.gz | tar xzf -
 RUN curl -sSL https://ftp.gnu.org/gnu/nettle/nettle-3.2.tar.gz | tar xzf -
-RUN curl -sSL https://github.com/pintsized/lua-resty-http/archive/v0.08.tar.gz | tar xzf -
+RUN curl -sSL https://github.com/pintsized/lua-resty-http/archive/v0.13.tar.gz | tar xzf -
 RUN curl -sSL https://github.com/bungle/lua-resty-nettle/archive/v0.95.tar.gz | tar -C /usr/local --strip-components 1 -xzf - && mkdir -p /usr/local/lib/lua/resty && mv /usr/local/lib/resty/* /usr/local/lib/lua/resty
 # Install CPAN dependencies for unit tests
 RUN curl -sSL http://cpanmin.us | perl - App::cpanminus
@@ -49,7 +49,7 @@ RUN make && make install
 RUN ln -s ${NGINX_ROOT}/sbin/nginx /usr/local/sbin/nginx
 # Lua dependency packages
 RUN ln -s /usr/lib/x86_64-linux-gnu/lua/5.1/cjson.so /usr/local/lib/lua/5.1/cjson.so
-WORKDIR /lua-resty-http-0.08
+WORKDIR /lua-resty-http-0.13
 RUN make install
 # Install GNU Nettle
 WORKDIR /nettle-3.2
@@ -70,7 +70,7 @@ RUN rm -rf \
     /LuaJIT-${VER_LUAJIT} \
     /${NGINX_DEVEL_KIT} \
     /${LUA_NGINX_MODULE} \
-    /lua-resty-http-0.08 \
+    /lua-resty-http-0.13 \
     /nettle-3.2
 COPY nginx.conf /nginx/conf/nginx.conf
 # forward request and error logs to docker log collector

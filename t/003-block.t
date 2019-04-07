@@ -304,3 +304,52 @@ Accept: application/json
 
 --- error_log
 [PerimeterX - DEBUG] [ PX_APP_ID ] - Visitor score is higher than allowed threshold
+
+=== TEST 6: Test JSON response set to false
+Process a valid cookie
+
+--- http_config
+    lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
+    lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
+    lua_ssl_verify_depth 3;
+    lua_socket_pool_size 500;
+    resolver 8.8.8.8;
+    init_worker_by_lua_block {
+        require ("px.utils.pxtimer").application()
+    }
+    set_real_ip_from   0.0.0.0/0;
+    real_ip_header     X-Forwarded-For;
+
+--- config
+    location = /t {
+        resolver 8.8.8.8;
+        set_by_lua_block $config {
+            pxconfig = require "px.pxconfig"
+            pxconfig.cookie_secret = "perimeterx"
+            pxconfig.px_debug = true
+            pxconfig.block_enabled = true
+            pxconfig.enable_server_calls = false
+            pxconfig.send_page_requested_activity = false
+            pxconfig.advanced_blocking_response = false
+          return true
+        }
+
+        access_by_lua_block {
+            require("px.pxnginx").application(require "px.pxconfig")
+        }
+    }
+
+--- request
+GET /t
+
+--- req_headers
+X-Forwarded-For: 1.2.3.4
+User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
+Accept: application/json
+
+--- response_body_like
+.* Access to this page has been denied.*
+--- error_code: 403
+
+--- error_log
+[PerimeterX - DEBUG] [ PX_APP_ID ] - Visitor score is higher than allowed threshold

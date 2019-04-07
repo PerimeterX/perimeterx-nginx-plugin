@@ -37,7 +37,7 @@ function M.load(px_config)
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
-        local ok, err = httpc:connect(px_server, px_port)
+        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config.proxy_url)
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
         end
@@ -55,7 +55,8 @@ function M.load(px_config)
             body = data,
             headers = {
                 ["Content-Type"] = "application/json",
-                ["Authorization"] = "Bearer " .. auth_token
+                ["Authorization"] = "Bearer " .. auth_token,
+                ["Host"] = px_server
             }
         })
         if not res then
@@ -203,7 +204,7 @@ function M.load(px_config)
 
         httpc:set_timeout(2000)
 
-        local ok, err = httpc:connect(server, port)
+        local ok, err = px_common_utils.call_px_server(httpc, server, port, px_config.proxy_url)
 
         if not ok then
             ngx.log(ngx.ERR, err)

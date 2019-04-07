@@ -116,8 +116,8 @@ function M.load(px_config)
 
         -- json response
         local accept_header = ngx.req.get_headers()["accept"] or ngx.req.get_headers()["content-type"]
-        local isJsonResponse = accept_header and is_accept_header_json(accept_header) and not ngx.ctx.px_is_mobile
-        if isJsonResponse then
+        local is_json_response = px_config.advanced_blocking_response and accept_header and is_accept_header_json(accept_header) and not ngx.ctx.px_is_mobile
+        if is_json_response then
             local props = px_template.get_props(px_config, details.block_uuid, vid, parse_action(ngx.ctx.px_action))
             local result = {
                 appId = props.appId,

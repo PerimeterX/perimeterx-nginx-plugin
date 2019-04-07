@@ -3,10 +3,10 @@ local _M = {}
 function _M.get_configuration(px_config)
     local http = require "resty.http"
     local px_constants = require "px.utils.pxconstants"
-    
+
     local px_client = require("px.utils.pxclient").load(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
-    local px_commom_utils = require("px.utils.pxcommonutils")
+    local px_common_utils = require("px.utils.pxcommonutils")
     local cjson = require "cjson"
     local px_conf_server = px_config.configuration_server
     local px_port = px_config.configuration_server_port
@@ -20,7 +20,8 @@ function _M.get_configuration(px_config)
     end
 
     local httpc = http.new()
-    local ok, err = httpc:connect(px_conf_server, px_port)
+
+    local ok, err = px_common_utils.call_px_server(httpc, px_conf_server, px_port, px_config.proxy_url)
     if not ok then
         px_logger.error("HTTPC connection error: " .. err)
     end
@@ -35,7 +36,8 @@ function _M.get_configuration(px_config)
         method = "GET",
         headers = {
             ["Content-Type"] = "application/json",
-            ["Authorization"] = "Bearer " .. px_config.auth_token
+            ["Authorization"] = "Bearer " .. px_config.auth_token,
+            ["Host"] = px_conf_server
         },
         query = query
     })
@@ -74,7 +76,7 @@ function _M.get_configuration(px_config)
 
         -- report enforcer telemetry
         local details = {}
-        details.px_config = px_commom_utils.filter_config(px_config)
+        details.px_config = px_common_utils.filter_config(px_config)
         details.update_reason = 'remote_config'
         px_client.send_enforcer_telmetry(details)
    end

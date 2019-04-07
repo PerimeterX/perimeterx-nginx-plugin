@@ -14,6 +14,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## Blocking Parameters ##
 -- _M.blocking_score = 100
 -- _M.block_enabled = false
+-- _M.advanced_blocking_response = true
 
 -- ## Additional Configuration Parameters ##
 -- _M.sensitive_headers = {'cookie', 'cookies'}
@@ -25,6 +26,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.enabled_routes = {}
 -- _M.first_party_enabled = true
 -- _M.reverse_xhr_enabled = true
+-- _M.proxy_url = nil
 
 -- -- ## API protection mode ##
 -- _M.api_protection_mode = false
