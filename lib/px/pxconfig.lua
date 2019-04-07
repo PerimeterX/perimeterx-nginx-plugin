@@ -26,6 +26,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.enabled_routes = {}
 -- _M.first_party_enabled = true
 -- _M.reverse_xhr_enabled = true
+-- _M.proxy_url = nil
 
 -- -- ## API protection mode ##
 -- _M.api_protection_mode = false
