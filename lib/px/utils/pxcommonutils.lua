@@ -156,8 +156,7 @@ end
 function _M.call_px_server(httpc, host, port, px_config, pool_key)
     if px_config.proxy_url ~= nil then
         local scheme = px_config.ssl_enabled and "https" or "http"
-        local proxy_authorization = px_config.proxy_authorization == nil and "" or px_config.proxy_authorization
-        return connect_proxy(httpc, px_config.proxy_url, scheme, host, port, pool_key, proxy_authorization)
+        return connect_proxy(httpc, px_config.proxy_url, scheme, host, port, pool_key, px_config.proxy_authorization)
     else
         return httpc:connect(host, port)
     end
