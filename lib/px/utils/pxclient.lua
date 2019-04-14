@@ -184,6 +184,7 @@ function M.load(px_config)
     -- @server - server address to send the request to
     -- @port_overide - if provided, will overide the server default port number
     -- @allow_failure - will allow http status >= 400
+    -- @pool_key - a key for the connection pool
     --
     -- @return - boolean value, success or failure
     local function forward_to_perimeterx(server, port_overide, allow_failure, pool_key)
