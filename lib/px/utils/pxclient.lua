@@ -37,7 +37,7 @@ function M.load(px_config)
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
-        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config.proxy_url)
+        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config, "px_activities")
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
         end
@@ -186,7 +186,7 @@ function M.load(px_config)
     -- @allow_failure - will allow http status >= 400
     --
     -- @return - boolean value, success or failure
-    local function forward_to_perimeterx(server, port_overide, allow_failure)
+    local function forward_to_perimeterx(server, port_overide, allow_failure, pool_key)
         -- Attach real ip from the enforcer
         ngx_req_set_header(px_constants.ENFORCER_TRUE_IP_HEADER, px_headers.get_ip())
         ngx_req_set_header(px_constants.FIRST_PARTY_HEADER, '1')
@@ -204,7 +204,7 @@ function M.load(px_config)
 
         httpc:set_timeout(2000)
 
-        local ok, err = px_common_utils.call_px_server(httpc, server, port, px_config.proxy_url)
+        local ok, err = px_common_utils.call_px_server(httpc, server, port, px_config, pool_key)
 
         if not ok then
             ngx.log(ngx.ERR, err)
@@ -261,7 +261,7 @@ function M.load(px_config)
         ngx_req_set_uri(px_request_uri)
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
 
-        forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true)
+        forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true, "px_fp_client")
 
         return true;
     end
@@ -284,7 +284,7 @@ function M.load(px_config)
         ngx_req_set_uri(px_request_uri)
 
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
-        forward_to_perimeterx(px_config.captcha_script_host, nil, true)
+        forward_to_perimeterx(px_config.captcha_script_host, nil, true, "px_fp_captcha")
 
         return true
     end
@@ -334,7 +334,7 @@ function M.load(px_config)
             xff_header = ngx.var.remote_addr
         end
         ngx_req_set_header('X-Forwarded-For', xff_header)
-        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, false)
+        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, false, "px_fp_xhr")
 
         if not status  then
             return default_response(default_content_type, default_content)
