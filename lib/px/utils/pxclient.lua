@@ -261,7 +261,7 @@ function M.load(px_config)
         ngx_req_set_uri(px_request_uri)
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
 
-        forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true, "px_fp_client")
+        forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true, "px_client")
 
         return true;
     end
@@ -284,7 +284,7 @@ function M.load(px_config)
         ngx_req_set_uri(px_request_uri)
 
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
-        forward_to_perimeterx(px_config.captcha_script_host, nil, true, "px_fp_captcha")
+        forward_to_perimeterx(px_config.captcha_script_host, nil, true, "px_captcha")
 
         return true
     end
@@ -334,7 +334,7 @@ function M.load(px_config)
             xff_header = ngx.var.remote_addr
         end
         ngx_req_set_header('X-Forwarded-For', xff_header)
-        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, false, "px_fp_xhr")
+        local status = forward_to_perimeterx(px_config.collector_host, px_config.collector_port_overide, false, "px_xhr")
 
         if not status  then
             return default_response(default_content_type, default_content)
