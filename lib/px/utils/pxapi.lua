@@ -157,7 +157,7 @@ function M.load(px_config)
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
-        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config.proxy_url)
+        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config, "px_api")
         if not ok then
             px_logger.debug("HTTPC connection error: " .. err)
             error('HTTPC connection error:'  .. err)
