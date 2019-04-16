@@ -37,7 +37,8 @@ function M.load(px_config)
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
-        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config, "px_activities")
+        local scheme = px_config.ssl_enabled and "https" or "http"
+        local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, "px_activities")
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
         end
@@ -205,7 +206,10 @@ function M.load(px_config)
 
         httpc:set_timeout(2000)
 
-        local ok, err = px_common_utils.call_px_server(httpc, server, port, px_config, pool_key)
+        local scheme = ngx.var.scheme == 'http' and 'http' or 'https'
+        local call_pool_key = pool_key .. '-' .. scheme
+
+        local ok, err = px_common_utils.call_px_server(httpc, scheme, server, port, px_config, call_pool_key)
 
         if not ok then
             ngx.log(ngx.ERR, err)
@@ -257,7 +261,13 @@ function M.load(px_config)
             return default_response(default_content_type, default_content)
         end
 
-        local px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
+        local px_request_uri
+        if (ngx.var.scheme == 'http') then
+            px_request_uri = 'http://' .. px_config.client_host  .. "/" .. px_config.px_appId .. "/main.min.js"
+        else
+            px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
+        end
+
         px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
@@ -280,7 +290,14 @@ function M.load(px_config)
             return default_response(default_content_type, default_content)
         end
 
-        local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
+        local px_request_uri
+        if (ngx.var.scheme == 'http') then
+            px_request_uri = 'http://' .. px_config.captcha_script_host  .. string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
+        else
+            px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
+        end
+
+
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to px captcha at " .. px_config.captcha_script_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
 
@@ -308,7 +325,12 @@ function M.load(px_config)
             return default_response(default_content_type, default_content)
         end
 
-        local px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
+        local px_request_uri
+        if (ngx.var.scheme == 'http') then
+            px_request_uri = 'http://' .. px_config.collector_host  .. string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
+        else
+            px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
+        end
 
         px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
         ngx_req_set_uri(px_request_uri)
