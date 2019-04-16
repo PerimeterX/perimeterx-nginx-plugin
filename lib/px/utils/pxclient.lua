@@ -261,14 +261,15 @@ function M.load(px_config)
             return default_response(default_content_type, default_content)
         end
 
+        local path = "/" .. px_config.px_appId .. "/main.min.js"
         local px_request_uri
         if (ngx.var.scheme == 'http') then
-            px_request_uri = 'http://' .. px_config.client_host  .. "/" .. px_config.px_appId .. "/main.min.js"
+            px_request_uri = 'http://' .. px_config.client_host  .. path
         else
-            px_request_uri = "/" .. px_config.px_appId .. "/main.min.js"
+            px_request_uri = path
         end
 
-        px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. px_request_uri)
+        px_logger.debug("Forwarding request from "  .. ngx.var.uri .. " to client at " .. px_config.client_host  .. path)
         ngx_req_set_uri(px_request_uri)
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
 
@@ -290,15 +291,16 @@ function M.load(px_config)
             return default_response(default_content_type, default_content)
         end
 
+        local path = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
         local px_request_uri
         if (ngx.var.scheme == 'http') then
-            px_request_uri = 'http://' .. px_config.captcha_script_host  .. string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
+            px_request_uri = 'http://' .. px_config.captcha_script_host  .. path
         else
-            px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
+            px_request_uri = path
         end
 
 
-        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to px captcha at " .. px_config.captcha_script_host .. px_request_uri)
+        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to px captcha at " .. px_config.captcha_script_host .. path)
         ngx_req_set_uri(px_request_uri)
 
         px_common_utils.clear_first_party_sensitive_headers(px_config.sensitive_headers)
@@ -325,14 +327,15 @@ function M.load(px_config)
             return default_response(default_content_type, default_content)
         end
 
+        local path = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
         local px_request_uri
         if (ngx.var.scheme == 'http') then
-            px_request_uri = 'http://' .. px_config.collector_host  .. string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
+            px_request_uri = 'http://' .. px_config.collector_host  .. path
         else
-            px_request_uri = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
+            px_request_uri = path
         end
 
-        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. px_request_uri)
+        px_logger.debug("Forwarding request from "  .. ngx.var.request_uri .. " to xhr at " .. px_config.collector_host .. path)
         ngx_req_set_uri(px_request_uri)
 
         local vid = ''
