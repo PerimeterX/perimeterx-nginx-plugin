@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.1.1] - 2019-04-16
+### Fixed
+- Proxy connection pool and scheme handling
+
 ## [6.1.0] - 2019-04-07
 ### Added
 - Advanced blocking response enablement flag

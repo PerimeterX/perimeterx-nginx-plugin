@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.1-0)
+> Latest stable version: [v6.1.1](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.1-1)
 
 
 ## [Introduction](#introduction)
@@ -49,6 +49,7 @@
   * [First-Party Prefix](#first-party-prefix)
   * [Advanced Blocking Response](#json-response-enabled)
   * [Proxy Support](#proxy-url)
+  * [Proxy Authorization Header](#proxy-authorization)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -795,6 +796,20 @@ Example:
 
 ```lua
 _M.proxy_url = 'http://localhost:8008'
+```
+
+### <a name="proxy-authorization"></a> Proxy Authorization
+
+If proxy support is enabled, allow you to set a proxy authorization header.
+
+> Requires `lua-resty-http` version 0.12 and up.
+
+**Default:** nil
+
+Example:
+
+```lua
+_M.proxy_authorization = 'top-secret-header-value'
 ```
 
 ## <a name="enrichment"></a> Enrichment
