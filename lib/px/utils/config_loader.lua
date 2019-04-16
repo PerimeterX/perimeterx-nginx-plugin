@@ -21,7 +21,9 @@ function _M.get_configuration(px_config)
 
     local httpc = http.new()
 
-    local ok, err = px_common_utils.call_px_server(httpc, px_conf_server, px_port, px_config, "px_remote_config")
+    local scheme = px_config.ssl_enabled and "https" or "http"
+
+    local ok, err = px_common_utils.call_px_server(httpc, scheme, px_conf_server, px_port, px_config, "px_remote_config")
     if not ok then
         px_logger.error("HTTPC connection error: " .. err)
     end

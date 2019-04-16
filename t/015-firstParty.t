@@ -91,6 +91,7 @@ payload=W3sidCI6IlBYMiIsImQiOnsiUFg2MyI6Ik1hY0ludGVsIiwiUFg5NiI6Imh0dHA6Ly9zYW1w
 --- error_log
 [PerimeterX - DEBUG] [ PXvRfnOj4y ] - Forwarding request from /vrfnoj4y/xhr/api/v1/collector to xhr at collector-PXvRfnOj4y.perimeterx.net/vrfnoj4y/xhr/api/v1/collector
 
+
 === TEST 3: Forward captcha script request
 
 --- http_config
@@ -130,3 +131,5 @@ GET /vRfnOj4y/captcha/PXvRfnOj4y/captcha.js
 
 --- error_log
 [PerimeterX - DEBUG] [ PXvRfnOj4y ] - Forwarding request from /vRfnOj4y/captcha/PXvRfnOj4y/captcha.js to px captcha at captcha.px-cdn.net/PXvRfnOj4y/captcha.js
+
+

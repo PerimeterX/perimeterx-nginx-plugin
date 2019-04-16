@@ -150,6 +150,7 @@ function M.load(px_config)
         local px_server = px_config.base_url
         local px_port = px_config.px_port
         local ssl_enabled = px_config.ssl_enabled
+        local scheme = ssl_enabled and "https" or "http"
 
         data = cjson.encode(data)
         -- timeout in milliseconds
@@ -157,7 +158,7 @@ function M.load(px_config)
         -- create new HTTP connection
         local httpc = http.new()
         httpc:set_timeout(timeout)
-        local ok, err = px_common_utils.call_px_server(httpc, px_server, px_port, px_config, "px_api")
+        local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, "px_api")
         if not ok then
             px_logger.debug("HTTPC connection error: " .. err)
             error('HTTPC connection error:'  .. err)
