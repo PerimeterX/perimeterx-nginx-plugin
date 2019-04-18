@@ -1,4 +1,3 @@
-local hmac = require "resty.nettle.hmac"
 local px_common_utils = require('px.utils.pxcommonutils')
 local px_constants = require('px.utils.pxconstants')
 
@@ -17,6 +16,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers)
     end
     local timestamp = split_header_value[0]
     local hmac = split_header_value[1]
+    local hmac = require "resty.nettle.hmac"
     local generated_hmac = hmac('sha256', px_config.cookie_secret, timestamp)
     if hmac == generated_hmac then
         px_logger.debug('Received command to send enforcer telemetry')
