@@ -1,5 +1,5 @@
 local hmac = require "resty.nettle.hmac"
-local px_commom_utils = require('px.utils.pxcommonutils')
+local px_common_utils = require('px.utils.pxcommonutils')
 local px_constants = require('px.utils.pxconstants')
 
 local M = {}
@@ -11,7 +11,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers)
     end
 
     header_value = ngx.decode_base64(header_value)
-    local split_header_value = string_split(header_value, ':')
+    local split_header_value = string.split(header_value, ':')
     if #split_header_value ~= 2 then
         px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header)
     end
@@ -21,7 +21,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers)
     if hmac == generated_hmac then
         px_logger.debug('Received command to send enforcer telemetry')
         local details = {}
-		details.px_config = px_commom_utils.filter_config(px_config);
+		details.px_config = px_common_utils.filter_config(px_config);
 		details.update_reason = 'command'
         px_client.send_enforcer_telmetry(details);
     else
