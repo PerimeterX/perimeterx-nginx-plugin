@@ -28,7 +28,7 @@ function M.load(px_config)
     local px_server = px_config.base_url
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
-    function _M.submit(data, path)
+    function _M.submit(data, path, pool_key)
 
         local px_port = px_config.px_port
         local px_debug = px_config.px_debug
@@ -38,7 +38,7 @@ function M.load(px_config)
         local httpc = http.new()
         httpc:set_timeout(timeout)
         local scheme = px_config.ssl_enabled and "https" or "http"
-        local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, "px_activities")
+        local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, pool_key)
         if not ok then
             px_logger.error("HTTPC connection error: " .. err)
         end
@@ -156,7 +156,7 @@ function M.load(px_config)
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
-            pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
+            pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities");
         end
 
         if px_config.additional_activity_handler ~= nil then
@@ -178,7 +178,7 @@ function M.load(px_config)
         enforcer_telemetry.details = details
 
         -- Perform the HTTP action
-        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
+        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH, "px_telemetry");
     end
 
     -- Internal function that forward the requests to PerimeterX backends
