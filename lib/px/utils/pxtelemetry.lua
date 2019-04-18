@@ -14,6 +14,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
     local split_header_value = string.split(header_value, ':')
     if #split_header_value ~= 2 then
         px_logger.debug('Malformed ' .. px_constants.ENFORCER_TELEMETRY_HEADER .. ' header: ' .. header_value)
+        return
     end
     local timestamp = split_header_value[1]
     local given_hmac = string.upper(split_header_value[2])
