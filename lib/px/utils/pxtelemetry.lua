@@ -11,13 +11,13 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
     end
 
     header_value = ngx.decode_base64(header_value)
-    px_logger.debug('header_value' .. header_value)
+    px_logger.debug('header_value: ' .. header_value)
     local split_header_value = string.split(header_value, ':')
     if #split_header_value ~= 2 then
         px_logger.debug('Malformed ' .. px_constants.ENFORCER_TELEMETRY_HEADER .. ' header: ' .. header_value)
     end
     local timestamp = split_header_value[1]
-    local given_hmac = split_header_value[2]
+    local given_hmac = string.upper(split_header_value[2])
     local hmac_raw = hmac('sha256', px_config.cookie_secret, timestamp)
     local generated_hmac = px_common_utils.to_hex(hmac_raw)
     px_logger.debug('timestamp: ' .. timestamp .. ', given_hmac: ' .. given_hmac .. ', hmac_raw: ' .. hmac_raw .. ', generated_hmac: ' .. generated_hmac)
