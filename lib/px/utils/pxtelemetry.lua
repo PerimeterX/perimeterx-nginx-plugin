@@ -14,8 +14,8 @@ function M.telemetry_check_header(px_config, px_client, px_headers)
     if #split_header_value ~= 2 then
         px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header)
     end
-    local timestamp = split_header_value[0]
-    local hmac = split_header_value[1]
+    local timestamp = split_header_value[1]
+    local hmac = split_header_value[2]
     local hmac = require "resty.nettle.hmac"
     local generated_hmac = hmac('sha256', px_config.cookie_secret, timestamp)
     if hmac == generated_hmac then
