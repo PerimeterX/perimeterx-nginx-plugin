@@ -1,7 +1,9 @@
 local hmac = require "resty.nettle.hmac"
 local px_commom_utils = require('px.utils.pxcommonutils')
 
-local telemetry_check_header(px_config, px_client)
+local M = {}
+
+function M.telemetry_check_header(px_config, px_client)
     local header_value = px_headers.get_header(px_constants.ENFORCER_TELEMETRY_HEADER)
     if not header_value then
         return
@@ -25,3 +27,5 @@ local telemetry_check_header(px_config, px_client)
         px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header)
     end
 end
+
+return M
