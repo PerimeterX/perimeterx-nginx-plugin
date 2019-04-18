@@ -3,7 +3,7 @@ local px_commom_utils = require('px.utils.pxcommonutils')
 
 local M = {}
 
-function M.telemetry_check_header(px_config, px_client)
+function M.telemetry_check_header(px_config, px_client, px_headers)
     local header_value = px_headers.get_header(px_constants.ENFORCER_TELEMETRY_HEADER)
     if not header_value then
         return

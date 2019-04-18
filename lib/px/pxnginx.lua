@@ -116,7 +116,7 @@ function M.application(px_configuration_table)
     end
 
     -- check for x-px-enforcer-telemetry header
-    px_telemetry.telemetry_check_header(px_config, px_client);
+    px_telemetry.telemetry_check_header(px_config, px_client, px_headers);
 
     -- Match for client/XHRs/captcha
     if is_first_party_request(reverse_prefix, lower_request_url) then
