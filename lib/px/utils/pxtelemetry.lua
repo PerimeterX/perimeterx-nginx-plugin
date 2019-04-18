@@ -11,7 +11,7 @@ function M.telemetry_check_header(px_config, px_client)
 
     header_value = ngx.decode_base64(header_value)
     local split_header_value = string_split(header_value, ':')
-    if #split_header_value != 2 then
+    if #split_header_value ~= 2 then
         px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header)
     end
     local timestamp = split_header_value[0]
