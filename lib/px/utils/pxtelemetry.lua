@@ -18,7 +18,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
     local timestamp = split_header_value[1]
     local given_hmac = split_header_value[2]
     local hmac_raw = hmac('sha256', px_config.cookie_secret, timestamp)
-    local generated_hmac = = px_common_utils.to_hex(hmac_raw)
+    local generated_hmac = px_common_utils.to_hex(hmac_raw)
     if given_hmac == generated_hmac then
         px_logger.debug('Received command to send enforcer telemetry')
         local details = {}
