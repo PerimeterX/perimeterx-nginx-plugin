@@ -41,6 +41,7 @@ function M.application(px_configuration_table)
     local px_data_enrichment = require("px.utils.pxdataenrichment").load(px_config)
     local px_constants = require("px.utils.pxconstants")
     local px_common_utils = require("px.utils.pxcommonutils")
+    local px_telemetry = require("px.utils.pxtelemetry")
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
@@ -114,6 +115,8 @@ function M.application(px_configuration_table)
         end
     end
 
+    -- check for x-px-enforcer-telemetry header
+    px_telemetry.telemetry_check_header(px_config, px_client);
 
     -- Match for client/XHRs/captcha
     if is_first_party_request(reverse_prefix, lower_request_url) then

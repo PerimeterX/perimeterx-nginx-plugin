@@ -179,6 +179,7 @@ function M.load(px_config)
 
         -- Perform the HTTP action
         _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
+        px_logger.debug("Sent enforcer telemetry");
     end
 
     -- Internal function that forward the requests to PerimeterX backends

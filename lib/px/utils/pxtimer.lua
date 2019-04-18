@@ -13,25 +13,8 @@ function M.application(px_configutraion_table)
 	local px_logger = require ("px.utils.pxlogger").load(px_config)
 	local px_constants = require("px.utils.pxconstants")
 	local buffer = require "px.utils.pxbuffer"
-	local px_commom_utils = require('px.utils.pxcommonutils')
 
 	local ngx_timer_at = ngx.timer.at
-
-	function send_initial_enforcer_telemetry()
-		if px_config == nil or not px_config.px_enabled then
-			px_logger.debug("module is disabled, skipping enforcer telemetry")
-			return
-		end
-
-		if px_config.px_appId == 'PX_APP_ID' then
-			return
-		end
-
-		local details = {}
-		details.px_config = px_commom_utils.filter_config(px_config);
-		details.update_reason = 'initial_config'
-		pxclient.send_enforcer_telmetry(details);
-	end
 
 	function init_remote_config()
 		if px_config == nil or not px_config.px_enabled then
@@ -66,12 +49,6 @@ function M.application(px_configutraion_table)
 	end
 	-- Init async activities
 	submit_on_timer()
-
-	-- Enforcer telemerty first init
-	local ok, err = ngx_timer_at(1, send_initial_enforcer_telemetry)
-	if not ok then
-		px_logger.debug("Failed to schedule telemetry on init: " .. err)
-	end
 
 	-- Init Remote configuration
 	local ok, err = ngx_timer_at(1, init_remote_config)

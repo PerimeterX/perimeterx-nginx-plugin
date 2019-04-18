@@ -15,6 +15,7 @@ local _M = {
     FIRST_PARTY_XHR_PATH = '/xhr',
     FIRST_PARTY_CAPTCHA_PATH = '/captcha',
     EMPTY_GIF_B64 = 'R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+    ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry'
 }
 
 return _M
