@@ -13,7 +13,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers)
     header_value = ngx.decode_base64(header_value)
     local split_header_value = string.split(header_value, ':')
     if #split_header_value ~= 2 then
-        px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header)
+        px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header_value)
     end
     local timestamp = split_header_value[1]
     local hmac = split_header_value[2]
@@ -26,7 +26,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers)
 		details.update_reason = 'command'
         px_client.send_enforcer_telmetry(details);
     else
-        px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header)
+        px_logger.debug('Malformed x-px-enforcer-telemetry header: ' .. header_value)
     end
 end
 
