@@ -41,14 +41,14 @@ function M.load(px_config)
         local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, pool_key)
         if not ok then
             px_logger.error("HTTPC connection Error: " .. err)
-            return
+            error("HTTPC connection Error: " .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
             local session, err = httpc:ssl_handshake()
             if not session then
                 px_logger.error("HTTPC SSL handshare error: " .. err)
-                return
+                error("HTTPC SSL handshare error: " .. err)
             end
         end
         -- Perform the HTTP requeset
@@ -64,10 +64,10 @@ function M.load(px_config)
         })
         if not res then
             px_logger.error("Failed to make HTTP POST: " .. err)
-            return
+            error("Failed to make HTTP POST: " .. err)
         elseif res.status ~= 200 then
             px_logger.debug("Non 200 response code: " .. res.status)
-            return
+            error("Non 200 response code: " .. res.status)
         else
             px_logger.debug("POST response status: " .. res.status)
         end
@@ -171,7 +171,7 @@ function M.load(px_config)
         enforcer_telemetry.details = details
 
         -- Perform the HTTP action
-        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH, "px_telemetry")
+        pcall(_M.submit, cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH, "px_telemetry")
         px_logger.debug("Sent enforcer telemetry")
     end
 

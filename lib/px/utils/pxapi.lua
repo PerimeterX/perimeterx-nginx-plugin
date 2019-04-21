@@ -161,14 +161,14 @@ function M.load(px_config)
         local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, "px_api")
         if not ok then
             px_logger.debug("HTTPC connection error: " .. err)
-            return
+            error("HTTPC connection error: " .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
             local session, err = httpc:ssl_handshake()
             if not session then
                 px_logger.debug("HTTPC SSL handshare error: " .. err)
-                return
+                error("HTTPC SSL handshare error: " .. err)
             end
         end
         -- Perform the HTTP requeset
@@ -184,10 +184,10 @@ function M.load(px_config)
         })
         if err or not res then
             px_logger.debug("Failed to make HTTP POST: " .. err)
-            return
+            error("Failed to make HTTP POST: " .. err)
         elseif res.status ~= 200 then
             px_logger.debug("Non 200 response code: " .. res.status)
-            return
+            error("Non 200 response code: " .. res.status)
         else
             px_logger.debug("POST response status: " .. res.status)
         end
