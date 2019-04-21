@@ -22,15 +22,19 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
     local generated_hmac = px_common_utils.to_hex(hmac_raw)
     local timestamp_number = tonumber(timestamp)
     local current_unix_time_ms = ngx.time() * 1000
-    if given_hmac == generated_hmac and timestamp_number ~= nil and timestamp_number >= current_unix_time_ms then
-        local details = {}
-		details.px_config = px_common_utils.filter_config(px_config);
-		details.update_reason = 'command'
-        px_client.send_enforcer_telmetry(details);
-    else
-        px_logger.debug(px_constants.ENFORCER_TELEMETRY_HEADER .. ' hmac validation failed or timestamp expired. original: ' .. given_hmac .. '. generated hmac: ' .. generated_hmac)
-        return
+
+    if given_hmac != generated_hmac then
+        px_logger.debug(px_constants.ENFORCER_TELEMETRY_HEADER .. ' hmac validation failed. original: ' .. given_hmac .. '. generated hmac: ' .. generated_hmac)
     end
+
+    if timestamp_number == nil or timestamp_number < current_unix_time_ms then
+        px_logger.debug(px_constants.ENFORCER_TELEMETRY_HEADER .. ' timestamp expired: ' .. timestamp .. ' < ' .. tostring(current_unix_time_ms))
+    end
+    
+    local details = {}
+    details.px_config = px_common_utils.filter_config(px_config);
+    details.update_reason = 'command'
+    px_client.send_enforcer_telmetry(details);
 end
 
 return M
