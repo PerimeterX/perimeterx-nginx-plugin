@@ -40,13 +40,15 @@ function M.load(px_config)
         local scheme = px_config.ssl_enabled and "https" or "http"
         local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, pool_key)
         if not ok then
-            px_logger.error("HTTPC connection error: " .. err)
+            px_logger.error("HTTPC connection Error: " .. err)
+            return
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
             local session, err = httpc:ssl_handshake()
             if not session then
                 px_logger.error("HTTPC SSL handshare error: " .. err)
+                return
             end
         end
         -- Perform the HTTP requeset
@@ -62,10 +64,10 @@ function M.load(px_config)
         })
         if not res then
             px_logger.error("Failed to make HTTP POST: " .. err)
-            error("Failed to make HTTP POST: " .. err)
+            return
         elseif res.status ~= 200 then
             px_logger.debug("Non 200 response code: " .. res.status)
-            error("Non 200 response code: " .. res.status)
+            return
         else
             px_logger.debug("POST response status: " .. res.status)
         end
@@ -73,15 +75,6 @@ function M.load(px_config)
         -- Must read the response body to clear the buffer in order for set keepalive to work properly.
         local body = res:read_body()
 
-        -- Check for connection reuse
-        if px_debug == true then
-            local times, err = httpc:get_reused_times()
-            if not times then
-                px_logger.error("Error getting reuse times: " .. err)
-            else
-                px_logger.debug("Reused conn times: " .. times)
-            end
-        end
         -- set keepalive to ensure connection pooling
         local ok, err = httpc:set_keepalive()
         if not ok then
