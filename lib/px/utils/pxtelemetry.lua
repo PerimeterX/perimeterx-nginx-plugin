@@ -23,7 +23,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
     local timestamp_number = tonumber(timestamp)
     local current_unix_time_ms = ngx.time() * 1000
 
-    if given_hmac != generated_hmac then
+    if given_hmac ~= generated_hmac then
         px_logger.debug(px_constants.ENFORCER_TELEMETRY_HEADER .. ' hmac validation failed. original: ' .. given_hmac .. '. generated hmac: ' .. generated_hmac)
     end
 
