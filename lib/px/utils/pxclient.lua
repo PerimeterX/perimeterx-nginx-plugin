@@ -213,6 +213,7 @@ function M.load(px_config)
             local session, err = httpc:ssl_handshake()
             if not session then
                 px_logger.error("HTTPC SSL handshare error: " .. err)
+                return
             end
         end
 
