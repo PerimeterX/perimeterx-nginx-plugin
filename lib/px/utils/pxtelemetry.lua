@@ -25,10 +25,12 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
 
     if given_hmac ~= generated_hmac then
         px_logger.debug(px_constants.ENFORCER_TELEMETRY_HEADER .. ' hmac validation failed. original: ' .. given_hmac .. '. generated hmac: ' .. generated_hmac)
+        return
     end
 
     if timestamp_number == nil or timestamp_number < current_unix_time_ms then
         px_logger.debug(px_constants.ENFORCER_TELEMETRY_HEADER .. ' timestamp expired: ' .. timestamp .. ' < ' .. tostring(current_unix_time_ms))
+        return
     end
     
     local details = {}
