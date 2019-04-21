@@ -32,7 +32,7 @@ function _M.get_configuration(px_config)
         local session, err = httpc:ssl_handshake()
         if not session then
             px_logger.error("HTTPC SSL handshare error: " .. err)
-            reutrn
+            return
         end
     end
     local res, err = httpc:request({
