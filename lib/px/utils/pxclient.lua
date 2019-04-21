@@ -83,18 +83,18 @@ function M.load(px_config)
     end
 
     function _M.send_to_perimeterx(event_type, details)
-        local buflen = buffer.getBufferLength();
-        local maxbuflen = px_config.px_maxbuflen;
-        local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
+        local buflen = buffer.getBufferLength()
+        local maxbuflen = px_config.px_maxbuflen
+        local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri
 
         if event_type == 'page_requested' and not px_config.send_page_requested_activity then
             return
         end
 
-        local pxdata = {};
-        pxdata['type'] = event_type;
+        local pxdata = {}
+        pxdata['type'] = event_type
         pxdata['headers'] = px_common_utils.filter_headers(px_config.sensitive_headers, false)
-        pxdata['url'] = full_url;
+        pxdata['url'] = full_url
         pxdata['px_app_id'] = px_config.px_appId
         pxdata['timestamp'] = tostring(ngx_time())
         pxdata['socket_ip'] = px_headers.get_ip()
@@ -144,16 +144,16 @@ function M.load(px_config)
             details['simulated_block'] = not px_config.block_enabled
         end
 
-        pxdata['details'] = details;
+        pxdata['details'] = details
 
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
-            pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities");
+            pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities")
         end
 
         if px_config.additional_activity_handler ~= nil then
-            px_logger.debug("additional_activity_handler was triggered");
+            px_logger.debug("additional_activity_handler was triggered")
             px_config.additional_activity_handler(event_type, ngx.ctx, details)
         end
     end
@@ -171,8 +171,8 @@ function M.load(px_config)
         enforcer_telemetry.details = details
 
         -- Perform the HTTP action
-        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH, "px_telemetry");
-        px_logger.debug("Sent enforcer telemetry");
+        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH, "px_telemetry")
+        px_logger.debug("Sent enforcer telemetry")
     end
 
     -- Internal function that forward the requests to PerimeterX backends
@@ -270,7 +270,7 @@ function M.load(px_config)
 
         forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true, "px_client")
 
-        return true;
+        return true
     end
 
     function _M.reverse_px_captcha(reverse_prefix, lower_request_url)
