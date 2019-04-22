@@ -118,7 +118,7 @@ function M.application(px_configuration_table)
     -- check for x-px-enforcer-telemetry header
     local ran, error_msg = pcall(px_telemetry.telemetry_check_header, px_config, px_client, px_headers, px_logger)
     if not ran then
-        px_logger.debug("telemetry_check_header errored with message: " .. error_msg)
+        px_logger.debug("telemetry_check_header encountered an error: " .. error_msg)
     end
 
     -- Match for client/XHRs/captcha
