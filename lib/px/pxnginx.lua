@@ -116,7 +116,10 @@ function M.application(px_configuration_table)
     end
 
     -- check for x-px-enforcer-telemetry header
-    px_telemetry.telemetry_check_header(px_config, px_client, px_headers, px_logger);
+    local ran, error_msg = pcall(px_telemetry.telemetry_check_header, px_config, px_client, px_headers, px_logger)
+    if not ran then
+        px_logger.debug("telemetry_check_header errored with message: " .. error_msg)
+    end
 
     -- Match for client/XHRs/captcha
     if is_first_party_request(reverse_prefix, lower_request_url) then
