@@ -34,9 +34,9 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
     end
     
     local details = {}
-    details.px_config = px_common_utils.filter_config(px_config);
+    details.px_config = px_common_utils.filter_config(px_config)
     details.update_reason = 'command'
-    px_client.send_enforcer_telmetry(details);
+    px_client.send_enforcer_telmetry(details)
 end
 
 return M
