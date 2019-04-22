@@ -26,11 +26,13 @@ function _M.get_configuration(px_config)
     local ok, err = px_common_utils.call_px_server(httpc, scheme, px_conf_server, px_port, px_config, "px_remote_config")
     if not ok then
         px_logger.error("HTTPC connection error: " .. err)
+        return
     end
     if px_config.ssl_enabled == true then
         local session, err = httpc:ssl_handshake()
         if not session then
             px_logger.error("HTTPC SSL handshare error: " .. err)
+            return
         end
     end
     local res, err = httpc:request({

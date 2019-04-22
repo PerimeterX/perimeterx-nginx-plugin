@@ -28,7 +28,7 @@ function M.load(px_config)
     local px_server = px_config.base_url
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
-    function _M.submit(data, path)
+    function _M.submit(data, path, pool_key)
 
         local px_port = px_config.px_port
         local px_debug = px_config.px_debug
@@ -38,15 +38,17 @@ function M.load(px_config)
         local httpc = http.new()
         httpc:set_timeout(timeout)
         local scheme = px_config.ssl_enabled and "https" or "http"
-        local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, "px_activities")
+        local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, pool_key)
         if not ok then
-            px_logger.error("HTTPC connection error: " .. err)
+            px_logger.error("HTTPC connection Error: " .. err)
+            error("HTTPC connection Error: " .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
             local session, err = httpc:ssl_handshake()
             if not session then
                 px_logger.error("HTTPC SSL handshare error: " .. err)
+                error("HTTPC SSL handshare error: " .. err)
             end
         end
         -- Perform the HTTP requeset
@@ -73,15 +75,6 @@ function M.load(px_config)
         -- Must read the response body to clear the buffer in order for set keepalive to work properly.
         local body = res:read_body()
 
-        -- Check for connection reuse
-        if px_debug == true then
-            local times, err = httpc:get_reused_times()
-            if not times then
-                px_logger.error("Error getting reuse times: " .. err)
-            else
-                px_logger.debug("Reused conn times: " .. times)
-            end
-        end
         -- set keepalive to ensure connection pooling
         local ok, err = httpc:set_keepalive()
         if not ok then
@@ -90,18 +83,18 @@ function M.load(px_config)
     end
 
     function _M.send_to_perimeterx(event_type, details)
-        local buflen = buffer.getBufferLength();
-        local maxbuflen = px_config.px_maxbuflen;
-        local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri;
+        local buflen = buffer.getBufferLength()
+        local maxbuflen = px_config.px_maxbuflen
+        local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri
 
         if event_type == 'page_requested' and not px_config.send_page_requested_activity then
             return
         end
 
-        local pxdata = {};
-        pxdata['type'] = event_type;
+        local pxdata = {}
+        pxdata['type'] = event_type
         pxdata['headers'] = px_common_utils.filter_headers(px_config.sensitive_headers, false)
-        pxdata['url'] = full_url;
+        pxdata['url'] = full_url
         pxdata['px_app_id'] = px_config.px_appId
         pxdata['timestamp'] = tostring(ngx_time())
         pxdata['socket_ip'] = px_headers.get_ip()
@@ -151,16 +144,16 @@ function M.load(px_config)
             details['simulated_block'] = not px_config.block_enabled
         end
 
-        pxdata['details'] = details;
+        pxdata['details'] = details
 
         buffer.addEvent(pxdata)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
-            pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH);
+            pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities")
         end
 
         if px_config.additional_activity_handler ~= nil then
-            px_logger.debug("additional_activity_handler was triggered");
+            px_logger.debug("additional_activity_handler was triggered")
             px_config.additional_activity_handler(event_type, ngx.ctx, details)
         end
     end
@@ -178,7 +171,8 @@ function M.load(px_config)
         enforcer_telemetry.details = details
 
         -- Perform the HTTP action
-        _M.submit(cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH);
+        pcall(_M.submit, cjson.encode(enforcer_telemetry), px_constants.TELEMETRY_PATH, "px_telemetry")
+        px_logger.debug("Sent enforcer telemetry")
     end
 
     -- Internal function that forward the requests to PerimeterX backends
@@ -220,6 +214,7 @@ function M.load(px_config)
             local session, err = httpc:ssl_handshake()
             if not session then
                 px_logger.error("HTTPC SSL handshare error: " .. err)
+                return
             end
         end
 
@@ -275,7 +270,7 @@ function M.load(px_config)
 
         forward_to_perimeterx(px_config.client_host, px_config.client_port_overide, true, "px_client")
 
-        return true;
+        return true
     end
 
     function _M.reverse_px_captcha(reverse_prefix, lower_request_url)

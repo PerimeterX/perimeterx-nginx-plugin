@@ -3,7 +3,7 @@
 ----------------------------------------------
 
 local _M = {
-    MODULE_VERSION = "NGINX Module v6.1.1",
+    MODULE_VERSION = "NGINX Module v6.2.0",
     RISK_PATH = "/api/v3/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
     ACTIVITIES_PATH = "/api/v1/collector/s2s",
@@ -15,6 +15,7 @@ local _M = {
     FIRST_PARTY_XHR_PATH = '/xhr',
     FIRST_PARTY_CAPTCHA_PATH = '/captcha',
     EMPTY_GIF_B64 = 'R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+    ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry'
 }
 
 return _M

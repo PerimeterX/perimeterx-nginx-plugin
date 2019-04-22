@@ -161,13 +161,14 @@ function M.load(px_config)
         local ok, err = px_common_utils.call_px_server(httpc, scheme, px_server, px_port, px_config, "px_api")
         if not ok then
             px_logger.debug("HTTPC connection error: " .. err)
-            error('HTTPC connection error:'  .. err)
+            error("HTTPC connection error: " .. err)
         end
         -- Perform SSL/TLS handshake
         if ssl_enabled == true then
             local session, err = httpc:ssl_handshake()
             if not session then
                 px_logger.debug("HTTPC SSL handshare error: " .. err)
+                error("HTTPC SSL handshare error: " .. err)
             end
         end
         -- Perform the HTTP requeset
@@ -193,13 +194,6 @@ function M.load(px_config)
 
         local body = cjson.decode(res:read_body())
 
-        -- Check for connection reuse
-        if px_debug == true then
-            local times, err = httpc:get_reused_times()
-            if not times then
-                px_logger.debug("Error getting reuse times: " .. err)
-            end
-        end
         -- set keepalive to ensure connection pooling
         local ok, err = httpc:set_keepalive()
         if not ok then
