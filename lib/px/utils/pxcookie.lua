@@ -1,6 +1,6 @@
 local PXPayload = require "px.utils.pxpayload"
 
-PXCookie = PXPayload:new{}
+local PXCookie = PXPayload:new{}
 
 function PXCookie:new(t)
     t = t or {}

@@ -1,6 +1,6 @@
 local PXPayload = require "px.utils.pxpayload"
 
-PXToken = PXPayload:new{}
+local PXToken = PXPayload:new{}
 
 function PXToken:new(t)
     t = t or {}

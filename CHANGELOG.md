@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.1] - 2019-04-23
+### Fixed
+- Additional check for proxy for http scheme in first party
+- Changed global variables to local for pxcookie/pxtoken
+
 ## [6.2.0] - 2019-04-22
 ### Fixed
 - Proxy connection pool key for activities and telemetry
