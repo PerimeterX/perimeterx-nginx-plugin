@@ -1,6 +1,6 @@
 local PXToken = require('px.utils.pxtoken')
 
-TokenV1 = PXToken:new{}
+local TokenV1 = PXToken:new{}
 
 function TokenV1:new(t)
     t = t or {}

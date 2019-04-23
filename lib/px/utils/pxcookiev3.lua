@@ -1,6 +1,6 @@
 local PXCookie = require('px.utils.pxcookie')
 
-PXCookieV3 = PXCookie:new {}
+local PXCookieV3 = PXCookie:new {}
 
 function PXCookieV3:new(t)
     t = t or {}
