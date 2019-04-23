@@ -258,7 +258,7 @@ function M.load(px_config)
 
         local path = "/" .. px_config.px_appId .. "/main.min.js"
         local px_request_uri
-        if (ngx.var.scheme == 'http') then
+        if (ngx.var.scheme == 'http' and px_config.proxy_url) then
             px_request_uri = 'http://' .. px_config.client_host  .. path
         else
             px_request_uri = path
@@ -288,7 +288,7 @@ function M.load(px_config)
 
         local path = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_CAPTCHA_PATH, '')
         local px_request_uri
-        if (ngx.var.scheme == 'http') then
+        if (ngx.var.scheme == 'http' and px_config.proxy_url) then
             px_request_uri = 'http://' .. px_config.captcha_script_host  .. path
         else
             px_request_uri = path
@@ -324,7 +324,7 @@ function M.load(px_config)
 
         local path = string.gsub(ngx.var.uri, '/' .. reverse_prefix .. px_constants.FIRST_PARTY_XHR_PATH, '')
         local px_request_uri
-        if (ngx.var.scheme == 'http') then
+        if (ngx.var.scheme == 'http' and px_config.proxy_url) then
             px_request_uri = 'http://' .. px_config.collector_host  .. path
         else
             px_request_uri = path
