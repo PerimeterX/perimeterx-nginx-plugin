@@ -1,5 +1,5 @@
  package = "perimeterx-nginx-plugin"
- version = "6.2-1"
+ version = "6.2.1-1"
  source = {
     url = "git://github.com/PerimeterX/perimeterx-nginx-plugin.git",
     tag = "v6.2.1",
