@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.2] - 2019-04-24
+### Fixed
+- Changed Payload from global to local variable
+
 ## [6.2.1] - 2019-04-23
 ### Fixed
 - Additional check for proxy for http scheme in first party
