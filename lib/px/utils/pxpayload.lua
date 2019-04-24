@@ -1,4 +1,4 @@
-PXPayload = {}
+local PXPayload = {}
 
 function PXPayload:new(t)
     t = t or {}
