@@ -62,8 +62,8 @@ local PX_CONFIG_FILE_MAP = {}
 PX_CONFIG_FILE_MAP["px_app_id"] = "px_appId"
 PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
 
-local function full_path(config_file_path)
-    return string.sub(debug.getinfo(1).source, 2, string.len(config_file_path) * -1)
+local function get_dirname()
+    return string.sub(debug.getinfo(1).source, 2, string.len('/config_builder.lua') * -1)
 end
 
 local function load_config_file(px_config)
@@ -71,7 +71,7 @@ local function load_config_file(px_config)
     local ngx_ERR = ngx.ERR
 
     if px_config["config_file_path"] ~= nil then
-        local config_file_path = full_path(px_config["config_file_path"]) .. px_config["config_file_path"]
+        local config_file_path = get_dirname(px_config["config_file_path"]) .. px_config["config_file_path"]
         
         local file = io.open(config_file_path, "rb")
         if file == nil then
