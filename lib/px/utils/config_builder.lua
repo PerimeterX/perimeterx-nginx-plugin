@@ -67,6 +67,7 @@ local function get_dirname()
 end
 
 local function load_config_file(px_config)
+    local cjson = require "cjson"
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
 
@@ -105,7 +106,6 @@ end
 function _M.load(px_config)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
-    local cjson = require "cjson"
     local string_sub = string.sub
 
     -- Check the correct values from input configurations
