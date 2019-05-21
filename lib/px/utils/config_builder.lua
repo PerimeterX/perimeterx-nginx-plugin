@@ -1,6 +1,6 @@
 local _M = {}
-local PX_DEFAULT_CONFIGURATIONS  = {}
-local PX_REQUIRED_FIELDS= {"px_appId", "cookie_secret", "auth_token"}
+local PX_DEFAULT_CONFIGURATIONS = {}
+local PX_REQUIRED_FIELDS = {"px_appId", "cookie_secret", "auth_token"}
 
 PX_DEFAULT_CONFIGURATIONS["px_enabled"] = { true, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_appId"] = { nil, "string"}
@@ -58,12 +58,12 @@ PX_DEFAULT_CONFIGURATIONS["whitelist_ua_full"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_sub"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["config_file_path"] = { nil, "string"}
 
-local PX_CONFIG_FILE_MAP  = {}
+local PX_CONFIG_FILE_MAP = {}
 PX_CONFIG_FILE_MAP["px_app_id"] = "px_appId"
 PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
 
 local function load_config_file(px_config)  
-    if px_config["config_file_path"] ~= nil then {
+    if px_config["config_file_path"] ~= nil then
         local config_file_path = __dirname .. px_config["config_file_path"]
         
         local file = io.open(config_file_path, "rb")
