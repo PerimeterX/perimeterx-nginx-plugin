@@ -56,10 +56,13 @@ PX_DEFAULT_CONFIGURATIONS["whitelist_uri_suffixes"] = { {'.css', '.bmp', '.tif',
 PX_DEFAULT_CONFIGURATIONS["whitelist_ip_addresses"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_full"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_sub"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["config_file_path"] = { nil, "string"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
+    local cjson_util = require "cjson.util"
+    local cjson = require "cjson"
 
     -- Check the correct values from input configurations
     for k, v in pairs(px_config) do
@@ -82,6 +85,25 @@ function _M.load(px_config)
             px_config["px_enabled"] = false
         end
     end
+
+    -- Load file config
+    if (px_config['config_file_path'] ~= nil) {
+        local success, data = pcall(cjson_util.file_load, __dirname .. px_config)
+        if not success then
+            px_logger.debug("error while reading config file")
+            return
+        end
+
+        local success, json_data = pcall(cjson.decode, data)
+        if not success then
+            px_logger.debug("error while decoding config file as json")
+            return
+        end
+
+        for k, v in pairs(json_data) do
+            px_config[k] = v
+        end
+    }
 
     if px_config["px_enabled"] == true then
         px_config["base_url"] = string.format('sapi-%s.perimeterx.net', px_config["px_appId"])
