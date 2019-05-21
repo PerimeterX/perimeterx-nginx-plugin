@@ -64,14 +64,14 @@ PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
 
 local function load_config_file(px_config)
     local ngx_log = ngx.log
-    local ngx_DEBUG = ngx.ERR
+    local ngx_ERR = ngx.ERR
 
     if px_config["config_file_path"] ~= nil then
         local config_file_path = __dirname .. px_config["config_file_path"]
         
         local file = io.open(config_file_path, "rb")
         if (file == nil) then
-            ngx_log(ngx_DEBUG, "[PerimeterX - DEBUG] - cannot open file " .. config_file_path)
+            ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - cannot open file " .. config_file_path)
             return
         end
         local content = file:read("*all")
@@ -79,7 +79,7 @@ local function load_config_file(px_config)
 
         local success, json_data = pcall(cjson.decode, data)
         if not success then
-            ngx_log(ngx_DEBUG, "[PerimeterX - DEBUG] - error while decoding config file as json")
+            ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - error while decoding config file as json")
             return
         end
 
@@ -94,14 +94,13 @@ local function load_config_file(px_config)
             end
         end
 
-        ngx_log(ngx_DEBUG, "[PerimeterX - DEBUG] - loaded config file successfully")
+        ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - loaded config file successfully")
     end
 end
 
 function _M.load(px_config)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
-    local ngx_DEBUG = ngx.ERR
     local cjson = require "cjson"
     local string_sub = string.sub
 
@@ -127,8 +126,9 @@ function _M.load(px_config)
         end
     end
     
-    if not pcall(load_config_file, px_config) then
-        ngx_log(ngx_DEBUG, "[PerimeterX - DEBUG] - error loading config file")
+    local status, err = pcall(load_config_file, px_config)
+    if not status then
+        ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - error loading config file: " .. err)
     end
 
     if px_config["px_enabled"] == true then
