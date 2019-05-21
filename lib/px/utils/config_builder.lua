@@ -63,7 +63,7 @@ PX_CONFIG_FILE_MAP["px_app_id"] = "px_appId"
 PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
 
 local function load_config_file(px_config)  
-    if (px_config['config_file_path'] ~= nil) {
+    if px_config["config_file_path"] ~= nil then {
         local config_file_path = __dirname .. px_config["config_file_path"]
         
         local file = io.open(config_file_path, "rb")
@@ -84,13 +84,13 @@ local function load_config_file(px_config)
             if PX_CONFIG_FILE_MAP[k] then
                 px_config[PX_CONFIG_FILE_MAP[k]] = v
             else
-                if string_sub(k, 1, 3) == 'px_' then
+                if string_sub(k, 1, 3) == "px_" then
                     no_px_key = string_sub(k, 4)
                     px_config[no_px_key] = v
                 end
             end
         end
-    }
+    end
 end
 
 function _M.load(px_config)
