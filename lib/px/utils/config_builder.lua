@@ -74,6 +74,7 @@ local function load_config_file(px_config)
     local cjson = require "cjson"
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
+    local string_sub = string.sub
 
     if px_config["config_file_path"] ~= nil then
         local config_file_path = px_config["config_file_path"]
@@ -108,7 +109,6 @@ end
 function _M.load(px_config)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
-    local string_sub = string.sub
 
     -- Check the correct values from input configurations
     for k, v in pairs(px_config) do
