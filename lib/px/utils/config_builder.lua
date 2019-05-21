@@ -127,8 +127,7 @@ function _M.load(px_config)
         end
     end
     
-    local success = pcall(load_config_file, px_config)
-    if not success then
+    if not pcall(load_config_file, px_config) then
         ngx_log(ngx_DEBUG, "[PerimeterX - DEBUG] - error loading config file")
     end
 
