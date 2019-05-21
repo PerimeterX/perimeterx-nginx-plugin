@@ -102,8 +102,6 @@ local function load_config_file(px_config)
                 end
             end
         end
-
-        ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - loaded config file successfully")
     end
 end
 
