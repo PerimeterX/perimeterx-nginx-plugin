@@ -67,7 +67,7 @@ local function load_config_file(px_config)
     local ngx_ERR = ngx.ERR
 
     if px_config["config_file_path"] ~= nil then
-        local config_file_path = get_path() .. px_config["config_file_path"]
+        local config_file_path = px_config["config_file_path"]
         
         local file = io.open(config_file_path, "rb")
         if (file == nil) then
