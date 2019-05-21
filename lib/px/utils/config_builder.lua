@@ -63,7 +63,7 @@ PX_CONFIG_FILE_MAP["px_app_id"] = "px_appId"
 PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
 
 local function get_dirname()
-    return string.sub(debug.getinfo(1).source, 2, string.len('/config_builder.lua') * -1)
+    return string.sub(debug.getinfo(1).source, 2, string.len('/utils/config_builder.lua') * -1)
 end
 
 local function load_config_file(px_config)
