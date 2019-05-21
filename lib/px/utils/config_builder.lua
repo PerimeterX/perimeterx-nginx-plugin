@@ -58,11 +58,46 @@ PX_DEFAULT_CONFIGURATIONS["whitelist_ua_full"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_sub"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["config_file_path"] = { nil, "string"}
 
+local PX_CONFIG_FILE_MAP  = {}
+PX_CONFIG_FILE_MAP["px_app_id"] = "px_appId"
+PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
+
+local function load_config_file(px_config)  
+    if (px_config['config_file_path'] ~= nil) {
+        local config_file_path = __dirname .. px_config["config_file_path"]
+        
+        local file = io.open(config_file_path, "rb")
+        if (file == nil) then
+            px_logger.debug("cannot open file " .. config_file_path)
+            return
+        end
+        local content = file:read("*all")
+        file:close()
+
+        local success, json_data = pcall(cjson.decode, data)
+        if not success then
+            px_logger.debug("error while decoding config file as json")
+            return
+        end
+
+        for k, v in pairs(json_data) do
+            if PX_CONFIG_FILE_MAP[k] then
+                px_config[PX_CONFIG_FILE_MAP[k]] = v
+            else
+                if string_sub(k, 1, 3) == 'px_' then
+                    no_px_key = string_sub(k, 4)
+                    px_config[no_px_key] = v
+                end
+            end
+        end
+    }
+end
+
 function _M.load(px_config)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
-    local cjson_util = require "cjson.util"
     local cjson = require "cjson"
+    local string_sub = string.sub
 
     -- Check the correct values from input configurations
     for k, v in pairs(px_config) do
@@ -85,25 +120,11 @@ function _M.load(px_config)
             px_config["px_enabled"] = false
         end
     end
-
-    -- Load file config
-    if (px_config['config_file_path'] ~= nil) {
-        local success, data = pcall(cjson_util.file_load, __dirname .. px_config)
-        if not success then
-            px_logger.debug("error while reading config file")
-            return
-        end
-
-        local success, json_data = pcall(cjson.decode, data)
-        if not success then
-            px_logger.debug("error while decoding config file as json")
-            return
-        end
-
-        for k, v in pairs(json_data) do
-            px_config[k] = v
-        end
-    }
+    
+    local success = pcall(load_config_file, px_config)
+    if not success then
+        px_logger.debug("error loading config file")
+    end
 
     if px_config["px_enabled"] == true then
         px_config["base_url"] = string.format('sapi-%s.perimeterx.net', px_config["px_appId"])
