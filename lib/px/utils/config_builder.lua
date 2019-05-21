@@ -61,6 +61,10 @@ PX_DEFAULT_CONFIGURATIONS["config_file_path"] = { nil, "string"}
 local PX_CONFIG_FILE_MAP = {}
 PX_CONFIG_FILE_MAP["px_app_id"] = "px_appId"
 PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
+PX_CONFIG_FILE_MAP["px_custom_block_page_url"] = "custom_block_url"
+PX_CONFIG_FILE_MAP["px_redirect_on_custom_block_page_url"] = "redirect_on_custom_url"
+PX_CONFIG_FILE_MAP["px_collector_url"] = "collector_host"
+PX_CONFIG_FILE_MAP["px_client_url"] = "client_host"
 
 local function get_dirname()
     return string.sub(debug.getinfo(1).source, 2, string.len('/utils/config_builder.lua') * -1)
