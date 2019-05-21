@@ -79,7 +79,7 @@ local function load_config_file(px_config)
             ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - unable to read config file: " .. config_file_path)
             return
         end
-        local content = file:read("*all")
+        local data = file:read("*all")
         file:close()
 
         local success, json_data = pcall(cjson.decode, data)
