@@ -64,7 +64,7 @@ PX_CONFIG_FILE_MAP["px_enabled"] = "px_enabled"
 
 local function load_config_file(px_config)
     local ngx_log = ngx.log
-    local ngx_DEBUG = ngx.DEBUG
+    local ngx_DEBUG = ngx.ERR
 
     if px_config["config_file_path"] ~= nil then
         local config_file_path = __dirname .. px_config["config_file_path"]
@@ -101,7 +101,7 @@ end
 function _M.load(px_config)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
-    local ngx_DEBUG = ngx.DEBUG
+    local ngx_DEBUG = ngx.ERR
     local cjson = require "cjson"
     local string_sub = string.sub
 
