@@ -66,31 +66,42 @@ PX_CONFIG_FILE_MAP["px_redirect_on_custom_block_page_url"] = "redirect_on_custom
 PX_CONFIG_FILE_MAP["px_collector_url"] = "collector_host"
 PX_CONFIG_FILE_MAP["px_client_url"] = "client_host"
 
+local loaded_config_file = nil
+
 local function get_dirname()
     return string.sub(debug.getinfo(1).source, 2, string.len('/utils/config_builder.lua') * -1)
 end
 
-local function load_config_file(px_config)
+local function load_config_file(config_file_path)
     local cjson = require "cjson"
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
+
+    local file = io.open(config_file_path, "rb")
+    if file == nil then
+        ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - unable to read config file: " .. config_file_path)
+        return nil
+    end
+    local data = file:read("*all")
+    file:close()
+
+    local success, json_data = pcall(cjson.decode, data)
+    if not success then
+        ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - error while decoding config file as json")
+        return nil
+    end
+
+    return json_data
+end
+
+local function update_config_from_file(px_config)
     local string_sub = string.sub
 
-    if px_config["config_file_path"] ~= nil then
-        local config_file_path = px_config["config_file_path"]
+    config_file_path = px_config["config_file_path"]
+    if config_file_path ~= nil then
         
-        local file = io.open(config_file_path, "rb")
-        if file == nil then
-            ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - unable to read config file: " .. config_file_path)
-            return
-        end
-        local data = file:read("*all")
-        file:close()
-
-        local success, json_data = pcall(cjson.decode, data)
-        if not success then
-            ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - error while decoding config file as json")
-            return
+        if loaded_config_file == nil then
+            loaded_config_file = load_config_file(config_file_path)
         end
 
         for k, v in pairs(json_data) do
@@ -132,7 +143,7 @@ function _M.load(px_config)
         end
     end
     
-    local status, err = pcall(load_config_file, px_config)
+    local status, err = pcall(update_config_from_file, px_config)
     if not status then
         ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - error loading config file: " .. err)
     end
