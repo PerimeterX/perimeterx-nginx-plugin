@@ -80,7 +80,7 @@ local function load_config_file(config_file_path)
     local file = io.open(config_file_path, "rb")
     if file == nil then
         ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - unable to read config file: " .. config_file_path)
-        return nil
+        return false
     end
     local data = file:read("*all")
     file:close()
@@ -88,7 +88,7 @@ local function load_config_file(config_file_path)
     local success, json_data = pcall(cjson.decode, data)
     if not success then
         ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - error while decoding config file as json")
-        return nil
+        return false
     end
 
     ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - loaded config from file successfully")
@@ -104,8 +104,11 @@ local function update_config_from_file(px_config)
         if loaded_config_file == nil then
             loaded_config_file = load_config_file(config_file_path)
         end
+        if loaded_config_file == false then
+            return
+        end
 
-        for k, v in pairs(json_data) do
+        for k, v in pairs(loaded_config_file) do
             if PX_CONFIG_FILE_MAP[k] then
                 px_config[PX_CONFIG_FILE_MAP[k]] = v
             else
