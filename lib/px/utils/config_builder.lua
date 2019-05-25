@@ -91,6 +91,7 @@ local function load_config_file(config_file_path)
         return nil
     end
 
+    ngx_log(ngx_ERR, "[PerimeterX - DEBUG] - loaded config from file successfully")
     return json_data
 end
 
