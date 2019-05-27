@@ -714,21 +714,17 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
  * [reCaptcha](examples/Custom Block Page + reCAPTCHA + Redirect/README.md)
  * [Custom Block Page](examples/Custom Block Page/README.md)
 
-### <a name="redirect_to_subdomain"></a> Redirect to Subdomain
+### <a name="redirect_to_referer"></a> Redirect to Referer
 
-If your custom block page is on a different subdomain and you set `Redirect on Custom URL` to `true`, set this option to the subdomain you wish to redirect to. The following example will set the custom block url to `blocking.example.com`. Once the captcha is solved - the page will redirect to `www.example.com` with the path to the page the challenge page originated from.
+A boolean flag indicating if the challenege page should redirect to the referer page upon successful solve.
 
-  > NOTE: The `redirect_to_subdomain` property will be active only if `redirect_on_custom_url` is set to `true`.
-
- **Default:** nil
+ **Default:** false
 
  Example:
 
 
   ```lua
-  _M.custom_block_url = 'blocking.example.com/block.html'
-  _M.redirect_on_custom_url = true
-  _M.redirect_to_subdomain = 'www'
+  _M.redirect_to_referer = true
   ```
 
 

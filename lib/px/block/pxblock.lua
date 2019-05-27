@@ -164,8 +164,8 @@ function M.load(px_config)
                 local req_query_param = ngx.req.get_uri_args()
                 local enc_url, enc_args
                 local original_req_url = ngx.var.uri
-                if px_config.redirect_to_subdomain ~= nil then
-                    original_req_url = ngx.var.scheme .. "://" .. px_config.redirect_to_subdomain .. "." .. px_common_utils.get_parent_domain(ngx.var.host) .. ngx.var.uri
+                if px_config.redirect_to_referer == true then
+                    original_req_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri
                 end
                 if req_query_param then
                     enc_args = ngx_encode_args(req_query_param)

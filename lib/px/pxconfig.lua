@@ -47,7 +47,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 
 -- _M.custom_block_url = nil
 -- _M.redirect_on_custom_url = false
--- _M.redirect_to_subdomain = nil
+-- _M.redirect_to_referer = false
 
 -- ## Debug Parameters ##
 -- _M.px_debug = false

@@ -161,31 +161,6 @@ function _M.call_px_server(httpc, scheme, host, port, px_config, pool_key)
     end
 end
 
-function _M.get_parent_domain(hostname)
-  local splittedDomain = string_split(hostname, ".")
-  local startIndex = #splittedDomain > 1 and #splittedDomain - 1 or 1
-  return table_join(splittedDomain, startIndex, ".")
-end
-
-function string_split(str, delimeter)
-  local fields = {}
-  local b = 1
-  for i in string.gmatch(str, "[^".. delimeter .. "]+") do
-    fields[b] = i
-    b = b + 1
-  end
-  return fields
-end
-
-function table_join(table, startIndex, delimiter)
-  local result = ""
-  for i = startIndex, #table do
-    result = result .. table[i] .. "."
-  end
-  result = string.sub(result, 1, -2)
-  return result
-end
-
 function connect_proxy(httpc, proxy_uri, scheme, host, port, pool_key, proxy_authorization)
     -- Parse the provided proxy URI
     local parsed_proxy_uri, err = httpc:parse_uri(proxy_uri, false)
