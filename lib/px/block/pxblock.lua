@@ -18,7 +18,6 @@ function M.load(px_config)
     local px_client = require("px.utils.pxclient").load(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
     local px_headers = require("px.utils.pxheaders").load(px_config)
-    local px_common_utils = require("px.utils.pxcommonutils")
     local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
