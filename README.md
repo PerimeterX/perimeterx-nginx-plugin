@@ -11,6 +11,7 @@
 
 ## [Upgrading](#upgradingVersions)
 * [From any Version Lower than 4.x](#3x4x)
+* [From any Version Above 4.x](#4x)
 
 ## [Installation](#installation)
 * [Supported Operating Systems](#supported_os)
@@ -91,6 +92,10 @@ As of version 4.x the config builder was added. The config builder adds default 
         require("px.pxnginx").application(pxconfig)
     }
 ```
+
+#### <a name="4x"></a> From any Version above 4.x
+
+To upgrade to the latest Enforcer version, [re-install](#installation) the Enforcer according to your OS.
 
 ## <a name="installation"></a>Installation
 
