@@ -716,12 +716,11 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
 
 ### <a name="redirect_to_referer"></a> Redirect to Referer
 
-A boolean flag indicating if the challenege page should redirect to the referer page upon successful solve.
+Indicates whether the user is redirected from the challenge page to the referrer page after successfully solving the challenge.
 
  **Default:** false
 
  Example:
-
 
   ```lua
   _M.redirect_to_referer = true
