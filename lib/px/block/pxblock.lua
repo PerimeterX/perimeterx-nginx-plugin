@@ -18,6 +18,7 @@ function M.load(px_config)
     local px_client = require("px.utils.pxclient").load(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
     local px_headers = require("px.utils.pxheaders").load(px_config)
+    local px_common_utils = require("px.utils.pxcommonutils")
     local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
     local ngx_exit = ngx.exit
@@ -163,6 +164,9 @@ function M.load(px_config)
                 local req_query_param = ngx.req.get_uri_args()
                 local enc_url, enc_args
                 local original_req_url = ngx.var.uri
+                if px_config.redirect_to_referer == true then
+                    original_req_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri
+                end
                 if req_query_param then
                     enc_args = ngx_encode_args(req_query_param)
                     enc_url = ngx_endcode_64(original_req_url .. '?' .. enc_args)
