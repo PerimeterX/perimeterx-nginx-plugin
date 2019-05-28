@@ -13,7 +13,7 @@ In order to use the example:
     window._pxJsClientSrc = 'https://client.perimeterx.net/<APP_ID>/main.min.js';
     window._pxHostUrl = 'https://collector-<APP_ID>.perimeterx.net';
  </script>
- <script src="https://captcha.px-cdn.perimeterx.net/<APP_ID>/captcha.js?a=b&m=0"></script>
+ <script src="https://captcha.px-cdn.net/<APP_ID>/captcha.js?a=b&m=0"></script>
 ```
 
 2. Set the `_M.custom_block_url` to the location you have just defined (e.g. /block.html)

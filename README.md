@@ -4,20 +4,21 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.2.2](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.2.2-1)
+> Latest stable version: [v6.3.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.3.0-1)
 
 
 ## [Introduction](#introduction)
 
-## [Upgrading](#upgradingVersions) 
+## [Upgrading](#upgradingVersions)
 * [From any Version Lower than 4.x](#3x4x)
+* [From any Version Above 4.x](#4x)
 
 ## [Installation](#installation)
 * [Supported Operating Systems](#supported_os)
 * [Supported NGINX Versions](#supported_versions)
 * [Installing with Ubuntu](#ubuntu)
 * [Installing with CentOS7](#centos7)
-* [Installing the PerimeterX NGINX Plugin for NGINX+](#installation_nginxplus_px)  
+* [Installing the PerimeterX NGINX Plugin for NGINX+](#installation_nginxplus_px)
 * [Required NGINX Configuration](#nginx_configuration)
   * [Resolver](#nginx_resolver)
   * [Lua Package Path](#nginx_lua_package_path)
@@ -43,6 +44,7 @@
   * [Customize Default Block Page](#customblockpage)
   * [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
   * [Redirect on Custom URL](#redirect_on_custom_url)
+  * [Redirect to Subdomain](#redirect_to_subdomain)
   * [Additional Activity Handler](#add-activity-handler)
   * [Enrich Custom Parameters](#custom-parameters)
   * [Blocking Score](#blocking-score)
@@ -57,7 +59,7 @@
 
 ## [Advanced Blocking Response](#advancedBlockingResponse)
 
-## [Appendix](#appendix)  
+## [Appendix](#appendix)
  * [HTTP v2 Support](#http2)
  * [NGINX Plus](#nginxplus)
  * [NGINX Dynamic Modules](#dynamicmodules)
@@ -67,15 +69,15 @@
 
 ## <a name="introduction"></a> Introduction
 The PerimeterX Nginx Lua Plugin is a Lua module that enforces whether or not
-a request is allowed to continue being processed. When the PerimeterX Enforcer determines that a request is coming from a non-human source the request is blocked. 
- 
+a request is allowed to continue being processed. When the PerimeterX Enforcer determines that a request is coming from a non-human source the request is blocked.
+
 ## <a name="upgradingVersions"></a> Upgrading
 See the full [changelog](CHANGELOG.md) for all versions.
 
 #### <a name="3x4x"></a> From any Version Lower than 4.x
 
 As of version 4.x the config builder was added. The config builder adds default values to properties that are not impicitly specified. This change requires the user to import the configuration in the `init_worker_by_lua_block` and `access_by_lua_block` blocks inside `nginx.conf`:
-   
+
 1. Modify `init_worker_by_lua_block`
 ```lua
     init_worker_by_lua_block {
@@ -91,18 +93,22 @@ As of version 4.x the config builder was added. The config builder adds default 
     }
 ```
 
+#### <a name="4x"></a> From any Version above 4.x
+
+To upgrade to the latest Enforcer version, [re-install](#installation) the Enforcer according to your OS.
+
 ## <a name="installation"></a>Installation
 
 #### <a name="supported_os"></a> Supported Operating Systems
 * Debian
-* [Ubuntu 14.04](#ubuntu1404) or [Ubuntu 16.04+](#ubuntu1604) 
+* [Ubuntu 14.04](#ubuntu1404) or [Ubuntu 16.04+](#ubuntu1604)
 * RHEL
 * [CentOS 7](#centos7)
 * Amazon Linux (AMI)
 
 #### <a name="supported_versions"></a>Supported NGINX Versions:
-Recomended that you use the newest version of NGINX from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo. 
- 
+Recomended that you use the newest version of NGINX from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo.
+
 * [NGINX 1.7 or later](#installation_px)
   * [Lua NGINX Module V0.9.11 or later](#installation_px)
 * [NGINX Plus](#installation_nginxplus_px)
@@ -122,14 +128,14 @@ sudo apt-get upgrade
 ```
 
 ###### 2. Add the offical NGINX repository to get the latest version of NGINX
-```sh 
+```sh
 sudo add-apt-repository ppa:nginx/stable
 ```
   If an `add-apt-repository: command not found` error is returned, run:
- 
+
   `sudo apt-get -y install software-properties-common`
 
-###### 3. Install the dependencies for Ubuntu 14.04: 
+###### 3. Install the dependencies for Ubuntu 14.04:
 ```sh
 sudo apt-get -y install build-essential
 sudo apt-get -y install ca-certificates
@@ -150,7 +156,7 @@ sudo make clean && sudo make build && sudo make install
 cd ~
 ```
 
-###### 5. Download and install Netttle 3.3 from source 
+###### 5. Download and install Netttle 3.3 from source
 ```sh
 wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
 tar -xzf nettle-3.3.tar.gz
@@ -180,13 +186,13 @@ sudo apt-get update
 ```
 
 ###### 2. Add the offical NGINX repository to get the latest version of NGINX
-```sh 
+```sh
 sudo add-apt-repository ppa:nginx/stable
 ```
   If an `add-apt-repository: command not found` error is returned, run:
- 
+
   `sudo apt-get -y install software-properties-common`
-  
+
 ###### 3. Update and upgrade your existing dependencies for Ubuntu 16.04 or higher
 ```sh
 sudo apt-get update
@@ -198,12 +204,12 @@ sudo apt-get upgrade
 sudo apt-get -y install build-essential
 sudo apt-get -y install ca-certificates
 sudo apt-get -y install nginx
-sudo apt-get -y install libnginx-mod-http-lua 
-sudo apt-get -y install lua-cjson 
-sudo apt-get -y install libnettle6 
-sudo apt-get -y install nettle-dev 
-sudo apt-get -y install luarocks 
-sudo apt-get -y install luajit 
+sudo apt-get -y install libnginx-mod-http-lua
+sudo apt-get -y install lua-cjson
+sudo apt-get -y install libnettle6
+sudo apt-get -y install nettle-dev
+sudo apt-get -y install luarocks
+sudo apt-get -y install luajit
 sudo apt-get -y install libluajit-5.1-dev
 ```
 
@@ -214,19 +220,19 @@ luarocks install perimeterx-nginx-plugin
 
 ##
 ### <a name="centos7"></a>Installing with CentOS 7
-NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This means that you need to compile the Module from source. 
+NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This means that you need to compile the Module from source.
 
 ###### 1. Update and Install dependecies
-```sh 
+```sh
 sudo yum -y update
 sudo yum install -y epel-release
 sudo yum update -y
 sudo yum groupinstall -y  "Development Tools"
-sudo yum install -y luarocks wget rpmdevtools git luajit luajit-devel openssl-devel zlib-devel pcre-devel gcc gcc-c++ make perl-ExtUtils-Embed lua-json lua-devel  ca-certificates 
+sudo yum install -y luarocks wget rpmdevtools git luajit luajit-devel openssl-devel zlib-devel pcre-devel gcc gcc-c++ make perl-ExtUtils-Embed lua-json lua-devel  ca-certificates
 sudo yum remove -y nettle
 ```
 
-###### 2. Make a tmp directory to work in 
+###### 2. Make a tmp directory to work in
 ```sh
 sudo mkdir /tmp/nginx
 cd /tmp/nginx
@@ -253,7 +259,7 @@ tar -xvf nginx_lua_module.tar.gz
 ###### 5. Install Nettle from source
 ```sh
 cd /tmp/nginx/nettle-3.4
-sudo ./configure --prefix=/usr --disable-static 
+sudo ./configure --prefix=/usr --disable-static
 sudo make
 sudo make check
 sudo make install
@@ -267,7 +273,7 @@ cd /tmp/nginx/LuaJIT-2.0.4
 sudo make install
 ```
 
-###### 7. Build and Install NGINX with required Modules 
+###### 7. Build and Install NGINX with required Modules
 ```sh
 cd /tmp/nginx/nginx-1.13.11
 LUAJIT_LIB=/usr/local/lib LUAJIT_INC=/usr/local/include/luajit-2.0 \
@@ -295,7 +301,7 @@ sudo make install
 sudo nginx -t
 ```
 
-###### 8. Install PerimeterX Nginx Plugin & Dependencies 
+###### 8. Install PerimeterX Nginx Plugin & Dependencies
 ```sh
 sudo luarocks install luasec
 sudo luarocks install lustache
@@ -308,7 +314,7 @@ sudo luarocks install perimeterx-nginx-plugin
 
 ###### 9. Optionalally, if you are testing in a new environment you may need to configure the following:
 * Add the user "nginx"
-   ```sh 
+   ```sh
    sudo useradd --system --home /var/cache/nginx --shell /sbin/nologin --comment "nginx user" --user-group nginx
    ```
 
@@ -317,14 +323,14 @@ sudo luarocks install perimeterx-nginx-plugin
   sudo vi /usr/lib/systemd/system/nginx.service
   ```
 
-* Paste the following in the file you just created: 
+* Paste the following in the file you just created:
   ```text
   [Unit]
   Description=nginx - high performance web server
   Documentation=https://nginx.org/en/docs/
   After=network-online.target remote-fs.target nss-lookup.target
   Wants=network-online.target
-  
+
   [Service]
   Type=forking
   PIDFile=/var/run/nginx.pid
@@ -332,14 +338,14 @@ sudo luarocks install perimeterx-nginx-plugin
   ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
   ExecReload=/bin/kill -s HUP $MAINPID
   ExecStop=/bin/kill -s TERM $MAINPID
-  
+
   [Install]
   WantedBy=multi-user.target
   ```
 * Enable and Start the NGINX Service
   ```sh
   sudo systemctl is-enabled nginx.service
-  sudo systemctl start nginx.service 
+  sudo systemctl start nginx.service
   sudo systemctl enable nginx.service
   ```
 
@@ -356,13 +362,13 @@ If you are already using NGINX+, the following steps cover installing the NGINX+
 The following NGINX Configurations are required to support the PerimeterX NGINX Lua Plugin:
 
 * #### <a name="nginx_resolver"></a>Resolver
-  The Resolver directive must be configured in the HTTP section of your NGINX configuration. 
-    * Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`), 
-   
-   _or_ 
-   
-   * Set the resolver, `resolver A.B.C.D;`, to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).   
-  
+  The Resolver directive must be configured in the HTTP section of your NGINX configuration.
+    * Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`),
+
+   _or_
+
+   * Set the resolver, `resolver A.B.C.D;`, to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).
+
   This is required for NGINX to resolve the PerimeterX API.
 
 * #### <a name="nginx_lua_package_path"></a>Lua Package Path
@@ -406,7 +412,7 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
 
 * #### <a name="nginx_config_example"></a> nginx.conf Example
   The following **nginx.conf** example contains the required directives with enforcement applied to the `location` block.
-  
+
   ```lua
   worker_processes  1;
   error_log /var/log/nginx/error.log;
@@ -461,7 +467,7 @@ The following configurations are set in:
   _M.auth_token = 'PX_AUTH_TOKEN'
   _M.cookie_secret = 'COOKIE_ENCRYPTION_KEY'
  ```
-  
+
  - The PerimeterX **Application ID / AppId** and PerimeterX **Token / Auth Token** can be found in the Portal, in <a href="https://console.perimeterx.com/#/app/applicationsmgmt" onclick="window.open(this.href); return false;">**Applications**</a>.
 
  - PerimeterX **Cookie Encryption Key** can be found in the portal, in <a href="https://console.perimeterx.com/#/app/policiesmgmt" onclick="window.open(this.href); return false;">**Policies**</a>.
@@ -518,11 +524,11 @@ Ensure the [PerimeterX NGINX Lua Plugin](#perimterx_plugin_configuration) is con
 To deploy the PerimeterX First-Party JS Snippet:
 
 ##### 1. Generate the First-Party Snippet
-  * Go to <a href="https://console.perimeterx.com/#/app/applicationsmgmt" onclick="window.open(this.href); return false;">**Applications**</a> >> **Snippet**. 
+  * Go to <a href="https://console.perimeterx.com/#/app/applicationsmgmt" onclick="window.open(this.href); return false;">**Applications**</a> >> **Snippet**.
   * Select **First-Party**.
   * Select **Use Default Routes**.
   * Click **Copy Snippet** to generate the JS Snippet.
-  
+
 ##### 2. Deploy the First-Party Snippet
   * Copy the JS Snippet and deploy using a tag manager, or by embedding it globally into your web template for which websites you want PerimeterX to run.
 
@@ -535,24 +541,24 @@ To deploy the PerimeterX First-Party JS Snippet:
   Adding the **_ M.block_enabled** flag and setting it to _true_ in the `pxconfig.lua` file activates the module to enforce blocking.
 
   The PerimeterX Module blocks requests that exceed the block score threshold. If a request receives a risk score that is equal to or greater than the block score, a block page is displayed.
-  
+
 ### <a name="debug-mode"></a> Debug Mode
 
  Enables debug logging mode.
 
  **Default:** false (disabled)
- 
+
   ```
   _M.px_debug = true
   ```
- 
+
   When Enabled, PerimeterX debug messages should be in the following template:
 
    - For debug messages - `[PerimeterX - DEBUG] [APP_ID] - MESSAGE` <br />
    - For error messages - `[PerimeterX - ERROR] [APP_ID] - MESSAGE`
 
   Valid request flow example:
-  
+
   ```
   2017/12/04 12:04:18 [error] 7#0: *9 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - Cookie V3 found - Evaluating, client: 172.17.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8888"
   2017/12/04 12:04:18 [error] 7#0: *9 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - cookie is encyrpted, client: 172.17.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:8888"
@@ -562,7 +568,7 @@ To deploy the PerimeterX First-Party JS Snippet:
   2017/12/04 12:04:19 [error] 7#0: *63 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - POST response status: 200, context: ngx.timer
   2017/12/04 12:04:19 [error] 7#0: *63 [lua] pxlogger.lua:29: debug(): [PerimeterX - DEBUG] [ APP_ID ] - Reused conn times: 3, context: ngx.timer
   ```
-  
+
 ### <a name="whitelisting"></a> Whitelisting
   Whitelisting (bypassing enforcement) is configured in the `pxconfig.lua` file
 
@@ -574,9 +580,9 @@ To deploy the PerimeterX First-Party JS Snippet:
      _M.whitelist_uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', 'webp', '.jar'},
      _M.whitelist_ip_addresses = {},
      _M.whitelist_ua_full = {},
-     _M.whitelist_ua_sub = {} 
+     _M.whitelist_ua_sub = {}
   ```
-  
+
   | Filter Name | Value | Filters Request To |
   | ----------- | ----- | ------------------ |
   | **whitelist_uri_full** | `{'/api_server_full'}` | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1` |
@@ -589,11 +595,11 @@ To deploy the PerimeterX First-Party JS Snippet:
 
 ### <a name="sensitive-headers"></a> Filter Sensitive Headers
   A list of sensitive headers configured to prevent specific headers from being sent to PerimeterX servers (headers in lower case). Filtering cookie headers for privacy is set by default, and can be overridden on the `pxConfig` variable.
- 
+
  **Default:** cookie, cookies
 
  Example:
-  
+
   ```lua
   _M.sensitive_headers = {'cookie', 'cookies', 'secret-header'}
   ```
@@ -604,9 +610,9 @@ To deploy the PerimeterX First-Party JS Snippet:
  **Default:** false
 
  **File:** `pxconfig.lua`
-    
+
  Example:
- 
+
  ```lua
     ...
     _M.dynamic_configurations = false
@@ -621,7 +627,7 @@ To deploy the PerimeterX First-Party JS Snippet:
  **Default:** Empty list (all routes are active)
 
  Example:
- 
+
  ```lua
   _M.enabled_routes = {'/blockhere'}
   ```
@@ -644,7 +650,7 @@ API Timeout in milliseconds (float) to wait for the PerimeterX server API respon
 Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, is expired, or is  invalid.
 
  **Default:** 1000
- 
+
  Example:
 
  ```
@@ -665,20 +671,17 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
   _M.js_ref = "http://www.example.com/script.js"
   ```
 ### <a name="redirect_to_custom_blockpage"></a>Redirect to a Custom Block Page URL
- Customizes the block page to meet branding and message requirements by specifying the URL of the block page HTML file. The page can also implement CAPTCHA. 
- 
+ Customizes the block page to meet branding and message requirements by specifying the URL of the block page HTML file. The page can also implement CAPTCHA.
+
  **Default:** nil
- 
+
  Example:
 
-  ```
-  _M.custom_block_url = nil
-  ```
 
   ```lua
   _M.custom_block_url = '/block.html'
   ```
-  
+
   > Note: This URI is whitelisted automatically under `_M.Whitelist['uri_full'] ` to avoid infinite redirects.
 
 
@@ -687,7 +690,7 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
   The `_M.redirect_on_custom_url` boolean flag to redirect users to a block page.
 
  **Default:** false
- 
+
  Example:
 
 ```lua
@@ -702,7 +705,7 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
  ```
   http://www.example.com/block.html?url=L3NvbWVwYWdlP2ZvbyUzRGJhcg==&uuid=e8e6efb0-8a59-11e6-815c-3bdad80c1d39&vid=08320300-6516-11e6-9308-b9c827550d47
  ```
-  
+
   Setting the flag to false does not require the block page to include any of the examples below, as they are injected into the blocking page via the PerimeterX NGINX Enforcer.
 
   > NOTE: The URL variable should be built with the URL Encoded query parameters (of the original request) with both the original path and variables  Base64 Encoded (to avoid collisions with block page query params).
@@ -716,11 +719,25 @@ Controls the timeouts for PerimeterX requests. The API is called when a Risk Coo
  * [reCaptcha](examples/Custom Block Page + reCAPTCHA + Redirect/README.md)
  * [Custom Block Page](examples/Custom Block Page/README.md)
 
+### <a name="redirect_to_referer"></a> Redirect to Referer
+
+Indicates whether the user is redirected from the challenge page to the referrer page after successfully solving the challenge.
+
+ **Default:** false
+
+ Example:
+
+  ```lua
+  _M.redirect_to_referer = true
+  ```
+
+
+
 ### <a name="add-activity-handler"></a> Additional Activity Handler
   An additional activity handler is added by setting `_M.additional_activity_handler` with a user defined function in the 'pxconfig.lua' file.
 
  **Default:** Activity is sent to PerimeterX as controlled by 'pxconfig.lua'.
- 
+
  Example:
 
   ```lua
@@ -740,7 +757,7 @@ You must return the `px_cusom_params` object at the end of the function.
 
  **Default:** nil
 
-Example: 
+Example:
 ```lua
 _M.enrich_custom_parameters = function(px_custom_params)
   px_custom_params["custom_param1"] = "user_id"
@@ -757,7 +774,7 @@ This value should not be changed from the default of 100 unless advised by Perim
 Example:
 
 ```lua
-  _M.blocking_score = 100  
+  _M.blocking_score = 100
 ```
 
 ### <a name="first-party-prefix"></a> First-Party Prefix
@@ -817,13 +834,13 @@ _M.proxy_authorization = 'top-secret-header-value'
 ### <a name="data-enrichment"></a> Data Enrichment
 
 The PerimeterX NGINX plugin stores the data enrichment payload on the request context. The data enrichment payload can also be processed with `additional_activity_handler`.
-  
+
 Only requests that are *not* being block will reach the backend server, so specific logic must be applied to the processing function.
 
-The following example includes the pre-condition checks required to process the data enrichment payload and enrich the request headers.  
- 
+The following example includes the pre-condition checks required to process the data enrichment payload and enrich the request headers.
+
 ```lua
-    ... 
+    ...
     _M.additional_activity_handler = function(event_type, ctx, details)
         -- verify that the request is passed to the backend
         if event_type == 'page_requested' then
@@ -848,7 +865,7 @@ For more information and the available fields in the JSON, refer to the [Perimet
  Access logs can be enriched with the PerimeterX bot information by creating an NGINX variable with the proper name. To configure this variable use the NGINX map directive in the HTTP section of your NGINX configuration file. This should be added before  additional configuration files are added.
 
   **The following variables are enabled:**
-     
+
   * **Request UUID**: `pxuuid`
   * **Request VID**: `pxvid`
   * **Risk Round Trimp**: `pxrtt`
@@ -921,7 +938,7 @@ For details on how to create a custom Captcha page, refer to the [documentation]
 
 ### <a name="http2"></a> HTTP v2 Support
   The PerimeterX NGINX module supports HTTP v2 for both Third-Party and First-Party implementations. To verify that your NGINX is running with HTTP v2 support, run:
-  
+
   ```
   nginx -V
   ```
@@ -950,7 +967,7 @@ location /<app id without PX prefix>/xhr/ {
     proxy_set_header X-PX-Enforcer-True-IP $remote_addr;
     proxy_set_header X-PX-First-Party 1;
     set $pxcookie "";
-    if ($cookie__pxvid != "") { 
+    if ($cookie__pxvid != "") {
         set $pxcookie pxvid=$cookie__pxvid;
     }
     if ($cookie_pxvid != "") {
@@ -988,10 +1005,10 @@ location /<app id without PX prefix>/xhr/ {
     For example: `require("px.pxnginx").application("mySpecialApp")`
   3. Locate the `pxconfig.lua` file, and create a copy of it. </br> The copy name should follow the pattern: </br> `pxconfig-<AppName>.lua` (e.g. `pxconfig-mySpecialApp.lua`) </br> The < AppName > placeholder must be replaced by the exact name provided to the application function in step 1.
   4. Change the configuration in file created in step 3.
-  5. Save the file in the location where pxnginx.lua file is located.   
+  5. Save the file in the location where pxnginx.lua file is located.
    (Default location: `/usr/local/lib/lua/px/<yourFile>`)
   6. For every location block of your app, replace the code mentioned in step 2 with the correct < AppName >.
-  
+
 ### <a name="setting_up_first_party_prefix"></a> Setting Up A First Party Prefix
 
 Documentation for setting up First-Party Prefixes is found [here](FIRST_PARTY_PREFIX.md).
