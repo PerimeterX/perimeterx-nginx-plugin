@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.1] - 2019-06-23
+### Fixed
+- Accept header extraction for application/json.
+
 ## [6.3.0] - 2019-05-28
 ### Added
 - Support for redirect to referer on challenge solve
