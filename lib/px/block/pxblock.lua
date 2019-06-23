@@ -24,7 +24,7 @@ function M.load(px_config)
     local string_gsub = string.gsub
 
     local function is_accept_header_json(header)
-        for h in string.gmatch(header, '[^,]+') do
+        for h in string.gmatch(header, '[^,;]+') do
             if string.lower(h) == "application/json" then
                 return true;
             end
