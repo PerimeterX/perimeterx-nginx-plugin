@@ -27,7 +27,7 @@ function PXCookieV3:validate(data)
 end
 
 function PXCookieV3:process()
-    cookie = self.px_common_utils.decode_uri_component(ngx.ctx.px_orig_cookie)
+    local cookie = self.px_common_utils.decode_uri_component(ngx.ctx.px_orig_cookie)
     if not cookie then
         local no_cookie_message = "no_cookie"
         if ngx.ctx.pxhd then
