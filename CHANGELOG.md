@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.3] - 2019-08-05
+### Fixed
+- orig_cookie is now a local variable
+- additional_activity_handler now gets called regardless of send_page_requested settings.
+
 ## [6.3.2] - 2019-07-14
 ### Fixed
 - Changed cookie variable from global to local
