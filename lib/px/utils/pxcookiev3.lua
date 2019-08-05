@@ -27,6 +27,7 @@ function PXCookieV3:validate(data)
 end
 
 function PXCookieV3:process()
+    local orig_cookie = ""
     local cookie = self.px_common_utils.decode_uri_component(ngx.ctx.px_orig_cookie)
     if not cookie then
         local no_cookie_message = "no_cookie"
@@ -47,7 +48,7 @@ function PXCookieV3:process()
         orig_cookie = result['cookie']
     else
         local splitted_cookie = self.px_common_utils.split_string(cookie, "[^:]+")
-        local orig_cookie = splitted_cookie[2]
+        orig_cookie = splitted_cookie[2]
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then
             self.px_logger.debug("Could not decode b64 cookie - " .. result)
