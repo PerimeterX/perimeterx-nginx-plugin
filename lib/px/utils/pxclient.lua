@@ -87,6 +87,11 @@ function M.load(px_config)
         local maxbuflen = px_config.px_maxbuflen
         local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri
 
+        if px_config.additional_activity_handler ~= nil then
+            px_logger.debug("additional_activity_handler was triggered")
+            px_config.additional_activity_handler(event_type, ngx.ctx, details)
+        end
+
         if event_type == 'page_requested' and not px_config.send_page_requested_activity then
             return
         end
@@ -150,11 +155,6 @@ function M.load(px_config)
         -- Perform the HTTP action
         if buflen >= maxbuflen then
             pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities")
-        end
-
-        if px_config.additional_activity_handler ~= nil then
-            px_logger.debug("additional_activity_handler was triggered")
-            px_config.additional_activity_handler(event_type, ngx.ctx, details)
         end
     end
 
