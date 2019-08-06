@@ -180,11 +180,15 @@ function M.application(px_configuration_table)
         ngx.ctx.pxhd = pxhd
     end
 
-    -- handle pxvid cookie
+    -- handle pxvid cookie and validation
+    local x = "%x"
+    local t = { x:rep(8), x:rep(4), x:rep(4), x:rep(4), x:rep(12) }
+    local pattern = table.concat(t, '%-')
     local pxvid = ""
-    if ngx.var.cookie__pxvid ~= nil and ngx.var.cookie__pxvid ~= "" then
+
+    if ngx.var.cookie__pxvid ~= nil and ngx.var.cookie__pxvid ~= "" and ngx.var.cookie__pxvid:match(pattern) then
         pxvid = ngx.var.cookie__pxvid
-    elseif ngx.var.cookie_pxvid ~= nil and ngx.var.cookie_pxvid ~= "" then
+    elseif ngx.var.cookie_pxvid ~= nil and ngx.var.cookie_pxvid ~= "" and ngx.var.cookie_pxvid:match(pattern) then
         pxvid = ngx.var.cookie_pxvid
     end
     if pxvid ~= "" then
