@@ -12,5 +12,5 @@ before_install:
 install: true
 script:
   - docker run -it -w /tmp perimeterx/pxnginx:latest prove -v t
-  - docker run -it -w /tmp perimeterx/pxnginx:latest luacheck lib/px/ --ignore ngx --no-self --no-max-line-length --no-unused --no-redefined
+  - docker run -it -w /tmp perimeterx/pxnginx:latest luacheck px/lib/px/ --ignore ngx --no-self --no-max-line-length --no-unused --no-redefined
 
