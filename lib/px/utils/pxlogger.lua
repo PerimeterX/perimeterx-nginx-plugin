@@ -9,7 +9,7 @@ function M.load(px_config)
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
 
-    function validate_msg(message)
+    local function validate_msg(message)
         if type(message) ~= 'string' and type(message) ~= 'number'  then
             return false;
         end

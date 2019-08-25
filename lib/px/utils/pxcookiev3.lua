@@ -28,6 +28,7 @@ end
 
 function PXCookieV3:process()
     local orig_cookie = ""
+    local data = ""
     local cookie = self.px_common_utils.decode_uri_component(ngx.ctx.px_orig_cookie)
     if not cookie then
         local no_cookie_message = "no_cookie"

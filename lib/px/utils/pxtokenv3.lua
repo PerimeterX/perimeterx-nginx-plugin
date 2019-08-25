@@ -25,6 +25,8 @@ end
 
 function TokenV3:process()
     local cookie = ngx.ctx.px_orig_cookie
+    local data = ""
+    local orig_cookie = ""
 
     if self.cookie_encrypted == true then
         self.px_logger.debug("cookie is encyrpted")
@@ -38,7 +40,7 @@ function TokenV3:process()
         self.px_logger.debug("decryption passed")
     else
         local splitted_cookie = self.px_common_utils.split_string(cookie, "[^:]+")
-        local orig_cookie = splitted_cookie[2]
+        orig_cookie = splitted_cookie[2]
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then
             self.px_logger.debug("Could not decode b64 cookie - " .. result)
