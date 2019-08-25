@@ -219,7 +219,6 @@ function M.load(px_config)
         end
 
         -- case: default px pages
-        
         px_logger.debug("Enforcing action: " .. parse_action(ngx.ctx.px_action) .. " page is served")
         local html = px_template.get_template(ngx.ctx.px_action, uuid, vid)
         ngx_say(html);

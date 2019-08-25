@@ -11,7 +11,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
     end
     px_logger.debug('Received command to send enforcer telemetry')
     header_value = ngx.decode_base64(header_value)
-    local split_header_value = string.split(header_value, ':')
+    local split_header_value = px_common_utils.split_string(header_value, ':')
     if #split_header_value ~= 2 then
         px_logger.debug('Malformed ' .. px_constants.ENFORCER_TELEMETRY_HEADER .. ' header: ' .. header_value)
         return
@@ -32,7 +32,7 @@ function M.telemetry_check_header(px_config, px_client, px_headers, px_logger)
         px_logger.debug(px_constants.ENFORCER_TELEMETRY_HEADER .. ' timestamp expired: ' .. timestamp .. ' < ' .. tostring(current_unix_time_ms))
         return
     end
-    
+
     local details = {}
     details.px_config = px_common_utils.filter_config(px_config)
     details.update_reason = 'command'
