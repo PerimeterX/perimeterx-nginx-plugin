@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.4] - 2019-08-25
+### Fixed
+- Linting related errors
+
 ## [6.3.3] - 2019-08-05
 ### Fixed
 - orig_cookie is now a local variable
