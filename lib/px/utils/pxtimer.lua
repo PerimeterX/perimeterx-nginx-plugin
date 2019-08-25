@@ -16,7 +16,7 @@ function M.application(px_configutraion_table)
 
 	local ngx_timer_at = ngx.timer.at
 
-	function init_remote_config()
+	local function init_remote_config()
 		if px_config == nil or not px_config.px_enabled then
 			px_logger.debug("module is disabled, skipping remote config")
 			return
@@ -31,7 +31,7 @@ function M.application(px_configutraion_table)
 		end
 	end
 
-	function submit_on_timer()
+	local function submit_on_timer()
 		if px_config == nil or not px_config.px_enabled then
 			px_logger.debug("module is disabled, skipping submit timer")
 			return

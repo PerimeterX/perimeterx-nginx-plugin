@@ -1,6 +1,87 @@
 local socket = require("socket")
 local _M = {}
 
+local function clone (t) -- deep-copy a table
+    if type(t) ~= "table" then return t end
+    local meta = getmetatable(t)
+    local target = {}
+    for k, v in pairs(t) do
+        if type(v) == "function" then
+            target[k] = string.dump(v)
+        elseif type(v) == "table" then
+            target[k] = clone(v)
+        else
+            target[k] = v
+        end
+    end
+    setmetatable(target, meta)
+    return target
+end
+
+local function hex_to_char(str)
+    return string.char(tonumber(str, 16))
+end
+
+local function trim(s)
+    return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+local function ends_with(str, ending)
+   return ending == "" or str:sub(-#ending) == ending
+end
+
+local function connect_proxy(httpc, proxy_uri, scheme, host, port, pool_key, proxy_authorization)
+    -- Parse the provided proxy URI
+    local parsed_proxy_uri, err = httpc:parse_uri(proxy_uri, false)
+    if not parsed_proxy_uri then
+        return nil, err
+    end
+
+    -- Check that the scheme is http (https is not supported for
+    -- connections between the client and the proxy)
+    local proxy_scheme = parsed_proxy_uri[1]
+    if proxy_scheme ~= "http" then
+        return nil, "protocol " .. proxy_scheme .. " not supported for proxy connections"
+    end
+
+    -- Make the connection to the given proxy
+    local proxy_host, proxy_port = parsed_proxy_uri[2], parsed_proxy_uri[3]
+    local c, err = httpc:connect(proxy_host, proxy_port, { pool = pool_key })
+    if not c then
+        return nil, err
+    end
+
+    if scheme == "https" then
+        local times = httpc:get_reused_times()
+        if times and times > 0 then
+            return c, nil
+        end
+        -- Make a CONNECT request to create a tunnel to the destination through
+        -- the proxy. The request-target and the Host header must be in the
+        -- authority-form of RFC 7230 Section 5.3.3. See also RFC 7231 Section
+        -- 4.3.6 for more details about the CONNECT request
+        local destination = host .. ":" .. port
+        local res, err = httpc:request({
+            method = "CONNECT",
+            path = destination,
+            headers = {
+                ["Host"] = destination,
+                ["Proxy-Authorization"] = proxy_authorization,
+            }
+        })
+
+        if not res then
+            return nil, err
+        end
+
+        if res.status < 200 or res.status > 299 then
+            return nil, "failed to establish a tunnel through a proxy: " .. res.status
+        end
+    end
+
+    return c, nil
+end
+
 function _M.handle_custom_parameters(px_config, px_logger, result_table)
     local px_custom_params = {}
 
@@ -33,27 +114,6 @@ function _M.array_index_of(array, item)
         end
     end
     return -1
-end
-
-function clone (t) -- deep-copy a table
-    if type(t) ~= "table" then return t end
-    local meta = getmetatable(t)
-    local target = {}
-    for k, v in pairs(t) do
-        if type(v) == "function" then
-            target[k] = string.dump(v)
-        elseif type(v) == "table" then
-            target[k] = clone(v)
-        else
-            target[k] = v
-        end
-    end
-    setmetatable(target, meta)
-    return target
-end
-
-function hex_to_char(str)
-    return string.char(tonumber(str, 16))
 end
 
 function  _M.filter_config(px_config)
@@ -159,66 +219,6 @@ function _M.call_px_server(httpc, scheme, host, port, px_config, pool_key)
     else
         return httpc:connect(host, port)
     end
-end
-
-function connect_proxy(httpc, proxy_uri, scheme, host, port, pool_key, proxy_authorization)
-    -- Parse the provided proxy URI
-    local parsed_proxy_uri, err = httpc:parse_uri(proxy_uri, false)
-    if not parsed_proxy_uri then
-        return nil, err
-    end
-
-    -- Check that the scheme is http (https is not supported for
-    -- connections between the client and the proxy)
-    local proxy_scheme = parsed_proxy_uri[1]
-    if proxy_scheme ~= "http" then
-        return nil, "protocol " .. proxy_scheme .. " not supported for proxy connections"
-    end
-
-    -- Make the connection to the given proxy
-    local proxy_host, proxy_port = parsed_proxy_uri[2], parsed_proxy_uri[3]
-    local c, err = httpc:connect(proxy_host, proxy_port, { pool = pool_key })
-    if not c then
-        return nil, err
-    end
-
-    if scheme == "https" then
-        local times = httpc:get_reused_times()
-        if times and times > 0 then
-            return c, nil
-        end
-        -- Make a CONNECT request to create a tunnel to the destination through
-        -- the proxy. The request-target and the Host header must be in the
-        -- authority-form of RFC 7230 Section 5.3.3. See also RFC 7231 Section
-        -- 4.3.6 for more details about the CONNECT request
-        local destination = host .. ":" .. port
-        local res, err = httpc:request({
-            method = "CONNECT",
-            path = destination,
-            headers = {
-                ["Host"] = destination,
-                ["Proxy-Authorization"] = proxy_authorization,
-            }
-        })
-
-        if not res then
-            return nil, err
-        end
-
-        if res.status < 200 or res.status > 299 then
-            return nil, "failed to establish a tunnel through a proxy: " .. res.status
-        end
-    end
-
-    return c, nil
-end
-
-function trim(s)
-    return (s:gsub("^%s*(.-)%s*$", "%1"))
-end
-
-function ends_with(str, ending)
-   return ending == "" or str:sub(-#ending) == ending
 end
 
 return _M

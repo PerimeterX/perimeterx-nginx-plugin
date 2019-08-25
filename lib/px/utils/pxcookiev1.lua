@@ -104,7 +104,7 @@ function PXCookieV1:process()
 
     -- Set the score header for upstream applications
     self.px_headers.set_score_header(fields.s.b)
-    -- Set the score variable for logging 
+    -- Set the score variable for logging
 
     -- Check bot score and block if it is >= to the configured block score
     if fields.s and fields.s.b then
