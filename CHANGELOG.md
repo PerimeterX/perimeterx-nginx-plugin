@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.4.0] - 2019-08-27
+### Fixed
+- Refactoring of split string functions.
+
 ## [6.3.4] - 2019-08-25
 ### Fixed
 - Linting related errors
