@@ -39,7 +39,7 @@ function TokenV3:process()
         orig_cookie = result['cookie']
         self.px_logger.debug("decryption passed")
     else
-        local splitted_cookie = self.px_common_utils.split_string(cookie, "[%:]+")
+        local splitted_cookie = self.px_common_utils.split_first(cookie, "[%:]+")
         orig_cookie = splitted_cookie[2]
         local success, result = pcall(ngx.decode_base64, orig_cookie)
         if not success then

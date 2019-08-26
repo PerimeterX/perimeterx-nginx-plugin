@@ -99,7 +99,7 @@ function M.load(px_config)
     function _M.prepare_cidrs(whitelisted_ips)
         local result = {}
         for _, v in pairs(whitelisted_ips) do
-            local splitted_mask = px_common_utils.split_string(v, "[%/]+")
+            local splitted_mask = px_common_utils.split_first(v, "[%/]+")
             if (splitted_mask ~= nil) then
                 local cidr_object = parse_cidr(splitted_mask)
                 table.insert(result, cidr_object)

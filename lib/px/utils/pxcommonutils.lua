@@ -156,7 +156,7 @@ end
 -- @delimeter - delimeiter to use
 --
 -- @return - splitted string as array
-function _M.split_string(s,delimeter)
+function _M.split_first(s,delimeter)
     local result = {}
     if (s ~= nil) then
         local index = string.find(s,delimeter)
