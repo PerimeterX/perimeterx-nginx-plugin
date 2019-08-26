@@ -156,14 +156,23 @@ end
 -- @delimeter - delimeiter to use
 --
 -- @return - splitted string as array
-function _M.split_string(s, delimeter)
-    local a = {}
-    local b = 1
-    for i in string.gmatch(s, delimeter) do
-        a[b] = i
-        b = b + 1
+function _M.split_string(s,delimeter)
+    local result = {}
+    if (s ~= nil) then
+        ngx.log(ngx.ERR, "[PerimeterX - DEBUG] - [s]" .. s)
+        ngx.log(ngx.ERR, "[PerimeterX - DEBUG] - [delimeter]" .. delimeter)
+        local index = string.find(s,delimeter)
+        if (index == nil) then
+            result[1] = s
+        else
+            ngx.log(ngx.ERR, "[PerimeterX - DEBUG] - [index]" .. index)
+            result[1] = string.sub(s,1, index-1)
+            ngx.log(ngx.ERR, "[PerimeterX - DEBUG] - [result[1]]" .. result[1])
+            result[2] = string.sub(s,index+1)
+            ngx.log(ngx.ERR, "[PerimeterX - DEBUG] - [result[2]]" .. result[2])
+        end
     end
-    return a
+    return result
 end
 
 -- Formats string bytes into hex string
