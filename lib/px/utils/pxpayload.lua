@@ -82,6 +82,9 @@ function PXPayload:split_cookie(cookie)
     for i in string.gmatch(cookie, "[^:]+") do
         a[b] = i
         b = b + 1
+        if b == 5 then
+            break
+        end
     end
 
     if a[4] ~= nil then
