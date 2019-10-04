@@ -52,6 +52,7 @@
   * [Advanced Blocking Response](#json-response-enabled)
   * [Proxy Support](#proxy-url)
   * [Proxy Authorization Header](#proxy-authorization)
+  * [Custom Cookie Header](#custom-cookie-header)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -827,6 +828,17 @@ Example:
 
 ```lua
 _M.proxy_authorization = 'top-secret-header-value'
+```
+
+#### <a name="custom-cookie-header"></a> Custom Cookie Header
+When set, this property specifies a header name which will be used to extract the PerimeterX cookie from, instead of the Cookie header.
+
+**Default:** nil
+
+Example:
+
+```lua
+_M.custom_cookie_header= 'x-px-cookies'
 ```
 
 ## <a name="enrichment"></a> Enrichment
