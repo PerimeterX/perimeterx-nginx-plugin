@@ -585,14 +585,14 @@ To deploy the PerimeterX First-Party JS Snippet:
      _M.whitelist_ua_sub = {}
   ```
 
-  | Filter Name | Value | Filters Request To |
-  | ----------- | ----- | ------------------ |
-  | **whitelist_uri_full** | `{'/api_server_full'}` | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1` |
-  | **whitelist_uri_prefixes** | `{'/api_server'}` | `/api_server_full?data=1` </br> but not to </br>  `/full_api_server?data=1` |
-  | **whitelist_uri_suffixes** | `{'.css'}` | `/style.css` </br> but not to </br>  `/style.js` |
-  | **whitelist_ip_addresses** | `{'192.168.99.1'}` | Filters requests coming from any of the listed IPs. |
-  | **whitelist_ua_full** | `{'Mozilla/5.0 (compatible; pingbot/2.0; http://www.pingdom.com/)'}` | Filters all requests matching this exact UA. |
-  | **whitelist_ua_sub** | `{'GoogleCloudMonitoring'}` | Filters requests containing the provided string in their UA.
+  Filter Name | Value | Filters Request To |
+  ----------- | ----- | ------------------ |
+  **whitelist_uri_full** | `{'/api_server_full'}` | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1` |
+  **whitelist_uri_prefixes** | `{'/api_server'}` | `/api_server_full?data=1` </br> but not to </br>  `/full_api_server?data=1` |
+  **whitelist_uri_suffixes** | `{'.css'}` | `/style.css` </br> but not to </br>  `/style.js` |
+  **whitelist_ip_addresses** | `{'192.168.99.1'}` | Filters requests coming from any of the listed IPs. |
+  **whitelist_ua_full** | `{'Mozilla/5.0 (compatible; pingbot/2.0; http://www.pingdom.com/)'}` | Filters all requests matching this exact UA. |
+  **whitelist_ua_sub** | `{'GoogleCloudMonitoring'}` | Filters requests containing the provided string in their UA. |
 
 
 ### <a name="sensitive-headers"></a> Filter Sensitive Headers
@@ -842,7 +842,7 @@ When set, this property specifies a header name which will be used to extract th
 Example:
 
 ```lua
-_M.custom_cookie_header= 'x-px-cookies'
+_M.custom_cookie_header = 'x-px-cookies'
 ```
 
 #### <a name="bypass-monitor-header"></a> Bypass Monitor Mode Header
@@ -853,8 +853,7 @@ The property accept an header name which, if provided in a request with the valu
 **Default:** nil
 
 ```lua
-_M.bypass_monitor_header='x-px-block'
-};
+_M.bypass_monitor_header = 'x-px-block'
 ```
 
 ## <a name="enrichment"></a> Enrichment

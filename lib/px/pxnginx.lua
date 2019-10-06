@@ -25,7 +25,7 @@
 local M = {}
 M.configLoaded = false
 function M.application(px_configuration_table)
-    local config_builder = require("px.utils.config_builder");
+    local config_builder = require("px.utils.config_builder")
 
     local px_config = config_builder.load(px_configuration_table)
     local _M = {}
@@ -163,7 +163,7 @@ function M.application(px_configuration_table)
 
     px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent)
 
-    local details = {};
+    local details = {}
 
     -- hadle pxde cookie
     local pxde = ngx.var.cookie__pxde
@@ -213,9 +213,9 @@ function M.application(px_configuration_table)
     -- cookie verification passed - checking result.
     if success then
         px_logger.debug("Cookie evaluation ended successfully, risk score: " .. ngx.ctx.block_score)
-        details["px_cookie"] = ngx.ctx.px_cookie;
-        details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac;
-        details["px_cookie_version"] = ngx.ctx.px_cookie_version;
+        details["px_cookie"] = ngx.ctx.px_cookie
+        details["px_cookie_hmac"] = ngx.ctx.px_cookie_hmac
+        details["px_cookie_version"] = ngx.ctx.px_cookie_version
 
         px_logger.enrich_log('pxscore', ngx.ctx.block_score)
         px_logger.enrich_log('pxcookiets', ngx.ctx.cookie_timestamp)
