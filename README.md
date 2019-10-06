@@ -53,6 +53,7 @@
   * [Proxy Support](#proxy-url)
   * [Proxy Authorization Header](#proxy-authorization)
   * [Custom Cookie Header](#custom-cookie-header)
+  * [Bypass Monitor Mode Header](#bypass-monitor-header)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -831,6 +832,7 @@ _M.proxy_authorization = 'top-secret-header-value'
 ```
 
 #### <a name="custom-cookie-header"></a> Custom Cookie Header
+
 When set, this property specifies a header name which will be used to extract the PerimeterX cookie from, instead of the Cookie header.
 
 > NOTE: Using a custom cookie header requires client side integration to be done as well. Please refer to the relevant [docs](https://console.perimeterx.com/docs/advanced_client_integration.html#custom-cookie-header) for details.
@@ -841,6 +843,18 @@ Example:
 
 ```lua
 _M.custom_cookie_header= 'x-px-cookies'
+```
+
+#### <a name="bypass-monitor-header"></a> Bypass Monitor Mode Header
+
+When set, allows you to test the blocking flow of an enforcer, while in monitoring mode. <br/>
+The property accept an header name which, if provided in a request with the value of `1`, in addition to a bad user agent (such as `PhantomJS/1.0`) will block the request and show a challenge page.
+
+**Default:** nil
+
+```lua
+_M.bypass_monitor_header='x-px-block'
+};
 ```
 
 ## <a name="enrichment"></a> Enrichment
