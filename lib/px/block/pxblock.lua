@@ -26,7 +26,7 @@ function M.load(px_config)
     local function is_accept_header_json(header)
         for h in string.gmatch(header, '[^,;]+') do
             if string.lower(h) == "application/json" then
-                return true;
+                return true
             end
         end
         return false
@@ -83,7 +83,7 @@ function M.load(px_config)
 
         px_logger.enrich_log('pxaction', ngx.ctx.px_action)
 
-        px_client.send_to_perimeterx('block', details);
+        px_client.send_to_perimeterx('block', details)
 
         local should_bypass_monitor = px_config.bypass_monitor_header and px_headers.get_header(px_config.bypass_monitor_header) == '1'
 
@@ -109,8 +109,8 @@ function M.load(px_config)
                 page = ngx.encode_base64(html),
                 collectorUrl = collectorUrl
             }
-            ngx.header["Content-Type"] = 'application/json';
-            ngx.status = ngx_HTTP_FORBIDDEN;
+            ngx.header["Content-Type"] = 'application/json'
+            ngx.status = ngx_HTTP_FORBIDDEN
             ngx.say(cjson.encode(result))
             ngx_exit(ngx.OK)
             return
@@ -130,19 +130,19 @@ function M.load(px_config)
                 hostUrl = props.hostUrl,
                 blockScript = props.blockScript
             }
-            ngx.header["Content-Type"] = 'application/json';
-            ngx.status = ngx_HTTP_FORBIDDEN;
+            ngx.header["Content-Type"] = 'application/json'
+            ngx.status = ngx_HTTP_FORBIDDEN
             ngx.say(cjson.encode(result))
             ngx_exit(ngx.OK)
         end
 
         -- web scenarios
-        ngx.header["Content-Type"] = 'text/html';
+        ngx.header["Content-Type"] = 'text/html'
 
         -- render advanced actions (js challange/rate limit)
         if ngx.ctx.px_action ~= 'c' and ngx.ctx.px_action ~= 'b' then
             -- default status code
-            ngx.status = ngx_HTTP_FORBIDDEN;
+            ngx.status = ngx_HTTP_FORBIDDEN
             local action_name = parse_action(ngx.ctx.px_action)
             local body = ngx.ctx.px_action_data or px_template.get_template(action_name, uuid, vid)
             px_logger.debug("Enforcing action: " .. action_name .. " page is served")
@@ -152,8 +152,8 @@ function M.load(px_config)
                 ngx.status = ngx_HTTP_TOO_MANY_REQUESTS
             end
 
-            ngx_say(body);
-            ngx_exit(ngx.OK);
+            ngx_say(body)
+            ngx_exit(ngx.OK)
             return
         end
 
@@ -190,17 +190,17 @@ function M.load(px_config)
             if ngx.ctx.px_action == 'c' then
                 -- inject captcha to the page
                 px_logger.debug('Injecting captcha to page')
-                body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1);
-                body = string_gsub(body, '::BLOCK_REF::', uuid);
+                body = string_gsub(res.body, '</head>', inject_captcha_script(vid, uuid) .. '</head>', 1)
+                body = string_gsub(body, '::BLOCK_REF::', uuid)
             end
-            ngx.status = ngx_HTTP_FORBIDDEN;
-            ngx_say(body);
-            ngx_exit(ngx.OK);
+            ngx.status = ngx_HTTP_FORBIDDEN
+            ngx_say(body)
+            ngx_exit(ngx.OK)
             return
         end
 
         -- not custom block url, either api protection or default
-        ngx.status = ngx_HTTP_FORBIDDEN;
+        ngx.status = ngx_HTTP_FORBIDDEN
         if px_config.api_protection_mode then
             -- api protection mode
             local redirect_url = ngx.req.get_headers()['Referer']
@@ -214,17 +214,17 @@ function M.load(px_config)
                 reason = "blocked",
                 redirect_to = url
             }
-            ngx.header["Content-Type"] = 'application/json';
+            ngx.header["Content-Type"] = 'application/json'
             ngx_say(cjson.encode(result))
-            ngx_exit(ngx.OK);
+            ngx_exit(ngx.OK)
             return
         end
 
         -- case: default px pages
         px_logger.debug("Enforcing action: " .. parse_action(ngx.ctx.px_action) .. " page is served")
         local html = px_template.get_template(ngx.ctx.px_action, uuid, vid)
-        ngx_say(html);
-        ngx_exit(ngx.OK);
+        ngx_say(html)
+        ngx_exit(ngx.OK)
         return
     end
     return _M
