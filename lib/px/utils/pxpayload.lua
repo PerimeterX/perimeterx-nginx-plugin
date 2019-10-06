@@ -58,17 +58,28 @@ function PXPayload:get_payload()
             self.px_logger.debug("Token V1 found - Evaluating")
             return self.cookie_v1:new {}
         end
-    elseif ngx.var.cookie__px3 then
-        ngx.ctx.px_orig_cookie = ngx.var.cookie__px3
-        ngx.ctx.px_cookie_version = "v3";
-        self.px_logger.debug("Cookie V3 found - Evaluating")
-        return self.cookie_v3:new {}
-    elseif ngx.var.cookie__px then
-        ngx.ctx.px_orig_cookie = ngx.var.cookie__px
-        ngx.ctx.px_cookie_version = "v1";
-        self.px_logger.debug("Cookie V1 found - Evaluating")
-        return self.cookie_v1:new {}
+    else
+        if self.px_config.custom_cookie_header and self.px_headers.get_header(self.px_config.custom_cookie_header) then
+            local cookieValue = string.match(self.px_headers.get_header(self.px_config.custom_cookie_header), "_px3=[^;]+");
+            if cookieValue then
+                ngx.ctx.px_orig_cookie = string.sub(cookieValue, 6)
+                ngx.ctx.px_cookie_version = "v3";
+                self.px_logger.debug("Cookie V3 found in cookie header- Evaluating")
+                return self.cookie_v3:new {}
+            end
+        elseif ngx.var.cookie__px3 then
+            ngx.ctx.px_orig_cookie = ngx.var.cookie__px3
+            ngx.ctx.px_cookie_version = "v3";
+            self.px_logger.debug("Cookie V3 found - Evaluating")
+            return self.cookie_v3:new {}
+        elseif ngx.var.cookie__px then
+            ngx.ctx.px_orig_cookie = ngx.var.cookie__px
+            ngx.ctx.px_cookie_version = "v1";
+            self.px_logger.debug("Cookie V1 found - Evaluating")
+            return self.cookie_v1:new {}
+        end
     end
+
     -- check for cookie, and if found return the right object
     self.px_logger.debug("Cookie is missing")
 end

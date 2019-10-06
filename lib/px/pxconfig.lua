@@ -28,6 +28,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.reverse_xhr_enabled = true
 -- _M.proxy_url = nil
 -- _M.proxy_authorization = nil
+-- _M.custom_cookie_header = nil
 
 -- -- ## API protection mode ##
 -- _M.api_protection_mode = false
