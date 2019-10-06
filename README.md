@@ -833,7 +833,7 @@ _M.proxy_authorization = 'top-secret-header-value'
 #### <a name="custom-cookie-header"></a> Custom Cookie Header
 When set, this property specifies a header name which will be used to extract the PerimeterX cookie from, instead of the Cookie header.
 
-> Note: Using a custom cookie header requires client side integration to be done as well. Please refer to the relevant [docs](https://console.perimeterx.com/docs/advanced_client_integration.html#custom-cookie-header) for details.
+> NOTE: Using a custom cookie header requires client side integration to be done as well. Please refer to the relevant [docs](https://console.perimeterx.com/docs/advanced_client_integration.html#custom-cookie-header) for details.
 
 **Default:** nil
 
