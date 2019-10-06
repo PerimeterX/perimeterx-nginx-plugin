@@ -60,8 +60,8 @@ function PXPayload:get_payload()
         end
     else
         if self.px_config.custom_cookie_header and self.px_headers.get_header(self.px_config.custom_cookie_header) then
-            local cookieValue = string.match(self.px_headers.get_header(self.px_config.custom_cookie_header), "_px%d[^;]+");
-            if cookieValue and string.find(cookieValue, "_px3") then
+            local cookieValue = string.match(self.px_headers.get_header(self.px_config.custom_cookie_header), "_px3=[^;]+");
+            if cookieValue then
                 ngx.ctx.px_orig_cookie = string.sub(cookieValue, 6)
                 ngx.ctx.px_cookie_version = "v3";
                 self.px_logger.debug("Cookie V3 found in cookie header- Evaluating")
