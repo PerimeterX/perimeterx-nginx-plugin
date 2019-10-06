@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.5.0] - 2019-10-06
+### Added
+- Support for testing blocking flow in monitor mode.
+- Support for custom cookie header
+
 ## [6.4.0] - 2019-08-27
 ### Fixed
 - Refactoring of split string functions.
