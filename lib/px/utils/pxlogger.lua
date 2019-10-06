@@ -11,9 +11,9 @@ function M.load(px_config)
 
     local function validate_msg(message)
         if type(message) ~= 'string' and type(message) ~= 'number'  then
-            return false;
+            return false
         end
-        return true;
+        return true
     end
 
     function _M.debug(message)

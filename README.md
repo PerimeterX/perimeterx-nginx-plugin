@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.4.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.4.0-1)
+> Latest stable version: [v6.5.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.5.0-1)
 
 
 ## [Introduction](#introduction)
@@ -52,6 +52,8 @@
   * [Advanced Blocking Response](#json-response-enabled)
   * [Proxy Support](#proxy-url)
   * [Proxy Authorization Header](#proxy-authorization)
+  * [Custom Cookie Header](#custom-cookie-header)
+  * [Bypass Monitor Mode Header](#bypass-monitor-header)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -583,14 +585,14 @@ To deploy the PerimeterX First-Party JS Snippet:
      _M.whitelist_ua_sub = {}
   ```
 
-  | Filter Name | Value | Filters Request To |
-  | ----------- | ----- | ------------------ |
-  | **whitelist_uri_full** | `{'/api_server_full'}` | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1` |
-  | **whitelist_uri_prefixes** | `{'/api_server'}` | `/api_server_full?data=1` </br> but not to </br>  `/full_api_server?data=1` |
-  | **whitelist_uri_suffixes** | `{'.css'}` | `/style.css` </br> but not to </br>  `/style.js` |
-  | **whitelist_ip_addresses** | `{'192.168.99.1'}` | Filters requests coming from any of the listed IPs. |
-  | **whitelist_ua_full** | `{'Mozilla/5.0 (compatible; pingbot/2.0; http://www.pingdom.com/)'}` | Filters all requests matching this exact UA. |
-  | **whitelist_ua_sub** | `{'GoogleCloudMonitoring'}` | Filters requests containing the provided string in their UA.
+  Filter Name | Value | Filters Request To |
+  ----------- | ----- | ------------------ |
+  **whitelist_uri_full** | `{'/api_server_full'}` | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1` |
+  **whitelist_uri_prefixes** | `{'/api_server'}` | `/api_server_full?data=1` </br> but not to </br>  `/full_api_server?data=1` |
+  **whitelist_uri_suffixes** | `{'.css'}` | `/style.css` </br> but not to </br>  `/style.js` |
+  **whitelist_ip_addresses** | `{'192.168.99.1'}` | Filters requests coming from any of the listed IPs. |
+  **whitelist_ua_full** | `{'Mozilla/5.0 (compatible; pingbot/2.0; http://www.pingdom.com/)'}` | Filters all requests matching this exact UA. |
+  **whitelist_ua_sub** | `{'GoogleCloudMonitoring'}` | Filters requests containing the provided string in their UA. |
 
 
 ### <a name="sensitive-headers"></a> Filter Sensitive Headers
@@ -827,6 +829,31 @@ Example:
 
 ```lua
 _M.proxy_authorization = 'top-secret-header-value'
+```
+
+#### <a name="custom-cookie-header"></a> Custom Cookie Header
+
+When set, this property specifies a header name which will be used to extract the PerimeterX cookie from, instead of the Cookie header.
+
+> NOTE: Using a custom cookie header requires client side integration to be done as well. Please refer to the relevant [docs](https://console.perimeterx.com/docs/advanced_client_integration.html#custom-cookie-header) for details.
+
+**Default:** nil
+
+Example:
+
+```lua
+_M.custom_cookie_header = 'x-px-cookies'
+```
+
+#### <a name="bypass-monitor-header"></a> Bypass Monitor Mode Header
+
+When set, allows you to test the blocking flow of an enforcer, while in monitoring mode. <br/>
+The property accept an header name which, if provided in a request with the value of `1`, in addition to a bad user agent (such as `PhantomJS/1.0`) will block the request and show a challenge page.
+
+**Default:** nil
+
+```lua
+_M.bypass_monitor_header = 'x-px-block'
 ```
 
 ## <a name="enrichment"></a> Enrichment

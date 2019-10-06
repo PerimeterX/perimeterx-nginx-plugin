@@ -56,6 +56,8 @@ PX_DEFAULT_CONFIGURATIONS["whitelist_uri_suffixes"] = { {'.css', '.bmp', '.tif',
 PX_DEFAULT_CONFIGURATIONS["whitelist_ip_addresses"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_full"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_sub"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["custom_cookie_header"] = { nil, "string"}
+PX_DEFAULT_CONFIGURATIONS["bypass_monitor_header"] = { nil, "string"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log

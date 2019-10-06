@@ -90,7 +90,7 @@ function _M.handle_custom_parameters(px_config, px_logger, result_table)
         px_custom_params["custom_param" .. i] = ""
     end
 
-    px_logger.debug("enrich_custom_parameters was triggered");
+    px_logger.debug("enrich_custom_parameters was triggered")
     local px_result_custom_params = px_config.enrich_custom_parameters(px_custom_params)
     for key, value in pairs(px_result_custom_params) do
         if string.match(key,"^custom_param%d+$") and value ~= "" then
@@ -202,7 +202,7 @@ function _M.extract_cookie_names(cookies)
         end
 
         if (cookies_data ~= "") then
-            local index = 1;
+            local index = 1
             for token in string.gmatch(cookies_data, ("([^;]+)")) do
                 local key_value = trim(token)
                 for key, value in string.gmatch(key_value, "(%w+)=(%w+)") do

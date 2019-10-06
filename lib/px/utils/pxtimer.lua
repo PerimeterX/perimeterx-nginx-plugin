@@ -5,7 +5,7 @@
 local M = {}
 
 function M.application(px_configutraion_table)
-	local config_builder = require("px.utils.config_builder");
+	local config_builder = require("px.utils.config_builder")
 
 	local px_config = config_builder.load(px_configutraion_table)
 

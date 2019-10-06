@@ -15,7 +15,7 @@ function M.load(px_config)
     local string_len = string.len
     local string_gsub = string.gsub
 
-    _M.Whitelist = {};
+    _M.Whitelist = {}
 
     -- Full URI filter
     -- will filter requests where the uri starts with any of the list below.

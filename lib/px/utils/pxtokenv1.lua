@@ -10,7 +10,7 @@ function TokenV1:new(t)
 end
 
 function TokenV1:validate(data)
-    local request_data = data.t .. data.s.a .. data.s.b .. data.u;
+    local request_data = data.t .. data.s.a .. data.s.b .. data.u
     if data.v then
         request_data = request_data .. data.v
     end
@@ -39,7 +39,7 @@ function TokenV1:validate(data)
         return true
     end
 
-    self.px_logger.debug('Cookie HMAC validation failed, value without ip: '.. digest_noip ..' with ip: '.. digest_ip ..', user-agent: ' .. self.px_headers.get_header("User-Agent"));
+    self.px_logger.debug('Cookie HMAC validation failed, value without ip: '.. digest_noip ..' with ip: '.. digest_ip ..', user-agent: ' .. self.px_headers.get_header("User-Agent"))
     return false
 end
 
@@ -71,7 +71,7 @@ function TokenV1:process()
     end
 
     local fields = result
-    ngx.ctx.px_cookie = data;
+    ngx.ctx.px_cookie = data
     ngx.ctx.px_cookie_hmac = fields.h
 
     if fields.u then
@@ -120,4 +120,4 @@ function TokenV1:process()
     return true
 end
 
-return TokenV1;
+return TokenV1
