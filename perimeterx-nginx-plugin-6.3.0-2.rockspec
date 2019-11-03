@@ -2,7 +2,7 @@
  version = "6.3.0-2"
  source = {
     url = "git://github.com/PerimeterX/perimeterx-nginx-plugin.git",
-    tag = "v6.3.0.2",
+    tag = "v6.3.0-2",
  }
  description = {
     summary = "PerimeterX NGINX Lua Middleware.",
