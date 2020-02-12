@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.5.1] - 2020-02-12
+### Fixed
+- Better iterations value validation.
+
 ## [6.5.0] - 2019-10-06
 ### Added
 - Support for testing blocking flow in monitor mode.
