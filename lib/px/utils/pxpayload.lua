@@ -165,8 +165,9 @@ function PXPayload:decrypt(cookie, key)
     -- Split the cookie into three parts - salt , iterations, ciphertext
     local orig_salt, orig_iterations, orig_ciphertext = self:split_cookie(cookie)
     local iterations = tonumber(orig_iterations)
-    if iterations > 5000 then
-        error('PX: Received cookie with too many iterations: ', iterations)
+    if iterations > 5000 or iterations < 500 then
+        self.px_logger.error('Received cookie with an invalid iterations value: ' .. iterations)
+        error({ message = 'Invalid cookie iterations value: ' .. iterations})
     end
     local salt = ngx.decode_base64(orig_salt)
     local ciphertext = ngx.decode_base64(orig_ciphertext)
