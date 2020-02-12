@@ -85,7 +85,7 @@ function M.load(px_config)
     function _M.send_to_perimeterx(event_type, details)
         local buflen = buffer.getBufferLength()
         local maxbuflen = px_config.px_maxbuflen
-        local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.uri
+        local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.request_uri
 
         if px_config.additional_activity_handler ~= nil then
             px_logger.debug("additional_activity_handler was triggered")

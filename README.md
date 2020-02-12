@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.5.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.5.0-2)
+> Latest stable version: [v6.5.1](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.5.1-1)
 
 
 ## [Introduction](#introduction)
@@ -245,7 +245,7 @@ cd /tmp/nginx
 wget http://nginx.org/download/nginx-1.13.11.tar.gz
 wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
 wget -O nginx_devel_kit.tar.gz https://github.com/simpl/ngx_devel_kit/archive/v0.3.0.tar.gz
-wget -O nginx_lua_module.tar.gz https://github.com/openresty/lua-nginx-module/archive/v0.10.10.tar.gz
+wget -O nginx_lua_module.tar.gz https://github.com/openresty/lua-nginx-module/archive/v0.10.15.tar.gz
 wget https://ftp.gnu.org/gnu/nettle/nettle-3.4.tar.gz
 ```
 
@@ -298,7 +298,7 @@ LUAJIT_LIB=/usr/local/lib LUAJIT_INC=/usr/local/include/luajit-2.0 \
 --with-file-aio                       \
 --with-http_realip_module             \
 --add-module=/tmp/nginx/ngx_devel_kit-0.3.0 \
---add-module=/tmp/nginx/lua-nginx-module-0.10.10
+--add-module=/tmp/nginx/lua-nginx-module-0.10.15
 sudo make install
 sudo nginx -t
 ```
