@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [6.5.1] - 2020-02-12
 ### Fixed
 - Better iterations value validation.
+- Full url parameter in risk_api calls.
 
 ## [6.5.0] - 2019-10-06
 ### Added
