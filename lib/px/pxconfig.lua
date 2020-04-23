@@ -31,6 +31,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.proxy_authorization = nil
 -- _M.custom_cookie_header = nil
 -- _M.bypass_monitor_header = nil
+-- _M.pxhd_secure_enabled = false
 
 -- -- ## API protection mode ##
 -- _M.api_protection_mode = false
