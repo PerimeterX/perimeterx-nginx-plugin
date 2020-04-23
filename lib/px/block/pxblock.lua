@@ -87,7 +87,7 @@ function M.load(px_config)
 
         local should_bypass_monitor = px_config.bypass_monitor_header and px_headers.get_header(px_config.bypass_monitor_header) == '1'
 
-        if not px_config.block_enabled and not should_bypass_monitor then
+        if (not px_config.block_enabled or ngx.ctx.monitored_route) and not should_bypass_monitor then
             -- end request inspection here and not block
             px_logger.debug("Blocking is not enabled, the request will not be blocked")
             return

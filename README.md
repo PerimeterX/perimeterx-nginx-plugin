@@ -39,6 +39,7 @@
   * [Filter Sensitive Headers](#sensitive-headers)
   * [Remote Configurations](#remote-configurations)
   * [Enabled Routes](#enabled-routes)
+  * [Monitored Routes](#monitored-routes)
   * [Sensitive Routes](#sensitive-routes)
   * [API Timeout](#api-timeout)
   * [Customize Default Block Page](#customblockpage)
@@ -632,6 +633,18 @@ To deploy the PerimeterX First-Party JS Snippet:
 
  ```lua
   _M.enabled_routes = {'/blockhere'}
+  ```
+
+### <a name="monitored-routes"></a> Monitored Routes
+
+allows you to define a set of route prefixes that will be handled as if in monitor mode, even if `block_enabled` is set to `true`.
+
+ **Default:** Empty list
+
+ Example:
+
+ ```lua
+  _M.monitored_routes = {'/profile'}
   ```
 
 ### <a name="sensitive-routes"></a> Sensitive Routes

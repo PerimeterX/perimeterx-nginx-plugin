@@ -47,6 +47,7 @@ function M.application(px_configuration_table)
     local enable_server_calls = px_config.enable_server_calls
     local risk_api_path = px_constants.RISK_PATH
     local enabled_routes = px_config.enabled_routes
+    local monitored_routes = px_config.monitored_routes
     local remote_addr = px_headers.get_ip()
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
@@ -144,6 +145,14 @@ function M.application(px_configuration_table)
     if not valid_route and #enabled_routes > 0 then
         px_headers.set_score_header(0)
         return true
+    end
+
+     -- Check for monitored route
+    for i = 1, #monitored_routes do
+        if string_sub(ngx.var.uri, 1, string_len(monitored_routes[i])) == monitored_routes[i] then
+            px_logger.debug("Found monitored route prefix: " .. monitored_routes[i])
+            ngx.ctx.monitored_route = true
+        end
     end
 
     -- Validate if request is from internal redirect to avoid duplicate processing
