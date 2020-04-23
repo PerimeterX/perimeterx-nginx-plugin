@@ -55,6 +55,7 @@
   * [Proxy Authorization Header](#proxy-authorization)
   * [Custom Cookie Header](#custom-cookie-header)
   * [Bypass Monitor Mode Header](#bypass-monitor-header)
+  * [Secured PXHD Cookie](#pxhd-cookie)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -867,6 +868,16 @@ The property accept an header name which, if provided in a request with the valu
 
 ```lua
 _M.bypass_monitor_header = 'x-px-block'
+```
+
+#### <a name="pxhd-cookie"></a> Secured PXHD Cookie
+
+A boolean flag to enable/disable the `Secure` flag when baking a PXHD cookie.
+
+**Default:** false
+
+```lua
+_M.pxhd_secure_enabled = true
 ```
 
 ## <a name="enrichment"></a> Enrichment

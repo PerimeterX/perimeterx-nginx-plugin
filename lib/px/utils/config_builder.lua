@@ -21,6 +21,7 @@ PX_DEFAULT_CONFIGURATIONS["monitored_routes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["advanced_blocking_response"] = { true, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["first_party_enabled"] = { true, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["reverse_xhr_enabled"] = { true, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["pxhd_secure_enabled"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["first_party_prefix"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["api_protection_mode"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["api_protection_block_url"] = { nil, "string"}

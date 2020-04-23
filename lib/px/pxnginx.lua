@@ -48,6 +48,7 @@ function M.application(px_configuration_table)
     local risk_api_path = px_constants.RISK_PATH
     local enabled_routes = px_config.enabled_routes
     local monitored_routes = px_config.monitored_routes
+    local pxhd_secure_enabled = px_config.pxhd_secure_enabled
     local remote_addr = px_headers.get_ip()
     local user_agent = ngx.var.http_user_agent or ""
     local string_sub = string.sub
@@ -78,6 +79,7 @@ function M.application(px_configuration_table)
         local request_data = px_api.new_request_object(result.message)
         local start_risk_rtt = px_common_utils.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
+        local cookie_secure_directive = ""
 
         ngx.ctx.risk_rtt = px_common_utils.get_time_in_milliseconds() - start_risk_rtt
         ngx.ctx.is_made_s2s_api_call = true
@@ -90,7 +92,12 @@ function M.application(px_configuration_table)
             -- handle pxhd cookie
             if ngx.ctx.pxhd ~= nil then
                 ngx.header["Content-Type"] = nil
-                ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires) .. "; Path=/"
+
+                if (pxhd_secure_enabled == true) then
+                    cookie_secure_directive = "; Secure"
+                end
+
+                ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd ..  cookie_secure_directive  .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires) .. "; Path=/"
             end
 
             -- case score crossed threshold
