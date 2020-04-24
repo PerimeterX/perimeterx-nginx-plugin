@@ -202,13 +202,18 @@ function _M.extract_cookie_names(cookies)
         end
 
         if (cookies_data ~= "") then
-            local index = 1
-            for token in string.gmatch(cookies_data, ("([^;]+)")) do
-                local key_value = trim(token)
-                for key, value in string.gmatch(key_value, "(%w+)=(%w+)") do
-                    t[index] = key
-                    index = index + 1
-                end
+            local index = 1;
+            local loopIndex = 0;
+            local cookie_name = ""
+            while(loopIndex ~= nil) do
+              loopIndex = string.find(cookies, "=")
+              cookie_name = string.sub(cookies, 0, loopIndex - 1)
+              t[index] = cookie_name
+              index = index + 1
+              loopIndex = string.find(cookies, ";")
+              if loopIndex ~= nil then
+                cookies = string.sub(cookies,loopIndex + 1)
+              end
             end
         else
             return "[]"
