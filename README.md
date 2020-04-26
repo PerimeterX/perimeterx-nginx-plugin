@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.5.1](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.5.1-1)
+> Latest stable version: [v6.6.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.6.0-1)
 
 
 ## [Introduction](#introduction)
@@ -39,6 +39,7 @@
   * [Filter Sensitive Headers](#sensitive-headers)
   * [Remote Configurations](#remote-configurations)
   * [Enabled Routes](#enabled-routes)
+  * [Monitored Routes](#monitored-routes)
   * [Sensitive Routes](#sensitive-routes)
   * [API Timeout](#api-timeout)
   * [Customize Default Block Page](#customblockpage)
@@ -54,6 +55,7 @@
   * [Proxy Authorization Header](#proxy-authorization)
   * [Custom Cookie Header](#custom-cookie-header)
   * [Bypass Monitor Mode Header](#bypass-monitor-header)
+  * [Secured PXHD Cookie](#pxhd-cookie)
 
 ## [Enrichment](#enrichment)
  * [Data Enrichment](#data-enrichment)
@@ -634,6 +636,18 @@ To deploy the PerimeterX First-Party JS Snippet:
   _M.enabled_routes = {'/blockhere'}
   ```
 
+### <a name="monitored-routes"></a> Monitored Routes
+
+allows you to define a set of route prefixes that will be handled as if in monitor mode, even if `block_enabled` is set to `true`.
+
+ **Default:** Empty list
+
+ Example:
+
+ ```lua
+  _M.monitored_routes = {'/profile'}
+  ```
+
 ### <a name="sensitive-routes"></a> Sensitive Routes
 
   A list of route prefixes and suffixes. The PerimeterX module always matches the request URI with the prefixes list and suffixes list. When there is a match, the PerimeterX module creates a server-to-server call, even when the cookie is valid and the risk score is low.
@@ -854,6 +868,16 @@ The property accept an header name which, if provided in a request with the valu
 
 ```lua
 _M.bypass_monitor_header = 'x-px-block'
+```
+
+#### <a name="pxhd-cookie"></a> Secured PXHD Cookie
+
+A boolean flag to enable/disable the `Secure` flag when baking a PXHD cookie.
+
+**Default:** false
+
+```lua
+_M.pxhd_secure_enabled = true
 ```
 
 ## <a name="enrichment"></a> Enrichment

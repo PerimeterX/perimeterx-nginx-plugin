@@ -146,7 +146,7 @@ function M.load(px_config)
         end
 
         if event_type == 'block' then
-            details['simulated_block'] = not px_config.block_enabled
+            details['simulated_block'] = not px_config.block_enabled or ngx.ctx.monitored_route == true
         end
 
         pxdata['details'] = details

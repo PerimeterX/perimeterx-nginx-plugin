@@ -24,12 +24,14 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.sensitive_routes_suffix = {}
 -- _M.additional_activity_handler = nil
 -- _M.enabled_routes = {}
+-- _M.monitored_routes = {}
 -- _M.first_party_enabled = true
 -- _M.reverse_xhr_enabled = true
 -- _M.proxy_url = nil
 -- _M.proxy_authorization = nil
 -- _M.custom_cookie_header = nil
 -- _M.bypass_monitor_header = nil
+-- _M.pxhd_secure_enabled = false
 
 -- -- ## API protection mode ##
 -- _M.api_protection_mode = false

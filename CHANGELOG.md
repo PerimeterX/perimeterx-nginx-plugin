@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.6.0] - 2020-04-26
+### Added
+- Support for monitored routes.
+- Support for secure flag for PXHD cookies.
+
+### Fixed
+- Removal of `gmatch` in `extract_cookie_names` for better performance.
+
 ## [6.5.1] - 2020-02-12
 ### Fixed
 - Better iterations value validation.
