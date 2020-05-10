@@ -207,9 +207,11 @@ function _M.extract_cookie_names(cookies)
             local cookie_name = ""
             while(loopIndex ~= nil) do
               loopIndex = string.find(cookies, "=")
-              cookie_name = string.sub(cookies, 0, loopIndex - 1)
-              t[index] = cookie_name
-              index = index + 1
+              if loopIndex ~= nil then
+                cookie_name = string.sub(cookies, 0, loopIndex - 1)
+                t[index] = cookie_name
+                index = index + 1
+              end
               loopIndex = string.find(cookies, ";")
               if loopIndex ~= nil then
                 cookies = string.sub(cookies,loopIndex + 1)

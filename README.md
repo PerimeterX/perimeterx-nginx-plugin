@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.6.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.6.0-1)
+> Latest stable version: [v6.6.1](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.6.1-1)
 
 
 ## [Introduction](#introduction)
@@ -523,7 +523,7 @@ The following configurations are set in:
 
 ##### <a name="perimterx_first_party_js_snippet"></a> First-Party JS Snippet
 
-Ensure the [PerimeterX NGINX Lua Plugin](#perimterx_plugin_configuration) is configured before deploying the PerimeterX First-Party JS Snippet across your site. (Detailed instructions for deploying the PerimeterX First-Party JS Snippet can be found <a href="https://console.perimeterx.com/docs/user_guide.html#first-party-snippet" onclick="window.open(this.href); return false;">here</a>.)
+Ensure the [PerimeterX NGINX Lua Plugin](#perimterx_plugin_configuration) is configured before deploying the PerimeterX First-Party JS Snippet across your site. (Detailed instructions for deploying the PerimeterX First-Party JS Snippet can be found <a href="https://docs.perimeterx.com/pxconsole/docs/managing-applications#section-snippet" onclick="window.open(this.href); return false;">here</a>.)
 
 To deploy the PerimeterX First-Party JS Snippet:
 
@@ -849,7 +849,7 @@ _M.proxy_authorization = 'top-secret-header-value'
 
 When set, this property specifies a header name which will be used to extract the PerimeterX cookie from, instead of the Cookie header.
 
-> NOTE: Using a custom cookie header requires client side integration to be done as well. Please refer to the relevant [docs](https://console.perimeterx.com/docs/advanced_client_integration.html#custom-cookie-header) for details.
+> NOTE: Using a custom cookie header requires client side integration to be done as well. Please refer to the relevant [docs](https://docs.perimeterx.com/pxconsole/docs/advanced-client-integration#section-custom-cookie-header) for details.
 
 **Default:** nil
 
@@ -909,7 +909,7 @@ The following example includes the pre-condition checks required to process the 
     end
     ...
 ```
-For more information and the available fields in the JSON, refer to the [PerimeterX Portal documentation](https://console.perimeterx.com/docs/user_guide.html#data-classification-enrichment).
+For more information and the available fields in the JSON, refer to the [PerimeterX Portal documentation](https://docs.perimeterx.com/pxconsole/docs/data-enrichment).
 
 
 ### <a name="log-enrichment"></a> Log Enrichment
@@ -982,7 +982,7 @@ window._pxOnCaptchaSuccess = function(isValid) {
 }
 ```
 
-For details on how to create a custom Captcha page, refer to the [documentation](https://console.perimeterx.com/docs/server_integration_new.html#custom-captcha-section)
+For details on how to create a custom Captcha page, refer to the [documentation](https://docs.perimeterx.com/pxconsole/docs/customize-challenge-page)
 
 <a name="appendix"></a> Appendix
 --------------------------------
