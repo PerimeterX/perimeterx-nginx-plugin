@@ -196,6 +196,10 @@ end
 -- returns one value - table
 function PXPayload:decode(data)
     local fields = self.cjson.decode(data)
+    if fields == nil or next(fields) == nil then
+            self.px_logger.error("Provided JSON was Empty")
+            error({ message = "empty_json" })
+    end
     return fields
 end
 
