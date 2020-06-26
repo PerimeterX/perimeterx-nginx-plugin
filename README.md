@@ -591,6 +591,7 @@ To deploy the PerimeterX First-Party JS Snippet:
   ----------- | ----- | ------------------ |
   **whitelist_uri_full** | `{'/api_server_full'}` | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1` |
   **whitelist_uri_prefixes** | `{'/api_server'}` | `/api_server_full?data=1` </br> but not to </br>  `/full_api_server?data=1` |
+  **whitelist_ignore_uri_prefixes** | `{'/api_server_auth'}` | Together with previous example, will prevent <br> `/api_server_auth_login` from being whitelisted. |
   **whitelist_uri_suffixes** | `{'.css'}` | `/style.css` </br> but not to </br>  `/style.js` |
   **whitelist_ip_addresses** | `{'192.168.99.1'}` | Filters requests coming from any of the listed IPs. |
   **whitelist_ua_full** | `{'Mozilla/5.0 (compatible; pingbot/2.0; http://www.pingdom.com/)'}` | Filters all requests matching this exact UA. |

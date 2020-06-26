@@ -34,6 +34,10 @@ function M.load(px_config)
     -- _M.Whitelist['uri_prefixes'] = {'/api_server'}
     _M.Whitelist['uri_prefixes'] = px_config.whitelist_uri_prefixes and px_config.whitelist_uri_prefixes or {}
 
+    -- Any url that matches these prefixes will not be whitelisted, even if matches `whitelist_uri_prefixes`
+    _M.Whitelist['ignore_uri_prefixes'] = px_config.whitelist_ignore_uri_prefixes or {}
+
+
     -- URI Suffixes filter
     -- will filter requests where the uri starts with any of the list below.
     -- example:
@@ -118,11 +122,22 @@ function M.load(px_config)
             end
         end
 
-        local wluri = _M.Whitelist['uri_prefixes']
+        local whitelist_prefix_cancel = false
+        local wluri = _M.Whitelist['ignore_uri_prefixes']
         for i = 1, #wluri do
             if string_sub(uri, 1, string_len(wluri[i])) == wluri[i] then
-                px_logger.debug("Whitelisted: uri_prefixes. " .. wluri[i])
-                return true
+                whitelist_prefix_cancel = true
+                break
+            end
+        end
+
+        if not whitelist_prefix_cancel then
+            local wluri = _M.Whitelist['uri_prefixes']
+            for i = 1, #wluri do
+                if string_sub(uri, 1, string_len(wluri[i])) == wluri[i] then
+                    px_logger.debug("Whitelisted: uri_prefixes. " .. wluri[i])
+                    return true
+                end
             end
         end
 
