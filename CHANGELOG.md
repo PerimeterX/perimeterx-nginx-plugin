@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.6.2] - 2020-10-16
+### Fixed
+- Handle cookies as tablee in `extract_cookie_names`.
+
 ## [6.6.1] - 2020-05-10
 ### Fixed
 - Small logic fix in `extract_cookie_names` function.
