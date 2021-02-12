@@ -27,6 +27,7 @@ install:
 	$(INSTALL) lib/px/block/templates/* $(DESTDIR)/$(LUA_LIB_DIR)/px/block/templates
 	$(INSTALL) -d $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
 	$(INSTALL) lib/px/utils/*.lua $(DESTDIR)/$(LUA_LIB_DIR)/px/utils
+	- ln -s /usr/local/lib/lua/px /usr/local/share/lua/5.1/px
 
 docker-test: docker
 	docker run -it -w /tmp -v logs:/var/log/nginx perimeterx/pxnginx:latest prove -v t
