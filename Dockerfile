@@ -8,9 +8,15 @@ RUN apt-get update && apt-get -qq -y install \
     curl \
     wget luarocks
 
+# Install CPAN dependencies for unit tests
+RUN curl -sSL http://cpanmin.us | perl - App::cpanminus
+RUN cpanm --quiet --notest --skip-satisfied Test::Nginx
+RUN cpanm --quiet --notest --skip-satisfied CryptX
+
 RUN luarocks install lustache
 RUN luarocks install luasocket
 RUN luarocks install lua-resty-http
+RUN luarocks install luacheck 
 RUN curl -sSL https://github.com/bungle/lua-resty-nettle/archive/v${VER_LUA_NETTLE}.tar.gz | tar -C /usr/local --strip-components 1 -xzf - && \
     mkdir -p /usr/local/lib/lua/resty && \
     mv /usr/local/lib/resty/* /usr/local/lib/lua/resty
