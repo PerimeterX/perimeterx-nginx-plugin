@@ -8,6 +8,11 @@ RUN apt-get update && apt-get -qq -y install \
     curl \
     wget luarocks
 
+# Install CPAN dependencies for unit tests
+RUN curl -sSL http://cpanmin.us | perl - App::cpanminus
+RUN cpanm --quiet --notest --skip-satisfied Test::Nginx
+RUN cpanm --quiet --notest --skip-satisfied CryptX
+
 RUN luarocks install lustache
 RUN luarocks install luasocket
 RUN luarocks install lua-resty-http
