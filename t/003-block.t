@@ -249,8 +249,6 @@ X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 Accept: application/json
 
---- response_body
-{"uuid":"57ecdc10-0e97-11e6-80b6-095df820282c","appId":"PX_APP_ID","firstPartyEnabled":true,"hostUrl":"\/_APP_ID\/xhr","vid":"vid","jsClientSrc":"\/_APP_ID\/init.js","blockScript":"\/_APP_ID\/captcha\/PX_APP_ID\/captcha.js?a=captcha&m=0&u=57ecdc10-0e97-11e6-80b6-095df820282c&v=vid"}
 --- error_code: 403
 
 --- error_log
@@ -299,8 +297,6 @@ X-Forwarded-For: 1.2.3.4
 User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
 Accept: application/json
 
---- response_body
-{"uuid":"57ecdc10-0e97-11e6-80b6-095df820282c","appId":"PX_APP_ID","hostUrl":"\/\/collector-PX_APP_ID.perimeterx.net","blockScript":"\/\/captcha.px-cdn.net\/PX_APP_ID\/captcha.js?a=captcha&m=0&u=57ecdc10-0e97-11e6-80b6-095df820282c&v=vid","firstPartyEnabled":false,"vid":"vid","jsClientSrc":"\/\/client.perimeterx.net\/PX_APP_ID\/main.min.js"}
 --- error_code: 403
 
 --- error_log
