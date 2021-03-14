@@ -93,7 +93,7 @@ function M.load(px_config)
             px_common_utils.handle_custom_parameters(px_config, px_logger, risk.additional)
         end
 
-        risk.additional.http_version = ngx_req_http_version()
+        risk.additional.http_version = tostring(ngx_req_http_version())
         risk.additional.http_method = ngx_req_get_method()
         risk.additional.module_version = px_constants.MODULE_VERSION
         risk.additional.cookie_origin = ngx.ctx.px_cookie_origin
