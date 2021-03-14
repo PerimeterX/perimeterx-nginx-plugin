@@ -300,7 +300,7 @@ User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 
 Accept: application/json
 
 --- response_body
-{"appId":"PX_APP_ID", "hostUrl":"\/\/collector-PX_APP_ID.perimeterx.net", "firstPartyEnabled":false, "uuid":"57ecdc10-0e97-11e6-80b6-095df820282c","vid":"vid","jsClientSrc":"\/\/client.perimeterx.net\/PX_APP_ID\/main.min.js","blockScript":"\/\/captcha.px-cdn.net\/PX_APP_ID\/captcha.js?a=captcha&m=0&u=57ecdc10-0e97-11e6-80b6-095df820282c&v=vid"}
+{"appId":"PX_APP_ID","hostUrl":"\/\/collector-PX_APP_ID.perimeterx.net","firstPartyEnabled":false,"uuid":"57ecdc10-0e97-11e6-80b6-095df820282c","vid":"vid","jsClientSrc":"\/\/client.perimeterx.net\/PX_APP_ID\/main.min.js","blockScript":"\/\/captcha.px-cdn.net\/PX_APP_ID\/captcha.js?a=captcha&m=0&u=57ecdc10-0e97-11e6-80b6-095df820282c&v=vid"}
 --- error_code: 403
 
 --- error_log
