@@ -65,7 +65,7 @@ Set the NGX $pxscore variable
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent" perimeterx_score "$pxscore';
 
-    access_log /var/log/nginx/access_log enriched;
+    access_log /var/log/nginx/access.log enriched;
 
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
@@ -121,7 +121,7 @@ Set the NGX $pxuuid variable
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent" perimeterx_score "$pxuuid';
 
-    access_log /var/log/nginx/access_log enriched;
+    access_log /var/log/nginx/access.log enriched;
 
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
@@ -177,7 +177,7 @@ Set the NGX $pxuuid variable
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent" perimeterx_score "$pxvid';
 
-    access_log /var/log/nginx/access_log enriched;
+    access_log /var/log/nginx/access.log enriched;
 
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
@@ -233,7 +233,7 @@ Set the NGX $pxuuid variable
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent" perimeterx_score "$pxuuid';
 
-    access_log /var/log/nginx/access_log enriched;
+    access_log /var/log/nginx/access.log enriched;
 
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
@@ -289,7 +289,7 @@ Set the NGX pxblock variable
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent" perimeterx_score "$pxblock';
 
-    access_log /var/log/nginx/access_log enriched;
+    access_log /var/log/nginx/access.log enriched;
 
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
@@ -345,7 +345,7 @@ Set the NGX pxblock variable
                     '"$request" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent" perimeterx_score "$pxpass';
 
-    access_log /var/log/nginx/access_log enriched;
+    access_log /var/log/nginx/access.log enriched;
 
     lua_package_path "/usr/local/lib/lua/?.lua;/usr/local/openresty/lualib/?.lua;;";
     lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
