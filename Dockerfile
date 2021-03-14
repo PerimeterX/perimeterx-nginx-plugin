@@ -16,6 +16,7 @@ RUN cpanm --quiet --notest --skip-satisfied CryptX
 RUN luarocks install lustache
 RUN luarocks install luasocket
 RUN luarocks install lua-resty-http
+RUN luarocks install luacheck
 RUN curl -sSL https://github.com/bungle/lua-resty-nettle/archive/v${VER_LUA_NETTLE}.tar.gz | tar -C /usr/local --strip-components 1 -xzf - && \
     mkdir -p /usr/local/lib/lua/resty && \
     mv /usr/local/lib/resty/* /usr/local/lib/lua/resty
