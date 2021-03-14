@@ -29,4 +29,6 @@ RUN make -C /tmp/px install
 COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 COPY examples/creds.json /tmp/creds.json
 
+RUN touch /var/log/nginx/access.log
+
 CMD ["nginx", "-g", "daemon off;"]
