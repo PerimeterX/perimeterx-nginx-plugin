@@ -77,4 +77,8 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.whitelist_ua_full = {}
 -- _M.whitelist_ua_sub = {}
 
+-- ## Login Credentials extraction
+--_M.px_enable_login_creds_extraction = false
+--_M.px_login_creds_settings_filename = nil
+
 return _M

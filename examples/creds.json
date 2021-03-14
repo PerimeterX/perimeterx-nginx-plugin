@@ -1,0 +1,38 @@
+{
+    "features": {
+        "credentials": {
+            "items": [
+                {
+                    "id": 0,
+                    "method": "post",
+                    "sent_through": "body",
+                    "content_type": "form-data",
+                    "encoding": "clear-text",
+                    "path": "/old_login",
+                    "pass_field": "password",
+                    "user_field": "username"
+                },
+                {
+                    "id": 1,
+                    "method": "post",
+                    "sent_through": "body",
+                    "content_type": "json",
+                    "encoding": "clear-text",
+                    "path": "/login",
+                    "pass_field": "password",
+                    "user_field": "username"
+                },
+                {
+                    "id": 2,
+                    "method": "post",
+                    "sent_through": "body",
+                    "content_type": "form-data",
+                    "encoding": "clear-text",
+                    "path": "/old_login2",
+                    "pass_field": "password",
+                    "user_field": "username"
+                }
+            ]
+        }
+    }
+}
