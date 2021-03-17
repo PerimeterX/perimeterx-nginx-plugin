@@ -89,7 +89,7 @@ function M.load(px_config)
     -- extract login information from client request
     -- return table or nil
     function _M.px_credentials_extract()
-        if px_config.Creds == nil then
+        if px_config.creds == nil then
             return nil
         end
 
@@ -99,7 +99,7 @@ function M.load(px_config)
 
         -- check creds path and method
         local uri = ngx.var.uri
-        for k, v in pairs(px_config.Creds) do
+        for k, v in pairs(px_config.creds) do
             if v.path == uri and v.method == method then
                 ci = v
                 break
@@ -127,7 +127,7 @@ function M.load(px_config)
     end
 
     -- check if login credentials settings are already loaded
-    if px_config.Creds then
+    if px_config.creds then
         return _M
     end
 
@@ -145,7 +145,7 @@ function M.load(px_config)
     if not success then
         px_logger.error("Could not decode login credentials JSON file")
     else
-        px_config.Creds = creds_json.features.credentials.items
+        px_config.creds = creds_json.features.credentials.items
     end
 
     return _M
