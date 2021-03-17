@@ -77,7 +77,7 @@ function M.application(px_configuration_table)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local cookie_expires = 31536000 -- one year
-        local request_data = px_api.new_request_object(result.message)
+        local request_data = px_api.new_request_object(result.message, details)
         local start_risk_rtt = px_common_utils.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
         local cookie_secure_directive = ""

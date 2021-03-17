@@ -26,7 +26,7 @@ function M.load(px_config)
     -- new_request_object --
     -- takes no arguments
     -- returns table
-    function _M.new_request_object(call_reason)
+    function _M.new_request_object(call_reason, details)
         local risk = {}
         local cookieHeader = px_headers.get_header("cookie")
         local vid_source = "none"
@@ -102,6 +102,14 @@ function M.load(px_config)
             risk.additional.risk_mode = "active_blocking"
         else
             risk.additional.risk_mode = "monitor"
+        end
+
+        if details["user"] then
+            risk.additional.user = details["user"]
+        end
+
+        if details["pass"] then
+            risk.additional.pass = details["pass"]
         end
 
         return risk

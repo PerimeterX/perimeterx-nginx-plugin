@@ -6,7 +6,6 @@ local M = {}
 
 function M.load(px_config)
     local _M = {}
-    _M.Creds = nil
 
     local cjson = require "cjson"
     local px_logger = require ("px.utils.pxlogger").load(px_config)
@@ -78,8 +77,9 @@ function M.load(px_config)
             return nil
         end
 
-        local body_json = cjson.decode(data)
-        if not body_json then
+        local success, body_json  = pcall(cjson.decode, data)
+        if not success then
+            px_logger.debug("Could not decode JSON body")
             return nil
         end
 
@@ -89,7 +89,7 @@ function M.load(px_config)
     -- extract login information from client request
     -- return table or nil
     function _M.px_credentials_extract()
-        if _M.Creds == nil then
+        if px_config.Creds == nil then
             return nil
         end
 
@@ -99,7 +99,7 @@ function M.load(px_config)
 
         -- check creds path and method
         local uri = ngx.var.uri
-        for k, v in pairs(_M.Creds) do
+        for k, v in pairs(px_config.Creds) do
             if v.path == uri and v.method == method then
                 ci = v
                 break
@@ -121,11 +121,17 @@ function M.load(px_config)
         return nil
     end
 
-    -- try to load JSON with creds information
+    -- check if login credentials feature is enabled
     if not px_config.px_enable_login_creds_extraction or px_config.px_login_creds_settings_filename == nil then
         return _M
     end
 
+    -- check if login credentials settings are already loaded
+    if px_config.Creds then
+        return _M
+    end
+
+    -- try to load JSON with creds information
     local f, err = io.open(px_config.px_login_creds_settings_filename, "r")
     if not f then
         px_logger.error("Failed to load login credentials JSON file: " .. err)
@@ -133,10 +139,14 @@ function M.load(px_config)
     end
 
     local content = f:read("*a")
-    local creds_json = cjson.decode(content)
     f:close()
 
-    _M.Creds = creds_json.features.credentials.items
+    local success, creds_json  = pcall(cjson.decode, content)
+    if not success then
+        px_logger.error("Could not decode login credentials JSON file")
+    else
+        px_config.Creds = creds_json.features.credentials.items
+    end
 
     return _M
 end

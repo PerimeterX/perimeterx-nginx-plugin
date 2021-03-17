@@ -13,7 +13,9 @@ function M.application(px_configutraion_table)
 	local px_logger = require ("px.utils.pxlogger").load(px_config)
 	local px_constants = require("px.utils.pxconstants")
 	local buffer = require "px.utils.pxbuffer"
-	local px_creds = require ("px.utils.pxlogin_credentials").load(px_config)
+
+    -- load login credentials settings at the application startup
+	local px_creds = require("px.utils.pxlogin_credentials").load(px_config)
 
 	local ngx_timer_at = ngx.timer.at
 
