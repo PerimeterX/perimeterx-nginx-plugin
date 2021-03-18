@@ -26,7 +26,7 @@ function M.load(px_config)
     -- new_request_object --
     -- takes no arguments
     -- returns table
-    function _M.new_request_object(call_reason)
+    function _M.new_request_object(call_reason, details)
         local risk = {}
         local cookieHeader = px_headers.get_header("cookie")
         local vid_source = "none"
@@ -93,7 +93,7 @@ function M.load(px_config)
             px_common_utils.handle_custom_parameters(px_config, px_logger, risk.additional)
         end
 
-        risk.additional.http_version = ngx_req_http_version()
+        risk.additional.http_version = tostring(ngx_req_http_version())
         risk.additional.http_method = ngx_req_get_method()
         risk.additional.module_version = px_constants.MODULE_VERSION
         risk.additional.cookie_origin = ngx.ctx.px_cookie_origin
@@ -102,6 +102,14 @@ function M.load(px_config)
             risk.additional.risk_mode = "active_blocking"
         else
             risk.additional.risk_mode = "monitor"
+        end
+
+        if details["user"] then
+            risk.additional.user = details["user"]
+        end
+
+        if details["pass"] then
+            risk.additional.pass = details["pass"]
         end
 
         return risk

@@ -42,6 +42,7 @@ function M.application(px_configuration_table)
     local px_constants = require("px.utils.pxconstants")
     local px_common_utils = require("px.utils.pxcommonutils")
     local px_telemetry = require("px.utils.pxtelemetry")
+    local px_creds = require ("px.utils.pxlogin_credentials").load(px_config)
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
@@ -76,7 +77,7 @@ function M.application(px_configuration_table)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local cookie_expires = 31536000 -- one year
-        local request_data = px_api.new_request_object(result.message)
+        local request_data = px_api.new_request_object(result.message, details)
         local start_risk_rtt = px_common_utils.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
         local cookie_secure_directive = ""
@@ -224,6 +225,12 @@ function M.application(px_configuration_table)
             no_cookie_message = "no_cookie_w_vid"
         end
         result = { message = no_cookie_message }
+    end
+
+    local creds = px_creds.px_credentials_extract()
+    if creds then
+        details["user"] = creds["user"]
+        details["pass"] = creds["pass"]
     end
 
     -- cookie verification passed - checking result.
