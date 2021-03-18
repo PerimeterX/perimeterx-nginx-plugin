@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.7.0] - 2021-03-17
+### Added
+- New feature: Login Credentials Extraction.
+
 ## [6.6.2] - 2020-10-16
 ### Fixed
 - Handle cookies as tablee in `extract_cookie_names`.
