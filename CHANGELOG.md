@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [6.6.0] - 2020-04-26
 ### Added
-- Support for monitored routes. 
+- Support for monitored routes.
 - Support for secure flag for PXHD cookies.
 
 ### Fixed
