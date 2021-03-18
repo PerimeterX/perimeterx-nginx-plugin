@@ -75,6 +75,7 @@
 - [NGINX Dynamic Modules](#dynamicmodules)
 - [Multiple App Support](#multipleapps)
 - [Setting Up A First Party Prefix](#setting_up_first_party_prefix)
+- [URI Delimiters](#uri_delimiters)
 - [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
@@ -1159,6 +1160,10 @@ If your PerimeterX account contains several applications (as defined in the Port
 ### <a name="setting_up_first_party_prefix"></a> Setting Up A First Party Prefix
 
 Documentation for setting up First-Party Prefixes is found [here](FIRST_PARTY_PREFIX.md).
+
+### <a name="uri_delimiters"></a> URI Delimiters
+
+PerimeterX processes URI paths with general- and sub-delimiters according to RFC 3986. General delimiters (e.g., `?`, `#`) are used to separate parts of the URI. Sub-delimiters (e.g., `$`, `&`) are not used to split the URI as they are considered valid characters in the URI path.
 
 ## <a name="contributing"></a> Contributing
 
