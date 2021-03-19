@@ -1058,12 +1058,12 @@ _M.px_login_creds_settings_filename = ‘/path/to/creds.json’
 
 Example available in `examples/creds.json` file. It includes an array of JSON objects containing the following properties:
 
-```json
+```json5
 {
   "id": 0, // unique int
   "method": "post", // supported methods: post
   "sent_through": "body", // supported sent_throughs: header, url, body
-  "content_type": "json", // supported content_types: json
+  "content_type": "json", // supported content_types: json, form-data
   "encoding": "clear-text", // supported encodings: clear-text
   "path": "/login", // login path
   "pass_field": "password", // name of the password field in the request
