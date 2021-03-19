@@ -12,6 +12,20 @@ function M.load(px_config)
     local px_headers = require ("px.utils.pxheaders").load(px_config)
     local sha2 = require "resty.nettle.sha2"
     local px_common_utils = require("px.utils.pxcommonutils")
+    local upload = require "resty.upload"
+
+    -- return table with hashed username and password
+    function _M.creds_encode(user, pass)
+        local creds = {}
+        local user_hash = sha2.sha256.new()
+        user_hash:update(user)
+        local pass_hash = sha2.sha256.new()
+        pass_hash:update(pass)
+
+        creds["user"] = px_common_utils.to_hex(user_hash:digest())
+        creds["pass"] = px_common_utils.to_hex(pass_hash:digest())
+        return creds
+    end
 
     -- extract login information from a table
     -- return table or nil
@@ -27,15 +41,7 @@ function M.load(px_config)
         end
 
         if user and pass then
-            local creds = {}
-            local user_hash = sha2.sha256.new()
-            user_hash:update(user)
-            local pass_hash = sha2.sha256.new()
-            pass_hash:update(pass)
-
-            creds["user"] = px_common_utils.to_hex(user_hash:digest())
-            creds["pass"] = px_common_utils.to_hex(pass_hash:digest())
-            return creds
+            return _M.creds_encode(user, pass)
         end
 
         return nil
@@ -46,10 +52,7 @@ function M.load(px_config)
         local pass = px_headers.get_header(ci.pass_field)
 
         if user and pass then
-            local creds = {}
-            creds["user"] = user
-            creds["pass"] = pass
-            return creds
+            return _M.creds_encode(user, pass)
         end
 
         return nil
@@ -64,16 +67,11 @@ function M.load(px_config)
         return _M.creds_extract_from_table(ci, params)
     end
 
-    function _M.creds_extract_from_body(ci)
+    function _M.creds_extract_from_body_json(ci)
         -- force Nginx to read body data
         ngx.req.read_body()
         local data = ngx.req.get_body_data()
         if not data then
-            return nil
-        end
-
-        -- only JSON body type is supported
-        if ci.content_type ~= "json" then
             return nil
         end
 
@@ -84,6 +82,87 @@ function M.load(px_config)
         end
 
         return _M.creds_extract_from_table(ci, body_json)
+    end
+
+    -- parse lines similar to:  form-data; name1=val1; name2=val2
+    local function decode_content_disposition(value)
+        local result
+        local disposition_type, params = string.match(value, "([%w%-%._]+);(.+)")
+        if disposition_type then
+            result = {}
+            if params then
+                for index, param in pairs(px_common_utils.split(params, ";")) do
+                    local key, value = param:match('([%w%.%-_]+)="(.+)"$')
+                    local key = px_common_utils.trim(key)
+                    if key then
+                        result[key] = px_common_utils.trim(value)
+                    end
+                end
+            end
+        end
+
+        return result
+    end
+
+    function _M.creds_extract_from_formdata(ci)
+        -- maximal POST field size to read
+        local chunk_size = 4096
+        local form, err = upload:new(chunk_size)
+        if not form then
+            return nil
+        end
+
+        local user = nil
+        local pass = nil
+
+        form:set_timeout(1000)
+
+        local field_name = "none"
+        while true do
+            local t, res, err = form:read()
+            if not t then
+                return nil
+            end
+
+            if t == "header" then
+                -- return:  name = [key name]
+                local kv = decode_content_disposition(res[2])
+
+                if kv.name == ci.user_field then
+                    field_name = "user"
+                elseif kv.name == ci.pass_field then
+                    field_name = "pass"
+                else
+                    field_name = "none"
+                end
+            elseif t == "body" then
+                if field_name == "user"  then
+                    user = res
+                elseif field_name == "pass"  then
+                    pass = res
+                end
+            elseif t == "eof" then
+                field_name = "none"
+                break
+            end
+        end
+
+        if user and pass then
+             return _M.creds_encode(user, pass)
+        end
+
+        return nil
+    end
+
+    function _M.creds_extract_from_body(ci)
+        -- JSON body type
+        if ci.content_type == "json" then
+            return _M.creds_extract_from_body_json(ci)
+        elseif ci.content_type == "form-data" then
+            return _M.creds_extract_from_formdata(ci)
+        else
+            return nil
+        end
     end
 
     -- extract login information from client request

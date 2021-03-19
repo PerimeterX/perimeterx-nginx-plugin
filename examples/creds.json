@@ -28,9 +28,9 @@
                     "sent_through": "body",
                     "content_type": "form-data",
                     "encoding": "clear-text",
-                    "path": "/old_login2",
-                    "pass_field": "password",
-                    "user_field": "username"
+                    "path": "/user_sessions",
+                    "pass_field": "user_session[password]",
+                    "user_field": "user_session[login]"
                 }
             ]
         }
