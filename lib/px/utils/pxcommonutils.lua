@@ -22,8 +22,16 @@ local function hex_to_char(str)
     return string.char(tonumber(str, 16))
 end
 
-local function trim(s)
+function _M.trim(s)
     return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+function _M.split(s, sep)
+    local fields = {}
+    local sep = sep or " "
+    local pattern = string.format("([^%s]+)", sep)
+    string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
+    return fields
 end
 
 local function ends_with(str, ending)
@@ -191,7 +199,7 @@ function _M.extract_cookie_names(cookies)
     if cookies ~= nil then
         if type(cookies) == 'table' then
             for k, v in pairs(cookies) do
-                local trimmed = trim(v)
+                local trimmed = _M.trim(v)
                 if not ends_with(trimmed, ";") then
                     trimmed = trimmed .. ";"
                 end

@@ -67,7 +67,6 @@ function M.load(px_config)
         return _M.creds_extract_from_table(ci, params)
     end
 
-
     function _M.creds_extract_from_body_json(ci)
         -- force Nginx to read body data
         ngx.req.read_body()
@@ -85,14 +84,6 @@ function M.load(px_config)
         return _M.creds_extract_from_table(ci, body_json)
     end
 
-    local function split(s, sep)
-        local fields = {}
-        local sep = sep or " "
-        local pattern = string.format("([^%s]+)", sep)
-        string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
-        return fields
-    end
-
     -- parse lines similar to:  form-data; name1=val1; name2=val2
     local function decode_content_disposition(value)
         local result
@@ -100,10 +91,11 @@ function M.load(px_config)
         if disposition_type then
             result = {}
             if params then
-                for index, param in pairs(split(params, ";")) do
-                    key, value = param:match('([%w%.%-_]+)="(.+)"$')
+                for index, param in pairs(px_common_utils.split(params, ";")) do
+                    local key, value = param:match('([%w%.%-_]+)="(.+)"$')
+                    local key = px_common_utils.trim(key)
                     if key then
-                       result[key] = value
+                        result[key] = px_common_utils.trim(value)
                     end
                 end
             end
@@ -113,6 +105,7 @@ function M.load(px_config)
     end
 
     function _M.creds_extract_from_formdata(ci)
+        -- maximal POST field size to read
         local chunk_size = 4096
         local form, err = upload:new(chunk_size)
         if not form then
