@@ -104,7 +104,7 @@ function M.load(px_config)
         return result
     end
 
-    function _M.creds_extract_from_formdata(ci)
+    function _M.creds_extract_from_body_formdata(ci)
         -- maximal POST field size to read
         local chunk_size = 4096
         local form, err = upload:new(chunk_size)
@@ -154,12 +154,26 @@ function M.load(px_config)
         return nil
     end
 
+    function _M.creds_extract_from_body_form_urlencoded(ci)
+        -- force Nginx to read body data
+        ngx.req.read_body()
+        local args, err = ngx.req.get_post_args()
+
+        if err or not args then
+            return nil
+        end
+
+        return _M.creds_extract_from_table(ci, args)
+    end
+
     function _M.creds_extract_from_body(ci)
         -- JSON body type
         if ci.content_type == "json" then
             return _M.creds_extract_from_body_json(ci)
         elseif ci.content_type == "form-data" then
-            return _M.creds_extract_from_formdata(ci)
+            return _M.creds_extract_from_body_formdata(ci)
+        elseif ci.content_type == "form-urlencoded" then
+            return _M.creds_extract_from_body_form_urlencoded(ci)
         else
             return nil
         end

@@ -9,8 +9,8 @@
                     "content_type": "form-data",
                     "encoding": "clear-text",
                     "path": "/old_login",
-                    "pass_field": "password",
-                    "user_field": "username"
+                    "user_field": "username",
+                    "pass_field": "password"
                 },
                 {
                     "id": 1,
@@ -19,8 +19,8 @@
                     "content_type": "json",
                     "encoding": "clear-text",
                     "path": "/login",
-                    "pass_field": "password",
-                    "user_field": "username"
+                    "user_field": "username",
+                    "pass_field": "password"
                 },
                 {
                     "id": 2,
@@ -29,8 +29,18 @@
                     "content_type": "form-data",
                     "encoding": "clear-text",
                     "path": "/user_sessions",
-                    "pass_field": "user_session[password]",
-                    "user_field": "user_session[login]"
+                    "user_field": "user_session[login]",
+                    "pass_field": "user_session[password]"
+                },
+                {
+                    "id": 3,
+                    "method": "post",
+                    "sent_through": "body",
+                    "content_type": "form-urlencoded",
+                    "encoding": "clear-text",
+                    "path": "/auth/login",
+                    "user_field": "email",
+                    "pass_field": "password"
                 }
             ]
         }
