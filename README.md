@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.6.2](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.7.0-1)
+> Latest stable version: [v6.7.2](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.7.2-1)
 
 ## [Introduction](#introduction)
 
@@ -1063,7 +1063,7 @@ Example available in `examples/creds.json` file. It includes an array of JSON ob
   "id": 0, // unique int
   "method": "post", // supported methods: post
   "sent_through": "body", // supported sent_throughs: header, url, body
-  "content_type": "json", // supported content_types: json, form-data
+  "content_type": "json", // supported content_types: json, form-data, form-urlencoded
   "encoding": "clear-text", // supported encodings: clear-text
   "path": "/login", // login path
   "pass_field": "password", // name of the password field in the request
