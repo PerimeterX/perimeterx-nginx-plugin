@@ -196,6 +196,8 @@ cd ~
 ```sh
 sudo apt-get -y install lua-sec
 sudo luarocks install lua-resty-nettle
+luarocks install lua-resty-upload
+
 ```
 
 ###### 7. Install the PerimeterX NGINX Plugin
@@ -261,12 +263,12 @@ NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This
 ###### 1. Update and Install dependecies
 
 ```sh
-sudo yum -y update
-sudo yum install -y epel-release
-sudo yum update -y
-sudo yum groupinstall -y  "Development Tools"
-sudo yum install -y luarocks wget rpmdevtools git luajit luajit-devel openssl-devel zlib-devel pcre-devel gcc gcc-c++ make perl-ExtUtils-Embed lua-json lua-devel  ca-certificates
-sudo yum remove -y nettle
+yum -y update
+yum install -y epel-release
+yum update -y
+yum groupinstall -y  "Development Tools"
+yum install -y wget rpmdevtools git luajit luajit-devel openssl-devel zlib-devel pcre-devel gcc gcc-c++ make perl-ExtUtils-Embed lua-json lua-devel  ca-certificates
+yum remove -y nettle luarocks
 ```
 
 ###### 2. Make a tmp directory to work in
@@ -279,47 +281,55 @@ cd /tmp/nginx
 ###### 3. Download all required source files
 
 ```sh
-wget http://nginx.org/download/nginx-1.13.11.tar.gz
-wget http://luajit.org/download/LuaJIT-2.0.4.tar.gz
-wget -O nginx_devel_kit.tar.gz https://github.com/simpl/ngx_devel_kit/archive/v0.3.0.tar.gz
+wget http://luarocks.github.io/luarocks/releases/luarocks-3.5.0.tar.gz
+wget http://nginx.org/download/nginx-1.18.0.tar.gz
+wget -O luajit-2.0.tar.gz https://github.com/LuaJIT/LuaJIT/archive/refs/tags/v2.0.5.tar.gz
+wget -O nginx_devel_kit.tar.gz https://github.com/simpl/ngx_devel_kit/archive/v0.3.1.tar.gz
 wget -O nginx_lua_module.tar.gz https://github.com/openresty/lua-nginx-module/archive/v0.10.15.tar.gz
-wget https://ftp.gnu.org/gnu/nettle/nettle-3.4.tar.gz
+wget https://ftp.gnu.org/gnu/nettle/nettle-3.6.tar.gz
 ```
 
 ###### 4. Unpackage all source files
 
 ```sh
-tar -xzf nettle-3.4.tar.gz
-tar -xvf LuaJIT-2.0.4.tar.gz
-tar -xvf nginx-1.13.11.tar.gz
+tar -xzf luarocks-3.5.0.tar.gz
+tar -xzf nettle-3.6.tar.gz
+tar -xvf luajit-2.0.tar.gz
+tar -xvf nginx-1.18.0.tar.gz
 tar -xvf nginx_devel_kit.tar.gz
 tar -xvf nginx_lua_module.tar.gz
 ```
 
-###### 5. Install Nettle from source
+###### 5. Install luarocks from source
 
 ```sh
-cd /tmp/nginx/nettle-3.4
-sudo ./configure --prefix=/usr --disable-static
-sudo make
-sudo make check
-sudo make install
-sudo chmod -v 755 /usr/lib/lib{hogweed,nettle}.so
-sudo install -v -m755 -d /usr/share/doc/nettle-3.4
-sudo install -v -m644 nettle.html /usr/share/doc/nettle-3.4
+cd /tmp/nginx/luarocks-3.5.0
+./configure
+make
+make install
 ```
 
-###### 6. Install LuaJIT
-
-```
-cd /tmp/nginx/LuaJIT-2.0.4
-sudo make install
-```
-
-###### 7. Build and Install NGINX with required Modules
+###### 6. Install Nettle from source
 
 ```sh
-cd /tmp/nginx/nginx-1.13.11
+cd /tmp/nginx/nettle-3.6
+./configure --prefix=/usr --disable-static
+make
+make check
+make install
+```
+
+###### 7. Install LuaJIT
+
+```
+cd /tmp/nginx/LuaJIT-2.0.5
+make install
+```
+
+###### 8. Build and Install NGINX with required Modules
+
+```sh
+cd /tmp/nginx/nginx-1.18.0
 LUAJIT_LIB=/usr/local/lib LUAJIT_INC=/usr/local/include/luajit-2.0 \
 ./configure \
 --user=nginx                          \
@@ -339,25 +349,26 @@ LUAJIT_LIB=/usr/local/lib LUAJIT_INC=/usr/local/include/luajit-2.0 \
 --with-http_perl_module               \
 --with-file-aio                       \
 --with-http_realip_module             \
---add-module=/tmp/nginx/ngx_devel_kit-0.3.0 \
+--add-module=/tmp/nginx/ngx_devel_kit-0.3.1 \
 --add-module=/tmp/nginx/lua-nginx-module-0.10.15
-sudo make install
-sudo nginx -t
+make install
 ```
 
-###### 8. Install PerimeterX Nginx Plugin & Dependencies
+###### 9. Install PerimeterX Nginx Plugin & Dependencies
 
 ```sh
-sudo luarocks install luasec
-sudo luarocks install lustache
-sudo luarocks install lua-resty-nettle
-sudo luarocks install luasocket
-sudo luarocks install lua-resty-http
-sudo luarocks install lua-cjson
-sudo luarocks install perimeterx-nginx-plugin
+luarocks install luasec
+luarocks install lustache
+luarocks install lua-resty-core
+luarocks install lua-resty-nettle
+luarocks install lua-resty-upload
+luarocks install luasocket
+luarocks install lua-resty-http
+luarocks install lua-cjson
+luarocks install perimeterx-nginx-plugin
 ```
 
-###### 9. Optionalally, if you are testing in a new environment you may need to configure the following:
+###### 10. Optionalally, if you are testing in a new environment you may need to configure the following:
 
 - Add the user "nginx"
 
