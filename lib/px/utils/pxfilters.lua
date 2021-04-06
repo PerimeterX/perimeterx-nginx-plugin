@@ -41,6 +41,15 @@ function M.load(px_config)
     -- _M.Whitelist['uri_suffixes'] = {'.css'}
     _M.Whitelist['uri_suffixes'] = px_config.whitelist_uri_suffixes and px_config.whitelist_uri_suffixes or {}
 
+    -- URI Suffixes filter
+    -- will filter requests where the uri matches any lua pattern in the list below.
+    -- example:
+    -- filter: example.com/aaa/anthing/api_server?data=data
+    -- _M.Whitelist['uri_pattern'] = {'/aaa/.*/api_server'}
+    -- For clearness, the pattern always requires to match full uri path, so if you want to match from the middle
+    -- you need to all `.*` in the beginning
+    _M.Whitelist['uri_pattern'] = px_config.whitelist_uri_pattern or {}
+
     -- IP Addresses filter
     -- will filter requests coming from the ip in the list below
     -- _M.Whitelist['ip_addresses'] = {'192.168.99.1'}
@@ -130,6 +139,14 @@ function M.load(px_config)
         for i = 1, #wluris do
             if string_sub(uri, -string_len(wluris[i])) == wluris[i] then
                 px_logger.debug("Whitelisted: uri_suffix. " .. wluris[i])
+                return true
+            end
+        end
+
+        local wluris = _M.Whitelist['uri_pattern']
+        for i = 1, #wluris do
+            if string.find(uri, '^' .. wluris[i] .. '$') then
+                px_logger.debug("Whitelisted: uri_pattern. " .. wluris[i])
                 return true
             end
         end
