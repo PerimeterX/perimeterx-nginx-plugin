@@ -16,6 +16,7 @@
     "lua-resty-nettle < 1.0",
     "luasocket",
     "lustache"
+    "lua-resty-upload"
  }
 
  build = {
