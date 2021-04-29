@@ -12,7 +12,7 @@ function M.load(px_config)
     local px_headers = require ("px.utils.pxheaders").load(px_config)
     local sha2 = require "resty.nettle.sha2"
     local px_common_utils = require("px.utils.pxcommonutils")
-    local upload = require "resty.upload"
+    local upload = require("px.utils.upload")
 
     -- return table with hashed username and password
     function _M.creds_encode(user, pass)
@@ -107,7 +107,10 @@ function M.load(px_config)
     function _M.creds_extract_from_body_formdata(ci)
         -- maximal POST field size to read
         local chunk_size = 4096
-        local form, err = upload:new(chunk_size)
+        -- maximal single string length
+        local max_string_size = 512
+        local form, err = upload:new(chunk_size, max_string_size, true)
+
         if not form then
             return nil
         end
