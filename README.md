@@ -196,7 +196,6 @@ cd ~
 ```sh
 sudo apt-get -y install lua-sec
 sudo luarocks install lua-resty-nettle
-luarocks install lua-resty-upload
 
 ```
 
@@ -361,7 +360,6 @@ luarocks install luasec
 luarocks install lustache
 luarocks install lua-resty-core
 luarocks install lua-resty-nettle
-luarocks install lua-resty-upload
 luarocks install luasocket
 luarocks install lua-resty-http
 luarocks install lua-cjson
