@@ -12,7 +12,7 @@ function M.load(px_config)
     local px_headers = require ("px.utils.pxheaders").load(px_config)
     local sha2 = require "resty.nettle.sha2"
     local px_common_utils = require("px.utils.pxcommonutils")
-    local upload = require("px.utils.upload")
+    local upload = require("px.utils.resty_upload")
 
     -- return table with hashed username and password
     function _M.creds_encode(user, pass)
