@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.7.2](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.7.2-1)
+> Latest stable version: [v6.7.3](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.7.3-1)
 
 ## [Introduction](#introduction)
 
@@ -196,7 +196,6 @@ cd ~
 ```sh
 sudo apt-get -y install lua-sec
 sudo luarocks install lua-resty-nettle
-luarocks install lua-resty-upload
 
 ```
 
@@ -361,7 +360,6 @@ luarocks install luasec
 luarocks install lustache
 luarocks install lua-resty-core
 luarocks install lua-resty-nettle
-luarocks install lua-resty-upload
 luarocks install luasocket
 luarocks install lua-resty-http
 luarocks install lua-cjson
