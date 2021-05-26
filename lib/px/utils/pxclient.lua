@@ -140,7 +140,7 @@ function M.load(px_config)
         end
 
         if event_type == 'page_requested' then
-            px_logger.debug("Sent page requested acitvity")
+            px_logger.debug("Sent page requested activity")
             details['pass_reason'] = ngx.ctx.pass_reason
             px_logger.enrich_log('pxpass', details.pass_reason)
         end
