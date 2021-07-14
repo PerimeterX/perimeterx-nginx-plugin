@@ -25,9 +25,7 @@
 local M = {}
 M.configLoaded = false
 
--- postpone_page_requested: optional parameter,
---  if true then finalize() must be called to finalize the request processing
-function M.application(px_configuration_table, postpone_page_requested)
+function M.application(px_configuration_table)
     local config_builder = require("px.utils.config_builder")
 
     local px_config = config_builder.load(px_configuration_table)
@@ -268,7 +266,7 @@ function M.application(px_configuration_table, postpone_page_requested)
     px_data["details"] = details
     px_data["finalized"] = false
 
-    if not postpone_page_requested then
+    if px_config.postpone_page_requested == nil or not px_config.postpone_page_requested then
         M.finalize(px_data)
     else
         return px_data
