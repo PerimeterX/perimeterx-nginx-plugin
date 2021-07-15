@@ -124,7 +124,7 @@ function M.application(px_configuration_table)
     end
 
     -- by default it's set as finalized, no need to call page_requested
-    px_data = {}
+    local px_data = {}
     px_data["finalized"] = true
     px_data["px_config"] = px_config
 
