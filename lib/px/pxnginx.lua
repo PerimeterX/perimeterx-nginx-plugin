@@ -24,6 +24,7 @@
 
 local M = {}
 M.configLoaded = false
+
 function M.application(px_configuration_table)
     local config_builder = require("px.utils.config_builder")
 
@@ -108,7 +109,6 @@ function M.application(px_configuration_table)
             end
             -- score did not cross the blocking threshold
             ngx.ctx.pass_reason = 's2s'
-            pcall(px_client.send_to_perimeterx, "page_requested", details)
             return true
         else
             -- server2server call failed, passing traffic
@@ -118,11 +118,15 @@ function M.application(px_configuration_table)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
             px_logger.debug('Risk API failed with error: ' .. response)
-            px_client.send_to_perimeterx("page_requested", details)
 
             return true
         end
     end
+
+    -- by default it's set as finalized, no need to call page_requested
+    local px_data = {}
+    px_data["finalized"] = true
+    px_data["px_config"] = px_config
 
     -- check for x-px-enforcer-telemetry header
     local ran, error_msg = pcall(px_telemetry.telemetry_check_header, px_config, px_client, px_headers, px_logger)
@@ -132,12 +136,12 @@ function M.application(px_configuration_table)
 
     -- Match for client/XHRs/captcha
     if is_first_party_request(reverse_prefix, lower_request_url) then
-        return true
+        return px_data
     end
 
     if not px_config.px_enabled then
         px_logger.debug("Request will not be verified, module is disabled")
-        return true
+        return px_data
     end
 
     local valid_route = false
@@ -152,7 +156,7 @@ function M.application(px_configuration_table)
 
     if not valid_route and #enabled_routes > 0 then
         px_headers.set_score_header(0)
-        return true
+        return px_data
     end
 
      -- Check for monitored route
@@ -165,7 +169,7 @@ function M.application(px_configuration_table)
 
     -- Validate if request is from internal redirect to avoid duplicate processing
     if px_headers.validate_internal_request() then
-        return true
+        return px_data
     end
 
     -- Clean any protected headers from the request.
@@ -175,7 +179,7 @@ function M.application(px_configuration_table)
     -- run filter and whitelisting logic
     if (px_filters.process()) then
         px_headers.set_score_header(0)
-        return true
+        return px_data
     end
 
     px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent)
@@ -245,22 +249,42 @@ function M.application(px_configuration_table)
         -- score crossed threshold
         if result == false then
             ngx.ctx.block_reason = 'cookie_high_score'
-            return px_block.block(ngx.ctx.block_reason)
+            px_block.block(ngx.ctx.block_reason)
+            return px_data
         else
             ngx.ctx.pass_reason = 'cookie'
-            pcall(px_client.send_to_perimeterx, "page_requested", details)
-            return true
         end
     elseif enable_server_calls == true then
         if result == nil then
             result = { message = "cookie_error" }
         end
-        return perform_s2s(result, details)
+        perform_s2s(result, details)
     else
         ngx.ctx.pass_reason = 'error'
-        pcall(px_client.send_to_perimeterx, "page_requested", details)
-        return true
     end
+
+    px_data["details"] = details
+    px_data["finalized"] = false
+
+    if px_config.postpone_page_requested == nil or not px_config.postpone_page_requested then
+        M.finalize(px_data)
+    else
+        return px_data
+    end
+end
+
+-- if postpone_page_requested is set to true, then this function
+-- must be called from header_filter_by_lua_block{}
+function M.finalize(px_data)
+    if not px_data or px_data["finalized"] then
+        return
+    end
+
+    local px_client = require("px.utils.pxclient").load(px_data["px_config"])
+
+    -- set Upstream status code, if no upstream server, then it will contain nil
+    px_data["details"]["status_code"] = ngx.var.upstream_status
+    pcall(px_client.send_to_perimeterx, "page_requested", px_data["details"])
 end
 
 return M
