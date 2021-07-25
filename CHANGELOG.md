@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [6.7.3 - 2021-05-02
+## [6.8.0] - 2021-07-25
+
+### Added
+- Whitelist URI pattern support
+- Page requested activity includes HTTP status code
+
+## [6.7.3] - 2021-05-02
 ### Fixed
 - Issue with request body in login credentials extraction
 
