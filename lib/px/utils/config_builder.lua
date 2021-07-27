@@ -53,6 +53,7 @@ PX_DEFAULT_CONFIGURATIONS["client_port_overide"] = { nil, "number"}
 PX_DEFAULT_CONFIGURATIONS["proxy_url"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["proxy_authorization"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_uri_full"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["whitelist_uri_pattern"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_uri_prefixes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_uri_suffixes"] = { {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', '.webp', '.jar'}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ip_addresses"] = { {}, "table"}
@@ -62,6 +63,7 @@ PX_DEFAULT_CONFIGURATIONS["custom_cookie_header"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["bypass_monitor_header"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_enable_login_creds_extraction"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
+PX_DEFAULT_CONFIGURATIONS["postpone_page_requested"] = { false, "boolean"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log

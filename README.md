@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.7.3](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.7.3-1)
+> Latest stable version: [v6.8.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.8.0-1)
 
 ## [Introduction](#introduction)
 
@@ -647,6 +647,7 @@ Several filters can be configured:
    _M.whitelist_uri_full = { _M.custom_block_url },
    _M.whitelist_uri_prefixes = {},
    _M.whitelist_uri_suffixes = {'.css', '.bmp', '.tif', '.ttf', '.docx', '.woff2', '.js', '.pict', '.tiff', '.eot', '.xlsx', '.jpg', '.csv', '.eps', '.woff', '.xls', '.jpeg', '.doc', '.ejs', '.otf', '.pptx', '.gif', '.pdf', '.swf', '.svg', '.ps', '.ico', '.pls', '.midi', '.svgz', '.class', '.png', '.ppt', '.mid', '.webp', '.jar'},
+   _M.whitelist_uri_pattern = {},
    _M.whitelist_ip_addresses = {},
    _M.whitelist_ua_full = {},
    _M.whitelist_ua_sub = {}
@@ -657,6 +658,7 @@ Several filters can be configured:
 | **whitelist_uri_full**     | `{'/api_server_full'}`                                               | `/api_server_full?data=1` </br> but not to </br> `/api_server?data=1`      |
 | **whitelist_uri_prefixes** | `{'/api_server'}`                                                    | `/api_server_full?data=1` </br> but not to </br> `/full_api_server?data=1` |
 | **whitelist_uri_suffixes** | `{'.css'}`                                                           | `/style.css` </br> but not to </br> `/style.js`                            |
+| **whitelist_uri_pattern**  | `{'/api/.*/server'}`                                                 | `/api/any/thing/server?data=1` </br> but not to </br> `/api/api_server`    |
 | **whitelist_ip_addresses** | `{'192.168.99.1'}`                                                   | Filters requests coming from any of the listed IPs.                        |
 | **whitelist_ua_full**      | `{'Mozilla/5.0 (compatible; pingbot/2.0; http://www.pingdom.com/)'}` | Filters all requests matching this exact UA.                               |
 | **whitelist_ua_sub**       | `{'GoogleCloudMonitoring'}`                                          | Filters requests containing the provided string in their UA.               |
