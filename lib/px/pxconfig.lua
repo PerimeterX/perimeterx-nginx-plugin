@@ -80,6 +80,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## Login Credentials extraction
 --_M.px_enable_login_creds_extraction = false
 --_M.px_login_creds_settings_filename = nil
+--_M.compromised_credentials_header_name = "px-compromised-credentials"
 
 -- ## Page Requested Settings
 -- postpone_page_requested: if true then finalize() must be called from header_filter_by_lua_block to finalize the request processing

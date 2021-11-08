@@ -102,6 +102,13 @@ function M.application(px_configuration_table)
                 ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd ..  cookie_secure_directive  .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires) .. "; Path=/"
             end
 
+            -- set compromised credentials header
+            if px_config.px_enable_login_creds_extraction and ngx.ctx.breached_account then
+                px_logger.debug("Setting compromised credentials header '"..
+                    px_config.compromised_credentials_header_name.."' to '"..tostring(ngx.ctx.breached_account).."'")
+                px_headers.set_compromised_credentials_header(ngx.ctx.breached_account)
+            end
+
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
