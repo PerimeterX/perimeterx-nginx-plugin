@@ -64,6 +64,7 @@ PX_DEFAULT_CONFIGURATIONS["bypass_monitor_header"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_enable_login_creds_extraction"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["postpone_page_requested"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log

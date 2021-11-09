@@ -132,6 +132,9 @@ function M.load(px_config)
         if data.data_enrichment then
             ngx.ctx.pxde_verified = true
             ngx.ctx.pxde = data.data_enrichment
+            if ngx.ctx.pxde then
+                ngx.ctx.breached_account = ngx.ctx.pxde.breached_account
+            end
         end
 
         if data.action == 'j' and data.action_data and data.action_data.body then

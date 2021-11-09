@@ -16,7 +16,7 @@ RUN cpanm --quiet --notest --skip-satisfied CryptX
 RUN luarocks install lustache
 RUN luarocks install luasocket
 RUN luarocks install lua-resty-http
-RUN luarocks install luacheck 
+RUN luarocks install luacheck
 RUN curl -sSL https://github.com/bungle/lua-resty-nettle/archive/v${VER_LUA_NETTLE}.tar.gz | tar -C /usr/local --strip-components 1 -xzf - && \
     mkdir -p /usr/local/lib/lua/resty && \
     mv /usr/local/lib/resty/* /usr/local/lib/lua/resty
@@ -29,5 +29,8 @@ RUN make -C /tmp/px install
 
 COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 COPY examples/creds.json /tmp/creds.json
+
+# adjust local pxconfig.lua
+#COPY pxconfig.lua /usr/local/lib/lua/px/
 
 CMD ["nginx", "-g", "daemon off;"]

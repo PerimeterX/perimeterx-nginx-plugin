@@ -5,3 +5,5 @@ www
 t/servroot
 .DS_Store
 logs/
+pxconfig.lua
+docker.sh
