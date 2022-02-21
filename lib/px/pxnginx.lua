@@ -44,6 +44,7 @@ function M.application(px_configuration_table)
     local px_common_utils = require("px.utils.pxcommonutils")
     local px_telemetry = require("px.utils.pxtelemetry")
     local px_creds = require ("px.utils.pxlogin_credentials").load(px_config)
+    local e2e_endpoints = require ("px.utils.pxe2e_endpoints").load(px_config)
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
@@ -143,6 +144,10 @@ function M.application(px_configuration_table)
 
     -- Match for client/XHRs/captcha
     if is_first_party_request(reverse_prefix, lower_request_url) then
+        return px_data
+    end
+
+    if e2e_endpoints.handle_e2e_endpoints(lower_request_url) then
         return px_data
     end
 

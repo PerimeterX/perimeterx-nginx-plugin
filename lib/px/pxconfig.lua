@@ -86,4 +86,8 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- postpone_page_requested: if true then finalize() must be called from header_filter_by_lua_block to finalize the request processing
 -- _M.postpone_page_requested = false
 
+-- ## Testing
+-- _M.e2e_tests_enabled = false
+
+
 return _M
