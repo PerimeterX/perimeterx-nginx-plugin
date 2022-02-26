@@ -80,6 +80,7 @@ function M.load(px_config)
             risk.additional.ssl_server_name = ssl_server_name
         end
 
+        risk.additional.request_id = ngx.ctx.client_uuid
 
         if call_reason == 'cookie_decryption_failed' then
             px_logger.debug("Attaching px_orig_cookie to request")
@@ -104,12 +105,10 @@ function M.load(px_config)
             risk.additional.risk_mode = "monitor"
         end
 
-        if details["user"] then
+        if details["user"] and details["pass"] then
             risk.additional.user = details["user"]
-        end
-
-        if details["pass"] then
             risk.additional.pass = details["pass"]
+            risk.additional.ci_version = px_config.px_credentials_intelligence_version
         end
 
         return risk

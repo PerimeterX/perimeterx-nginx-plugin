@@ -63,8 +63,14 @@ PX_DEFAULT_CONFIGURATIONS["custom_cookie_header"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["bypass_monitor_header"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_enable_login_creds_extraction"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
-PX_DEFAULT_CONFIGURATIONS["postpone_page_requested"] = { false, "boolean"}
-PX_DEFAULT_CONFIGURATIONS["compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_reporting_method"] = { "none", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_header_name"] = { "x-px-login-successful", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_status"] = { {200}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_body_regex"] = { "", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_send_raw_username_on_additional_s2s_activity"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["px_credentials_intelligence_version"] = { "v1", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_additional_s2s_activity_header_enabled"] = { false, "boolean"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log

@@ -51,7 +51,7 @@ function M.load(px_config)
         end
     end
 
-    function _M.block(reason)
+    function _M.block(reason, user, pass, ci_version)
         local details = {}
         local ref_str = ''
         local vid = ''
@@ -79,6 +79,12 @@ function M.load(px_config)
         if ngx.ctx.vid then
             vid = ngx.ctx.vid
             px_logger.enrich_log("pxvid", ngx.ctx.vid)
+        end
+
+        if user and pass and ci_version then
+            details["user"] = user
+            details["pass"] = pass
+            details["ci_version"] = ci_version
         end
 
         px_logger.enrich_log('pxaction', ngx.ctx.px_action)

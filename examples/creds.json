@@ -6,8 +6,6 @@
                     "id": 0,
                     "method": "post",
                     "sent_through": "body",
-                    "content_type": "form-data",
-                    "encoding": "clear-text",
                     "path": "/old_login",
                     "user_field": "username",
                     "pass_field": "password"
@@ -16,18 +14,14 @@
                     "id": 1,
                     "method": "post",
                     "sent_through": "body",
-                    "content_type": "json",
-                    "encoding": "clear-text",
-                    "path": "/login",
-                    "user_field": "username",
+                    "path": "/api/v1/authn",
+                    "user_field": "email",
                     "pass_field": "password"
                 },
                 {
                     "id": 2,
                     "method": "post",
                     "sent_through": "body",
-                    "content_type": "form-data",
-                    "encoding": "clear-text",
                     "path": "/user_sessions",
                     "user_field": "user_session[login]",
                     "pass_field": "user_session[password]"
@@ -36,8 +30,6 @@
                     "id": 3,
                     "method": "post",
                     "sent_through": "body",
-                    "content_type": "form-urlencoded",
-                    "encoding": "clear-text",
                     "path": "/auth/login",
                     "user_field": "email",
                     "pass_field": "password"

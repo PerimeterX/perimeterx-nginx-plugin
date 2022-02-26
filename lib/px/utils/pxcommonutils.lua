@@ -1,4 +1,6 @@
-local socket = require("socket")
+local socket = require "socket"
+local bit = require "bit"
+local sha2 = require "resty.nettle.sha2"
 local _M = {}
 
 local function clone (t) -- deep-copy a table
@@ -32,6 +34,10 @@ function _M.split(s, sep)
     local pattern = string.format("([^%s]+)", sep)
     string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
     return fields
+end
+
+function _M.isempty(s)
+    return s == nil or s == ''
 end
 
 local function ends_with(str, ending)
@@ -184,7 +190,7 @@ end
 -- @return - a hex formated representation of the string bytes
 function _M.to_hex(str)
     return (string.gsub(str, "(.)", function(c)
-        return string.format("%02X%s", string.byte(c), "")
+        return string.format("%02x%s", string.byte(c), "")
     end))
 end
 
@@ -238,6 +244,41 @@ function _M.call_px_server(httpc, scheme, host, port, px_config, pool_key)
     else
         return httpc:connect(host, port)
     end
+end
+
+function _M.generate_uuid()
+    local random = math.random
+    local tohex = bit.tohex
+    local band = bit.band
+    local bor = bit.bor
+
+    return (string.format('%s%s%s%s-%s%s-%s%s-%s%s-%s%s%s%s%s%s',
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+
+        tohex(bor(band(random(0, 255), 0x0F), 0x40), 2),
+        tohex(random(0, 255), 2),
+
+        tohex(bor(band(random(0, 255), 0x3F), 0x80), 2),
+        tohex(random(0, 255), 2),
+
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2),
+        tohex(random(0, 255), 2)))
+end
+
+function _M.sha256_hash(s)
+    local h = sha2.sha256.new()
+    h:update(s)
+    return _M.to_hex(h:digest())
 end
 
 return _M

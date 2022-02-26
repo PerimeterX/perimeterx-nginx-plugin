@@ -19,6 +19,7 @@ function M.load(px_config)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require "px.utils.pxcommonutils"
+    local px_creds = require("px.utils.pxlogin_credentials").load(px_config)
     local ngx_req_get_method = ngx.req.get_method
     local pcall = pcall
 
@@ -108,6 +109,7 @@ function M.load(px_config)
         details['module_version'] = px_constants.MODULE_VERSION
         details['risk_rtt'] = 0
         details['cookie_origin'] = ngx.ctx.px_cookie_origin
+        details['request_id'] = ngx.ctx.client_uuid
         if ngx.ctx.risk_rtt then
             details['risk_rtt'] = math.ceil(ngx.ctx.risk_rtt)
             px_logger.enrich_log('pxrtt', math.ceil(ngx.ctx.risk_rtt))
@@ -156,6 +158,12 @@ function M.load(px_config)
         if buflen >= maxbuflen then
             pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities")
         end
+    end
+
+    function _M.send_additional_s2s(is_login_successful)
+        local buf = px_creds.create_additional_s2s(is_login_successful, false)
+
+        pcall(_M.submit, buf, px_constants.ACTIVITIES_PATH, "px_activities")
     end
 
     function _M.send_enforcer_telmetry(details)
