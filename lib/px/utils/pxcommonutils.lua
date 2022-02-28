@@ -190,9 +190,16 @@ end
 -- @return - a hex formated representation of the string bytes
 function _M.to_hex(str)
     return (string.gsub(str, "(.)", function(c)
-        return string.format("%02x%s", string.byte(c), "")
+        return string.format("%02X%s", string.byte(c), "")
     end))
 end
+
+function _M.to_hex_low(str)
+    return (string.gsub(str, "(.)", function(c)
+        return string.format("%02X%s", string.byte(c), "")
+    end))
+end
+
 
 -- Matches instaces of url encoded text (%<XX>) and decode it back to its original char
 function _M.decode_uri_component(str)
@@ -278,7 +285,7 @@ end
 function _M.sha256_hash(s)
     local h = sha2.sha256.new()
     h:update(s)
-    return _M.to_hex(h:digest())
+    return _M.to_hex_low(h:digest())
 end
 
 return _M
