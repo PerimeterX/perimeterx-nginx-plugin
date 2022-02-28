@@ -44,6 +44,7 @@ function M.application(px_configuration_table)
     local px_common_utils = require("px.utils.pxcommonutils")
     local px_telemetry = require("px.utils.pxtelemetry")
     local px_creds = require ("px.utils.pxlogin_credentials").load(px_config)
+    local px_graphql = require ("px.utils.pxgraphql_extractor").load(px_config)
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
@@ -236,6 +237,12 @@ function M.application(px_configuration_table)
             no_cookie_message = "no_cookie_w_vid"
         end
         result = { message = no_cookie_message }
+    end
+
+    local graphql = px_graphql.extract(lower_request_url)
+    if graphql then
+        details["graphql_operation_name"] = graphql["operationName"]
+        details["graphql_operation_type"] = graphql["operationType"]
     end
 
     local creds = px_creds.px_credentials_extract()

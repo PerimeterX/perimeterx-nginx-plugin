@@ -65,6 +65,8 @@ PX_DEFAULT_CONFIGURATIONS["px_enable_login_creds_extraction"] = { false, "boolea
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["postpone_page_requested"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_types"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_names"] = { {}, "table"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log

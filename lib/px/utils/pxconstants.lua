@@ -15,7 +15,10 @@ local _M = {
     FIRST_PARTY_XHR_PATH = '/xhr',
     FIRST_PARTY_CAPTCHA_PATH = '/captcha',
     EMPTY_GIF_B64 = 'R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
-    ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry'
+    ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry',
+    GRAPHQL_PATH = "graphql",
+    GRAPHQL_QUERY = "query",
+    GRAPHQL_MUTATION = "mutation"
 }
 
 return _M

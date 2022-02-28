@@ -86,4 +86,8 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- postpone_page_requested: if true then finalize() must be called from header_filter_by_lua_block to finalize the request processing
 -- _M.postpone_page_requested = false
 
+-- ## GraphQL
+-- _M.px_sensitive_graphql_operation_types = {}
+-- _M.px_sensitive_graphql_operation_names = {}
+
 return _M
