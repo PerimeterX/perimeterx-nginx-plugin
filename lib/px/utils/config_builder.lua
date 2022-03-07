@@ -98,9 +98,15 @@ function _M.load(px_config)
         end
     end
 
+    -- Adjust default base_url and collector_host
     if px_config["px_enabled"] == true then
-        px_config["base_url"] = string.format('sapi-%s.perimeterx.net', px_config["px_appId"])
-        px_config["collector_host"] = string.format('collector-%s.perimeterx.net', px_config["px_appId"])
+        if px_config["base_url"] == "sapi.perimeterx.net" then
+            px_config["base_url"] = string.format('sapi-%s.perimeterx.net', px_config["px_appId"])
+        end
+
+        if px_config["collector_host"] == "collector.perimeterx.net" then
+            px_config["collector_host"] = string.format('collector-%s.perimeterx.net', px_config["px_appId"])
+        end
     end
 
     return px_config
