@@ -196,7 +196,7 @@ end
 
 function _M.to_hex_low(str)
     return (string.gsub(str, "(.)", function(c)
-        return string.format("%02X%s", string.byte(c), "")
+        return string.format("%02x%s", string.byte(c), "")
     end))
 end
 
