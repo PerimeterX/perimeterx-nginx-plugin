@@ -37,14 +37,21 @@ function M.load(px_config)
 
     -- extract login information from a table
     -- return table or nil
-    function _M.creds_extract_from_table(ci, t)
+    function _M.creds_extract_from_table(ci, t, parent)
         local user = nil
         local pass = nil
         for k, v in pairs(t) do
-            if k == ci.user_field then
-                user = v
-            elseif k == ci.pass_field then
-                pass = v
+
+            if (type(v) ~= "table") then
+                if parent ~= nil then
+                    k = parent .. "." .. k
+                end
+
+                if k == ci.user_field then
+                    user = v
+                elseif k == ci.pass_field then
+                    pass = v
+                end
             end
         end
 
@@ -89,7 +96,19 @@ function M.load(px_config)
             return nil
         end
 
-        return _M.creds_extract_from_table(ci, body_json)
+        local creds = _M.creds_extract_from_table(ci, body_json)
+        if not creds then
+            for k, v in pairs(body_json) do
+                if (type(v) == "table") then
+                    creds = _M.creds_extract_from_table(ci, v, k)
+                    if creds then
+                        return creds
+                    end
+                end
+            end
+        end
+
+        return creds
     end
 
     -- parse lines similar to:  form-data; name1=val1; name2=val2
@@ -184,11 +203,11 @@ function M.load(px_config)
         end
 
         -- JSON body type
-        if string.find(ctype, px_constants.JSON_CONTENT_TYPE) then
+        if string.find(ctype, px_constants.JSON_CONTENT_TYPE, 1, true) then
             return _M.creds_extract_from_body_json(ci)
-        elseif string.find(ctype, px_constants.MULTIPART_FORM_CONTENT_TYPE) then
+        elseif string.find(ctype, px_constants.MULTIPART_FORM_CONTENT_TYPE, 1, true) then
             return _M.creds_extract_from_body_formdata(ci)
-        elseif string.find(ctype, px_constants.URL_ENCODED_CONTENT_TYPE) then
+        elseif string.find(ctype, px_constants.URL_ENCODED_CONTENT_TYPE, 1, true) then
             return _M.creds_extract_from_body_form_urlencoded(ci)
         else
             return nil
@@ -259,10 +278,14 @@ function M.load(px_config)
         end
         details['ci_version'] = ngx.ctx.ci_version
 
-        details['credentials_compromised'] = ngx.ctx.credentials_compromised
+        if ngx.ctx.credentials_compromised then
+            details['credentials_compromised'] = ngx.ctx.credentials_compromised
+        else
+            details['credentials_compromised'] = 0
+        end
 
         if not is_header then
-            details['http_status_code'] = ngx.var.upstream_status
+            details['http_status_code'] = tonumber(ngx.var.upstream_status)
             details['login_successful'] = is_login_successful
 
             if px_config.px_send_raw_username_on_additional_s2s_activity and
@@ -276,14 +299,14 @@ function M.load(px_config)
 
         local pxdata = {}
         pxdata['type'] = 'additional_s2s'
-        pxdata['timestamp'] = tostring(ngx_time())
+        pxdata['timestamp'] = ngx_time()
         pxdata['socket_ip'] = px_headers.get_ip()
         pxdata['px_app_id'] = px_config.px_appId
         pxdata['url'] = full_url
         pxdata['details'] = details
 
+        -- add to shared buffer
         buffer.addEvent(pxdata)
-        return buffer.dumpEvents()
     end
 
 
@@ -313,7 +336,7 @@ function M.load(px_config)
 
         if ci.sent_through == "header" then
             return _M.creds_extract_from_headers(ci)
-        elseif ci.sent_through == "url" then
+        elseif ci.sent_through == "query-param" then
             return _M.creds_extract_from_query(ci)
         elseif ci.sent_through == "body" then
             return _M.creds_extract_from_body(ci)

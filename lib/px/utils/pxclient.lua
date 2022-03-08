@@ -161,9 +161,7 @@ function M.load(px_config)
     end
 
     function _M.send_additional_s2s(is_login_successful)
-        local buf = px_creds.create_additional_s2s(is_login_successful, false)
-
-        pcall(_M.submit, buf, px_constants.ACTIVITIES_PATH, "px_activities")
+        px_creds.create_additional_s2s(is_login_successful, false)
     end
 
     function _M.send_enforcer_telmetry(details)

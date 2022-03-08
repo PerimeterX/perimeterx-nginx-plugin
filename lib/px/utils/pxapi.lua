@@ -13,6 +13,7 @@ function M.load(px_config)
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require("px.utils.pxcommonutils")
     local sha1 = require "resty.nettle.sha1"
+    local px_data_enrichment = require("px.utils.pxdataenrichment").load(px_config)
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_http_version = ngx.req.http_version
@@ -108,7 +109,7 @@ function M.load(px_config)
         if details["user"] and details["pass"] then
             risk.additional.user = details["user"]
             risk.additional.pass = details["pass"]
-            risk.additional.ci_version = px_config.px_credentials_intelligence_version
+            risk.additional.ci_version = ngx.ctx.ci_version
         end
 
         return risk
@@ -129,11 +130,8 @@ function M.load(px_config)
         ngx.ctx.px_action = data.action
 
         if data.data_enrichment then
-            ngx.ctx.pxde_verified = true
-            ngx.ctx.pxde = data.data_enrichment
-            if ngx.ctx.pxde then
-                ngx.ctx.breached_account = ngx.ctx.pxde.breached_account
-            end
+                ngx.ctx.pxde_verified = true
+                ngx.ctx.breached_account = data.data_enrichment.breached_account
         end
 
         if data.action == 'j' and data.action_data and data.action_data.body then

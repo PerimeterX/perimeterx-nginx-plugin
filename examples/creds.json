@@ -5,35 +5,32 @@
                 {
                     "id": 0,
                     "method": "post",
+                    "path": "/login",
                     "sent_through": "body",
-                    "path": "/old_login",
-                    "user_field": "username",
-                    "pass_field": "password"
-                },
-                {
+                    "pass_field": "password",
+                    "user_field": "username"
+                  }, {
                     "id": 1,
                     "method": "post",
+                    "path": "/login-nested-object",
                     "sent_through": "body",
-                    "path": "/api/v1/authn",
-                    "user_field": "email",
-                    "pass_field": "password"
-                },
-                {
+                    "pass_field": "nested.password",
+                    "user_field": "nested.username"
+                  }, {
                     "id": 2,
                     "method": "post",
-                    "sent_through": "body",
-                    "path": "/user_sessions",
-                    "user_field": "user_session[login]",
-                    "pass_field": "user_session[password]"
-                },
-                {
+                    "path": "/login-header",
+                    "sent_through": "header",
+                    "pass_field": "password",
+                    "user_field": "username"
+                  }, {
                     "id": 3,
-                    "method": "post",
-                    "sent_through": "body",
-                    "path": "/auth/login",
-                    "user_field": "email",
-                    "pass_field": "password"
-                }
+                    "method": "put",
+                    "path": "/login-params",
+                    "sent_through": "query-param",
+                    "pass_field": "password",
+                    "user_field": "username"
+                  }
             ]
         }
     }

@@ -103,10 +103,10 @@ function M.application(px_configuration_table)
             end
 
             -- set compromised credentials header
-            if px_config.px_enable_login_creds_extraction and ngx.ctx.breached_account then
+            if px_config.px_enable_login_creds_extraction and ngx.ctx.breached_account and px_config.px_compromised_credentials_header_name then
                 px_logger.debug("Setting compromised credentials header '"..
-                    px_config.compromised_credentials_header_name.."' to '"..tostring(ngx.ctx.breached_account).."'")
-                px_headers.set_compromised_credentials_header(ngx.ctx.breached_account)
+                    px_config.px_compromised_credentials_header_name.."' to '"..tostring(ngx.ctx.breached_account).."'")
+                ngx.req.set_header(px_config.px_compromised_credentials_header_name, ngx.ctx.breached_account)
             end
 
             -- case score crossed threshold
@@ -247,6 +247,7 @@ function M.application(px_configuration_table)
         details["user"] = creds["user"]
         details["pass"] = creds["pass"]
         details["ci_version"] = px_config.px_credentials_intelligence_version
+        ngx.ctx.ci_version = px_config.px_credentials_intelligence_version
         ngx.ctx.ci_raw_user = creds["raw_user"]
     end
 

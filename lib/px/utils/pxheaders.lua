@@ -55,11 +55,6 @@ function M.load(px_config)
         end
     end
 
-    function _M.set_compromised_credentials_header(breached_account)
-        ngx_req_set_header(px_config.compromised_credentials_header_name, breached_account)
-        return
-    end
-
     function _M.get_ip()
         if px_config.ip_headers ~= nil then
             for i, header in ipairs(px_config.ip_headers) do
