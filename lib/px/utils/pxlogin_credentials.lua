@@ -291,10 +291,10 @@ function M.load(px_config)
         end
         details['ci_version'] = ngx.ctx.ci_version
 
-        if ngx.ctx.credentials_compromised then
-            details['credentials_compromised'] = ngx.ctx.credentials_compromised
+        if ngx.ctx.breached_account then
+            details['credentials_compromised'] = true
         else
-            details['credentials_compromised'] = 0
+            details['credentials_compromised'] = false
         end
 
         if not is_header then
@@ -302,7 +302,7 @@ function M.load(px_config)
             details['login_successful'] = is_login_successful
 
             if px_config.px_send_raw_username_on_additional_s2s_activity and
-                ngx.ctx.credentials_compromised and
+                ngx.ctx.breached_account and
                 is_login_successful and
                 ngx.ctx.ci_raw_user then
 

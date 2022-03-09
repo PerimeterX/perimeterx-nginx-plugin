@@ -306,6 +306,11 @@ function M.finalize()
         return
     end
 
+    -- do not send additional_s2s if blocked
+    if ngx.ctx.block_reason then
+        return
+    end
+
     local px_config = ngx.ctx.px_data["px_config"]
     local px_creds = ngx.ctx.px_data["px_creds"]
     local px_client = require("px.utils.pxclient").load(px_config)
