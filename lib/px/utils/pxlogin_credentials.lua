@@ -33,7 +33,8 @@ function M.load(px_config)
         elseif px_config.px_credentials_intelligence_version == px_constants.CI_VERSION_MULTISTEP_SSO then
 
             if not px_common_utils.isempty(user) then
-                user_hash = px_common_utils.sha256_hash(user)
+                -- For multistep_sso, the username should be sent raw and unhashed
+                user_hash = user
                 creds["sso_step"] = "user"
             end
             if not px_common_utils.isempty(pass) then
@@ -46,7 +47,10 @@ function M.load(px_config)
 
         creds["user"] = user_hash
         creds["pass"] = pass_hash
-        creds["raw_user"] = user
+        if user then
+            creds["raw_user"] = user
+        end
+
         creds["ci_version"] = px_config.px_credentials_intelligence_version
         return creds
     end
@@ -290,6 +294,7 @@ function M.load(px_config)
             details['client_uuid'] = ngx.ctx.uuid
         end
         details['ci_version'] = ngx.ctx.ci_version
+        details['sso_step'] = ngx.ctx.sso_step
 
         if ngx.ctx.breached_account then
             details['credentials_compromised'] = true
@@ -318,8 +323,7 @@ function M.load(px_config)
         pxdata['url'] = full_url
         pxdata['details'] = details
 
-        -- add to shared buffer
-        buffer.addEvent(pxdata)
+        return pxdata
     end
 
 

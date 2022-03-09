@@ -30,7 +30,6 @@ function M.load(px_config)
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path, pool_key)
-
         local px_port = px_config.px_port
         local px_debug = px_config.px_debug
         -- timeout in milliseconds
@@ -84,7 +83,6 @@ function M.load(px_config)
     end
 
     function _M.send_to_perimeterx(event_type, details)
-        local buflen = buffer.getBufferLength()
         local maxbuflen = px_config.px_maxbuflen
         local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.request_uri
 
@@ -154,6 +152,7 @@ function M.load(px_config)
         pxdata['details'] = details
 
         buffer.addEvent(pxdata)
+        local buflen = buffer.getBufferLength()
         -- Perform the HTTP action
         if buflen >= maxbuflen then
             pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities")
@@ -161,7 +160,12 @@ function M.load(px_config)
     end
 
     function _M.send_additional_s2s(is_login_successful)
-        px_creds.create_additional_s2s(is_login_successful, false)
+        local buf = px_creds.create_additional_s2s(is_login_successful, false)
+        if not buf then
+            return
+        end
+
+        buffer.addEvent(buf)
     end
 
     function _M.send_enforcer_telmetry(details)

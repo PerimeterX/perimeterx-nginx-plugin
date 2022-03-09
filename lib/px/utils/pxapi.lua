@@ -106,7 +106,7 @@ function M.load(px_config)
             risk.additional.risk_mode = "monitor"
         end
 
-        if details["user"] and details["pass"] then
+        if details["user"] or details["pass"] then
             risk.additional.user = details["user"]
             risk.additional.pass = details["pass"]
             risk.additional.ci_version = details["ci_version"]
@@ -132,7 +132,7 @@ function M.load(px_config)
 
         if data.data_enrichment and type(data.data_enrichment) == "table" then
             ngx.ctx.pxde_verified = true
-            ngx.ctx.breached_account = data.data_enrichment.breached_account
+            ngx.ctx.breached_account = data.data_enrichment.breached_account == 1
         end
 
         if data.action == 'j' and data.action_data and data.action_data.body then

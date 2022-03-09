@@ -82,10 +82,10 @@ function M.load(px_config)
         end
 
         if creds then
-            details["user"] = creds["user"]
-            details["pass"] = creds["pass"]
-            details["ci_version"] = creds["ci_version"]
-            details["sso_step"] = creds["sso_step"]
+            details.user = creds["user"]
+            details.pass = creds["pass"]
+            details.ci_version = creds["ci_version"]
+            details.sso_step = creds["sso_step"]
         end
 
         px_logger.enrich_log('pxaction', ngx.ctx.px_action)

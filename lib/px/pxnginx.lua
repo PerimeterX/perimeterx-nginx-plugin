@@ -44,6 +44,7 @@ function M.application(px_configuration_table)
     local px_common_utils = require("px.utils.pxcommonutils")
     local px_telemetry = require("px.utils.pxtelemetry")
     local px_creds = require("px.utils.pxlogin_credentials").load(px_config)
+    local cjson = require "cjson"
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
@@ -250,6 +251,7 @@ function M.application(px_configuration_table)
         details["sso_step"] = creds["sso_step"]
 
         ngx.ctx.ci_version = details["ci_version"]
+        ngx.ctx.sso_step = details["sso_step"]
         ngx.ctx.ci_raw_user = creds["raw_user"]
     end
 
@@ -261,6 +263,7 @@ function M.application(px_configuration_table)
         local buf = px_creds.create_additional_s2s(false, true)
 
         if buf then
+            buf = cjson.encode(buf)
             ngx.req.set_header(px_constants.ADDITIONAL_ACTIVITY_HEADER,  buf)
             local scheme = px_config.ssl_enabled and "https" or "http"
             ngx.req.set_header(px_constants.ADDITIONAL_ACTIVITY_URL_HEADER,  scheme .. "://" .. px_config.base_url .. px_constants.ACTIVITIES_PATH)
