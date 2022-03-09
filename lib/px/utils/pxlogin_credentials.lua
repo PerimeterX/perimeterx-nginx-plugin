@@ -19,12 +19,27 @@ function M.load(px_config)
     -- return table with hashed username and password
     function _M.creds_encode(user, pass)
         local creds = {}
-        local user_hash
-        local pass_hash
+        local user_hash = nil
+        local pass_hash = nil
 
         if px_config.px_credentials_intelligence_version == px_constants.CI_VERSION1 then
+
+            if px_common_utils.isempty(user) or px_common_utils.isempty(pass) then
+                return nil
+            end
+
             user_hash = px_common_utils.sha256_hash(user)
             pass_hash = px_common_utils.sha256_hash(pass)
+        elseif px_config.px_credentials_intelligence_version == px_constants.CI_VERSION_MULTISTEP_SSO then
+
+            if not px_common_utils.isempty(user) then
+                user_hash = px_common_utils.sha256_hash(user)
+                creds["sso_step"] = "user"
+            end
+            if not px_common_utils.isempty(pass) then
+                pass_hash = px_common_utils.sha256_hash(pass)
+                creds["sso_step"] = "pass"
+            end
         else
             return nil
         end
@@ -32,6 +47,7 @@ function M.load(px_config)
         creds["user"] = user_hash
         creds["pass"] = pass_hash
         creds["raw_user"] = user
+        creds["ci_version"] = px_config.px_credentials_intelligence_version
         return creds
     end
 
@@ -55,22 +71,14 @@ function M.load(px_config)
             end
         end
 
-        if user and pass then
-            return _M.creds_encode(user, pass)
-        end
-
-        return nil
+        return _M.creds_encode(user, pass)
     end
 
     function _M.creds_extract_from_headers(ci)
         local user = px_headers.get_header(ci.user_field)
         local pass = px_headers.get_header(ci.pass_field)
 
-        if user and pass then
-            return _M.creds_encode(user, pass)
-        end
-
-        return nil
+        return _M.creds_encode(user, pass)
     end
 
     function _M.creds_extract_from_query(ci)
@@ -177,11 +185,7 @@ function M.load(px_config)
             end
         end
 
-        if user and pass then
-             return _M.creds_encode(user, pass)
-        end
-
-        return nil
+        return _M.creds_encode(user, pass)
     end
 
     function _M.creds_extract_from_body_form_urlencoded(ci)

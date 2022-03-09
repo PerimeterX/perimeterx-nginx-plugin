@@ -74,7 +74,7 @@ function M.application(px_configuration_table)
         return first_party_flag
     end
 
-    local function perform_s2s(result, details)
+    local function perform_s2s(result, details, creds)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local cookie_expires = 31536000 -- one year
@@ -112,7 +112,7 @@ function M.application(px_configuration_table)
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
-                return px_block.block(ngx.ctx.block_reason, details["user"], details["pass"], details["ci_version"])
+                return px_block.block(ngx.ctx.block_reason, creds)
             end
             -- score did not cross the blocking threshold
             ngx.ctx.pass_reason = 's2s'
@@ -246,8 +246,10 @@ function M.application(px_configuration_table)
     if creds then
         details["user"] = creds["user"]
         details["pass"] = creds["pass"]
-        details["ci_version"] = px_config.px_credentials_intelligence_version
-        ngx.ctx.ci_version = px_config.px_credentials_intelligence_version
+        details["ci_version"] = creds["ci_version"]
+        details["sso_step"] = creds["sso_step"]
+
+        ngx.ctx.ci_version = details["ci_version"]
         ngx.ctx.ci_raw_user = creds["raw_user"]
     end
 
@@ -277,7 +279,7 @@ function M.application(px_configuration_table)
         -- score crossed threshold
         if result == false then
             ngx.ctx.block_reason = 'cookie_high_score'
-            px_block.block(ngx.ctx.block_reason, details["user"], details["pass"], details["ci_version"])
+            px_block.block(ngx.ctx.block_reason, creds)
             return px_data
         else
             ngx.ctx.pass_reason = 'cookie'
@@ -287,7 +289,7 @@ function M.application(px_configuration_table)
         if result == nil then
             result = { message = "cookie_error" }
         end
-        perform_s2s(result, details)
+        perform_s2s(result, details, creds)
     else
         ngx.ctx.pass_reason = 'error'
         pcall(px_client.send_to_perimeterx, "page_requested", details)

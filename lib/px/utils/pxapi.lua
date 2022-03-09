@@ -109,7 +109,8 @@ function M.load(px_config)
         if details["user"] and details["pass"] then
             risk.additional.user = details["user"]
             risk.additional.pass = details["pass"]
-            risk.additional.ci_version = ngx.ctx.ci_version
+            risk.additional.ci_version = details["ci_version"]
+            risk.additional.sso_step = details["sso_step"]
         end
 
         return risk
@@ -129,9 +130,9 @@ function M.load(px_config)
         ngx.ctx.block_score = data.score
         ngx.ctx.px_action = data.action
 
-        if data.data_enrichment then
-                ngx.ctx.pxde_verified = true
-                ngx.ctx.breached_account = data.data_enrichment.breached_account
+        if data.data_enrichment and type(data.data_enrichment) == "table" then
+            ngx.ctx.pxde_verified = true
+            ngx.ctx.breached_account = data.data_enrichment.breached_account
         end
 
         if data.action == 'j' and data.action_data and data.action_data.body then

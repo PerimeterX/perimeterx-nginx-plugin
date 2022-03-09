@@ -51,7 +51,7 @@ function M.load(px_config)
         end
     end
 
-    function _M.block(reason, user, pass, ci_version)
+    function _M.block(reason, creds)
         local details = {}
         local ref_str = ''
         local vid = ''
@@ -81,10 +81,11 @@ function M.load(px_config)
             px_logger.enrich_log("pxvid", ngx.ctx.vid)
         end
 
-        if user and pass and ci_version then
-            details["user"] = user
-            details["pass"] = pass
-            details["ci_version"] = ci_version
+        if creds then
+            details["user"] = creds["user"]
+            details["pass"] = creds["pass"]
+            details["ci_version"] = creds["ci_version"]
+            details["sso_step"] = creds["sso_step"]
         end
 
         px_logger.enrich_log('pxaction', ngx.ctx.px_action)
