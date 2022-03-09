@@ -88,6 +88,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 --_M.px_send_raw_username_on_additional_s2s_activity = false
 --_M.px_credentials_intelligence_version = "v1"
 --_M.px_additional_s2s_activity_header_enabled = false
+--_M.custom_login_successful = nil
 
 
 -- ## Page Requested Settings

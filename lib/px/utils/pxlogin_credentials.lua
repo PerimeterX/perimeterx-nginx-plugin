@@ -237,7 +237,12 @@ function M.load(px_config)
         end
 
         if px_config.px_login_successful_reporting_method == "header" and px_config.px_login_successful_header_name then
-            local login_successful_value = ngx.resp.get_headers()[px_config.px_login_successful_header_name]
+            local headers, err = ngx.resp.get_headers()
+            if err then
+                return false
+            end
+
+            local login_successful_value = headers[px_config.px_login_successful_header_name]
             if login_successful_value then
                 return tonumber(login_successful_value) == 1
             end
@@ -252,6 +257,10 @@ function M.load(px_config)
                     end
                 end
             end
+        end
+
+        if px_config.px_login_successful_reporting_method == "custom" and px_config.custom_login_successful then
+            return px_config.custom_login_successful()
         end
 
 --[[  Reading response body
