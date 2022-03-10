@@ -233,21 +233,6 @@ function M.application(px_configuration_table)
         ngx.ctx.pxvid = pxvid
     end
 
-    px_payload:load(px_config)
-    local px_cookie = px_payload:get_payload()
-    local success = false
-    local result
-    if px_cookie ~= nil then
-        px_cookie:load(px_config)
-        success, result = pcall(px_cookie.process, px_cookie)
-    else
-        local no_cookie_message = "no_cookie"
-        if ngx.ctx.pxhd then
-            no_cookie_message = "no_cookie_w_vid"
-        end
-        result = { message = no_cookie_message }
-    end
-
     local graphql = px_graphql.extract(lower_request_url)
     if graphql then
         details["graphql_operation_name"] = graphql["operationName"]
@@ -264,6 +249,21 @@ function M.application(px_configuration_table)
         ngx.ctx.ci_version = details["ci_version"]
         ngx.ctx.sso_step = details["sso_step"]
         ngx.ctx.ci_raw_user = creds["raw_user"]
+    end
+
+    px_payload:load(px_config)
+    local px_cookie = px_payload:get_payload()
+    local success = false
+    local result
+    if px_cookie ~= nil then
+        px_cookie:load(px_config)
+        success, result = pcall(px_cookie.process, px_cookie)
+    else
+        local no_cookie_message = "no_cookie"
+        if ngx.ctx.pxhd then
+            no_cookie_message = "no_cookie_w_vid"
+        end
+        result = { message = no_cookie_message }
     end
 
     if px_config.px_enable_login_creds_extraction and
