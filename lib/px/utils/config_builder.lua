@@ -72,6 +72,7 @@ PX_DEFAULT_CONFIGURATIONS["px_send_raw_username_on_additional_s2s_activity"] = {
 PX_DEFAULT_CONFIGURATIONS["px_credentials_intelligence_version"] = { "v1", "string"}
 PX_DEFAULT_CONFIGURATIONS["px_additional_s2s_activity_header_enabled"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["custom_login_successful"] = { nil, "function" }
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_header_value"] = { "1", "string"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log

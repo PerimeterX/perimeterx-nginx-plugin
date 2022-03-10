@@ -247,8 +247,8 @@ function M.load(px_config)
             end
 
             local login_successful_value = headers[px_config.px_login_successful_header_name]
-            if login_successful_value then
-                return tonumber(login_successful_value) == 1
+            if not px_common_utils.isempty(login_successful_value) then
+                return login_successful_value == px_config.px_login_successful_header_value
             end
         end
 
