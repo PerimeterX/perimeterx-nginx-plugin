@@ -12,28 +12,55 @@ function M.load(px_config)
     local px_constants = require("px.utils.pxconstants")
     local px_common_utils = require("px.utils.pxcommonutils")
 
+    function _M.is_valid_graphql_operation_type(op)
+        if op == px_constants.GRAPHQL_QUERY then
+            return true
+        elseif op == px_constants.GRAPHQL_MUTATION then
+            return true
+        else
+            return false
+        end
+    end
+
+    -- extract field names from string similar to:
+    -- "query HeroNameAndFriends {hero {name friends {name}}}" -> {query, HeroNameAndFriends}
+    -- return table
+    function _M.extract_fields(q)
+        local s, e = string.find(q, "{", 1, true)
+        if not s then
+            return nil
+        end
+
+        local part = string.sub(q, 1, s-1)
+
+        local fields = {}
+        local i = 0
+        for str in string.gmatch(part, "([A-Za-z0-9_]+)") do
+            if not px_common_utils.isempty(str) then
+                table.insert(fields, str)
+                i = i + 1
+            end
+        end
+        return fields
+    end
+
     function _M.get_operation_type(body)
         local success, body_json  = pcall(cjson.decode, body)
         if not success then
-            return px_constants.GRAPHQL_QUERY
+            return nil
         end
 
         if not body_json["query"] then
             return px_constants.GRAPHQL_QUERY
         end
-        local q = body_json["query"]
 
-        local ops = {}
-        local i = 0
-        for str in string.gmatch(q, "([a-z]+)") do
-            if not px_common_utils.isempty(str) then
-                table.insert(ops, str)
-                i = i + 1
-            end
+        local fields = _M.extract_fields(body_json["query"])
+        if not fields then
+            return nil
         end
 
-        if i > 0 then
-            return ops[1]
+        if _M.is_valid_graphql_operation_type(fields[1]) then
+            return fields[1]
         else
             return px_constants.GRAPHQL_QUERY
         end
@@ -52,19 +79,14 @@ function M.load(px_config)
         if not body_json["query"] then
             return nil
         end
-        local q = body_json["query"]
 
-        local ops = {}
-        local i = 0
-        for str in string.gmatch(q, "([A-Za-z0-9_]+)") do
-            if not px_common_utils.isempty(str) then
-                table.insert(ops, str)
-                i = i + 1
-            end
+        local fields = _M.extract_fields(body_json["query"])
+        if not fields then
+            return nil
         end
 
-        if i > 1 then
-            return ops[2]
+        if fields[2] then
+            return fields[2]
         else
             return nil
         end
@@ -74,15 +96,19 @@ function M.load(px_config)
         local operationType = graphql["operationType"]
         local operationName = graphql["operationName"]
 
-        for i = 1, #px_config.px_sensitive_graphql_operation_types do
-            if px_config.px_sensitive_graphql_operation_types[i] == operationType then
-                return true
+        if next(px_config.px_sensitive_graphql_operation_names) ~= nil and operationType then
+            for i = 1, #px_config.px_sensitive_graphql_operation_types do
+                if px_config.px_sensitive_graphql_operation_types[i] == operationType then
+                    return true
+                end
             end
         end
 
-        for i = 1, #px_config.px_sensitive_graphql_operation_names do
-            if px_config.px_sensitive_graphql_operation_names[i] == operationName then
-                return true
+        if next(px_config.px_sensitive_graphql_operation_types) ~= nil and operationName then
+            for i = 1, #px_config.px_sensitive_graphql_operation_names do
+                if px_config.px_sensitive_graphql_operation_names[i] == operationName then
+                    return true
+                end
             end
         end
 
@@ -90,10 +116,6 @@ function M.load(px_config)
     end
 
     function _M.extract(lower_request_url)
-        if next(px_config.px_sensitive_graphql_operation_names) == nil and next(px_config.px_sensitive_graphql_operation_types) == nil then
-            return nil
-        end
-
         local method = ngx.req.get_method()
         if not string.find(lower_request_url, px_constants.GRAPHQL_PATH, 1, true) and method:lower() == "post" then
             return nil
