@@ -28,6 +28,7 @@ function PXPayload:load(px_config)
     self.cookie_secret = self.px_config.cookie_secret
     self.cookie_v3 = require "px.utils.pxcookiev3"
     self.cookie_v1 = require "px.utils.pxcookiev1"
+    self.px_creds = require("px.utils.pxlogin_credentials").load(px_config)
 
     -- localized modules
     self.cjson = require "cjson"
@@ -210,7 +211,7 @@ function PXPayload:is_sensitive_route()
         -- find if any of the sensitive routes is the start of the URI
         for i, prefix in ipairs(self.px_config.sensitive_routes_prefix) do
             if string.sub(ngx.var.uri, 1, string.len(prefix)) == prefix then
-                self.px_logger.debug("Sensitive route match, sending Risk API. path:: " .. ngx.var.uri)
+                self.px_logger.debug("Sensitive route match, sending Risk API. path: " .. ngx.var.uri)
                 return true
             end
         end
@@ -219,11 +220,17 @@ function PXPayload:is_sensitive_route()
         -- find if any of the sensitive routes is the end of the URI
         for i, suffix in ipairs(self.px_config.sensitive_routes_suffix) do
             if string.sub(ngx.var.uri, -string.len(suffix)) == suffix then
-                self.px_logger.debug("Sensitive route match, sending Risk API. path:: " .. ngx.var.uri)
+                self.px_logger.debug("Sensitive route match, sending Risk API. path: " .. ngx.var.uri)
                 return true
             end
         end
     end
+
+    if self.px_config.px_enable_login_creds_extraction and self.px_creds.creds_has_uri_path() then
+        self.px_logger.debug("Extracted credentials found, sending Risk API. path: " .. ngx.var.uri)
+        return true
+    end
+
     return false
 end
 
