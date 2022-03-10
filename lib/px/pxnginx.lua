@@ -43,7 +43,8 @@ function M.application(px_configuration_table)
     local px_constants = require("px.utils.pxconstants")
     local px_common_utils = require("px.utils.pxcommonutils")
     local px_telemetry = require("px.utils.pxtelemetry")
-    local px_creds = require("px.utils.pxlogin_credentials").load(px_config)
+    local px_creds = require ("px.utils.pxlogin_credentials").load(px_config)
+    local px_graphql = require ("px.utils.pxgraphql_extractor").load(px_config)
     local cjson = require "cjson"
 
     local auth_token = px_config.auth_token
@@ -75,7 +76,7 @@ function M.application(px_configuration_table)
         return first_party_flag
     end
 
-    local function perform_s2s(result, details, creds)
+    local function perform_s2s(result, details, creds, graphql)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local cookie_expires = 31536000 -- one year
@@ -117,7 +118,7 @@ function M.application(px_configuration_table)
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
-                return px_block.block(ngx.ctx.block_reason, creds)
+                return px_block.block(ngx.ctx.block_reason, creds, graphql)
             end
             -- score did not cross the blocking threshold
             ngx.ctx.pass_reason = 's2s'
@@ -232,6 +233,24 @@ function M.application(px_configuration_table)
         ngx.ctx.pxvid = pxvid
     end
 
+    local graphql = px_graphql.extract(lower_request_url)
+    if graphql then
+        details["graphql_operation_name"] = graphql["operationName"]
+        details["graphql_operation_type"] = graphql["operationType"]
+    end
+
+    local creds = px_creds.px_credentials_extract()
+    if creds then
+        details["user"] = creds["user"]
+        details["pass"] = creds["pass"]
+        details["ci_version"] = creds["ci_version"]
+        details["sso_step"] = creds["sso_step"]
+
+        ngx.ctx.ci_version = details["ci_version"]
+        ngx.ctx.sso_step = details["sso_step"]
+        ngx.ctx.ci_raw_user = creds["raw_user"]
+    end
+
     px_payload:load(px_config)
     local px_cookie = px_payload:get_payload()
     local success = false
@@ -245,18 +264,6 @@ function M.application(px_configuration_table)
             no_cookie_message = "no_cookie_w_vid"
         end
         result = { message = no_cookie_message }
-    end
-
-    local creds = px_creds.px_credentials_extract()
-    if creds then
-        details["user"] = creds["user"]
-        details["pass"] = creds["pass"]
-        details["ci_version"] = creds["ci_version"]
-        details["sso_step"] = creds["sso_step"]
-
-        ngx.ctx.ci_version = details["ci_version"]
-        ngx.ctx.sso_step = details["sso_step"]
-        ngx.ctx.ci_raw_user = creds["raw_user"]
     end
 
     if px_config.px_enable_login_creds_extraction and
@@ -286,7 +293,7 @@ function M.application(px_configuration_table)
         -- score crossed threshold
         if result == false then
             ngx.ctx.block_reason = 'cookie_high_score'
-            px_block.block(ngx.ctx.block_reason, creds)
+            px_block.block(ngx.ctx.block_reason, creds, graphql)
             return px_data
         else
             ngx.ctx.pass_reason = 'cookie'
@@ -296,7 +303,7 @@ function M.application(px_configuration_table)
         if result == nil then
             result = { message = "cookie_error" }
         end
-        perform_s2s(result, details, creds)
+        perform_s2s(result, details, creds, graphql)
     else
         ngx.ctx.pass_reason = 'error'
         pcall(px_client.send_to_perimeterx, "page_requested", details)

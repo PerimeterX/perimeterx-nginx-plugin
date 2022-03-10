@@ -231,6 +231,11 @@ function PXPayload:is_sensitive_route()
         return true
     end
 
+    if ngx.ctx.is_graphql_sensitive_operation then
+        self.px_logger.debug("GraphQL sensitive operation found, sending Risk API. path: " .. ngx.var.uri)
+        return true
+    end
+
     return false
 end
 

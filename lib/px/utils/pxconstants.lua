@@ -16,6 +16,9 @@ local _M = {
     FIRST_PARTY_CAPTCHA_PATH = '/captcha',
     EMPTY_GIF_B64 = 'R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
     ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry',
+    GRAPHQL_PATH = "graphql",
+    GRAPHQL_QUERY = "query",
+    GRAPHQL_MUTATION = "mutation",
     JSON_CONTENT_TYPE = "application/json",
     URL_ENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded",
     MULTIPART_FORM_CONTENT_TYPE = "multipart/form-data",
@@ -24,7 +27,6 @@ local _M = {
     CI_VERSION_MULTISTEP_SSO = "multistep_sso",
     ADDITIONAL_ACTIVITY_HEADER = "px-additional-activity",
     ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url"
-
 }
 
 return _M

@@ -113,6 +113,15 @@ function M.load(px_config)
             risk.additional.sso_step = details["sso_step"]
         end
 
+        if details["graphql_operation_name"] then
+            risk.additional.graphql_operation_name = details["graphql_operation_name"]
+        end
+
+        if details["graphql_operation_type"] then
+            risk.additional.graphql_operation_type = details["graphql_operation_type"]
+        end
+
+
         return risk
     end
 
