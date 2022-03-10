@@ -10,52 +10,79 @@ function M.load(px_config)
     local cjson = require "cjson"
     local px_logger = require ("px.utils.pxlogger").load(px_config)
     local px_headers = require ("px.utils.pxheaders").load(px_config)
-    local sha2 = require "resty.nettle.sha2"
     local px_common_utils = require("px.utils.pxcommonutils")
     local upload = require("px.utils.resty_upload")
+    local px_constants = require("px.utils.pxconstants")
+    local buffer = require "px.utils.pxbuffer"
+    local ngx_time = ngx.time
 
     -- return table with hashed username and password
     function _M.creds_encode(user, pass)
         local creds = {}
-        local user_hash = sha2.sha256.new()
-        user_hash:update(user)
-        local pass_hash = sha2.sha256.new()
-        pass_hash:update(pass)
+        local user_hash = nil
+        local pass_hash = nil
 
-        creds["user"] = px_common_utils.to_hex(user_hash:digest())
-        creds["pass"] = px_common_utils.to_hex(pass_hash:digest())
+        if px_config.px_credentials_intelligence_version == px_constants.CI_VERSION1 then
+
+            if px_common_utils.isempty(user) or px_common_utils.isempty(pass) then
+                return nil
+            end
+
+            user_hash = px_common_utils.sha256_hash(user)
+            pass_hash = px_common_utils.sha256_hash(pass)
+        elseif px_config.px_credentials_intelligence_version == px_constants.CI_VERSION_MULTISTEP_SSO then
+
+            if not px_common_utils.isempty(user) then
+                -- For multistep_sso, the username should be sent raw and unhashed
+                user_hash = user
+                creds["sso_step"] = "user"
+            end
+            if not px_common_utils.isempty(pass) then
+                pass_hash = px_common_utils.sha256_hash(pass)
+                creds["sso_step"] = "pass"
+            end
+        else
+            return nil
+        end
+
+        creds["user"] = user_hash
+        creds["pass"] = pass_hash
+        if user then
+            creds["raw_user"] = user
+        end
+
+        creds["ci_version"] = px_config.px_credentials_intelligence_version
         return creds
     end
 
     -- extract login information from a table
     -- return table or nil
-    function _M.creds_extract_from_table(ci, t)
+    function _M.creds_extract_from_table(ci, t, parent)
         local user = nil
         local pass = nil
         for k, v in pairs(t) do
-            if k == ci.user_field then
-                user = v
-            elseif k == ci.pass_field then
-                pass = v
+
+            if (type(v) ~= "table") then
+                if parent ~= nil then
+                    k = parent .. "." .. k
+                end
+
+                if k == ci.user_field then
+                    user = v
+                elseif k == ci.pass_field then
+                    pass = v
+                end
             end
         end
 
-        if user and pass then
-            return _M.creds_encode(user, pass)
-        end
-
-        return nil
+        return _M.creds_encode(user, pass)
     end
 
     function _M.creds_extract_from_headers(ci)
         local user = px_headers.get_header(ci.user_field)
         local pass = px_headers.get_header(ci.pass_field)
 
-        if user and pass then
-            return _M.creds_encode(user, pass)
-        end
-
-        return nil
+        return _M.creds_encode(user, pass)
     end
 
     function _M.creds_extract_from_query(ci)
@@ -81,7 +108,19 @@ function M.load(px_config)
             return nil
         end
 
-        return _M.creds_extract_from_table(ci, body_json)
+        local creds = _M.creds_extract_from_table(ci, body_json)
+        if not creds then
+            for k, v in pairs(body_json) do
+                if (type(v) == "table") then
+                    creds = _M.creds_extract_from_table(ci, v, k)
+                    if creds then
+                        return creds
+                    end
+                end
+            end
+        end
+
+        return creds
     end
 
     -- parse lines similar to:  form-data; name1=val1; name2=val2
@@ -150,11 +189,7 @@ function M.load(px_config)
             end
         end
 
-        if user and pass then
-             return _M.creds_encode(user, pass)
-        end
-
-        return nil
+        return _M.creds_encode(user, pass)
     end
 
     function _M.creds_extract_from_body_form_urlencoded(ci)
@@ -170,17 +205,127 @@ function M.load(px_config)
     end
 
     function _M.creds_extract_from_body(ci)
+        local ctype = ngx.req.get_headers()["content-type"]
+        if not ctype then
+            return nil
+        end
+
         -- JSON body type
-        if ci.content_type == "json" then
+        if string.find(ctype, px_constants.JSON_CONTENT_TYPE, 1, true) then
             return _M.creds_extract_from_body_json(ci)
-        elseif ci.content_type == "form-data" then
+        elseif string.find(ctype, px_constants.MULTIPART_FORM_CONTENT_TYPE, 1, true) then
             return _M.creds_extract_from_body_formdata(ci)
-        elseif ci.content_type == "form-urlencoded" then
+        elseif string.find(ctype, px_constants.URL_ENCODED_CONTENT_TYPE, 1, true) then
             return _M.creds_extract_from_body_form_urlencoded(ci)
         else
             return nil
         end
     end
+
+    function _M.creds_has_uri_path()
+        local uri = ngx.var.uri
+        local method = ngx.req.get_method()
+        method = method:lower()
+        for k, v in pairs(px_config.creds) do
+            if v.path == uri and v.method == method then
+                return true
+            end
+        end
+        return false
+    end
+
+    -- return true if login successful
+    function _M.creds_is_login_successful()
+        if px_config.px_login_successful_reporting_method == "none" then
+            return false
+        end
+
+        if px_config.px_login_successful_reporting_method == "header" and px_config.px_login_successful_header_name then
+            local headers, err = ngx.resp.get_headers()
+            if err then
+                return false
+            end
+
+            local login_successful_value = headers[px_config.px_login_successful_header_name]
+            if not px_common_utils.isempty(login_successful_value) then
+                return login_successful_value == px_config.px_login_successful_header_value
+            end
+        end
+
+
+        if px_config.px_login_successful_reporting_method == "status" then
+            if #px_config.px_login_successful_status > 0 then
+                for i = 1, #px_config.px_login_successful_status do
+                    if px_config.px_login_successful_status[i] == tonumber(ngx.var.upstream_status) then
+                        return true
+                    end
+                end
+            end
+        end
+
+        if px_config.px_login_successful_reporting_method == "custom" and px_config.custom_login_successful then
+            return px_config.custom_login_successful()
+        end
+
+--[[  Reading response body
+        if px_config.px_login_successful_reporting_method == "body" and not px_common_utils.isempty(px_config.px_login_successful_body_regex) then
+            local data = ngx.arg[1]
+            if not data then
+                return false
+            end
+
+            local from, to, err = ngx.re.find(data, px_config.px_login_successful_body_regex)
+            if from then
+                return true
+            end
+        end
+]]--
+        return false
+    end
+
+    function _M.create_additional_s2s(is_login_successful, is_header)
+        local buflen = buffer.getBufferLength()
+        local maxbuflen = px_config.px_maxbuflen
+        local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.request_uri
+
+        local details = {}
+        details['request_id'] = ngx.ctx.client_uuid
+        if ngx.ctx.uuid then
+            details['client_uuid'] = ngx.ctx.uuid
+        end
+        details['ci_version'] = ngx.ctx.ci_version
+        details['sso_step'] = ngx.ctx.sso_step
+
+        if ngx.ctx.breached_account then
+            details['credentials_compromised'] = true
+        else
+            details['credentials_compromised'] = false
+        end
+
+        if not is_header then
+            details['http_status_code'] = tonumber(ngx.var.upstream_status)
+            details['login_successful'] = is_login_successful
+
+            if px_config.px_send_raw_username_on_additional_s2s_activity and
+                ngx.ctx.breached_account and
+                is_login_successful and
+                ngx.ctx.ci_raw_user then
+
+                details['raw_username'] = ngx.ctx.ci_raw_user
+            end
+        end
+
+        local pxdata = {}
+        pxdata['type'] = 'additional_s2s'
+        pxdata['timestamp'] = ngx_time()
+        pxdata['socket_ip'] = px_headers.get_ip()
+        pxdata['px_app_id'] = px_config.px_appId
+        pxdata['url'] = full_url
+        pxdata['details'] = details
+
+        return pxdata
+    end
+
 
     -- extract login information from client request
     -- return table or nil
@@ -208,7 +353,7 @@ function M.load(px_config)
 
         if ci.sent_through == "header" then
             return _M.creds_extract_from_headers(ci)
-        elseif ci.sent_through == "url" then
+        elseif ci.sent_through == "query-param" then
             return _M.creds_extract_from_query(ci)
         elseif ci.sent_through == "body" then
             return _M.creds_extract_from_body(ci)

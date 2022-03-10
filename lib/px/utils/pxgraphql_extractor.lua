@@ -23,9 +23,17 @@ function M.load(px_config)
         end
         local q = body_json["query"]
 
-        local ops = px_common_utils.split(q, " ")
-        if ops and ops == px_constants.GRAPHQL_MUTATION then
-            return px_constants.GRAPHQL_MUTATION
+        local ops = {}
+        local i = 0
+        for str in string.gmatch(q, "([a-z]+)") do
+            if not px_common_utils.isempty(str) then
+                table.insert(ops, str)
+                i = i + 1
+            end
+        end
+
+        if i > 0 then
+            return ops[1]
         else
             return px_constants.GRAPHQL_QUERY
         end
@@ -34,14 +42,32 @@ function M.load(px_config)
     function _M.get_operation_name(body)
         local success, body_json  = pcall(cjson.decode, body)
         if not success then
-            return px_constants.GRAPHQL_QUERY
+            return nil
         end
 
-        if not body_json["operationName"] then
-            return px_constants.GRAPHQL_QUERY
+        if body_json["operationName"] then
+            return body_json["operationName"]
         end
 
-        return body_json["operationName"]
+        if not body_json["query"] then
+            return nil
+        end
+        local q = body_json["query"]
+
+        local ops = {}
+        local i = 0
+        for str in string.gmatch(q, "([A-Za-z0-9_]+)") do
+            if not px_common_utils.isempty(str) then
+                table.insert(ops, str)
+                i = i + 1
+            end
+        end
+
+        if i > 1 then
+            return ops[2]
+        else
+            return nil
+        end
     end
 
     function _M.is_sensitive_operation(graphql)
@@ -85,6 +111,8 @@ function M.load(px_config)
         graphql["operationType"] = _M.get_operation_type(body)
         graphql["operationName"] = _M.get_operation_name(body)
         graphql["isSensitiveOperation"] = _M.is_sensitive_operation(graphql)
+
+        ngx.ctx.is_graphql_sensitive_operation = graphql["isSensitiveOperation"]
 
         return graphql
     end
