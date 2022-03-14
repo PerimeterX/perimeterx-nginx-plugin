@@ -66,6 +66,18 @@ PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["postpone_page_requested"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
 PX_DEFAULT_CONFIGURATIONS["hypesale_host"] = { "https://captcha.px-cdn.net", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_types"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_names"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_reporting_method"] = { "none", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_header_name"] = { "x-px-login-successful", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_status"] = { {200}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_body_regex"] = { "", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_send_raw_username_on_additional_s2s_activity"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["px_credentials_intelligence_version"] = { "v1", "string"}
+PX_DEFAULT_CONFIGURATIONS["px_additional_s2s_activity_header_enabled"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["custom_login_successful"] = { nil, "function" }
+PX_DEFAULT_CONFIGURATIONS["px_login_successful_header_value"] = { "1", "string"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log
@@ -93,9 +105,15 @@ function _M.load(px_config)
         end
     end
 
+    -- Adjust default base_url and collector_host
     if px_config["px_enabled"] == true then
-        px_config["base_url"] = string.format('sapi-%s.perimeterx.net', px_config["px_appId"])
-        px_config["collector_host"] = string.format('collector-%s.perimeterx.net', px_config["px_appId"])
+        if px_config["base_url"] == "sapi.perimeterx.net" then
+            px_config["base_url"] = string.format('sapi-%s.perimeterx.net', px_config["px_appId"])
+        end
+
+        if px_config["collector_host"] == "collector.perimeterx.net" then
+            px_config["collector_host"] = string.format('collector-%s.perimeterx.net', px_config["px_appId"])
+        end
     end
 
     return px_config

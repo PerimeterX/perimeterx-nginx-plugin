@@ -13,6 +13,7 @@ function M.load(px_config)
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require("px.utils.pxcommonutils")
     local sha1 = require "resty.nettle.sha1"
+    local px_data_enrichment = require("px.utils.pxdataenrichment").load(px_config)
     local px_debug = px_config.px_debug
     local ngx_req_get_method = ngx.req.get_method
     local ngx_req_http_version = ngx.req.http_version
@@ -80,6 +81,7 @@ function M.load(px_config)
             risk.additional.ssl_server_name = ssl_server_name
         end
 
+        risk.additional.request_id = ngx.ctx.client_uuid
 
         if call_reason == 'cookie_decryption_failed' then
             px_logger.debug("Attaching px_orig_cookie to request")
@@ -104,13 +106,21 @@ function M.load(px_config)
             risk.additional.risk_mode = "monitor"
         end
 
-        if details["user"] then
+        if details["user"] or details["pass"] then
             risk.additional.user = details["user"]
+            risk.additional.pass = details["pass"]
+            risk.additional.ci_version = details["ci_version"]
+            risk.additional.sso_step = details["sso_step"]
         end
 
-        if details["pass"] then
-            risk.additional.pass = details["pass"]
+        if details["graphql_operation_name"] then
+            risk.additional.graphql_operation_name = details["graphql_operation_name"]
         end
+
+        if details["graphql_operation_type"] then
+            risk.additional.graphql_operation_type = details["graphql_operation_type"]
+        end
+
 
         return risk
     end
@@ -133,12 +143,9 @@ function M.load(px_config)
             ngx.ctx.drc = tonumber(data.drc)
         end
 
-        if data.data_enrichment then
+        if data.data_enrichment and type(data.data_enrichment) == "table" then
             ngx.ctx.pxde_verified = true
-            ngx.ctx.pxde = data.data_enrichment
-            if ngx.ctx.pxde then
-                ngx.ctx.breached_account = ngx.ctx.pxde.breached_account
-            end
+            ngx.ctx.breached_account = data.data_enrichment.breached_account == 1
         end
 
         if data.action == 'j' and data.action_data and data.action_data.body then
