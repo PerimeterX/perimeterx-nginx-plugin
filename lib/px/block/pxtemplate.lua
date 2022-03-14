@@ -60,6 +60,8 @@ function M.load(px_config)
         local path = 'block_template'
         if action == 'r' then
             path = 'ratelimit'
+        elseif action == px_constants.HSC_BLOCK_ACTION then
+            path = 'hypesale_template'
         end
         local template_path = string.format("%stemplates/%s.mustache", __dirname, path)
 

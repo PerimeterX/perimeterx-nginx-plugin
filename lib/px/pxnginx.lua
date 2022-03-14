@@ -74,11 +74,11 @@ function M.application(px_configuration_table)
         return first_party_flag
     end
 
-    local function perform_s2s(result, details)
+    local function perform_s2s(result, details, custom_params)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local cookie_expires = 31536000 -- one year
-        local request_data = px_api.new_request_object(result.message, details)
+        local request_data = px_api.new_request_object(result.message, details, custom_params)
         local start_risk_rtt = px_common_utils.get_time_in_milliseconds()
         local success, response = pcall(px_api.call_s2s, request_data, risk_api_path, auth_token)
         local cookie_secure_directive = ""
@@ -128,6 +128,14 @@ function M.application(px_configuration_table)
 
             return true
         end
+    end
+
+    local function shouldServeHsc()
+        if ngx.ctx.isHypeSale then
+            px_logger.debug("is HSC route ")
+            return true
+        end
+        return false
     end
 
     -- by default it's set as finalized, no need to call page_requested
@@ -244,6 +252,29 @@ function M.application(px_configuration_table)
         details["pass"] = creds["pass"]
     end
 
+    local custom_params = px_common_utils.handle_custom_parameters(px_config, px_logger)
+
+    if shouldServeHsc() then
+        px_logger.debug("is HSC route")
+
+        local call_reason = nil
+        if result then
+            call_reason = result.message
+        end
+
+        if (success or call_reason == "sensitive_route") and ngx.ctx.hscApproval then
+            px_logger.debug("HSC page: Cookie is verified and the HSC Approval value is true - HSC Passed!")
+            result = { message = "hsc_route" }
+            success = false
+        else
+            px_logger.debug("Serving HSC page")
+            ngx.header["Set-Cookie"] = "_pxhd=''; Path=/"
+            ngx.ctx.px_action = px_constants.HSC_BLOCK_ACTION
+            px_block.serve_hsc(ngx.ctx.block_reason)
+            return px_data
+        end
+    end
+
     -- cookie verification passed - checking result.
     if success then
         px_logger.debug("Cookie evaluation ended successfully, risk score: " .. ngx.ctx.block_score)
@@ -265,7 +296,7 @@ function M.application(px_configuration_table)
         if result == nil then
             result = { message = "cookie_error" }
         end
-        perform_s2s(result, details)
+        perform_s2s(result, details, custom_params)
     else
         ngx.ctx.pass_reason = 'error'
     end

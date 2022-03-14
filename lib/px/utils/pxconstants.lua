@@ -15,7 +15,10 @@ local _M = {
     FIRST_PARTY_XHR_PATH = '/xhr',
     FIRST_PARTY_CAPTCHA_PATH = '/captcha',
     EMPTY_GIF_B64 = 'R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
-    ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry'
+    ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry',
+    HYPE_SALE_CUSTOM_PARAM = 'is_hype_sale',
+    HSC_BLOCK_ACTION = 'hsc',
+    HSC_DRC_PROPERTY = 7190
 }
 
 return _M

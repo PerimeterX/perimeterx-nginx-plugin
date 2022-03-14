@@ -26,7 +26,7 @@ function M.load(px_config)
     -- new_request_object --
     -- takes no arguments
     -- returns table
-    function _M.new_request_object(call_reason, details)
+    function _M.new_request_object(call_reason, details, custom_params)
         local risk = {}
         local cookieHeader = px_headers.get_header("cookie")
         local vid_source = "none"
@@ -89,8 +89,8 @@ function M.load(px_config)
             risk.additional.px_cookie_hmac = ngx.ctx.px_cookie_hmac
         end
 
-        if px_config.enrich_custom_parameters ~= nil then
-            px_common_utils.handle_custom_parameters(px_config, px_logger, risk.additional)
+        for key, value in pairs(custom_params) do
+            risk.additional[key] = value
         end
 
         risk.additional.http_version = tostring(ngx_req_http_version())
@@ -128,6 +128,10 @@ function M.load(px_config)
         ngx.ctx.uuid = data.uuid or nil
         ngx.ctx.block_score = data.score
         ngx.ctx.px_action = data.action
+
+        if data.drc then
+            ngx.ctx.drc = tonumber(data.drc)
+        end
 
         if data.data_enrichment then
             ngx.ctx.pxde_verified = true

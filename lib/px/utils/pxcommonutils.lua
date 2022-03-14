@@ -1,6 +1,8 @@
 local socket = require("socket")
 local _M = {}
 
+local px_constants = require("px.utils.pxconstants")
+
 local function clone (t) -- deep-copy a table
     if type(t) ~= "table" then return t end
     local meta = getmetatable(t)
@@ -90,21 +92,31 @@ local function connect_proxy(httpc, proxy_uri, scheme, host, port, pool_key, pro
     return c, nil
 end
 
-function _M.handle_custom_parameters(px_config, px_logger, result_table)
-    local px_custom_params = {}
+function _M.handle_custom_parameters(px_config, px_logger)
+    if px_config.enrich_custom_parameters == nil then
+        return nil
+    end
 
+    local px_custom_params = {}
     -- initialize the px_custom_params table
     for i = 1, 10 do
         px_custom_params["custom_param" .. i] = ""
     end
+
+    local result_table = {}
 
     px_logger.debug("enrich_custom_parameters was triggered")
     local px_result_custom_params = px_config.enrich_custom_parameters(px_custom_params)
     for key, value in pairs(px_result_custom_params) do
         if string.match(key,"^custom_param%d+$") and value ~= "" then
             result_table[key] = value
+        elseif key == px_constants.HYPE_SALE_CUSTOM_PARAM then
+            result_table[key] = value
+            ngx.ctx.isHypeSale = value
         end
     end
+
+    return result_table
 end
 
 function _M.get_time_in_milliseconds()
