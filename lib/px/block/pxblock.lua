@@ -277,11 +277,11 @@ function M.load(px_config)
                 uuid = uuid,
                 vid = vid,
                 appId = px_config.px_appId,
-                page = ngx.encode_base64(html),
                 collectorUrl = collectorUrl,
                 jsTemplateScriptSrc = jsTemplateScriptSrc,
                 jsClientSrc = props.jsClientSrc,
-                isMobile = ngx.ctx.px_is_mobile
+                isMobile = isMobile,
+                page = ngx.encode_base64(html)
             }
         else
             result = {
@@ -290,17 +290,20 @@ function M.load(px_config)
                 vid = vid,
                 appId = px_config.px_appId,
                 blockType = px_constants.HSC_BLOCK_TYPE,
-                html = html,
                 collectorUrl = collectorUrl,
                 jsTemplateScriptSrc = jsTemplateScriptSrc,
                 jsClientSrc = props.jsClientSrc,
-                isMobile = ngx.ctx.px_is_mobile
+                isMobile = isMobile,
+                html = html
             }
         end
 
         ngx.header["Content-Type"] = 'application/json'
+        ngx.header["Cache-Control"] = 'no-cache, no-store'
+        ngx.header["x-px-is-hypesale"] = 'true'
         ngx.status = ngx_HTTP_FORBIDDEN
-        ngx.say(cjson.encode(result))
+        local out = cjson.encode(result)
+        ngx.say(out)
         ngx_exit(ngx.OK)
         return
     end

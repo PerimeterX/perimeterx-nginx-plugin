@@ -14,7 +14,7 @@
     window._pxUuid = '{{uuid}}';
     window._pxMobile = !!+'{{isMobile}}';
     var script = document.createElement('script');
-    script.src = '{{{jsTemplateScriptSrc}}};
+    script.src = '{{{jsTemplateScriptSrc}}}';
     script.onerror = function () {
         if (window._pxMobile) {
             window.top.location.href = '/px/captcha_close?status=-1';
