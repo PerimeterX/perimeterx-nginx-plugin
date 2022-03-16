@@ -122,7 +122,7 @@ function M.application(px_configuration_table)
             end
             -- score did not cross the blocking threshold
             ngx.ctx.pass_reason = 's2s'
-            pcall(px_client.send_to_perimeterx, "page_requested", details)
+            pcall(px_client.send_to_perimeterx, "page_requested", details, creds)
             return true
         else
             -- server2server call failed, passing traffic
@@ -132,7 +132,7 @@ function M.application(px_configuration_table)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
             px_logger.debug('Risk API failed with error: ' .. response)
-            px_client.send_to_perimeterx("page_requested", details)
+            px_client.send_to_perimeterx("page_requested", details, creds)
             return true
         end
     end
@@ -297,7 +297,7 @@ function M.application(px_configuration_table)
             return px_data
         else
             ngx.ctx.pass_reason = 'cookie'
-            pcall(px_client.send_to_perimeterx, "page_requested", details)
+            pcall(px_client.send_to_perimeterx, "page_requested", details, creds)
         end
     elseif enable_server_calls == true then
         if result == nil then
@@ -306,7 +306,7 @@ function M.application(px_configuration_table)
         perform_s2s(result, details, creds, graphql)
     else
         ngx.ctx.pass_reason = 'error'
-        pcall(px_client.send_to_perimeterx, "page_requested", details)
+        pcall(px_client.send_to_perimeterx, "page_requested", details, creds)
     end
 
     px_data["details"] = details

@@ -82,7 +82,7 @@ function M.load(px_config)
         end
     end
 
-    function _M.send_to_perimeterx(event_type, details)
+    function _M.send_to_perimeterx(event_type, details, creds)
         local maxbuflen = px_config.px_maxbuflen
         local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.request_uri
 
@@ -133,6 +133,16 @@ function M.load(px_config)
 
         if ngx.ctx.px_cookie then
             details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
+        end
+
+        if creds then
+            details["ci_version"] = creds["ci_version"]
+            details["sso_step"] = creds["sso_step"]
+            if ngx.ctx.breached_account then
+                details["credentials_compromised"] = true
+            else
+                details["credentials_compromised"] = false
+            end
         end
 
         if px_config.enrich_custom_parameters ~= nil then
