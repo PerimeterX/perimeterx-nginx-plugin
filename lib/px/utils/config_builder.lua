@@ -14,6 +14,7 @@ PX_DEFAULT_CONFIGURATIONS["score_header_name"] = { "X-PX-SCORE", "string"}
 PX_DEFAULT_CONFIGURATIONS["score_header_enabled"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["sensitive_routes_prefix"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["sensitive_routes_suffix"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["sensitive_routes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["additional_activity_handler"] = { nil, "function" }
 PX_DEFAULT_CONFIGURATIONS["enrich_custom_parameters"] = { nil, "function" }
 PX_DEFAULT_CONFIGURATIONS["enabled_routes"] = { {}, "table"}

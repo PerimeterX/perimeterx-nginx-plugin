@@ -313,7 +313,7 @@ function M.application(px_configuration_table)
         px_logger.debug("is HSC route")
 
         local call_reason = nil
-        if result then
+        if result and type(result) == 'table' then
             call_reason = result.message
         end
 
