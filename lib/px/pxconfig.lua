@@ -22,6 +22,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.score_header_name = 'X-PX-SCORE'
 -- _M.sensitive_routes_prefix = {}
 -- _M.sensitive_routes_suffix = {}
+-- _M.sensitive_routes = {}
 -- _M.additional_activity_handler = nil
 -- _M.enabled_routes = {}
 -- _M.monitored_routes = {}
