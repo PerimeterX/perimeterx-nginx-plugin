@@ -76,6 +76,22 @@ function M.application(px_configuration_table)
         return first_party_flag
     end
 
+    local function shouldServeHsc()
+        if ngx.ctx.isHypeSale then
+            return true
+        else
+            return false
+        end
+    end
+
+    local function shouldServeHscOnDrc()
+        if ngx.ctx.drc and ngx.ctx.drc == px_constants.HSC_DRC_PROPERTY and ngx.ctx.isHypeSale then
+            return true
+        else
+            return false
+        end
+    end
+
     local function perform_s2s(result, details, creds, graphql, custom_params)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
@@ -92,6 +108,14 @@ function M.application(px_configuration_table)
         if success then
             result = px_api.process(response)
             px_logger.debug("Risk API response returned successfully, risk score: " .. ngx.ctx.block_score .. ", round_trip_time: " .. ngx.ctx.risk_rtt)
+
+            if shouldServeHscOnDrc() then
+                px_logger.debug("Serving HSC page")
+                ngx.header["Set-Cookie"] = "_pxhd=''; Path=/"
+                ngx.ctx.px_action = px_constants.HSC_BLOCK_ACTION
+                px_block.serve_hsc(ngx.ctx.block_reason)
+                return true
+            end
 
             -- handle pxhd cookie
             if ngx.ctx.pxhd ~= nil then
@@ -137,13 +161,6 @@ function M.application(px_configuration_table)
         end
     end
 
-    local function shouldServeHsc()
-        if ngx.ctx.isHypeSale then
-            px_logger.debug("is HSC route ")
-            return true
-        end
-        return false
-    end
 
     math.randomseed(px_common_utils.get_time_in_milliseconds())
     ngx.ctx.client_uuid = px_common_utils.generate_uuid()
