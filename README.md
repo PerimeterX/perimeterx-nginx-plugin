@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v6.8.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/6.8.0-1)
+> Latest stable version: [v7.0.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/7.0.0-1)
 
 ## [Introduction](#introduction)
 
@@ -89,7 +89,7 @@ See the full [changelog](CHANGELOG.md) for all versions.
 
 #### <a name="3x4x"></a> From any Version Lower than 4.x
 
-As of version 4.x the config builder was added. The config builder adds default values to properties that are not impicitly specified. This change requires the user to import the configuration in the `init_worker_by_lua_block` and `access_by_lua_block` blocks inside `nginx.conf`:
+As of version 4.x the config builder was added. The config builder adds default values to properties that are not implicitly specified. This change requires the user to import the configuration in the `init_worker_by_lua_block` and `access_by_lua_block` blocks inside `nginx.conf`:
 
 1. Modify `init_worker_by_lua_block`
 
@@ -104,8 +104,16 @@ As of version 4.x the config builder was added. The config builder adds default 
 
 ```lua
     access_by_lua_block {
-        local pxconfig = require("px.pxconfig")
-        require("px.pxnginx").application(pxconfig)
+        local config = require('px.pxconfig')
+        require("px.pxnginx").application(config)
+    }
+```
+
+3. Modify `header_filter_by_lua_block`
+
+```lua
+    header_filter_by_lua_block {
+        require("px.pxnginx").finalize()
     }
 ```
 
@@ -465,13 +473,16 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
 
 - #### <a name="nginx_perimeterx_enforcement"></a>Apply PerimeterX Enforcement
 
-  Add the following line to your `location` block:
+  Add the following lines to your `location` block:
 
   ```
   #----- PerimeterX protect location -----#
   access_by_lua_block {
     local pxconfig = require("px.pxconfig")
     require ("px.pxnginx").application(pxconfig)
+  }
+  header_filter_by_lua_block {
+    require("px.pxnginx").finalize()
   }
   #----- PerimeterX Module End  -----#
   ```
@@ -509,6 +520,9 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
               access_by_lua_block {
                 local pxconfig = require("px.pxconfig")
                 require("px.pxnginx").application(pxconfig)
+              }
+              header_filter_by_lua_block {
+                require("px.pxnginx").finalize()
               }
               #----- PerimeterX Module End  -----#
 
@@ -570,6 +584,9 @@ server {
         access_by_lua_block {
           local pxconfig = require("px.pxconfig")
           require("px.pxnginx").application(pxconfig)
+        }
+        header_filter_by_lua_block {
+         require("px.pxnginx").finalize()
         }
         #----- PerimeterX Module End  -----#
 

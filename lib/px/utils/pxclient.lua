@@ -19,6 +19,7 @@ function M.load(px_config)
     local buffer = require "px.utils.pxbuffer"
     local px_constants = require "px.utils.pxconstants"
     local px_common_utils = require "px.utils.pxcommonutils"
+    local px_creds = require("px.utils.pxlogin_credentials").load(px_config)
     local ngx_req_get_method = ngx.req.get_method
     local pcall = pcall
 
@@ -29,7 +30,6 @@ function M.load(px_config)
 
     -- Submit is the function to create the HTTP connection to the PX collector and POST the data
     function _M.submit(data, path, pool_key)
-
         local px_port = px_config.px_port
         local px_debug = px_config.px_debug
         -- timeout in milliseconds
@@ -82,8 +82,7 @@ function M.load(px_config)
         end
     end
 
-    function _M.send_to_perimeterx(event_type, details)
-        local buflen = buffer.getBufferLength()
+    function _M.send_to_perimeterx(event_type, details, creds)
         local maxbuflen = px_config.px_maxbuflen
         local full_url = ngx.var.scheme .. "://" .. ngx.var.host .. ngx.var.request_uri
 
@@ -108,6 +107,7 @@ function M.load(px_config)
         details['module_version'] = px_constants.MODULE_VERSION
         details['risk_rtt'] = 0
         details['cookie_origin'] = ngx.ctx.px_cookie_origin
+        details['request_id'] = ngx.ctx.client_uuid
         if ngx.ctx.risk_rtt then
             details['risk_rtt'] = math.ceil(ngx.ctx.risk_rtt)
             px_logger.enrich_log('pxrtt', math.ceil(ngx.ctx.risk_rtt))
@@ -135,6 +135,16 @@ function M.load(px_config)
             details['px_cookie_hmac'] = ngx.ctx.px_cookie_hmac
         end
 
+        if creds then
+            details["ci_version"] = creds["ci_version"]
+            details["sso_step"] = creds["sso_step"]
+            if ngx.ctx.breached_account then
+                details["credentials_compromised"] = true
+            else
+                details["credentials_compromised"] = false
+            end
+        end
+
         if px_config.enrich_custom_parameters ~= nil then
             px_common_utils.handle_custom_parameters(px_config, px_logger, details)
         end
@@ -152,10 +162,20 @@ function M.load(px_config)
         pxdata['details'] = details
 
         buffer.addEvent(pxdata)
+        local buflen = buffer.getBufferLength()
         -- Perform the HTTP action
         if buflen >= maxbuflen then
             pcall(_M.submit, buffer.dumpEvents(), px_constants.ACTIVITIES_PATH, "px_activities")
         end
+    end
+
+    function _M.send_additional_s2s(is_login_successful)
+        local buf = px_creds.create_additional_s2s(is_login_successful, false)
+        if not buf then
+            return
+        end
+
+        buffer.addEvent(buf)
     end
 
     function _M.send_enforcer_telmetry(details)

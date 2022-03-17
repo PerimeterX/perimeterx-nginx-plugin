@@ -44,6 +44,8 @@ function M.application(px_configuration_table)
     local px_common_utils = require("px.utils.pxcommonutils")
     local px_telemetry = require("px.utils.pxtelemetry")
     local px_creds = require ("px.utils.pxlogin_credentials").load(px_config)
+    local px_graphql = require ("px.utils.pxgraphql_extractor").load(px_config)
+    local cjson = require "cjson"
 
     local auth_token = px_config.auth_token
     local enable_server_calls = px_config.enable_server_calls
@@ -74,7 +76,7 @@ function M.application(px_configuration_table)
         return first_party_flag
     end
 
-    local function perform_s2s(result, details)
+    local function perform_s2s(result, details, creds, graphql)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local cookie_expires = 31536000 -- one year
@@ -102,13 +104,25 @@ function M.application(px_configuration_table)
                 ngx.header["Set-Cookie"] = "_pxhd=" .. ngx.ctx.pxhd ..  cookie_secure_directive  .. "; Expires=" .. ngx.cookie_time(ngx.time() + cookie_expires) .. "; Path=/"
             end
 
+            -- set compromised credentials header
+            if px_config.px_enable_login_creds_extraction and ngx.ctx.breached_account and px_config.px_compromised_credentials_header_name then
+                px_logger.debug("Setting compromised credentials header '"..
+                    px_config.px_compromised_credentials_header_name.."' to '"..tostring(ngx.ctx.breached_account).."'")
+                if ngx.ctx.breached_account then
+                    ngx.req.set_header(px_config.px_compromised_credentials_header_name, "1")
+                else
+                    ngx.req.set_header(px_config.px_compromised_credentials_header_name, "0")
+                end
+            end
+
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
-                return px_block.block(ngx.ctx.block_reason)
+                return px_block.block(ngx.ctx.block_reason, creds, graphql)
             end
             -- score did not cross the blocking threshold
             ngx.ctx.pass_reason = 's2s'
+            pcall(px_client.send_to_perimeterx, "page_requested", details, creds)
             return true
         else
             -- server2server call failed, passing traffic
@@ -118,15 +132,18 @@ function M.application(px_configuration_table)
                 ngx.ctx.pass_reason = 's2s_timeout'
             end
             px_logger.debug('Risk API failed with error: ' .. response)
-
+            px_client.send_to_perimeterx("page_requested", details, creds)
             return true
         end
     end
 
-    -- by default it's set as finalized, no need to call page_requested
+    math.randomseed(px_common_utils.get_time_in_milliseconds())
+    ngx.ctx.client_uuid = px_common_utils.generate_uuid()
+
     local px_data = {}
-    px_data["finalized"] = true
+    ngx.ctx.px_data = px_data
     px_data["px_config"] = px_config
+    px_data["px_creds"] = px_creds
 
     -- check for x-px-enforcer-telemetry header
     local ran, error_msg = pcall(px_telemetry.telemetry_check_header, px_config, px_client, px_headers, px_logger)
@@ -182,11 +199,11 @@ function M.application(px_configuration_table)
         return px_data
     end
 
-    px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent)
+    px_logger.debug("Starting request verification. IP: " .. remote_addr .. ". UA: " .. user_agent .. ". Client UUID: " .. ngx.ctx.client_uuid)
 
     local details = {}
 
-    -- hadle pxde cookie
+    -- handle pxde cookie
     local pxde = ngx.var.cookie__pxde
     if pxde then
         local success, result = pcall(px_data_enrichment.process, pxde)
@@ -216,6 +233,24 @@ function M.application(px_configuration_table)
         ngx.ctx.pxvid = pxvid
     end
 
+    local graphql = px_graphql.extract(lower_request_url)
+    if graphql then
+        details["graphql_operation_name"] = graphql["operationName"]
+        details["graphql_operation_type"] = graphql["operationType"]
+    end
+
+    local creds = px_creds.px_credentials_extract()
+    if creds then
+        details["user"] = creds["user"]
+        details["pass"] = creds["pass"]
+        details["ci_version"] = creds["ci_version"]
+        details["sso_step"] = creds["sso_step"]
+
+        ngx.ctx.ci_version = details["ci_version"]
+        ngx.ctx.sso_step = details["sso_step"]
+        ngx.ctx.ci_raw_user = creds["raw_user"]
+    end
+
     px_payload:load(px_config)
     local px_cookie = px_payload:get_payload()
     local success = false
@@ -231,10 +266,19 @@ function M.application(px_configuration_table)
         result = { message = no_cookie_message }
     end
 
-    local creds = px_creds.px_credentials_extract()
-    if creds then
-        details["user"] = creds["user"]
-        details["pass"] = creds["pass"]
+    if px_config.px_enable_login_creds_extraction and
+        px_config.px_additional_s2s_activity_header_enabled and
+        px_creds.creds_has_uri_path() then
+
+        px_logger.debug("Attaching additional_activity_header")
+        local buf = px_creds.create_additional_s2s(false, true)
+
+        if buf then
+            buf = cjson.encode(buf)
+            ngx.req.set_header(px_constants.ADDITIONAL_ACTIVITY_HEADER,  buf)
+            local scheme = px_config.ssl_enabled and "https" or "http"
+            ngx.req.set_header(px_constants.ADDITIONAL_ACTIVITY_URL_HEADER,  scheme .. "://" .. px_config.base_url .. px_constants.ACTIVITIES_PATH)
+        end
     end
 
     -- cookie verification passed - checking result.
@@ -249,42 +293,52 @@ function M.application(px_configuration_table)
         -- score crossed threshold
         if result == false then
             ngx.ctx.block_reason = 'cookie_high_score'
-            px_block.block(ngx.ctx.block_reason)
+            px_block.block(ngx.ctx.block_reason, creds, graphql)
             return px_data
         else
             ngx.ctx.pass_reason = 'cookie'
+            pcall(px_client.send_to_perimeterx, "page_requested", details, creds)
         end
     elseif enable_server_calls == true then
         if result == nil then
             result = { message = "cookie_error" }
         end
-        perform_s2s(result, details)
+        perform_s2s(result, details, creds, graphql)
     else
         ngx.ctx.pass_reason = 'error'
+        pcall(px_client.send_to_perimeterx, "page_requested", details, creds)
     end
 
     px_data["details"] = details
-    px_data["finalized"] = false
 
-    if px_config.postpone_page_requested == nil or not px_config.postpone_page_requested then
-        M.finalize(px_data)
-    else
-        return px_data
-    end
+    return px_data
 end
 
--- if postpone_page_requested is set to true, then this function
 -- must be called from header_filter_by_lua_block{}
-function M.finalize(px_data)
-    if not px_data or px_data["finalized"] then
+function M.finalize()
+    if not ngx.ctx.px_data then
         return
     end
 
-    local px_client = require("px.utils.pxclient").load(px_data["px_config"])
+    -- do not send additional_s2s if blocked
+    if ngx.ctx.block_reason then
+        return
+    end
 
-    -- set Upstream status code, if no upstream server, then it will contain nil
-    px_data["details"]["status_code"] = ngx.var.upstream_status
-    pcall(px_client.send_to_perimeterx, "page_requested", px_data["details"])
+    local px_config = ngx.ctx.px_data["px_config"]
+    local px_creds = ngx.ctx.px_data["px_creds"]
+    local px_client = require("px.utils.pxclient").load(px_config)
+    local px_logger = require("px.utils.pxlogger").load(px_config)
+
+    if px_config.px_enable_login_creds_extraction and
+        not px_config.px_additional_s2s_activity_header_enabled and
+        px_creds.creds_has_uri_path() then
+
+        local is_login_successful = px_creds.creds_is_login_successful()
+
+        px_logger.debug("Sending additional_s2s activity")
+        pcall(px_client.send_additional_s2s, is_login_successful)
+    end
 end
 
 return M

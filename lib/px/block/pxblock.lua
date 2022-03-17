@@ -51,7 +51,7 @@ function M.load(px_config)
         end
     end
 
-    function _M.block(reason)
+    function _M.block(reason, creds, graphql)
         local details = {}
         local ref_str = ''
         local vid = ''
@@ -81,9 +81,14 @@ function M.load(px_config)
             px_logger.enrich_log("pxvid", ngx.ctx.vid)
         end
 
+        if graphql then
+            details["graphql_operation_name"] = graphql["operationName"]
+            details["graphql_operation_type"] = graphql["operationType"]
+        end
+
         px_logger.enrich_log('pxaction', ngx.ctx.px_action)
 
-        px_client.send_to_perimeterx('block', details)
+        px_client.send_to_perimeterx('block', details, creds)
 
         local should_bypass_monitor = px_config.bypass_monitor_header and px_headers.get_header(px_config.bypass_monitor_header) == '1'
 
