@@ -258,7 +258,7 @@ function M.load(px_config)
         local block_action = parse_action(ngx.ctx.px_action)
         px_logger.debug("Enforcing action: " .. block_action .. " page is served")
 
-        local html = px_template.get_template(ngx.ctx.px_action, uuid, vid)
+        local html = px_template.get_hsc_template(ngx.ctx.px_action, uuid, vid)
         local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
         local jsTemplateScriptSrc = px_config.hypesale_host .. "/" .. string.lower(px_config.px_appId) .. "/checkpoint.js"
         local isMobile = ""
@@ -268,7 +268,7 @@ function M.load(px_config)
             isMobile = "0"
         end
 
-        local props = px_template.get_props(px_config, uuid, vid, parse_action(ngx.ctx.px_action))
+        local props = px_template.get_hsc_props(px_config, uuid, vid, parse_action(ngx.ctx.px_action))
         local result = {}
 
         if ngx.ctx.px_is_mobile then
