@@ -260,7 +260,7 @@ function M.load(px_config)
 
         local html = px_template.get_hsc_template(ngx.ctx.px_action, uuid, vid)
         local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
-        local jsTemplateScriptSrc = px_config.hypesale_host .. "/" .. string.lower(px_config.px_appId) .. "/checkpoint.js"
+        local jsTemplateScriptSrc = px_config.hypesale_host .. "/" .. px_config.px_appId .. "/checkpoint.js"
         local isMobile = ""
         if ngx.ctx.px_is_mobile then
             isMobile = "1"

@@ -71,7 +71,7 @@ function M.load(px_config)
             captcha_url_prefix = string.format('/%s%s', reverse_prefix, px_constants.FIRST_PARTY_CAPTCHA_PATH)
             first_party_enabled = true
         end
-        local jsTemplateScriptSrc = px_config.hypesale_host .. "/" .. string.lower(px_config.px_appId) .. "/checkpoint.js"
+        local jsTemplateScriptSrc = px_config.hypesale_host .. "/" .. px_config.px_appId .. "/checkpoint.js"
         local captcha_src = ''
         if action ~= 'r' then
             captcha_src = captcha_url_prefix .. string.format('/' .. px_config.px_appId .. '/captcha.js?a=%s&m=%s&u=%s&v=%s', action, (ngx.ctx.px_is_mobile and '1' or '0'), uuid, vid)
