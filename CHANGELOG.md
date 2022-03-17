@@ -5,8 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [6.8.0] - 2021-07-25
 
+## [7.0.0] - 2022-03-17
+### Added
+- GraphQL support
+- sensitive_routes configuration
+
+### Fixed
+- Credential Intelligence code improvements and enhancement
+
+
+## [6.8.0] - 2021-07-25
 ### Added
 - Whitelist URI pattern support
 - Page requested activity includes HTTP status code
@@ -121,7 +130,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [6.0.0] - 2019-01-02
 ### Added
-- Added PXHD handling	
+- Added PXHD handling
 - Added async custom params
 - Major token and cookie refactoring
 
@@ -195,7 +204,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added support for rate limiting
 - Supporting more variable for log enrichment
 - Fixed sensitive headers filtering on captcha and activities
-- Code optimizations 
+- Code optimizations
 
 ## [3.0.0] - 2017-12-03
 - Added support for remote configurations
@@ -214,18 +223,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for API protection in Kong plugin
 
 ## [2.12.0] - 2017-08-30
-### Changed 
+### Changed
 - Removed luarocks dependency lua-cjosn (still needs to be installed via apt-get)
 - Changed structure of pxconstants
 
 ## [2.11.0] - 2017-08-24
-### Changed 
+### Changed
 - Changed default values for module mode to monitor
 - Changed default value of blocksing score to 100
 
 ## [2.10.1] - 2017-08-10
-### Fixed 
-- Removed PX snippet from block/captcha mustache 
+### Fixed
+- Removed PX snippet from block/captcha mustache
 - Update the collectorUrl in mobile sdk response
 - Added s2s_call_reason on mobile sdk connection error
 - Fixed sending call_reason on cookie validation failed
@@ -248,7 +257,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.8.0] - 2017-06-04
 ### Added
-- Support for funCaptcha. It is now possible to choose between reCaptcha and funCaptcha for the captcha page. 
+- Support for funCaptcha. It is now possible to choose between reCaptcha and funCaptcha for the captcha page.
 - New functionality - additional activity handler. The `additional_activity_handler` function will be executed before sending the data to the PerimeterX portal.
 - Support for pass reason and risk RTT for better analytics.
 
@@ -272,10 +281,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.4.0] - 2017-01-28
 ### Added
-- New default block page design 
+- New default block page design
 ### Fixed
 - Bug preventing valid users to get cleaned up when module used default block page
- 
+
 ## [2.3.0] - 2017-01-28
 ### Added
 - Support Cookie V3 and Risk API V2 - single numeric score value, action on response
@@ -325,7 +334,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 2. In each of the location blocks in your app (each route protected with the module), replace `access_by_lua_file` (in each block of location) with `access_by_lua_block { require("px.pxnginx").application() }`
 
-3. Compare your local `pxconfig.lua` file, with the config file located at `lib/px/pxconfig.lua`, adding in the whitelist filters to the configuration file. 
+3. Compare your local `pxconfig.lua` file, with the config file located at `lib/px/pxconfig.lua`, adding in the whitelist filters to the configuration file.
 
 <br><br>
 
