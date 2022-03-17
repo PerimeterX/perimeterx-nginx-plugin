@@ -1,7 +1,7 @@
  package = "perimeterx-nginx-plugin"
  version = "7.0.0-1"
  source = {
-    url = "git://github.com/PerimeterX/perimeterx-nginx-plugin.git",
+    url = "https://github.com/PerimeterX/perimeterx-nginx-plugin.git",
     tag = "v7.0.0",
  }
  description = {
