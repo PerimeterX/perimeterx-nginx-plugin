@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Please wait</title>
+</head>
+<body>
+<script>
+    window.frameElement.setAttribute('style', 'position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; border: none; background-color: white; z-index: 2147483647;');
+    window._pxAppId = '{{appId}}';
+    window._pxJsClientSrc = '{{{jsClientSrc}}}';
+    window._pxVid = '{{vid}}';
+    window._pxUuid = '{{uuid}}';
+    window._pxMobile = !!+'{{isMobile}}';
+    var script = document.createElement('script');
+    script.src = '{{{jsTemplateScriptSrc}}}';
+    script.onerror = function () {
+        if (window._pxMobile) {
+            window.top.location.href = '/px/captcha_close?status=-1';
+            return;
+        }
+        window._pxDisplayErrorMessage();
+        var onFail = window.parent._pxOnHypeSaleChallengeFail;
+        if (onFail) {
+            onFail();
+        }
+    };
+    document.head.appendChild(script);
+    window._pxDisplayErrorMessage = function () {
+        var style = document.createElement('style');
+        style.innerText = '.outer-div{display:table;position:absolute;top:0;left:0;height:100%;width:100%}.inner-div{display:table-cell;vertical-align:middle;font-family:sans-serif}.cart-svg{display:block;margin:auto;padding:0 0 10px 0;opacity:.25}.progress-bar-div{width:245px;padding:20px;margin:auto;opacity:.5}.bar-span{padding:6px}.message-div{font-size:15px;text-align:center;color:#f03947;padding:0 0 95px 0}.message-p{margin:10px 80px}';
+        document.head.appendChild(style);
+        var div = document.createElement('div');
+        div.className = 'outer-div';
+        div.innerHTML = '<div class="inner-div"><div><svg class="cart-svg" xmlns="http://www.w3.org/2000/svg" width="103" height="86" viewBox="0 0 103 86"><g fill="none" fill-rule="evenodd"><path fill="#04CFFE" fill-rule="nonzero" d="M1 12c-.552 0-1 .448-1 1s.448 1 1 1h13.187l10.75 50.719c-.183.627.412 1.345 1.063 1.281h50c.528.01 1.014-.472 1.014-1s-.486-1.007-1.014-1H26.812l-2.125-10H80c.448 0 .87-.344.969-.781l7-30c.13-.58-.374-1.215-.969-1.219H17.906l-1.937-9.219c-.098-.437-.521-.778-.969-.781H1zm17.344 12H41v13H21.094l-2.75-13zM43 24h18v13H43V24zm20 0h22.75l-3.031 13H63V24zM21.5 39H41v13H24.25L21.5 39zM43 39h18v13H43V39zm20 0h19.25l-3.031 13H63V39zM36 70c-4.406 0-8 3.594-8 8 0 4.406 3.594 8 8 8 4.406 0 8-3.594 8-8 0-4.406-3.594-8-8-8zm30 0c-4.406 0-8 3.594-8 8 0 4.406 3.594 8 8 8 4.406 0 8-3.594 8-8 0-4.406-3.594-8-8-8zm-30 2c3.326 0 6 2.674 6 6s-2.674 6-6 6c-3.325 0-6-2.674-6-6s2.675-6 6-6zm30 0c3.326 0 6 2.674 6 6s-2.674 6-6 6c-3.325 0-6-2.674-6-6s2.675-6 6-6z" transform="translate(-627 -446) translate(627.005 446)"></path><g transform="translate(-627 -446) translate(627.005 446) translate(53.995)"><circle cx="24" cy="24" r="22" fill="#04CFFE" stroke="#FFF" stroke-width="4"></circle><path fill="#FFF" fill-rule="nonzero" d="M28.712 22.281v-1.664c0-2.541-2.122-4.617-4.721-4.617s-4.722 2.076-4.722 4.617v1.664C17.99 22.388 17 23.426 17 24.715v5.833C17 31.908 18.116 33 19.507 33h8.986C29.883 33 31 31.908 31 30.548v-5.833c0-1.289-1.007-2.327-2.288-2.434zm-3.623 7.48c.036.179-.092.34-.275.34H23.15c-.183 0-.311-.161-.274-.34l.549-2.112c-.458-.196-.787-.644-.787-1.18 0-.716.604-1.307 1.336-1.307.732 0 1.335.59 1.335 1.306 0 .52-.329.967-.786 1.181l.567 2.112zm1.226-7.498h-4.648v-1.628c0-1.253 1.043-2.273 2.324-2.273 1.28 0 2.324 1.02 2.324 2.273v1.628z"></path></g></g></svg></div><div class="progress-bar-div"><span class="bar-span"><svg xmlns="http://www.w3.org/2000/svg" width="69" height="7" viewBox="0 0 69 7"><g fill="none" fill-rule="evenodd"><g fill="#E0E4E5" transform="translate(-506 -142)"><rect width="69" height="7" x="506" y="142" rx="3.25"></rect></g></g></svg></span><span class="bar-span"><svg xmlns="http://www.w3.org/2000/svg" width="69" height="7" viewBox="0 0 69 7"><g fill="none" fill-rule="evenodd"><g fill="#E0E4E5" transform="translate(-506 -142)"><rect width="69" height="7" x="506" y="142" rx="3.25"></rect></g></g></svg></span><span class="bar-span"><svg xmlns="http://www.w3.org/2000/svg" width="69" height="7" viewBox="0 0 69 7"><g fill="none" fill-rule="evenodd"><g fill="#E0E4E5" transform="translate(-506 -142)"><rect width="69" height="7" x="506" y="142" rx="3.25"></rect></g></g></svg></span></div><div class="message-div"><p class="message-p">Please check your network connection</p><p class="message-p">or disable your ad-blocker.</p></div></div>';
+        document.body.appendChild(div);
+    };
+</script>
+</body>
+</html>

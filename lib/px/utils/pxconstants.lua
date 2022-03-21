@@ -3,7 +3,7 @@
 ----------------------------------------------
 
 local _M = {
-    MODULE_VERSION = "NGINX Module v7.0.0",
+    MODULE_VERSION = "NGINX Module v7.0.1",
     RISK_PATH = "/api/v3/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
     ACTIVITIES_PATH = "/api/v1/collector/s2s",
@@ -16,6 +16,10 @@ local _M = {
     FIRST_PARTY_CAPTCHA_PATH = '/captcha',
     EMPTY_GIF_B64 = 'R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
     ENFORCER_TELEMETRY_HEADER = 'x-px-enforcer-telemetry',
+    HYPE_SALE_CUSTOM_PARAM = 'is_hype_sale',
+    HSC_BLOCK_ACTION = 'hsc',
+    HSC_DRC_PROPERTY = 7190,
+    HSC_BLOCK_TYPE = 'pxHypeSaleChallenge',
     GRAPHQL_PATH = "graphql",
     GRAPHQL_QUERY = "query",
     GRAPHQL_MUTATION = "mutation",
