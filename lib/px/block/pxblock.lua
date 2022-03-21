@@ -46,6 +46,8 @@ function M.load(px_config)
             return "challenge"
         elseif action == "r" then
             return "ratelimit"
+        elseif action == px_constants.HSC_BLOCK_ACTION then
+            return "hypesale"
         else
             return "captcha"
         end
@@ -232,6 +234,73 @@ function M.load(px_config)
         ngx_exit(ngx.OK)
         return
     end
+
+    function _M.serve_hsc(reason)
+        local uuid = ''
+        local vid = ''
+
+        if ngx.ctx.uuid then
+            uuid = ngx.ctx.uuid
+        end
+
+        if ngx.ctx.vid then
+            vid = ngx.ctx.vid
+        end
+
+
+        local block_action = parse_action(ngx.ctx.px_action)
+        px_logger.debug("Enforcing action: " .. block_action .. " page is served")
+
+        local html = px_template.get_hsc_template(ngx.ctx.px_action, uuid, vid)
+        local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+        local jsTemplateScriptSrc = px_config.hypesale_host .. "/" .. px_config.px_appId .. "/checkpoint.js"
+        local isMobile = ""
+        if ngx.ctx.px_is_mobile then
+            isMobile = "1"
+        else
+            isMobile = "0"
+        end
+
+        local props = px_template.get_hsc_props(px_config, uuid, vid, parse_action(ngx.ctx.px_action))
+        local result = {}
+
+        if ngx.ctx.px_is_mobile then
+            result = {
+                action = block_action,
+                uuid = uuid,
+                vid = vid,
+                appId = px_config.px_appId,
+                collectorUrl = collectorUrl,
+                jsTemplateScriptSrc = jsTemplateScriptSrc,
+                jsClientSrc = props.jsClientSrc,
+                isMobile = isMobile,
+                page = ngx.encode_base64(html)
+            }
+        else
+            result = {
+                action = block_action,
+                uuid = uuid,
+                vid = vid,
+                appId = px_config.px_appId,
+                blockType = px_constants.HSC_BLOCK_TYPE,
+                collectorUrl = collectorUrl,
+                jsTemplateScriptSrc = jsTemplateScriptSrc,
+                jsClientSrc = props.jsClientSrc,
+                isMobile = isMobile,
+                html = html
+            }
+        end
+
+        ngx.header["Content-Type"] = 'application/json'
+        ngx.header["Cache-Control"] = 'no-cache, no-store'
+        ngx.header["x-px-is-hypesale"] = 'true'
+        ngx.status = ngx_HTTP_FORBIDDEN
+        local out = cjson.encode(result)
+        ngx.say(out)
+        ngx_exit(ngx.OK)
+        return
+    end
+
     return _M
 end
 

@@ -77,6 +77,10 @@ function PXCookieV3:process()
         ngx.ctx.px_action = fields.a
     end
 
+    if fields.cpa then
+        ngx.ctx.hscApproval = fields.cpa
+    end
+
     -- cookie expired
     ngx.ctx.cookie_timestamp = fields.t
 
