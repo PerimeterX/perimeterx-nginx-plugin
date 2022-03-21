@@ -113,6 +113,8 @@ function M.application(px_configuration_table)
                 px_logger.debug("Serving HSC page")
                 ngx.header["Set-Cookie"] = "_pxhd=''; Path=/"
                 ngx.ctx.px_action = px_constants.HSC_BLOCK_ACTION
+                ngx.ctx.pass_reason = 'checkpoint_page'
+                pcall(px_client.send_to_perimeterx, "page_requested", details)
                 px_block.serve_hsc(ngx.ctx.block_reason)
                 return true
             end
@@ -325,6 +327,8 @@ function M.application(px_configuration_table)
             px_logger.debug("Serving HSC page")
             ngx.header["Set-Cookie"] = "_pxhd=''; Path=/"
             ngx.ctx.px_action = px_constants.HSC_BLOCK_ACTION
+            ngx.ctx.pass_reason = 'checkpoint_page'
+            pcall(px_client.send_to_perimeterx, "page_requested", details)
             px_block.serve_hsc(ngx.ctx.block_reason)
             return px_data
         end
