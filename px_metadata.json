@@ -23,7 +23,7 @@
         "first_party",
         "js_ref",
         "logger",
-        "login_credentials_extraction",
+        "credentials_intelligence",
         "mobile_support",
         "module_enable",
         "module_mode",
