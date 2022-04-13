@@ -12,11 +12,6 @@ function M.load(px_config)
     local px_logger = require("px.utils.pxlogger").load(px_config)
 
     function _M.get_props(px_config, uuid, vid, action)
-        local logo_css_style = 'visible'
-        if (px_config.custom_logo == nil) then
-            logo_css_style = 'hidden'
-        end
-
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
         local collectorUrl = '//' .. px_config.collector_host
         local captcha_url_prefix = '//' .. px_config.captcha_script_host
@@ -54,11 +49,6 @@ function M.load(px_config)
 
 
     function _M.get_hsc_props(px_config, uuid, vid, action)
-        local logo_css_style = 'visible'
-        if (px_config.custom_logo == nil) then
-            logo_css_style = 'hidden'
-        end
-
         local js_client_src = string.format('//client.perimeterx.net/%s/main.min.js', px_config.px_appId)
         local collectorUrl = '//' .. px_config.collector_host
         local captcha_url_prefix = '//' .. px_config.captcha_script_host
@@ -96,7 +86,6 @@ function M.load(px_config)
             customLogo = px_config.custom_logo,
             cssRef = px_config.css_ref,
             jsRef = px_config.js_ref,
-            logoVisibility = logo_css_style,
             hostUrl = collectorUrl,
             jsClientSrc = js_client_src,
             firstPartyEnabled = first_party_enabled,
