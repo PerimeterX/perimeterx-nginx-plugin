@@ -48,8 +48,7 @@ function M.load(px_config)
             blockScript = captcha_src,
             altBlockScript = alt_block_script,
             jsRef = px_config.js_ref,
-            cssRef = px_config.css_ref,
-            logoVisibility = logo_css_style
+            cssRef = px_config.css_ref
         }
     end
 

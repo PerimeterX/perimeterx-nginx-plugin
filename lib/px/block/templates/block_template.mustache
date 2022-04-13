@@ -5,23 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="px-captcha">
     <title>Access to this page has been denied</title>
-    {{{cssRef}}}
+    {{#cssRef}}
+        <link rel="stylesheet" type="text/css" href="{{{cssRef}}}">
+    {{/cssRef}}
 </head>
 <body>
     <script>
         window._pxVid = '{{vid}}';
         window._pxUuid = '{{uuid}}';
         window._pxAppId = '{{appId}}';
-                window._pxHostUrl = '{{{hostUrl}}}';
-                window._pxCustomLogo = '{{{customLogo}}}';
-                window._pxJsClientSrc = '{{{jsClientSrc}}}';
+        window._pxHostUrl = '{{{hostUrl}}}';
+        window._pxCustomLogo = '{{{customLogo}}}';
+        window._pxJsClientSrc = '{{{jsClientSrc}}}';
         window._pxFirstPartyEnabled = {{firstPartyEnabled}};
         var script = document.createElement('script');
-                script.src = '{{{blockScript}}}';
+        script.src = '{{{blockScript}}}';
         document.head.appendChild(script);
         script.onerror = function () {
             script = document.createElement('script');
-                    script.src = '{{{altBlockScript}}}';
+            script.src = '{{{altBlockScript}}}';
             script.onerror = window._pxDisplayErrorMessage;
             document.head.appendChild(script);
         };
@@ -35,6 +37,8 @@
             document.body.appendChild(div);
         };
     </script>
-    {{{jsRef}}}
+    {{#jsRef}}
+        <script src="{{{jsRef}}}"></script>
+    {{/jsRef}}
 </body>
 </html>
