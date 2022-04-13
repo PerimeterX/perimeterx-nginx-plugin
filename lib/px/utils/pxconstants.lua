@@ -30,7 +30,8 @@ local _M = {
     CI_VERSION2 = "v2",
     CI_VERSION_MULTISTEP_SSO = "multistep_sso",
     ADDITIONAL_ACTIVITY_HEADER = "px-additional-activity",
-    ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url"
+    ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url",
+    BACKUP_CAPTCHA_HOST = "https://captcha.px-cloud.net"
 }
 
 return _M

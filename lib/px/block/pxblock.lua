@@ -135,7 +135,9 @@ function M.load(px_config)
                 vid = props.vid,
                 uuid = props.uuid,
                 hostUrl = props.hostUrl,
-                blockScript = props.blockScript
+                blockScript = props.blockScript,
+                customLogo = px_config.customLogo,
+                altBlockScript = props.altBlockScript
             }
             ngx.header["Content-Type"] = 'application/json'
             ngx.status = ngx_HTTP_FORBIDDEN

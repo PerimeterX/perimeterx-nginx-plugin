@@ -3,172 +3,42 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Access to this page has been denied.</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Open Sans', sans-serif;
-            color: #000;
-        }
-
-        a {
-            color: #c5c5c5;
-            text-decoration: none;
-        }
-
-        .container {
-            align-items: center;
-            display: flex;
-            flex: 1;
-            justify-content: space-between;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .container > div {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container > div > div {
-            display: flex;
-            width: 80%;
-        }
-
-        .customer-logo-wrapper {
-            padding-top: 2rem;
-            flex-grow: 0;
-            background-color: #fff;
-            visibility: {{logoVisibility}};
-        }
-
-        .customer-logo {
-            border-bottom: 1px solid #000;
-        }
-
-        .customer-logo > img {
-            padding-bottom: 1rem;
-            max-height: 50px;
-            max-width: 100%;
-        }
-
-        .page-title-wrapper {
-            flex-grow: 2;
-        }
-
-        .page-title {
-            flex-direction: column-reverse;
-        }
-
-        .content-wrapper {
-            flex-grow: 5;
-        }
-
-        .content {
-            flex-direction: column;
-        }
-
-        .page-footer-wrapper {
-            align-items: center;
-            flex-grow: 0.2;
-            background-color: #000;
-            color: #c5c5c5;
-            font-size: 70%;
-        }
-
-        @media (min-width: 768px) {
-            html, body {
-                height: 100%;
-            }
-        }
-    </style>
-    <!-- Custom CSS -->
+    <meta name="description" content="px-captcha">
+    <title>Access to this page has been denied</title>
     {{#cssRef}}
-        <link rel="stylesheet" type="text/css" href="{{cssRef}}"/>
+        <link rel="stylesheet" type="text/css" href="{{{cssRef}}}">
     {{/cssRef}}
 </head>
-
 <body>
-<section class="container">
-    <div class="customer-logo-wrapper">
-        <div class="customer-logo">
-            <img src="{{customLogo}}" alt="Logo"/>
-        </div>
-    </div>
-    <div class="page-title-wrapper">
-        <div class="page-title">
-            <h1>Please verify you are a human</h1>
-        </div>
-    </div>
-    <div class="content-wrapper">
-        <div class="content">
-            <div id="px-captcha">
-            </div>
-            <p>
-                Access to this page has been denied because we believe you are using automation tools to browse the
-                website.
-            </p>
-            <p>
-                This may happen as a result of the following:
-            </p>
-            <ul>
-                <li>
-                    Javascript is disabled or blocked by an extension (ad blockers for example)
-                </li>
-                <li>
-                    Your browser does not support cookies
-                </li>
-            </ul>
-            <p>
-                Please make sure that Javascript and cookies are enabled on your browser and that you are not blocking
-                them from loading.
-            </p>
-            <p>
-                Reference ID: #{{refId}}
-            </p>
-        </div>
-    </div>
-    <div class="page-footer-wrapper">
-        <div class="page-footer">
-            <p>
-                Powered by
-                <a href="https://www.perimeterx.com/whywasiblocked">PerimeterX</a>
-                , Inc.
-            </p>
-        </div>
-    </div>
-</section>
-<!-- Px -->
-<script>
-    window._pxAppId = '{{appId}}';
-    window._pxJsClientSrc = '{{{jsClientSrc}}}';
-    window._pxFirstPartyEnabled = {{firstPartyEnabled}};
-    window._pxVid = '{{vid}}';
-    window._pxUuid = '{{uuid}}';
-    window._pxHostUrl = '{{{hostUrl}}}';
-</script>
-<!-- Captcha -->
-<script>
-    var s = document.createElement('script');
-    s.src = '{{{blockScript}}}';
-    var p = document.getElementsByTagName('head')[0];
-    p.insertBefore(s, null);
-    if ({{firstPartyEnabled}}) {
-        s.onerror = function () {
-            s = document.createElement('script');
-            var suffixIndex = '{{{blockScript}}}'.indexOf('captcha.js');
-            var temperedBlockScript = '{{{blockScript}}}'.substring(suffixIndex);
-            s.src = '//captcha.px-cdn.net/{{appId}}/' + temperedBlockScript;
-            p.parentNode.insertBefore(s, p);
+    <script>
+        window._pxVid = '{{vid}}';
+        window._pxUuid = '{{uuid}}';
+        window._pxAppId = '{{appId}}';
+        window._pxHostUrl = '{{{hostUrl}}}';
+        window._pxCustomLogo = '{{{customLogo}}}';
+        window._pxJsClientSrc = '{{{jsClientSrc}}}';
+        window._pxFirstPartyEnabled = {{firstPartyEnabled}};
+        var script = document.createElement('script');
+        script.src = '{{{blockScript}}}';
+        document.head.appendChild(script);
+        script.onerror = function () {
+            script = document.createElement('script');
+            script.src = '{{{altBlockScript}}}';
+            script.onerror = window._pxDisplayErrorMessage;
+            document.head.appendChild(script);
         };
-    }
-</script>
-<!-- Custom Script -->
-{{#jsRef}}
-    <script src="{{jsRef}}"></script>
-{{/jsRef}}
+        window._pxDisplayErrorMessage = function () {
+            var style = document.createElement('style');
+            style.innerText = '@import url(https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap);body{background-color:#fafbfc}.px-captcha-error-container{position:fixed;height:340px;background-color:#fff;font-family:Roboto,sans-serif}.px-captcha-error-header{color:#f0f1f2;font-size:29px;margin:67px 0 33px;font-weight:500;line-height:.83;text-align:center}.px-captcha-error-message{color:#f0f1f2;font-size:18px;margin:0 0 29px;line-height:1.33;text-align:center}.px-captcha-error-button{text-align:center;line-height:48px;width:253px;margin:auto;border-radius:50px;border:solid 1px #f0f1f2;font-size:20px;color:#f0f1f2}.px-captcha-error-wrapper{margin:18px 0 0}div.px-captcha-error{margin:auto;text-align:center;width:400px;height:30px;font-size:12px;background-color:#fcf0f2;color:#ce0e2d}img.px-captcha-error{margin:6px 8px -2px 0}.px-captcha-error-refid{border-top:solid 1px #f0eeee;height:27px;margin:13px 0 0;border-radius:0 0 3px 3px;background-color:#fafbfc;font-size:10px;line-height:2.5;text-align:center;color:#b1b5b8}@media (min-width:620px){.px-captcha-error-container{width:530px;top:50%;left:50%;margin-top:-170px;margin-left:-265px;border-radius:3px;box-shadow:0 2px 9px -1px rgba(0,0,0,.13)}}@media (min-width:481px) and (max-width:620px){.px-captcha-error-container{width:85%;top:50%;left:50%;margin-top:-170px;margin-left:-42.5%;border-radius:3px;box-shadow:0 2px 9px -1px rgba(0,0,0,.13)}}@media (max-width:480px){body{background-color:#fff}.px-captcha-error-header{color:#f0f1f2;font-size:29px;margin:55px 0 33px}.px-captcha-error-container{width:530px;top:50%;left:50%;margin-top:-170px;margin-left:-265px}.px-captcha-error-refid{position:fixed;width:100%;left:0;bottom:0;border-radius:0;font-size:14px;line-height:2}}@media (max-width:390px){div.px-captcha-error{font-size:10px}.px-captcha-error-refid{font-size:11px;line-height:2.5}}';
+            document.head.appendChild(style);
+            var div = document.createElement('div');
+            div.className = 'px-captcha-error-container';
+            div.innerHTML = '<div class="px-captcha-error-header">Before we continue...</div><div class="px-captcha-error-message">Press & Hold to confirm you are<br>a human (and not a bot).</div><div class="px-captcha-error-button">Press & Hold</div><div class="px-captcha-error-wrapper"><div class="px-captcha-error"><img class="px-captcha-error" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAQCAMAAADDGrRQAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABFUExURUdwTNYELOEGONQILd0AONwALtwEL+AAL9MFLfkJSNQGLdMJLdQJLdQGLdQKLtYFLNcELdUGLdcBL9gFL88OLdUFLNEOLglBhT4AAAAXdFJOUwC8CqgNIRgRoAS1dWWuR4RTjzgryZpYblfkcAAAAI9JREFUGNNdj+sWhCAIhAdvqGVa1r7/oy6RZ7eaH3D4ZACBIed9wlOOMtUnSrEmZ6cHa9YAIfsbCkWrdpi/c50Bk2CO9mNLdMAu03wJA3HpEnfpxbyOg6ruyx8JJi6KNstnslp1dbPd9GnqmuYq7mmcv1zjnbQw8cV0xzkqo+fX1zkjUOO7wnrInUTxJiruC3vtBNRoQQn2AAAAAElFTkSuQmCC">Please check your internet connection or disable your ad-blocker.</div></div><div class="px-captcha-error-refid">Reference ID ' + window._pxUuid + '</div>';
+            document.body.appendChild(div);
+        };
+    </script>
+    {{#jsRef}}
+        <script src="{{{jsRef}}}"></script>
+    {{/jsRef}}
 </body>
 </html>
