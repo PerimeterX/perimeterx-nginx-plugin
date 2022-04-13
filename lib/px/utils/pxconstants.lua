@@ -30,7 +30,9 @@ local _M = {
     CI_VERSION2 = "v2",
     CI_VERSION_MULTISTEP_SSO = "multistep_sso",
     ADDITIONAL_ACTIVITY_HEADER = "px-additional-activity",
-    ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url"
+    ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url",
+    EMAIL_ADDRESS_REGEX = "[A-Za-z0-9%.%%%+%-]+@[A-Za-z0-9%.%%%+%-]+%.%w%w%w?%w?",
+    GMAIL_DOMAIN = "gmail.com"
 }
 
 return _M
