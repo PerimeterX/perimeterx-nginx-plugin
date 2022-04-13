@@ -32,7 +32,8 @@ local _M = {
     ADDITIONAL_ACTIVITY_HEADER = "px-additional-activity",
     ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url",
     EMAIL_ADDRESS_REGEX = "[A-Za-z0-9%.%%%+%-]+@[A-Za-z0-9%.%%%+%-]+%.%w%w%w?%w?",
-    GMAIL_DOMAIN = "gmail.com"
+    GMAIL_DOMAIN = "gmail.com",
+    BACKUP_CAPTCHA_HOST = "https://captcha.px-cloud.net"
 }
 
 return _M
