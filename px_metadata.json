@@ -3,7 +3,6 @@
     "version": "7.0.1",
     "spec_version" : "1.0.0",
     "supported_features": [
-        "additional_s2s",
         "advanced_blocking_response",
         "block_activity",
         "block_page_captcha",
