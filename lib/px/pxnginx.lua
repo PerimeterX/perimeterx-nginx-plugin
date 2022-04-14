@@ -144,7 +144,7 @@ function M.application(px_configuration_table)
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
-                return px_block.block(ngx.ctx.block_reason, creds, graphql)
+                return px_block.block(ngx.ctx.block_reason, creds, graphql, custom_params)
             end
             -- score did not cross the blocking threshold
             ngx.ctx.pass_reason = 's2s'
@@ -310,6 +310,11 @@ function M.application(px_configuration_table)
     end
 
     local custom_params = px_common_utils.handle_custom_parameters(px_config, px_logger)
+    if custom_params then
+        for key, value in pairs(custom_params) do
+            details[key] = value
+        end
+    end
 
     if shouldServeHsc() then
         px_logger.debug("is HSC route")
@@ -346,7 +351,7 @@ function M.application(px_configuration_table)
         -- score crossed threshold
         if result == false then
             ngx.ctx.block_reason = 'cookie_high_score'
-            px_block.block(ngx.ctx.block_reason, creds, graphql)
+            px_block.block(ngx.ctx.block_reason, creds, graphql, custom_params)
             return px_data
         else
             ngx.ctx.pass_reason = 'cookie'
