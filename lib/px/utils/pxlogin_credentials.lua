@@ -30,6 +30,14 @@ function M.load(px_config)
 
             user_hash = px_common_utils.sha256_hash(user)
             pass_hash = px_common_utils.sha256_hash(pass)
+        elseif px_config.px_credentials_intelligence_version == px_constants.CI_VERSION2 then
+            if px_common_utils.isempty(user) or px_common_utils.isempty(pass) then
+                return nil
+            end
+
+            local norm_user = normalize_v2_username(user)
+            user_hash = px_common_utils.sha256_hash(norm_user)
+            pass_hash = px_common_utils.sha256_hash(user_hash .. px_common_utils.sha256_hash(pass))
         elseif px_config.px_credentials_intelligence_version == px_constants.CI_VERSION_MULTISTEP_SSO then
 
             if not px_common_utils.isempty(user) then
@@ -53,6 +61,30 @@ function M.load(px_config)
 
         creds["ci_version"] = px_config.px_credentials_intelligence_version
         return creds
+    end
+
+    function normalize_v2_username(username)
+        if not username:match(px_constants.EMAIL_ADDRESS_REGEX) then
+            return username
+        end
+
+        username = px_common_utils.trim(username)
+        username = string.lower(username)
+
+        local at = username:find("[^%@]+$")
+        local norm_user = username:sub(1, at - 2)
+        local domain = username:sub(at, #username)
+
+        local plus = norm_user:find("+", 1, true)
+        if plus then
+            norm_user = norm_user:sub(1, plus - 1)
+        end
+
+        if domain == px_constants.GMAIL_DOMAIN then
+            norm_user = norm_user:gsub('%.', '')
+        end
+
+        return norm_user .. '@' .. domain
     end
 
     -- extract login information from a table

@@ -1,9 +1,8 @@
 {
     "module_name" : "NGINX Module",
-    "version": "7.0.1",
+    "version": "7.1.0",
     "spec_version" : "1.0.0",
     "supported_features": [
-        "additional_s2s",
         "advanced_blocking_response",
         "block_activity",
         "block_page_captcha",
@@ -23,7 +22,7 @@
         "first_party",
         "js_ref",
         "logger",
-        "login_credentials_extraction",
+        "credentials_intelligence",
         "mobile_support",
         "module_enable",
         "module_mode",

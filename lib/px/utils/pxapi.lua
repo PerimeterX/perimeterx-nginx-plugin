@@ -91,8 +91,10 @@ function M.load(px_config)
             risk.additional.px_cookie_hmac = ngx.ctx.px_cookie_hmac
         end
 
-        for key, value in pairs(custom_params) do
-            risk.additional[key] = value
+        if custom_params then
+            for key, value in pairs(custom_params) do
+                risk.additional[key] = value
+            end
         end
 
         risk.additional.http_version = tostring(ngx_req_http_version())

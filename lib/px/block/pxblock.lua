@@ -53,7 +53,7 @@ function M.load(px_config)
         end
     end
 
-    function _M.block(reason, creds, graphql)
+    function _M.block(reason, creds, graphql, custom_params)
         local details = {}
         local ref_str = ''
         local vid = ''
@@ -86,6 +86,12 @@ function M.load(px_config)
         if graphql then
             details["graphql_operation_name"] = graphql["operationName"]
             details["graphql_operation_type"] = graphql["operationType"]
+        end
+
+        if custom_params then
+            for key, value in pairs(custom_params) do
+                details[key] = value
+            end
         end
 
         px_logger.enrich_log('pxaction', ngx.ctx.px_action)
@@ -135,7 +141,9 @@ function M.load(px_config)
                 vid = props.vid,
                 uuid = props.uuid,
                 hostUrl = props.hostUrl,
-                blockScript = props.blockScript
+                blockScript = props.blockScript,
+                customLogo = px_config.customLogo,
+                altBlockScript = props.altBlockScript
             }
             ngx.header["Content-Type"] = 'application/json'
             ngx.status = ngx_HTTP_FORBIDDEN
