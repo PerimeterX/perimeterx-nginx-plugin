@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.0.2] - 2022-04-20
+### Added
+- Credential Intelligence v2 protocol
+
+### Changed
+- Credential Intelligence v2 is the default protocol
+- New block page
+
+### Fixed
+- Send custom_params with page_req and block activities
+
+
 ## [7.0.1] - 2022-03-21
 ### Added
 - HypeSale support
