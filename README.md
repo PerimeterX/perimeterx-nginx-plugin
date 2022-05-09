@@ -62,8 +62,8 @@
 
 ## [Enrichment](#enrichment)
 
-- [Data Enrichment](#data-enrichment)
-- [Log Enrichment](#log-enrichment)
+ - [Data Enrichment](#data-enrichment)
+ - [Log Enrichment](#log-enrichment)
 
 ## [Advanced Blocking Response](#advancedBlockingResponse)
 
@@ -93,13 +93,16 @@
 
 ## [Appendix](#appendix)
 
-- [HTTP v2 Support](#http2)
-- [NGINX Plus](#nginxplus)
-- [NGINX Dynamic Modules](#dynamicmodules)
-- [Multiple App Support](#multipleapps)
-- [Setting Up A First Party Prefix](#setting_up_first_party_prefix)
-- [URI Delimiters](#uri_delimiters)
-- [Contributing](#contributing)
+ - [HTTP v2 Support](#http2)
+ - [NGINX Plus](#nginxplus)
+ - [NGINX Dynamic Modules](#dynamicmodules)
+ - [Multiple App Support](#multipleapps)
+ - [Setting Up A First Party Prefix](#setting_up_first_party_prefix)
+ - [URI Delimiters](#uri_delimiters)
+
+## [Test Environment](#test_environment)
+
+## [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
 
@@ -1358,6 +1361,17 @@ Documentation for setting up First-Party Prefixes is found [here](FIRST_PARTY_PR
 ### <a name="uri_delimiters"></a> URI Delimiters
 
 PerimeterX processes URI paths with general- and sub-delimiters according to RFC 3986. General delimiters (e.g., `?`, `#`) are used to separate parts of the URI. Sub-delimiters (e.g., `$`, `&`) are not used to split the URI as they are considered valid characters in the URI path.
+
+## <a name="test_environment"></a> Run test environment
+
+PerimeterX Nginx Lua Enforcer repository contains Dockerfile used to create a test docker image.
+In order to build an image, the following files must be present in the project's "example" directory:
+* examples/pxconfig.lua - Enforcer configuration (`px_appId`, `cookie_secret` and `auth_token` parameters are required and must be set).
+* examples/nginx.conf - Nginx configuration
+* examples/creds.json - Credential Intelligence configuration (optional)
+
+When these files are present and adjusted, the following command could be executed from the project's root directory to run a test docker container: `./examples/run_docker.sh`
+Docker container will run and Nginx will listen on 8080 port.
 
 ## <a name="contributing"></a> Contributing
 
