@@ -145,10 +145,6 @@ function M.load(px_config)
             end
         end
 
-        if px_config.enrich_custom_parameters ~= nil then
-            px_common_utils.handle_custom_parameters(px_config, px_logger, details)
-        end
-
         if event_type == 'page_requested' then
             px_logger.debug("Sent page requested activity")
             details['pass_reason'] = ngx.ctx.pass_reason
