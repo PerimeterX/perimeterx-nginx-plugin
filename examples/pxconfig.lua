@@ -7,9 +7,9 @@ local _M = {}
 _M.px_enabled = true
 
 -- ## Required Parameters ##
-_M.px_appId = 'PX_APP_ID'
-_M.cookie_secret = 'COOKIE_KEY'
-_M.auth_token = 'PX_AUTH_TOKEN'
+_M.px_appId = 'REPLACE PX_APP_ID'
+_M.cookie_secret = 'REPLACE COOKIE_KEY'
+_M.auth_token = 'REPLACE PX_AUTH_TOKEN'
 
 -- ## Blocking Parameters ##
 -- _M.blocking_score = 100
@@ -55,7 +55,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.redirect_to_referer = false
 
 -- ## Debug Parameters ##
--- _M.px_debug = false
+_M.px_debug = true
 -- _M.s2s_timeout = 1000
 -- _M.client_timeout = 2000
 -- _M.cookie_encrypted = true
@@ -84,7 +84,8 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 --_M.px_compromised_credentials_header_name = "px-compromised-credentials"
 --_M.px_login_successful_reporting_method = "none"
 --_M.px_login_successful_header_name = "x-px-login-successful"
---_M.px_login_successful_status = { 200 }
+--_M.px_login_successful_status = 200
+--_M.px_login_successful_body_regex = nil
 --_M.px_send_raw_username_on_additional_s2s_activity = false
 --_M.px_credentials_intelligence_version = "v1"
 --_M.px_additional_s2s_activity_header_enabled = false

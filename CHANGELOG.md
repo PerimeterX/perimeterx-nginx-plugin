@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.1.1] - 2022-05-10
+### Fixed
+- Call enrich_custom_parameters() only once
+
+
 ## [7.1.0] - 2022-04-20
 ### Added
 - Credential Intelligence v2 protocol

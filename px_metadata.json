@@ -1,6 +1,6 @@
 {
     "module_name" : "NGINX Module",
-    "version": "7.1.0",
+    "version": "7.1.1",
     "spec_version" : "1.0.0",
     "supported_features": [
         "advanced_blocking_response",

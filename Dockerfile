@@ -27,10 +27,8 @@ COPY lib /tmp/px/lib
 COPY t /tmp/t
 RUN make -C /tmp/px install
 
-COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY examples/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 COPY examples/creds.json /tmp/creds.json
-
-# adjust local pxconfig.lua
-#COPY pxconfig.lua /usr/local/lib/lua/px/
+COPY examples/pxconfig.lua /usr/local/lib/lua/px/
 
 CMD ["nginx", "-g", "daemon off;"]

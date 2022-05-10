@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v7.1.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/7.1.0-1)
+> Latest stable version: [v7.1.1](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/7.1.1-1)
 
 ## [Introduction](#introduction)
 
@@ -43,6 +43,7 @@
   - [Enabled Routes](#enabled-routes)
   - [Monitored Routes](#monitored-routes)
   - [Sensitive Routes](#sensitive-routes)
+  - [Sensitive Routes Regex List](#sensitive-routes-regex)
   - [API Timeout](#api-timeout)
   - [Customize Default Block Page](#customblockpage)
   - [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
@@ -61,22 +62,47 @@
 
 ## [Enrichment](#enrichment)
 
-- [Data Enrichment](#data-enrichment)
-- [Log Enrichment](#log-enrichment)
+ - [Data Enrichment](#data-enrichment)
+ - [Log Enrichment](#log-enrichment)
 
 ## [Advanced Blocking Response](#advancedBlockingResponse)
 
 ## [Login Credentials Extraction](#loginCredentialsExtraction)
 
+- [Login Credentials Extraction Configuration](#loginCredentialsExtractionConfiguration)
+ - [Enable Login Credentials Extraction](#px_enable_login_creds_extraction)
+ - [Credentials JSON file](#px_login_creds_settings_filename)
+ - [Credentials Intelligence Version](#px_credentials_intelligence_version)
+ - [Additional s2s Activity Header](#px_additional_s2s_activity_header_enabled)
+ - [Send Raw Username On Additional s2s Activity](#px_send_raw_username_on_additional_s2s_activity)
+ - [Compromised Credentials Header Name](#px_compromised_credentials_header_name)
+ - [Login Successful Reporting Method](#px_login_successful_reporting_method)
+ - [Login Successful Header Name](#px_login_successful_header_name)
+ - [Login Successful Header Value](#px_login_successful_header_value)
+ - [Login Successful Status](#px_login_successful_status)
+ - [Login Successful Custom Function](#custom_login_successful)
+
+## [HypeSale](#hypesale)
+
+ - [HypeSale host](#hypesale_host)
+
+## [Sensitive GraphQL Operations](#graphql)
+
+ - [Sensitive GraphQL Operation Types](#px_sensitive_graphql_operation_types)
+ - [Sensitive GraphQL Operation Names](#px_sensitive_graphql_operation_names)
+
 ## [Appendix](#appendix)
 
-- [HTTP v2 Support](#http2)
-- [NGINX Plus](#nginxplus)
-- [NGINX Dynamic Modules](#dynamicmodules)
-- [Multiple App Support](#multipleapps)
-- [Setting Up A First Party Prefix](#setting_up_first_party_prefix)
-- [URI Delimiters](#uri_delimiters)
-- [Contributing](#contributing)
+ - [HTTP v2 Support](#http2)
+ - [NGINX Plus](#nginxplus)
+ - [NGINX Dynamic Modules](#dynamicmodules)
+ - [Multiple App Support](#multipleapps)
+ - [Setting Up A First Party Prefix](#setting_up_first_party_prefix)
+ - [URI Delimiters](#uri_delimiters)
+
+## [Test Environment](#test_environment)
+
+## [Contributing](#contributing)
 
 ## <a name="introduction"></a> Introduction
 
@@ -133,7 +159,7 @@ To upgrade to the latest Enforcer version, [re-install](#installation) the Enfor
 
 #### <a name="supported_versions"></a>Supported NGINX Versions:
 
-Recomended that you use the newest version of NGINX from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo.
+Recommended that you use the newest version of NGINX from the [Official NGINX](http://nginx.org/en/linux_packages.html) repo.
 
 - [NGINX 1.7 or later](#installation_px)
   - [Lua NGINX Module V0.9.11 or later](#installation_px)
@@ -154,7 +180,7 @@ sudo apt-get update
 sudo apt-get upgrade
 ```
 
-###### 2. Add the offical NGINX repository to get the latest version of NGINX
+###### 2. Add the official NGINX repository to get the latest version of NGINX
 
 ```sh
 sudo add-apt-repository ppa:nginx/stable
@@ -188,7 +214,7 @@ sudo make clean && sudo make build && sudo make install
 cd ~
 ```
 
-###### 5. Download and install Netttle 3.3 from source
+###### 5. Download and install Nettle 3.3 from source
 
 ```sh
 wget https://ftp.gnu.org/gnu/nettle/nettle-3.3.tar.gz
@@ -223,7 +249,7 @@ sudo no_proxy=1 luarocks install perimeterx-nginx-plugin
 sudo apt-get update
 ```
 
-###### 2. Add the offical NGINX repository to get the latest version of NGINX
+###### 2. Add the official NGINX repository to get the latest version of NGINX
 
 ```sh
 sudo add-apt-repository ppa:nginx/stable
@@ -267,7 +293,7 @@ luarocks install perimeterx-nginx-plugin
 
 NGINX does not provide an NGINX http lua module for CentOS/RHEL via an RPM. This means that you need to compile the Module from source.
 
-###### 1. Update and Install dependecies
+###### 1. Update and Install dependencies
 
 ```sh
 yum -y update
@@ -374,7 +400,7 @@ luarocks install lua-cjson
 luarocks install perimeterx-nginx-plugin
 ```
 
-###### 10. Optionalally, if you are testing in a new environment you may need to configure the following:
+###### 10. Optionally, if you are testing in a new environment you may need to configure the following:
 
 - Add the user "nginx"
 
@@ -746,6 +772,17 @@ _M.sensitive_routes_prefix = {'/login', '/user/profile'}
 _M.sensitive_routes_suffix = {'/download'}
 ```
 
+### <a name="sensitive-routes-regex"></a> Sensitive Routes Regex List
+A list of route regular expressions (regex). When PerimeterX module matches the request URI with a regex from the list, the module creates a server-to-server call, even when the cookie is valid and the risk score is low.
+
+**Default:** Empty list
+
+Example:
+
+```lua
+_M.sensitive_routes = {'^/login/[0-9]*user$'}
+```
+
 ### <a name="api-timeout"></a>API Timeout Milliseconds
 
 API Timeout in milliseconds (float) to wait for the PerimeterX server API response.</br>
@@ -854,8 +891,8 @@ end
 
 ### <a name="custom-parameters"> Enrich Custom Parameters
 
-With the `enrich_custom_params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before seting the payload on every request to PerimetrX servers. The parameters should be passed according to the correct order (1-10).
-You must return the `px_cusom_params` object at the end of the function.
+With the `enrich_custom_params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before setting the payload on every request to PerimeterX servers. The parameters should be passed according to the correct order (1-10).
+You must return the `px_custom_params` object at the end of the function.
 
 **Default:** nil
 
@@ -882,7 +919,7 @@ Example:
 
 ### <a name="first-party-prefix"></a> First-Party Prefix
 
-Allows you to deinfe a custom prefix for First-Party routes. Refer to [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md) for complete setup instructions.
+Allows you to define a custom prefix for First-Party routes. Refer to [Setting Up A First Party Prefix](FIRST_PARTY_PREFIX.md) for complete setup instructions.
 
 **Default:** nil
 
@@ -1041,7 +1078,7 @@ http {
 
 ## <a name="advancedBlockingResponse"></a> Advanced Blocking Response
 
-In special cases, (such as XHR post requests) a full Captcha page render might not be an option. In such cases, using the Advanced Blocking Response returns a JSON object continaing all the information needed to render your own Captcha challenge implementation, be it a popup modal, a section on the page, etc. The Advanced Blocking Response occurs when a request contains the _Accept_ header with the value of `application/json`. A sample JSON response appears as follows:
+In special cases, (such as XHR post requests) a full Captcha page render might not be an option. In such cases, using the Advanced Blocking Response returns a JSON object containing all the information needed to render your own Captcha challenge implementation, be it a popup modal, a section on the page, etc. The Advanced Blocking Response occurs when a request contains the _Accept_ header with the value of `application/json`. A sample JSON response appears as follows:
 
 ```javascript
 {
@@ -1057,7 +1094,7 @@ In special cases, (such as XHR post requests) a full Captcha page render might n
 
 Once you have the JSON response object, you can pass it to your implementation (with query strings or any other solution) and render the Captcha challenge.
 
-In addition, you can add the `_pxOnCaptchaSuccess` callback function on the window object of your Captcha page to react according to the Captcha status. For example when using a modal, you can use this callback to close the modal once the Captcha is successfullt solved. <br/> An example of using the `_pxOnCaptchaSuccess` callback is as follows:
+In addition, you can add the `_pxOnCaptchaSuccess` callback function on the window object of your Captcha page to react according to the Captcha status. For example when using a modal, you can use this callback to close the modal once the Captcha is successfully solved. <br/> An example of using the `_pxOnCaptchaSuccess` callback is as follows:
 
 ```javascript
 window._pxOnCaptchaSuccess = function (isValid) {
@@ -1073,16 +1110,28 @@ For details on how to create a custom Captcha page, refer to the [documentation]
 
 ## <a name="loginCredentialsExtraction"></a> Login Credentials Extraction
 
-This feature extracts credentials (hashed username and password) from requests and sends them to PerimeterX as additional info in the risk api call. The feature can be toggled on and off. The settings are adjusted by modifying the creds.json file.
+This feature extracts credentials (hashed username and password) from requests and sends them to PerimeterX as additional info in risk / activity api calls. The feature can be toggled on and off. The settings are adjusted by modifying a Credentials JSON file.
 
-### pxconfig.lua
 
-```lua
+### <a name="loginCredentialsExtractionConfiguration"></a> Login Credentials Extraction Configuration
+
+### <a name="px_enable_login_creds_extraction"></a> Enable Login Credentials Extraction
+Enables Login Credentials Extraction
+
+**Default:** false (disabled)
+
+```
 _M.px_enable_login_creds_extraction = true
-_M.px_login_creds_settings_filename = ‘/path/to/creds.json’
 ```
 
-### creds.json
+### <a name="px_login_creds_settings_filename"></a> Credentials JSON file
+Sets a full path to credentials JSON file
+
+**Default:** nil (none)
+
+```
+_M.px_login_creds_settings_filename = '/etc/creds.json'
+```
 
 Example available in `examples/creds.json` file. It includes an array of JSON objects containing the following properties:
 
@@ -1091,20 +1140,140 @@ Example available in `examples/creds.json` file. It includes an array of JSON ob
   "id": 0, // unique int
   "method": "post", // supported methods: post
   "sent_through": "body", // supported sent_throughs: header, url, body
-  "content_type": "json", // supported content_types: json, form-data, form-urlencoded
-  "encoding": "clear-text", // supported encodings: clear-text
   "path": "/login", // login path
   "pass_field": "password", // name of the password field in the request
   "user_field": "username" // name of the username field in the request
 }
 ```
 
-### Default Values
+### <a name="px_credentials_intelligence_version"></a> Credentials Intelligence Version
+Sets Credentials Intelligence protocol version
 
-```lua
-_M.px_enable_login_creds_extraction = false
-_M.px_login_creds_settings_filename = nil
+**Default:** 'v1'
+
 ```
+_M.px_credentials_intelligence_version = 'v1'
+```
+
+### <a name="px_additional_s2s_activity_header_enabled"></a> Additional s2s Activity Header
+Enables attaching additional s2s activity header ('px-additional-activity'), instead of sending Additional s2s activity to PX Collector.
+
+**Default:** false
+
+```
+_M.px_additional_s2s_activity_header_enabled = false
+```
+
+### <a name="px_send_raw_username_on_additional_s2s_activity"></a> Send Raw Username On Additional s2s Activity
+Enables sending a raw username on additional s2s activity (only when activities are sent to PX Collector)
+
+**Default:** false
+
+```
+_M.px_send_raw_username_on_additional_s2s_activity = false
+```
+
+### <a name="px_compromised_credentials_header_name"></a> Compromised Credentials Header Name
+Compromised credentials header name
+
+**Default:** 'x-px-compromised-credentials'
+
+```
+_M.px_compromised_credentials_header_name = 'x-px-compromised-credentials'
+```
+
+### <a name="px_login_successful_reporting_method"></a> Login Successful Reporting Method
+Sets login successful reporting method, could be one of the following values: 'none', 'header', 'status', 'custom'
+
+**Default:** 'none'
+
+```
+--_M.px_login_successful_reporting_method = 'none'
+```
+
+### <a name="px_login_successful_header_name"></a> Login Successful Header Name
+Sets login successful header name
+
+**Default:** 'x-px-login-successful'
+
+```
+_M.px_login_successful_header_name = "x-px-login-successful"
+```
+
+### <a name="px_login_successful_header_value"></a> Login Successful Header Value
+Sets login successful header value
+
+**Default:** '1'
+
+```
+_M.px_login_successful_header_value = "1"
+```
+
+### <a name="px_login_successful_status"></a> Login Successful Status
+Sets login successful status(-es)
+
+**Default:** { 200 }
+
+```
+_M.px_login_successful_status = { 200 }
+```
+
+### <a name="custom_login_successful"></a> Login Successful Custom Function
+Sets an user defined function which should return `true` if login was successful.
+
+**Default:** nil
+
+```
+_M.custom_login_successful = function()
+    local headers, err = ngx.resp.get_headers()
+    if err then
+        return false
+    end
+    if headers['x-login'] and headers['x-login'] == "123" then
+        return true
+    else
+        return false
+    end
+end
+```
+
+
+## <a name="hypesale"></a> HypeSale
+To enforcer will server the hypesale page in cases where the custom_param["is_hype_sale"] set to true.
+If the request contains a cookie `_px3` with the `cpa` value so the hypesale will not be served but the enforcer will do risk_api to verify the request.
+
+### <a name="hypesale_host"></a> HypeSale host
+Sets HypeSale host
+
+**Default:** 'https://captcha.px-cdn.net'
+
+```
+_M.hypesale_host = 'https://captcha.px-cdn.net'
+```
+
+
+## <a name="graphql"></a> Sensitive GraphQL Operations
+For those using GraphQL endpoints, it is possible to trigger server-to-server risk calls on particular operation types or names. Like the sensitive routes feature, a request that contains an operation of the configured type or name will trigger a server call to PerimeterX servers every time that operation is performed.
+Note: This feature only applies to requests that contain the string `graphql` somewhere in the path name.
+
+### <a name="px_sensitive_graphql_operation_types"></a> Sensitive GraphQL Operation Types
+Sets an operation type (e.g., query, mutation)
+
+**Default:** nil (none)
+
+```
+_M.px_sensitive_graphql_operation_types = {}
+```
+
+### <a name="px_sensitive_graphql_operation_names"></a> Sensitive GraphQL Operation Names
+Sets an operation name
+
+**Default:** nil (none)
+
+```
+_M.px_sensitive_graphql_operation_names = {}
+```
+
 
 ## <a name="appendix"></a> Appendix
 
@@ -1192,6 +1361,17 @@ Documentation for setting up First-Party Prefixes is found [here](FIRST_PARTY_PR
 ### <a name="uri_delimiters"></a> URI Delimiters
 
 PerimeterX processes URI paths with general- and sub-delimiters according to RFC 3986. General delimiters (e.g., `?`, `#`) are used to separate parts of the URI. Sub-delimiters (e.g., `$`, `&`) are not used to split the URI as they are considered valid characters in the URI path.
+
+## <a name="test_environment"></a> Run test environment
+
+PerimeterX Nginx Lua Enforcer repository contains Dockerfile used to create a test docker image.
+In order to build an image, the following files must be present in the project's "example" directory:
+* examples/pxconfig.lua - Enforcer configuration (`px_appId`, `cookie_secret` and `auth_token` parameters are required and must be set).
+* examples/nginx.conf - Nginx configuration
+* examples/creds.json - Credential Intelligence configuration (optional)
+
+When these files are present and adjusted, the following command could be executed from the project's root directory to run a test docker container: `./examples/run_docker.sh`
+Docker container will run and Nginx will listen on 8080 port.
 
 ## <a name="contributing"></a> Contributing
 
