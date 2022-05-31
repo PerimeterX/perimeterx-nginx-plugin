@@ -147,6 +147,11 @@ function  _M.filter_config(px_config)
     -- remove
     config_copy.cookie_secret = nil
     config_copy.auth_token = nil
+    -- functions
+    config_copy.additional_activity_handler = nil
+    config_copy.enrich_custom_parameters = nil
+    config_copy.custom_login_successful = nil
+
     return config_copy
 end
 
