@@ -182,6 +182,27 @@ function _M.clear_first_party_sensitive_headers(sensitive_headers)
     end
 end
 
+-- h: header name
+-- return header value or nil
+-- if there are multiple headers - return the 1st header's value
+function _M.get_headers_single(h)
+    local hdr, e = ngx.req.get_headers()[h]
+    if hdr == nil then
+        return nil
+    end
+
+    if type(hdr) == 'table' then
+        for _,v in pairs(hdr) do
+            if v ~= nil then
+                return v
+            end
+        end
+        return nil
+    end
+
+    return hdr
+end
+
 -- Splits a string into array
 -- @s - string to split
 -- @delimeter - delimeiter to use
