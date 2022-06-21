@@ -364,7 +364,7 @@ function M.load(px_config)
             ngx_req_set_header('cookie', 'pxvid=' .. vid)
         end
 
-        local xff_header = ngx.req.get_headers()['X-Forwarded-For']
+        local xff_header = px_common_utils.get_headers_single('x-forwarded-for')
         if xff_header then
             xff_header = xff_header .. ', ' .. ngx.var.remote_addr
         else

@@ -20,6 +20,7 @@ function M.load(px_config)
     local px_headers = require("px.utils.pxheaders").load(px_config)
     local cjson = require "cjson"
     local px_constants = require "px.utils.pxconstants"
+    local px_common_utils = require("px.utils.pxcommonutils")
     local ngx_exit = ngx.exit
     local string_gsub = string.gsub
 
@@ -130,7 +131,7 @@ function M.load(px_config)
         end
 
         -- json response
-        local accept_header = ngx.req.get_headers()["accept"] or ngx.req.get_headers()["content-type"]
+        local accept_header = px_common_utils.get_headers_single("accept") or px_common_utils.get_headers_single("content-type")
         local is_json_response = px_config.advanced_blocking_response and accept_header and is_accept_header_json(accept_header) and not ngx.ctx.px_is_mobile
         if is_json_response then
             local props = px_template.get_props(px_config, details.block_uuid, vid, parse_action(ngx.ctx.px_action))
@@ -218,7 +219,7 @@ function M.load(px_config)
         ngx.status = ngx_HTTP_FORBIDDEN
         if px_config.api_protection_mode then
             -- api protection mode
-            local redirect_url = ngx.req.get_headers()['Referer']
+            local redirect_url = px_common_utils.get_headers_single('referer')
             if redirect_url == nil or redirect_url == '' then
                 redirect_url = px_config.api_protection_default_redirect_url
             end
