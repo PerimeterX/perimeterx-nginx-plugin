@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.1.2] - 2022-06-22
+### Fixed
+- Properly handle multiple instances of the same header
+- Fix field name in telemetry command
+
+
 ## [7.1.1] - 2022-05-10
 ### Fixed
 - Call enrich_custom_parameters() only once
