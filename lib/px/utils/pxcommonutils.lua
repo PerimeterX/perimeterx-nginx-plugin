@@ -147,6 +147,11 @@ function  _M.filter_config(px_config)
     -- remove
     config_copy.cookie_secret = nil
     config_copy.auth_token = nil
+    -- functions
+    config_copy.additional_activity_handler = nil
+    config_copy.enrich_custom_parameters = nil
+    config_copy.custom_login_successful = nil
+
     return config_copy
 end
 
@@ -175,6 +180,27 @@ function _M.clear_first_party_sensitive_headers(sensitive_headers)
     for i, header in ipairs(sensitive_headers) do
         ngx.req.clear_header(header)
     end
+end
+
+-- h: header name
+-- return header value or nil
+-- if there are multiple headers - return the 1st header's value
+function _M.get_headers_single(h)
+    local hdr, e = ngx.req.get_headers()[h]
+    if hdr == nil then
+        return nil
+    end
+
+    if type(hdr) == 'table' then
+        for _,v in pairs(hdr) do
+            if v ~= nil then
+                return v
+            end
+        end
+        return nil
+    end
+
+    return hdr
 end
 
 -- Splits a string into array

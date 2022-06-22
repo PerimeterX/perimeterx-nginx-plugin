@@ -237,7 +237,7 @@ function M.load(px_config)
     end
 
     function _M.creds_extract_from_body(ci)
-        local ctype = ngx.req.get_headers()["content-type"]
+        local ctype = px_common_utils.get_headers_single("content-type")
         if not ctype then
             return nil
         end
