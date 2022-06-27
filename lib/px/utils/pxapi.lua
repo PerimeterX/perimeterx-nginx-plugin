@@ -147,6 +147,7 @@ function M.load(px_config)
 
         if data.data_enrichment and type(data.data_enrichment) == "table" then
             ngx.ctx.pxde_verified = true
+            ngx.ctx.pxde = data.data_enrichment
             ngx.ctx.breached_account = data.data_enrichment.breached_account == 1
         end
 
