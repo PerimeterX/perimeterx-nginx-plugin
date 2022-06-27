@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.1.3] - 2022-06-27
+### Fixed
+- Export ngx.ctx.pxde variable
+
+
 ## [7.1.2] - 2022-06-22
 ### Fixed
 - Properly handle multiple instances of the same header
