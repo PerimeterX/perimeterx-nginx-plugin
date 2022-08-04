@@ -418,7 +418,14 @@ function M.load(px_config)
     if not success then
         px_logger.error("Could not decode login credentials JSON file")
     else
-        px_config.creds = creds_json.features.credentials.items
+        if creds_json.features.credentials.items then
+            px_config.creds = creds_json.features.credentials.items
+            for _, p in pairs(px_config.creds) do
+                if p["path"] then
+                    table.insert(px_config.sensitive_routes, p["path"])
+                end
+            end
+        end
     end
 
     return _M
