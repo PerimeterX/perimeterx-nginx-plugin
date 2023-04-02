@@ -98,5 +98,6 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## GraphQL
 -- _M.px_sensitive_graphql_operation_types = {}
 -- _M.px_sensitive_graphql_operation_names = {}
+-- _M.px_graphql_paths = {'/graphql'}
 
 return _M
