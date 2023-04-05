@@ -41,6 +41,7 @@
   - [Filter Sensitive Headers](#sensitive-headers)
   - [Remote Configurations](#remote-configurations)
   - [Enabled Routes](#enabled-routes)
+  - [Custom Enabled Routes](#custom-enabled-routes)
   - [Monitored Routes](#monitored-routes)
   - [Sensitive Routes](#sensitive-routes)
   - [Sensitive Routes Regex List](#sensitive-routes-regex)
@@ -746,6 +747,31 @@ Example:
 ```lua
  _M.enabled_routes = {'/blockhere'}
 ```
+
+### <a name="custom-enabled-routes"></a> Custom Enabled Routes
+
+Allows you to define a function, which takes `uri` as an argument and returns `true` or `false`.
+Returning `true` means that the plugin will be active for the given `uri`.
+
+**Default:** Function is not defined (all routes are active)
+
+Example:
+
+```lua
+-- return `true` if `/tmp/urls.txt` contains a string matching `uri`
+-- Warning! Reading from a file for each request could affect performance!
+_M.custom_enabled_routes = function(uri)
+    for line in io.lines("/tmp/urls.txt") do
+        -- simple substring match, could be extended to a pattern matching
+        if string.sub(uri, 1, string.len(line)) == line then
+            return true
+        end
+    end
+    return false
+end
+
+```
+
 
 ### <a name="monitored-routes"></a> Monitored Routes
 

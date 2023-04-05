@@ -18,6 +18,7 @@ PX_DEFAULT_CONFIGURATIONS["sensitive_routes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["additional_activity_handler"] = { nil, "function" }
 PX_DEFAULT_CONFIGURATIONS["enrich_custom_parameters"] = { nil, "function" }
 PX_DEFAULT_CONFIGURATIONS["enabled_routes"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["custom_enabled_routes"] = { nil, "function"}
 PX_DEFAULT_CONFIGURATIONS["monitored_routes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["advanced_blocking_response"] = { true, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["first_party_enabled"] = { true, "boolean"}

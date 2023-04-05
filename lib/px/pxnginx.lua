@@ -204,6 +204,15 @@ function M.application(px_configuration_table)
         return px_data
     end
 
+    if px_config.custom_enabled_routes ~= nil then
+        px_logger.debug("custom_enabled_routes was triggered")
+        local res = px_config.custom_enabled_routes(ngx.var.uri)
+        if not res then
+            px_headers.set_score_header(0)
+            return px_data
+        end
+    end
+
      -- Check for monitored route
     for i = 1, #monitored_routes do
         if string_sub(ngx.var.uri, 1, string_len(monitored_routes[i])) == monitored_routes[i] then
