@@ -25,6 +25,7 @@ _M.auth_token = 'REPLACE PX_AUTH_TOKEN'
 -- _M.sensitive_routes = {}
 -- _M.additional_activity_handler = nil
 -- _M.enabled_routes = {}
+-- _M.custom_enabled_routes = nil
 -- _M.monitored_routes = {}
 -- _M.first_party_enabled = true
 -- _M.reverse_xhr_enabled = true
