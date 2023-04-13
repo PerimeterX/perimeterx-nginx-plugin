@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.2.0] - 2023-04-13
+### Added
+- `custom_enabled_routes` a custom function to determine if url path is an enabled route
+- `px_graphql_paths` to specify a list of GraphQL endpoints
+- support for JWT and pxcts
+
+### Changed
+- support for multiple GraphQL endpoints
+
+### Fixed
+- Add CI paths to the sensitive routes
+
+
 ## [7.1.3] - 2022-06-27
 ### Fixed
 - Export ngx.ctx.pxde variable
