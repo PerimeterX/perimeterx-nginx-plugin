@@ -101,4 +101,13 @@ _M.px_debug = true
 -- _M.px_sensitive_graphql_operation_types = {}
 -- _M.px_sensitive_graphql_operation_names = {}
 -- _M.px_graphql_paths = {"/graphql"}
+
+
+-- _M.px_jwt_cookie_name = nil
+-- _M.px_jwt_cookie_user_id_field_name = nil
+-- _M.px_jwt_cookie_additional_field_names = {}
+-- _M.px_jwt_header_name = nil
+-- _M.px_jwt_header_user_id_field_name = nil
+-- _M.px_jwt_header_additional_field_names = {}
+
 return _M

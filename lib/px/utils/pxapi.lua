@@ -123,6 +123,17 @@ function M.load(px_config)
             risk.additional.graphql_operation_type = details["graphql_operation_type"]
         end
 
+        if details["cross_tab_session"] ~= nil then
+            risk.additional.cross_tab_session = details["cross_tab_session"]
+        end
+
+        if details["app_user_id"] ~= nil then
+            risk.additional.app_user_id = details["app_user_id"]
+        end
+
+        if details["jwt_additional_fields"] ~= nil then
+            risk.additional.jwt_additional_fields = details["jwt_additional_fields"]
+        end
 
         return risk
     end
