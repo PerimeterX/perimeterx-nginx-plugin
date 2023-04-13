@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) NGINX Lua Plugin
 
-> Latest stable version: [v7.1.3](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/7.1.3-1)
+> Latest stable version: [v7.2.0](https://luarocks.org/modules/bendpx/perimeterx-nginx-plugin/7.2.0-1)
 
 ## [Introduction](#introduction)
 
