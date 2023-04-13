@@ -3,7 +3,7 @@
 ----------------------------------------------
 
 local _M = {
-    MODULE_VERSION = "NGINX Module v7.1.3",
+    MODULE_VERSION = "NGINX Module v7.2.0",
     RISK_PATH = "/api/v3/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
     ACTIVITIES_PATH = "/api/v1/collector/s2s",
@@ -33,7 +33,8 @@ local _M = {
     ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url",
     EMAIL_ADDRESS_REGEX = "[A-Za-z0-9%.%%%+%-]+@[A-Za-z0-9%.%%%+%-]+%.%w%w%w?%w?",
     GMAIL_DOMAIN = "gmail.com",
-    BACKUP_CAPTCHA_HOST = "https://captcha.px-cloud.net"
+    BACKUP_CAPTCHA_HOST = "https://captcha.px-cloud.net",
+    CTS_COOKIE = "pxcts"
 }
 
 return _M

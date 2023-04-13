@@ -45,6 +45,7 @@ function M.application(px_configuration_table)
     local px_telemetry = require("px.utils.pxtelemetry")
     local px_creds = require ("px.utils.pxlogin_credentials").load(px_config)
     local px_graphql = require ("px.utils.pxgraphql_extractor").load(px_config)
+    local px_jwt = require ("px.utils.pxjwt_extractor").load(px_config)
     local cjson = require "cjson"
 
     local auth_token = px_config.auth_token
@@ -92,7 +93,7 @@ function M.application(px_configuration_table)
         end
     end
 
-    local function perform_s2s(result, details, creds, graphql, custom_params)
+    local function perform_s2s(result, details, creds, graphql, custom_params, jwt)
         px_logger.debug("Evaluating Risk API request, call reason: " .. result.message)
         ngx.ctx.s2s_call_reason = result.message
         local cookie_expires = 31536000 -- one year
@@ -144,7 +145,7 @@ function M.application(px_configuration_table)
             -- case score crossed threshold
             if not result then
                 px_logger.debug("Request will be blocked due to: " .. ngx.ctx.block_reason)
-                return px_block.block(ngx.ctx.block_reason, creds, graphql, custom_params)
+                return px_block.block(ngx.ctx.block_reason, creds, graphql, custom_params, jwt)
             end
             -- score did not cross the blocking threshold
             ngx.ctx.pass_reason = 's2s'
@@ -202,6 +203,15 @@ function M.application(px_configuration_table)
     if not valid_route and #enabled_routes > 0 then
         px_headers.set_score_header(0)
         return px_data
+    end
+
+    if px_config.custom_enabled_routes ~= nil then
+        px_logger.debug("custom_enabled_routes was triggered")
+        local res = px_config.custom_enabled_routes(ngx.var.uri)
+        if not res then
+            px_headers.set_score_header(0)
+            return px_data
+        end
     end
 
      -- Check for monitored route
@@ -265,6 +275,21 @@ function M.application(px_configuration_table)
     if graphql then
         details["graphql_operation_name"] = graphql["operationName"]
         details["graphql_operation_type"] = graphql["operationType"]
+    end
+
+    local jwt = px_jwt.extract(lower_request_url)
+    if jwt then
+        if jwt["cts"] ~= nil then
+            details["cross_tab_session"] = jwt["cts"]
+        end
+
+        if jwt["user_id"] ~= nil then
+            details["app_user_id"] = jwt["user_id"]
+        end
+
+        if jwt["additional_fields"] and type(jwt["additional_fields"]) == 'table' and next(jwt["additional_fields"]) ~= nil  then
+            details["jwt_additional_fields"] = jwt["additional_fields"]
+        end
     end
 
     local creds = px_creds.px_credentials_extract()
@@ -351,7 +376,7 @@ function M.application(px_configuration_table)
         -- score crossed threshold
         if result == false then
             ngx.ctx.block_reason = 'cookie_high_score'
-            px_block.block(ngx.ctx.block_reason, creds, graphql, custom_params)
+            px_block.block(ngx.ctx.block_reason, creds, graphql, custom_params, jwt)
             return px_data
         else
             ngx.ctx.pass_reason = 'cookie'
@@ -361,7 +386,7 @@ function M.application(px_configuration_table)
         if result == nil then
             result = { message = "cookie_error" }
         end
-        perform_s2s(result, details, creds, graphql, custom_params)
+        perform_s2s(result, details, creds, graphql, custom_params, jwt)
     else
         ngx.ctx.pass_reason = 'error'
         pcall(px_client.send_to_perimeterx, "page_requested", details, creds)

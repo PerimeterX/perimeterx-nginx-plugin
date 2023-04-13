@@ -117,26 +117,29 @@ function M.load(px_config)
 
     function _M.extract(lower_request_url)
         local method = ngx.req.get_method()
-        if not string.find(lower_request_url, px_constants.GRAPHQL_PATH, 1, true) and method:lower() == "post" then
-            return nil
+        for i = 1, #px_config.px_graphql_paths do
+            if string.find(lower_request_url, px_config.px_graphql_paths[i]) and method:lower() == "post" then
+                -- force Nginx to read body data
+                ngx.req.read_body()
+                local body = ngx.req.get_body_data()
+                if not body then
+                    return nil
+                end
+
+                local graphql = {}
+
+                graphql["operationType"] = _M.get_operation_type(body)
+                graphql["operationName"] = _M.get_operation_name(body)
+                graphql["isSensitiveOperation"] = _M.is_sensitive_operation(graphql)
+
+                ngx.ctx.is_graphql_sensitive_operation = graphql["isSensitiveOperation"]
+
+                return graphql
+            end
         end
 
-        -- force Nginx to read body data
-        ngx.req.read_body()
-        local body = ngx.req.get_body_data()
-        if not body then
-            return nil
-        end
+        return nul;
 
-        local graphql = {}
-
-        graphql["operationType"] = _M.get_operation_type(body)
-        graphql["operationName"] = _M.get_operation_name(body)
-        graphql["isSensitiveOperation"] = _M.is_sensitive_operation(graphql)
-
-        ngx.ctx.is_graphql_sensitive_operation = graphql["isSensitiveOperation"]
-
-        return graphql
     end
 
     return _M

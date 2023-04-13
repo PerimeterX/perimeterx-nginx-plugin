@@ -25,6 +25,7 @@ _M.auth_token = 'REPLACE PX_AUTH_TOKEN'
 -- _M.sensitive_routes = {}
 -- _M.additional_activity_handler = nil
 -- _M.enabled_routes = {}
+-- _M.custom_enabled_routes = nil
 -- _M.monitored_routes = {}
 -- _M.first_party_enabled = true
 -- _M.reverse_xhr_enabled = true
@@ -99,5 +100,14 @@ _M.px_debug = true
 -- ## GraphQL
 -- _M.px_sensitive_graphql_operation_types = {}
 -- _M.px_sensitive_graphql_operation_names = {}
+-- _M.px_graphql_paths = {"/graphql"}
+
+
+-- _M.px_jwt_cookie_name = nil
+-- _M.px_jwt_cookie_user_id_field_name = nil
+-- _M.px_jwt_cookie_additional_field_names = {}
+-- _M.px_jwt_header_name = nil
+-- _M.px_jwt_header_user_id_field_name = nil
+-- _M.px_jwt_header_additional_field_names = {}
 
 return _M

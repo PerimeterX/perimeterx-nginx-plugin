@@ -54,7 +54,7 @@ function M.load(px_config)
         end
     end
 
-    function _M.block(reason, creds, graphql, custom_params)
+    function _M.block(reason, creds, graphql, custom_params, jwt)
         local details = {}
         local ref_str = ''
         local vid = ''
@@ -92,6 +92,20 @@ function M.load(px_config)
         if custom_params then
             for key, value in pairs(custom_params) do
                 details[key] = value
+            end
+        end
+
+        if jwt then
+            if jwt["cts"] ~= nil then
+                details["cross_tab_session"] = jwt["cts"]
+            end
+
+            if jwt["user_id"] ~= nil then
+                details["app_user_id"] = jwt["user_id"]
+            end
+
+            if jwt["additional_fields"] ~= nil then
+                details["jwt_additional_fields"] = jwt["additional_fields"]
             end
         end
 
