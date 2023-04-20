@@ -23,6 +23,7 @@ _M.auth_token = 'REPLACE PX_AUTH_TOKEN'
 -- _M.sensitive_routes_prefix = {}
 -- _M.sensitive_routes_suffix = {}
 -- _M.sensitive_routes = {}
+-- _M.custom_sensitive_routes = nil
 -- _M.additional_activity_handler = nil
 -- _M.enabled_routes = {}
 -- _M.custom_enabled_routes = nil

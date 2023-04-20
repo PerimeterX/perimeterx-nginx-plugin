@@ -207,10 +207,18 @@ function PXPayload:validate(cookie)
 end
 
 function PXPayload:is_sensitive_route()
+    if self.px_config.custom_sensitive_routes ~= nil then
+        local res = self.px_config.custom_sensitive_routes(ngx.var.uri)
+        if res then
+            self.px_logger.debug("Sensitive route match, sending Risk API. path: " .. ngx.var.uri)
+            return true
+        end
+    end
+
     if self.px_config.sensitive_routes ~= nil then
         for i, p in ipairs(self.px_config.sensitive_routes) do
             if string.find(ngx.var.uri, p) ~= nil then
-                self.px_logger.debug("Sensitive route match, sending Risk API. path:: " .. ngx.var.uri)
+                self.px_logger.debug("Sensitive route match, sending Risk API. path: " .. ngx.var.uri)
                 return true
             end
         end

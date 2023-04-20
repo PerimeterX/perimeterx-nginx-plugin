@@ -45,6 +45,7 @@
   - [Monitored Routes](#monitored-routes)
   - [Sensitive Routes](#sensitive-routes)
   - [Sensitive Routes Regex List](#sensitive-routes-regex)
+  - [Custom Sensitive Routes](#custom-sensitive-routes)
   - [API Timeout](#api-timeout)
   - [Customize Default Block Page](#customblockpage)
   - [Redirect to a Custom Block Page URL](#redirect_to_custom_blockpage)
@@ -771,6 +772,7 @@ _M.custom_enabled_routes = function(uri)
 end
 
 ```
+See [examples/custom_enabled_routes.lua](/examples/custom_enabled_routes.lua) for a complete example of using `custom_enabled_routes`.
 
 
 ### <a name="monitored-routes"></a> Monitored Routes
@@ -808,6 +810,31 @@ Example:
 ```lua
 _M.sensitive_routes = {'^/login/[0-9]*user$'}
 ```
+
+### <a name="custom-sensitive-routes"></a> Custom Sensitive Routes
+Allows you to define a function, which takes `uri` as an argument and returns `true` or `false`.
+Returning `true` means that PerimeterX module creates a server-to-server call, even when the cookie is valid and the risk score is low.
+
+**Default:** Function is not defined
+
+Example:
+
+```lua
+-- return `true` if `/tmp/urls.txt` contains a string matching `uri`
+-- Warning! Reading from a file for each request could affect performance!
+_M.custom_sensitive_routes = function(uri)
+    for line in io.lines("/tmp/urls.txt") do
+        -- simple substring match, could be extended to a pattern matching
+        if string.sub(uri, 1, string.len(line)) == line then
+            return true
+        end
+    end
+    return false
+end
+
+```
+See [examples/custom_enabled_routes.lua](/examples/custom_enabled_routes.lua) for a complete example of using `custom_enabled_routes` (which is similar to `custom_sensitive_routes`).
+
 
 ### <a name="api-timeout"></a>API Timeout Milliseconds
 
