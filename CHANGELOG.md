@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.2.1] - 2023-04-20
+### Added
+- `custom_sensitive_routes` a custom function to determine if url path is a sensitive route
+
+
 ## [7.2.0] - 2023-04-13
 ### Added
 - `custom_enabled_routes` a custom function to determine if url path is an enabled route
