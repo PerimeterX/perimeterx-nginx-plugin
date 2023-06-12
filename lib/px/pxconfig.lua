@@ -100,7 +100,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## GraphQL
 -- _M.px_sensitive_graphql_operation_types = {}
 -- _M.px_sensitive_graphql_operation_names = {}
--- _M.px_graphql_paths = {'/graphql'}
+-- _M.px_graphql_routes = {'/graphql'}
 
 -- ## User Identifiers
 -- _M.px_jwt_cookie_name = nil
