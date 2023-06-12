@@ -54,6 +54,24 @@ function M.load(px_config)
         end
     end
 
+    local function append_cors_headers()
+        if not px_config.px_cors_support_enabled then
+            return
+        end
+
+        if px_config.px_cors_create_custom_block_response_headers ~= nil then
+            px_config.px_cors_create_custom_block_response_headers()
+        else
+            local origin_val = px_headers.get_header(px_constants.ORIGIN_HEADER_NAME)
+            if origin_val ~= nil then
+                ngx.header[px_constants.CORS_HEADER_KEY] = origin_val
+                ngx.header[px_constants.CORS_ALLOW_CREDENTIALS_HEADER_KEY] = 'true'
+            end
+        end
+
+
+    end
+
     function _M.block(reason, creds, graphql, custom_params, jwt)
         local details = {}
         local ref_str = ''
@@ -137,6 +155,7 @@ function M.load(px_config)
                 page = ngx.encode_base64(html),
                 collectorUrl = collectorUrl
             }
+            append_cors_headers()
             ngx.header["Content-Type"] = 'application/json'
             ngx.status = ngx_HTTP_FORBIDDEN
             ngx.say(cjson.encode(result))
@@ -160,6 +179,7 @@ function M.load(px_config)
                 customLogo = px_config.customLogo,
                 altBlockScript = props.altBlockScript
             }
+            append_cors_headers()
             ngx.header["Content-Type"] = 'application/json'
             ngx.status = ngx_HTTP_FORBIDDEN
             ngx.say(cjson.encode(result))
@@ -167,6 +187,7 @@ function M.load(px_config)
         end
 
         -- web scenarios
+        append_cors_headers()
         ngx.header["Content-Type"] = 'text/html'
 
         -- render advanced actions (js challange/rate limit)
