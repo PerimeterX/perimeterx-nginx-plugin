@@ -88,6 +88,7 @@ PX_DEFAULT_CONFIGURATIONS["px_jwt_header_user_id_field_name"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_jwt_header_additional_field_names"] = { {}, "table"}
 
 function _M.load(px_config)
+    local px_constants = require("px.utils.pxconstants")
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
 
@@ -122,6 +123,11 @@ function _M.load(px_config)
         if px_config["collector_host"] == "collector.perimeterx.net" then
             px_config["collector_host"] = string.format('collector-%s.perimeterx.net', px_config["px_appId"])
         end
+    end
+
+    -- set default GraphQL route
+    if not px_config.px_graphql_routes then
+        table.insert(px_config.px_graphql_routes, px_constants.GRAPHQL_PATH)
     end
 
     return px_config
