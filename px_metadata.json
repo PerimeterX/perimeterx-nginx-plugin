@@ -1,6 +1,6 @@
 {
     "module_name" : "NGINX Module",
-    "version": "7.2.1",
+    "version": "7.3.0",
     "spec_version" : "1.0.0",
     "supported_features": [
         "advanced_blocking_response",
@@ -11,7 +11,9 @@
         "client_ip_extraction",
         "css_ref",
         "cookie_v3",
+        "cors_support",
         "credentials_intelligence",
+        "custom_cookie_header",
         "custom_logo",
         "custom_parameters",
         "custom_proxy",
