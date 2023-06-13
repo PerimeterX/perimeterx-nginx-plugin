@@ -34,7 +34,17 @@ local _M = {
     EMAIL_ADDRESS_REGEX = "[A-Za-z0-9%.%%%+%-]+@[A-Za-z0-9%.%%%+%-]+%.%w%w%w?%w?",
     GMAIL_DOMAIN = "gmail.com",
     BACKUP_CAPTCHA_HOST = "https://captcha.px-cloud.net",
-    CTS_COOKIE = "pxcts"
+    CTS_COOKIE = "pxcts",
+    CORS_HEADER_KEY = "Access-Control-Allow-Origin",
+    CORS_ALLOW_CREDENTIALS_HEADER_KEY = "Access-Control-Allow-Credentials",
+    CORS_ACCESS_CONTROL_ALLOW_METHODS_KEY = "Access-Control-Allow-Methods",
+    CORS_ACCESS_CONTROL_REQUEST_METHOD_HEADER = "Access-Control-Request-Method",
+    CORS_ACCESS_CONTROL_ALLOW_METHODS_VALUE = "GET,POST,OPTIONS",
+    CORS_ACCESS_CONTROL_ALLOW_HEADERS_KEY = "Access-Control-Allow-Headers",
+    CORS_ACCESS_CONTROL_ALLOW_HEADERS_VALUE = "Content-Type,Authorization",
+    ORIGIN_HEADER_NAME = "origin",
+    OPTIONS_METHOD = "OPTIONS"
+
 }
 
 return _M

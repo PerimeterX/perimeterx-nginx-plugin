@@ -87,6 +87,10 @@ PX_DEFAULT_CONFIGURATIONS["px_jwt_cookie_additional_field_names"] = { {}, "table
 PX_DEFAULT_CONFIGURATIONS["px_jwt_header_name"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_jwt_header_user_id_field_name"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_jwt_header_additional_field_names"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_support_enabled"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_preflight_request_filter_enabled"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_custom_preflight_handler"] = { nil, "function"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_create_custom_block_response_headers"] = { nil, "function"}
 
 function _M.load(px_config)
     local ngx_log = ngx.log

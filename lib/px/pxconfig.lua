@@ -110,4 +110,10 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.px_jwt_header_name = nil
 -- _M.px_jwt_header_user_id_field_name = nil
 -- _M.px_jwt_header_additional_field_names = {}
+
+-- ## CORS support
+-- _M.px_cors_support_enabled = false
+-- _M.px_cors_custom_preflight_handler = nil
+-- _M.px_cors_preflight_request_filter_enabled = false
+-- _M.px_cors_create_custom_block_response_headers = nil
 return _M
