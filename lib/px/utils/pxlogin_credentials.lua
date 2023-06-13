@@ -358,6 +358,29 @@ function M.load(px_config)
         return pxdata
     end
 
+    -- try to load CI from a JSON file. Return True / False
+    function _M.px_credentials_load_from_file()
+        -- try to load JSON with creds information
+        local f, err = io.open(px_config.px_login_creds_settings_filename, "r")
+        if not f then
+            px_logger.error("Failed to load login credentials JSON file: " .. err)
+            return false
+        end
+
+        local content = f:read("*a")
+        f:close()
+
+        local success, creds_json  = pcall(cjson.decode, content)
+        if not success then
+            px_logger.error("Could not decode login credentials JSON file")
+            return false
+        else
+            if creds_json.features.credentials.items then
+                px_config.creds = creds_json.features.credentials.items
+            end
+        end
+        return true
+    end
 
     -- extract login information from client request
     -- return table or nil
@@ -395,7 +418,7 @@ function M.load(px_config)
     end
 
     -- check if login credentials feature is enabled
-    if not px_config.px_enable_login_creds_extraction or px_config.px_login_creds_settings_filename == nil then
+    if not px_config.px_enable_login_creds_extraction then
         return _M
     end
 
@@ -404,26 +427,23 @@ function M.load(px_config)
         return _M
     end
 
-    -- try to load JSON with creds information
-    local f, err = io.open(px_config.px_login_creds_settings_filename, "r")
-    if not f then
-        px_logger.error("Failed to load login credentials JSON file: " .. err)
-        return _M
+    if px_config.px_login_creds_settings_filename ~= nil then
+        local res = _M.px_credentials_load_from_file()
+        if not res then
+            return _M
+        end
     end
 
-    local content = f:read("*a")
-    f:close()
+    -- Use settings from Enforcer configuration
+    if px_config.px_login_creds_settings and next(px_config.px_login_creds_settings) ~= nil then
+        px_config.creds = px_config.px_login_creds_settings
+    end
 
-    local success, creds_json  = pcall(cjson.decode, content)
-    if not success then
-        px_logger.error("Could not decode login credentials JSON file")
-    else
-        if creds_json.features.credentials.items then
-            px_config.creds = creds_json.features.credentials.items
-            for _, p in pairs(px_config.creds) do
-                if p["path"] then
-                    table.insert(px_config.sensitive_routes, p["path"])
-                end
+    -- update sensitive routes
+    if px_config.creds and next(px_config.creds) ~= nil then
+        for _, p in pairs(px_config.creds) do
+            if p["path"] then
+                table.insert(px_config.sensitive_routes, p["path"])
             end
         end
     end

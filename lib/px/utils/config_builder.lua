@@ -71,6 +71,7 @@ PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_names"] = { {}, "table
 PX_DEFAULT_CONFIGURATIONS["px_graphql_paths"] = { {'/graphql'}, "table"}
 PX_DEFAULT_CONFIGURATIONS["px_enable_login_creds_extraction"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings"] = { nil, "table"}
 PX_DEFAULT_CONFIGURATIONS["px_compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
 PX_DEFAULT_CONFIGURATIONS["px_login_successful_reporting_method"] = { "none", "string"}
 PX_DEFAULT_CONFIGURATIONS["px_login_successful_header_name"] = { "x-px-login-successful", "string"}

@@ -83,6 +83,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## Login Credentials extraction
 --_M.px_enable_login_creds_extraction = false
 --_M.px_login_creds_settings_filename = nil
+--_M.px_login_creds_settings = nil
 --_M.px_compromised_credentials_header_name = "px-compromised-credentials"
 --_M.px_login_successful_reporting_method = "none"
 --_M.px_login_successful_header_name = "x-px-login-successful"
