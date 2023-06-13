@@ -96,7 +96,7 @@ function M.load(px_config)
         local operationType = graphql["operationType"]
         local operationName = graphql["operationName"]
 
-        if next(px_config.px_sensitive_graphql_operation_names) ~= nil and operationType then
+        if next(px_config.px_sensitive_graphql_operation_types) ~= nil and operationType then
             for i = 1, #px_config.px_sensitive_graphql_operation_types do
                 if px_config.px_sensitive_graphql_operation_types[i] == operationType then
                     return true
@@ -104,7 +104,7 @@ function M.load(px_config)
             end
         end
 
-        if next(px_config.px_sensitive_graphql_operation_types) ~= nil and operationName then
+        if next(px_config.px_sensitive_graphql_operation_names) ~= nil and operationName then
             for i = 1, #px_config.px_sensitive_graphql_operation_names do
                 if px_config.px_sensitive_graphql_operation_names[i] == operationName then
                     return true
@@ -116,9 +116,14 @@ function M.load(px_config)
     end
 
     function _M.extract(lower_request_url)
+        if not ((px_config.px_sensitive_graphql_operation_types and next(px_config.px_sensitive_graphql_operation_types) ~= nil) or
+            (px_config.px_sensitive_graphql_operation_names and next(px_config.px_sensitive_graphql_operation_names) ~= nil)) then
+            return nil
+        end
+
         local method = ngx.req.get_method()
-        for i = 1, #px_config.px_graphql_paths do
-            if string.find(lower_request_url, px_config.px_graphql_paths[i]) and method:lower() == "post" then
+        for i = 1, #px_config.px_graphql_routes do
+            if string.find(lower_request_url, px_config.px_graphql_routes[i]) and method:lower() == "post" then
                 -- force Nginx to read body data
                 ngx.req.read_body()
                 local body = ngx.req.get_body_data()
@@ -138,8 +143,7 @@ function M.load(px_config)
             end
         end
 
-        return nul;
-
+        return nil
     end
 
     return _M

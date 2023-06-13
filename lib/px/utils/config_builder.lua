@@ -62,15 +62,16 @@ PX_DEFAULT_CONFIGURATIONS["whitelist_uri_suffixes"] = { {'.css', '.bmp', '.tif',
 PX_DEFAULT_CONFIGURATIONS["whitelist_ip_addresses"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_full"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["whitelist_ua_sub"] = { {}, "table"}
-PX_DEFAULT_CONFIGURATIONS["custom_cookie_header"] = { nil, "string"}
+PX_DEFAULT_CONFIGURATIONS["custom_cookie_header"] = { 'X-PX-COOKIES', "string"}
 PX_DEFAULT_CONFIGURATIONS["bypass_monitor_header"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["postpone_page_requested"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["hypesale_host"] = { "https://captcha.px-cdn.net", "string"}
 PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_types"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_names"] = { {}, "table"}
-PX_DEFAULT_CONFIGURATIONS["px_graphql_paths"] = { {'/graphql'}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_graphql_routes"] = { {'/graphql'}, "table"}
 PX_DEFAULT_CONFIGURATIONS["px_enable_login_creds_extraction"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
+PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings"] = { nil, "table"}
 PX_DEFAULT_CONFIGURATIONS["px_compromised_credentials_header_name"] = { "px-compromised-credentials", "string"}
 PX_DEFAULT_CONFIGURATIONS["px_login_successful_reporting_method"] = { "none", "string"}
 PX_DEFAULT_CONFIGURATIONS["px_login_successful_header_name"] = { "x-px-login-successful", "string"}
@@ -86,8 +87,13 @@ PX_DEFAULT_CONFIGURATIONS["px_jwt_cookie_additional_field_names"] = { {}, "table
 PX_DEFAULT_CONFIGURATIONS["px_jwt_header_name"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_jwt_header_user_id_field_name"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_jwt_header_additional_field_names"] = { {}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_support_enabled"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_preflight_request_filter_enabled"] = { false, "boolean"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_custom_preflight_handler"] = { nil, "function"}
+PX_DEFAULT_CONFIGURATIONS["px_cors_create_custom_block_response_headers"] = { nil, "function"}
 
 function _M.load(px_config)
+    local px_constants = require("px.utils.pxconstants")
     local ngx_log = ngx.log
     local ngx_ERR = ngx.ERR
 
@@ -122,6 +128,11 @@ function _M.load(px_config)
         if px_config["collector_host"] == "collector.perimeterx.net" then
             px_config["collector_host"] = string.format('collector-%s.perimeterx.net', px_config["px_appId"])
         end
+    end
+
+    -- set default GraphQL route
+    if not px_config.px_graphql_routes then
+        table.insert(px_config.px_graphql_routes, px_constants.GRAPHQL_PATH)
     end
 
     return px_config

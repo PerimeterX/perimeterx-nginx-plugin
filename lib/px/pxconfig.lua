@@ -32,7 +32,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.reverse_xhr_enabled = true
 -- _M.proxy_url = nil
 -- _M.proxy_authorization = nil
--- _M.custom_cookie_header = nil
+-- _M.custom_cookie_header = 'X-PX-COOKIES'
 -- _M.bypass_monitor_header = nil
 -- _M.pxhd_secure_enabled = false
 
@@ -83,6 +83,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## Login Credentials extraction
 --_M.px_enable_login_creds_extraction = false
 --_M.px_login_creds_settings_filename = nil
+--_M.px_login_creds_settings = nil
 --_M.px_compromised_credentials_header_name = "px-compromised-credentials"
 --_M.px_login_successful_reporting_method = "none"
 --_M.px_login_successful_header_name = "x-px-login-successful"
@@ -100,7 +101,7 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- ## GraphQL
 -- _M.px_sensitive_graphql_operation_types = {}
 -- _M.px_sensitive_graphql_operation_names = {}
--- _M.px_graphql_paths = {'/graphql'}
+-- _M.px_graphql_routes = {'/graphql'}
 
 -- ## User Identifiers
 -- _M.px_jwt_cookie_name = nil
@@ -109,4 +110,10 @@ _M.auth_token = 'PX_AUTH_TOKEN'
 -- _M.px_jwt_header_name = nil
 -- _M.px_jwt_header_user_id_field_name = nil
 -- _M.px_jwt_header_additional_field_names = {}
+
+-- ## CORS support
+-- _M.px_cors_support_enabled = false
+-- _M.px_cors_custom_preflight_handler = nil
+-- _M.px_cors_preflight_request_filter_enabled = false
+-- _M.px_cors_create_custom_block_response_headers = nil
 return _M

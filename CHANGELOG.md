@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.3.0] - 2023-06-13
+### Added
+- CORS support
+- Set X-PX-COOKIES as the default custom cookie name
+- _M.px_login_creds_settings configuration, to allow specify CI settings in Lua configuration file
+
+### Changed
+- rename "px_graphql_paths" to "px_graphql_routes"
+
+### Fixed
+- correctly add GraphQL routes (requests must contain specified GraphQL Type/Name) to sensitive routes
+
+
 ## [7.2.1] - 2023-04-20
 ### Added
 - `custom_sensitive_routes` a custom function to determine if url path is a sensitive route

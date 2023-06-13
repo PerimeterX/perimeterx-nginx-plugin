@@ -227,6 +227,36 @@ function M.application(px_configuration_table)
         return px_data
     end
 
+    -- filter preflight requests
+    local method = ngx.req.get_method()
+    method = method:upper()
+    if px_config.px_cors_support_enabled and
+        method == px_constants.OPTIONS_METHOD and
+        (px_config.px_cors_custom_preflight_handler ~= nil or
+        px_config.px_cors_preflight_request_filter_enabled) then
+
+        local origin_val = px_headers.get_header(px_constants.ORIGIN_HEADER_NAME)
+        local req_method_val = px_headers.get_header(px_constants.CORS_ACCESS_CONTROL_REQUEST_METHOD_HEADER)
+
+        if origin_val ~= nil and req_method_val ~= nil then
+
+            if px_config.px_cors_custom_preflight_handler ~= nil then
+                px_logger.debug("custom_enabled_routes was triggered")
+                local ret = px_config.px_cors_custom_preflight_handler()
+                if ret then
+                    px_headers.set_score_header(0)
+                    return px_data
+                end
+            end
+
+            if px_config.px_cors_preflight_request_filter_enabled then
+                px_headers.set_score_header(0)
+                return px_data
+            end
+
+        end
+    end
+
     -- Clean any protected headers from the request.
     -- Prevents header spoofing to upstream application
     px_headers.clear_protected_headers()
