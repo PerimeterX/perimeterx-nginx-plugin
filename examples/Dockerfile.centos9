@@ -1,0 +1,25 @@
+FROM quay.io/centos/centos:stream9
+
+USER root
+RUN dnf update -y
+RUN dnf install -y epel-release
+RUN dnf config-manager --set-enabled crb
+RUN dnf update -y
+RUN dnf install -y wget make pkgconfig ca-certificates
+
+RUN wget https://openresty.org/package/centos/openresty2.repo -P /etc/yum.repos.d/
+RUN dnf update -y
+RUN dnf install -y openresty compat-lua compat-lua-devel compat-lua-libs luarocks
+
+RUN luarocks install --lua-version 5.1 lustache
+RUN luarocks install --lua-version 5.1 luasocket
+RUN luarocks install --lua-version 5.1 lua-resty-http
+RUN luarocks install --lua-version 5.1 luacheck
+RUN luarocks install --lua-version 5.1 lua-resty-nettle
+RUN luarocks install --lua-version 5.1 perimeterx-nginx-plugin
+
+COPY examples/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY examples/creds.json /tmp/creds.json
+COPY examples/pxconfig.lua /usr/local/lib/lua/px/
+
+CMD ["/usr/local/openresty/nginx/sbin/nginx", "-g", "daemon off;"]
