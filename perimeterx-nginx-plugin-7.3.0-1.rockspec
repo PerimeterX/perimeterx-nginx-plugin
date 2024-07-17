@@ -13,7 +13,7 @@
  }
  dependencies = {
     "lua-resty-http",
-    "lua-resty-nettle < 1.0",
+    "lua-resty-nettle",
     "luasocket",
     "lustache"
  }

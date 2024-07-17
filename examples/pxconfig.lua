@@ -57,7 +57,7 @@ _M.auth_token = 'REPLACE PX_AUTH_TOKEN'
 -- _M.redirect_to_referer = false
 
 -- ## Debug Parameters ##
-_M.px_debug = true
+-- _M.px_debug = false
 -- _M.s2s_timeout = 1000
 -- _M.client_timeout = 2000
 -- _M.cookie_encrypted = true
