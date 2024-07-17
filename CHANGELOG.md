@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.3.2] - 2024-07-17
+### Fixed
+- Fix rate_limit code
+
+
 ## [7.3.1] - 2024-07-17
 ### Changed
 - Remove lua-resty-nettle version restriction
