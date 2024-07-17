@@ -103,7 +103,7 @@ function M.load(px_config)
     local function get_content(action)
         local __dirname = get_path()
         local path = 'block_template'
-        if action == 'r' then
+        if action == 'ratelimit' then
             path = 'ratelimit'
         elseif action == px_constants.HSC_BLOCK_ACTION then
             path = 'hypesale_template'
