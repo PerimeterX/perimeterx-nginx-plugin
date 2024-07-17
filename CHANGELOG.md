@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.3.1] - 2024-07-17
+### Changed
+- Remove lua-resty-nettle version restriction
+
+### Fixed
+- Install PX package symlink in OpenResty Lua directory
+
+
 ## [7.3.0] - 2023-06-13
 ### Added
 - CORS support
