@@ -20,6 +20,7 @@ local _M = {
     HSC_BLOCK_ACTION = 'hsc',
     HSC_DRC_PROPERTY = 7190,
     HSC_BLOCK_TYPE = 'pxHypeSaleChallenge',
+    RATE_LIMIT_ACTION = 'r',
     GRAPHQL_PATH = "/graphql",
     GRAPHQL_QUERY = "query",
     GRAPHQL_MUTATION = "mutation",

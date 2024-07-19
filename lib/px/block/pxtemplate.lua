@@ -102,12 +102,16 @@ function M.load(px_config)
 
     local function get_content(action)
         local __dirname = get_path()
+
+        -- for Captcha Action
         local path = 'block_template'
-        if action == 'ratelimit' then
+
+        if action == px_constants.RATE_LIMIT_ACTION then
             path = 'ratelimit'
         elseif action == px_constants.HSC_BLOCK_ACTION then
             path = 'hypesale_template'
         end
+
         local template_path = string.format("%stemplates/%s.mustache", __dirname, path)
 
         px_logger.debug("fetching template from: " .. template_path)
