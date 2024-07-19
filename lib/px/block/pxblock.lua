@@ -145,19 +145,26 @@ function M.load(px_config)
             local block_action = parse_action(ngx.ctx.px_action)
             px_logger.debug("Enforcing action: " .. block_action .. " page is served")
 
-            local html = px_template.get_template(ngx.ctx.px_action, details.block_uuid, vid)
-            local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
-            local result = {
-                action = block_action,
-                uuid = details.block_uuid,
-                vid = vid,
-                appId = px_config.px_appId,
-                page = ngx.encode_base64(html),
-                collectorUrl = collectorUrl
-            }
+            local status = ngx_HTTP_FORBIDDEN
+            local result = {}
+            if ngx.ctx.px_action == px_constants.RATE_LIMIT_ACTION then
+               status = ngx_HTTP_TOO_MANY_REQUESTS
+            else
+                local html = px_template.get_template(ngx.ctx.px_action, details.block_uuid, vid)
+                local collectorUrl = 'https://collector-' .. string.lower(px_config.px_appId) .. '.perimeterx.net'
+                result = {
+                    action = block_action,
+                    uuid = details.block_uuid,
+                    vid = vid,
+                    appId = px_config.px_appId,
+                    page = ngx.encode_base64(html),
+                    collectorUrl = collectorUrl
+                }
+
+            end
             append_cors_headers()
             ngx.header["Content-Type"] = 'application/json'
-            ngx.status = ngx_HTTP_FORBIDDEN
+            ngx.status = status
             ngx.say(cjson.encode(result))
             ngx_exit(ngx.OK)
             return
@@ -167,21 +174,27 @@ function M.load(px_config)
         local accept_header = px_common_utils.get_headers_single("accept") or px_common_utils.get_headers_single("content-type")
         local is_json_response = px_config.advanced_blocking_response and accept_header and is_accept_header_json(accept_header) and not ngx.ctx.px_is_mobile
         if is_json_response then
-            local props = px_template.get_props(px_config, details.block_uuid, vid, parse_action(ngx.ctx.px_action))
-            local result = {
-                appId = props.appId,
-                jsClientSrc = props.jsClientSrc,
-                firstPartyEnabled = props.firstPartyEnabled,
-                vid = props.vid,
-                uuid = props.uuid,
-                hostUrl = props.hostUrl,
-                blockScript = props.blockScript,
-                customLogo = px_config.customLogo,
-                altBlockScript = props.altBlockScript
-            }
+            local status = ngx_HTTP_FORBIDDEN
+            local result = {}
+            if ngx.ctx.px_action == px_constants.RATE_LIMIT_ACTION then
+                status = ngx_HTTP_TOO_MANY_REQUESTS
+            else
+                local props = px_template.get_props(px_config, details.block_uuid, vid, parse_action(ngx.ctx.px_action))
+                result = {
+                    appId = props.appId,
+                    jsClientSrc = props.jsClientSrc,
+                    firstPartyEnabled = props.firstPartyEnabled,
+                    vid = props.vid,
+                    uuid = props.uuid,
+                    hostUrl = props.hostUrl,
+                    blockScript = props.blockScript,
+                    customLogo = px_config.customLogo,
+                    altBlockScript = props.altBlockScript
+                }
+            end
             append_cors_headers()
             ngx.header["Content-Type"] = 'application/json'
-            ngx.status = ngx_HTTP_FORBIDDEN
+            ngx.status = status
             ngx.say(cjson.encode(result))
             ngx_exit(ngx.OK)
         end
@@ -192,17 +205,14 @@ function M.load(px_config)
 
         -- render advanced actions (js challange/rate limit)
         if ngx.ctx.px_action ~= 'c' and ngx.ctx.px_action ~= 'b' then
-            -- default status code
-            ngx.status = ngx_HTTP_FORBIDDEN
             local action_name = parse_action(ngx.ctx.px_action)
-            local body = ngx.ctx.px_action_data or px_template.get_template(action_name, uuid, vid)
+            local body = ngx.ctx.px_action_data or px_template.get_template(ngx.ctx.px_action, uuid, vid)
             px_logger.debug("Enforcing action: " .. action_name .. " page is served")
-
-            -- additional handling for actions (status codes, headers, etc)
-            if ngx.ctx.px_action == 'r' then
-                ngx.status = ngx_HTTP_TOO_MANY_REQUESTS
+            local status = ngx_HTTP_FORBIDDEN
+            if ngx.ctx.px_action == px_constants.RATE_LIMIT_ACTION then
+                status = ngx_HTTP_TOO_MANY_REQUESTS
             end
-
+            ngx.status = status
             ngx_say(body)
             ngx_exit(ngx.OK)
             return

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.3.3] - 2024-07-19
+### Fixed
+- Fix rate_limit code for JSON responses
+
+
 ## [7.3.2] - 2024-07-17
 ### Fixed
 - Fix rate_limit code
@@ -23,7 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - CORS support
 - Set X-PX-COOKIES as the default custom cookie name
-- _M.px_login_creds_settings configuration, to allow specify CI settings in Lua configuration file
+- `_M.px_login_creds_settings` configuration, to allow specify CI settings in Lua configuration file
 
 ### Changed
 - rename "px_graphql_paths" to "px_graphql_routes"
