@@ -37,7 +37,6 @@
   - [Debug Mode](#debug-mode)
   - [Whitelisting](#whitelisting)
   - [Filter Sensitive Headers](#sensitive-headers)
-  - [Remote Configurations](#remote-configurations)
   - [Enabled Routes](#enabled-routes)
   - [Custom Enabled Routes](#custom-enabled-routes)
   - [Monitored Routes](#monitored-routes)
@@ -90,6 +89,8 @@
 
  - [Sensitive GraphQL Operation Types](#px_sensitive_graphql_operation_types)
  - [Sensitive GraphQL Operation Names](#px_sensitive_graphql_operation_names)
+ - [Sensitive GraphQL routes](#px_sensitive_graphql_routes)
+
 
 ## [Appendix](#appendix)
 
@@ -457,13 +458,13 @@ The following NGINX Configurations are required to support the PerimeterX NGINX 
 
 - #### <a name="nginx_resolver"></a>Resolver
 
-  The Resolver directive must be configured in the HTTP section of your NGINX configuration.
+  The Resolver directive must be configured in the HTTP section of your NGINX configuration, IPv6 addresses are not supported.
 
-  - Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8;`),
+  - Set the resolver, `resolver A.B.C.D;`, to an external DNS resolver, such as Google (`resolver 8.8.8.8 ipv6=off;`),
 
   _or_
 
-  - Set the resolver, `resolver A.B.C.D;`, to the internal IP address of your DNS resolver (`resolver 10.1.1.1;`).
+  - Set the resolver, `resolver A.B.C.D;`, to the internal IP address of your DNS resolver (`resolver 10.1.1.1 ipv6=off;`).
 
   This is required for NGINX to resolve the PerimeterX API.
 
@@ -716,23 +717,6 @@ Example:
 
 ```lua
 _M.sensitive_headers = {'cookie', 'cookies', 'secret-header'}
-```
-
-### <a name="remote-configurations"></a> Remote Configurations
-
-Allows the module to periodically pull configurations from PerimeterX services. When enabled, the configuration can be changed dynamically via PerimeterX Portal
-
-**Default:** false
-
-**File:** `pxconfig.lua`
-
-Example:
-
-```lua
-   ...
-   _M.dynamic_configurations = false
-   _M.load_interval = 5
-   ...
 ```
 
 ### <a name="enabled-routes"></a> Enabled Routes
@@ -1312,7 +1296,7 @@ Sets an operation type (e.g., query, mutation)
 
 **Default:** nil (none)
 
-```
+```lua
 _M.px_sensitive_graphql_operation_types = {}
 ```
 
@@ -1321,8 +1305,20 @@ Sets an operation name
 
 **Default:** nil (none)
 
-```
+```lua
 _M.px_sensitive_graphql_operation_names = {}
+```
+
+### <a name="px_sensitive_graphql_routes"></a> Sensitive GraphQL routes
+
+Sets the list of one or more GraphQL routes.
+
+Note: the list contains Lua Patterns, more here: [Understanding Lua Patterns](https://www.fhug.org.uk/kb/kb-article/understanding-lua-patterns/)
+
+**Default:** `^/graphql/?$`
+
+```lua
+_M.px_graphql_routes = {"^/graphql/?$", "^/graphql/csrf$"}
 ```
 
 
