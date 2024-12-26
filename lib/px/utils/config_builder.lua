@@ -68,7 +68,7 @@ PX_DEFAULT_CONFIGURATIONS["postpone_page_requested"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["hypesale_host"] = { "https://captcha.px-cdn.net", "string"}
 PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_types"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["px_sensitive_graphql_operation_names"] = { {}, "table"}
-PX_DEFAULT_CONFIGURATIONS["px_graphql_routes"] = { {'/graphql'}, "table"}
+PX_DEFAULT_CONFIGURATIONS["px_graphql_routes"] = { {}, "table"}
 PX_DEFAULT_CONFIGURATIONS["px_enable_login_creds_extraction"] = { false, "boolean"}
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings_filename"] = { nil, "string"}
 PX_DEFAULT_CONFIGURATIONS["px_login_creds_settings"] = { nil, "table"}
@@ -131,7 +131,7 @@ function _M.load(px_config)
     end
 
     -- set default GraphQL route
-    if not px_config.px_graphql_routes then
+    if next(px_config.px_graphql_routes) == nil then
         table.insert(px_config.px_graphql_routes, px_constants.GRAPHQL_PATH)
     end
 
