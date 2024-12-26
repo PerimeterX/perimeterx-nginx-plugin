@@ -3,7 +3,7 @@
 ----------------------------------------------
 
 local _M = {
-    MODULE_VERSION = "NGINX Module v7.3.3",
+    MODULE_VERSION = "NGINX Module v7.3.4",
     RISK_PATH = "/api/v3/risk",
     CAPTCHA_PATH = "/api/v2/risk/captcha",
     ACTIVITIES_PATH = "/api/v1/collector/s2s",
@@ -21,7 +21,7 @@ local _M = {
     HSC_DRC_PROPERTY = 7190,
     HSC_BLOCK_TYPE = 'pxHypeSaleChallenge',
     RATE_LIMIT_ACTION = 'r',
-    GRAPHQL_PATH = "/graphql",
+    GRAPHQL_PATH = "^/graphql/?$",
     GRAPHQL_QUERY = "query",
     GRAPHQL_MUTATION = "mutation",
     JSON_CONTENT_TYPE = "application/json",
