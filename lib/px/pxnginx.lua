@@ -63,6 +63,7 @@ function M.application(px_configuration_table)
     local reverse_prefix_appid = string.sub(px_config.px_appId, 3, string.len(px_config.px_appId))
     local reverse_prefix = px_config.first_party_prefix ~= nil and px_config.first_party_prefix .. '/' .. reverse_prefix_appid or reverse_prefix_appid
     local lower_request_url = string.lower(ngx.var.request_uri)
+    local lower_request_path = string.lower(ngx.var.uri)
 
     -- Internal wrapper function, will check if uri match first party route and forward the request if uri was matched
     local function is_first_party_request(reverse_prefix, lower_request_url)
@@ -301,7 +302,7 @@ function M.application(px_configuration_table)
         ngx.ctx.pxvid = pxvid
     end
 
-    local graphql = px_graphql.extract(lower_request_url)
+    local graphql = px_graphql.extract(lower_request_path)
     if graphql then
         details["graphql_operation_name"] = graphql["operationName"]
         details["graphql_operation_type"] = graphql["operationType"]
