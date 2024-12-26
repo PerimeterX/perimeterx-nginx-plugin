@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [7.3.4] - 2024-12-26
+### Changed
+- Automatically inspect GraphQL POST data
+
+### Fixed
+- GraphQL default path
+
+
 ## [7.3.3] - 2024-07-19
 ### Fixed
 - Fix rate_limit code for JSON responses
