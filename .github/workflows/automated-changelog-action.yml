@@ -1,0 +1,208 @@
+name: Update customer documentation changelog
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  extract_version:
+    runs-on: ubuntu-latest
+    name: Extract release version
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Get package version
+        id: version
+        run: echo "value=$(node -p -e "require('./px_metadata.json').version")" >> "$GITHUB_OUTPUT"
+
+  update_docs_changelog:  
+    runs-on: ubuntu-latest
+    name: Update changelog in customer documentation
+    needs: 
+      - extract_version
+    env:
+      SOURCE_FILE:  CHANGELOG.md
+      DOCS_REPO_PATH: docs
+      CHANGELOG_DEST_DIR: fern/docs/pages/applications/Server-Side Integration/nginx-lua-module/nginx-lua-changelog
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Check if CHANGELOG.md was modified
+        id: check_changelog
+        run: |
+          BEFORE_SHA="${{ github.event.before }}"
+          AFTER_SHA="${{ github.event.after }}"
+
+          if [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]] || [[ -z "$BEFORE_SHA" ]]; then
+            echo "New branch or missing before SHA, checking parent commit diff"
+            if git rev-parse HEAD~1 >/dev/null 2>&1; then
+              if git diff --name-only HEAD~1 HEAD | grep -q "^CHANGELOG.md$"; then
+                echo "changelog_modified=true" >> "$GITHUB_OUTPUT"
+              else
+                echo "changelog_modified=false" >> "$GITHUB_OUTPUT"
+              fi
+            else
+              echo "No parent commit available, skipping changelog sync"
+              echo "changelog_modified=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            if git diff --name-only "$BEFORE_SHA" "$AFTER_SHA" | grep -q "^CHANGELOG.md$"; then
+              echo "changelog_modified=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "changelog_modified=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Generate token
+        if: steps.check_changelog.outputs.changelog_modified == 'true'
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          # App ID and private key PX docs app
+          app-id: ${{ vars.HS_DOCS_UPDATER_APP_ID }}
+          private-key: ${{ secrets.HS_DOCS_UPDATER_APP_PRIVATE_KEY }}
+          repositories: public-docs
+
+      - name: Clone public-docs
+        if: steps.check_changelog.outputs.changelog_modified == 'true'
+        uses: actions/checkout@v6
+        with:
+          repository: PerimeterX/public-docs
+          path: ${{ env.DOCS_REPO_PATH }}
+          token: ${{ steps.generate-token.outputs.token }}
+          ref: main
+
+      - name: Extract and create changelog entry
+        if: steps.check_changelog.outputs.changelog_modified == 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            const version = '${{ needs.extract_version.outputs.version }}';
+            
+            const changelogContent = fs.readFileSync('${{ env.SOURCE_FILE }}', 'utf8');
+            
+            // Expected format: ## [VERSION] - YYYY-MM-DD (e.g., ## [1.5.0] - 2025-12-17)
+            const escapedVersion = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Do not use the multiline flag here: with /m, $ matches every line end and
+            // the lazy capture stops after the first blank line, omitting entry content.
+            const entryMatch = changelogContent.match(
+              new RegExp(`(?:^|\\n)## \\[${escapedVersion}\\] - (\\d{4}-\\d{2}-\\d{2})\\n([\\s\\S]*?)(?=\\n## \\[|$)`)
+            );
+            
+            if (!entryMatch) {
+              core.setFailed(`No changelog entry found for version ${version}`);
+              return;
+            }
+            
+            const date = entryMatch[1];
+            const content = entryMatch[2].trim();
+            
+            core.info(`Processing changelog entry for version ${version} dated ${date}`);
+            
+            const versionEntry = `## Version ${version}\n\n${content}\n`;
+
+            const filename = `${date}.mdx`;
+            const filepath = path.join(process.env.DOCS_REPO_PATH, process.env.CHANGELOG_DEST_DIR, filename);
+
+            fs.mkdirSync(path.dirname(filepath), { recursive: true });
+            
+            let finalContent;
+            if (fs.existsSync(filepath)) {
+              // File exists - check if this version is already in the file
+              const existingContent = fs.readFileSync(filepath, 'utf8');
+              
+              // Check if this exact version header already exists in the file
+              const versionHeaderRegex = new RegExp(`^## Version ${escapedVersion}$`, 'm');
+              if (versionHeaderRegex.test(existingContent)) {
+                core.info(`Version ${version} already exists in ${filename}, skipping...`);
+                return;
+              }
+              
+              // Prepend new version to existing content (newer versions first)
+              finalContent = versionEntry + '\n' + existingContent;
+              core.info(`Prepending version ${version} to existing file ${filename}`);
+            } else {
+              // New file - just use the version entry
+              finalContent = versionEntry;
+              core.info(`Creating new file ${filename} with version ${version}`);
+            }
+            
+            fs.writeFileSync(filepath, finalContent);
+          
+            core.info(`Created/updated changelog file: ${filepath}`);
+            core.info(`Version: ${version}, Date: ${date}`);
+        
+      - name: Commit and push changes to public-docs repo
+        if: steps.check_changelog.outputs.changelog_modified == 'true'
+        id: commit_push_changes
+        run: |
+          cd ${{ env.DOCS_REPO_PATH }}
+
+          if git status --porcelain | grep -q .; then
+            echo "Differences found. Committing and pushing..."
+            
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+            # Add changelog directory if it exists
+            if [ -d "${{ env.CHANGELOG_DEST_DIR }}" ]; then
+              git add "${{ env.CHANGELOG_DEST_DIR }}"
+            fi
+
+            BRANCH_NAME="sync/changelog-update-${{ github.sha }}"
+            git checkout -b $BRANCH_NAME
+
+            git commit -m "Docs Sync: Automated changelog update from source commit ${{ github.sha }}"
+
+            REMOTE_URL="https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/PerimeterX/public-docs.git"
+            git push origin $BRANCH_NAME
+
+            echo "pushed_branch=${BRANCH_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "No differences found after updates. No commit necessary."
+          fi
+
+      - name: Create PR in public-docs
+        # Only run if a new branch was successfully pushed
+        if: steps.commit_push_changes.outputs.pushed_branch != ''
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const branchName = '${{ steps.commit_push_changes.outputs.pushed_branch }}';
+            const sourceRepo = process.env.GITHUB_REPOSITORY;
+            const sourceSha = process.env.GITHUB_SHA;
+
+            try {
+              const response = await github.rest.pulls.create({
+                owner: 'PerimeterX',
+                repo: 'public-docs',
+                title: 'Automated changelog update',
+                head: branchName,
+                base: 'main',
+                body: `Automated changelog update.
+
+              Source Commit: \`${sourceRepo}@${sourceSha}\`
+              Source File: \`${process.env.SOURCE_FILE}\`
+              Changelog Directory: \`${{ env.CHANGELOG_DEST_DIR }}\`
+
+              Please review the changes and merge.`,
+                  });
+                  console.log(`Pull Request created: ${response.data.html_url}`);
+              } 
+                catch (error) {
+                  console.error('Failed to create PR:', error.message);
+                  core.setFailed(`PR creation failed: ${error.message}`);
+              }
